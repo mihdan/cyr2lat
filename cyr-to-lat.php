@@ -160,7 +160,7 @@ add_filter( 'sanitize_file_name', 'ctl_sanitize_title' );
 function ctl_convert_existing_slugs() {
 	global $wpdb;
 
-	$posts = $wpdb->get_results( "SELECT ID, post_name FROM {$wpdb->posts} WHERE post_name REGEXP('[^A-Za-z0-9\-]+') AND post_status = 'publish'" );
+	$posts = $wpdb->get_results( "SELECT ID, post_name FROM {$wpdb->posts} WHERE post_name REGEXP('[^A-Za-z0-9\-]+') AND post_status IN ('publish', 'future', 'private')" );
 
 	foreach ( (array) $posts as $post ) {
 		$sanitized_name = ctl_sanitize_title( urldecode( $post->post_name ) );
