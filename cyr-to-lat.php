@@ -109,7 +109,7 @@ function ctl_sanitize_title( $title ) {
 		'я' => 'ya',
 	);
 
-	// Georgian.
+	// Georgian table.
 	$geo2lat = array(
 		'áƒ' => 'a',
 		'áƒ‘' => 'b',
