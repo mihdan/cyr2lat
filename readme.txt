@@ -41,6 +41,10 @@ add_filter('ctl_table', 'my_cyr_to_lat_table');
 
 == Changelog ==
 
+= 3.3 =
+* wpcs 1.0
+* Fixed many bugs
+
 = 3.2.1 =
 * mihdan, you are welcome :)
 
