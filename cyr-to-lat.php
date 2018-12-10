@@ -8,6 +8,11 @@
  * Version: 3.3
  */
 
+/**
+ * @param string $title post title.
+ *
+ * @return string|string[]|null
+ */
 function ctl_sanitize_title( $title ) {
 	global $wpdb;
 
@@ -51,9 +56,9 @@ function ctl_sanitize_title( $title ) {
 		'Џ' => 'DH',
 		'Ш' => 'SH',
 		'Щ' => 'SHH',
-		'Ъ' => '``',
+		'Ъ' => '',
 		'Ы' => 'Y`',
-		'Ь' => '`',
+		'Ь' => '',
 		'Э' => 'E`',
 		'Ю' => 'YU',
 		'Я' => 'YA',
@@ -96,9 +101,9 @@ function ctl_sanitize_title( $title ) {
 		'џ' => 'dh',
 		'ш' => 'sh',
 		'щ' => 'shh',
-		'ъ' => '``',
+		'ъ' => '',
 		'ы' => 'y`',
-		'ь' => '`',
+		'ь' => '',
 		'э' => 'e`',
 		'ю' => 'yu',
 		'я' => 'ya',
@@ -109,12 +114,12 @@ function ctl_sanitize_title( $title ) {
 		case 'bg_BG':
 			$iso9_table['Щ'] = 'SHT';
 			$iso9_table['щ'] = 'sht';
-			$iso9_table['Ъ'] = 'A`';
-			$iso9_table['ъ'] = 'a`';
+			$iso9_table['Ъ'] = 'A';
+			$iso9_table['ъ'] = 'a';
 			break;
 		case 'uk':
-			$iso9_table['И'] = 'Y`';
-			$iso9_table['и'] = 'y`';
+			$iso9_table['И'] = 'Y';
+			$iso9_table['и'] = 'y';
 			break;
 	}
 
