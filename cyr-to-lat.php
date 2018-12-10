@@ -136,7 +136,15 @@ function ctl_sanitize_title( $title ) {
 
 	if ( empty( $term ) ) {
 		$title = strtr( $title, apply_filters( 'ctl_table', $iso9_table ) );
-		$title = preg_replace( "/[^A-Za-z0-9`'_\-\.]/", '-', $title );
+
+		if ( function_exists( 'iconv' ) ) {
+			$title = iconv( 'UTF-8', 'UTF-8//TRANSLIT//IGNORE', $title );
+		}
+
+		$title = preg_replace( "/[^A-Za-z0-9'_\-\.]/", '-', $title );
+		$title = preg_replace( '/\-+/', '-', $title );
+		$title = preg_replace( '/^-+/', '', $title );
+		$title = preg_replace( '/-+$/', '', $title );
 	} else {
 		$title = $term;
 	}
