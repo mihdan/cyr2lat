@@ -154,6 +154,9 @@ function ctl_sanitize_title( $title ) {
 add_filter( 'sanitize_title', 'ctl_sanitize_title', 9 );
 add_filter( 'sanitize_file_name', 'ctl_sanitize_title' );
 
+/**
+ * Convert Existing Slugs
+ */
 function ctl_convert_existing_slugs() {
 	global $wpdb;
 
