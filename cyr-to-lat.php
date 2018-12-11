@@ -173,7 +173,9 @@ function ctl_sanitize_title( $title ) {
 
 	$term = $is_term ? $wpdb->get_var( "SELECT slug FROM {$wpdb->terms} WHERE name = '$title'" ) : '';
 
-	if ( empty( $term ) ) {
+	if ( ! empty( $term ) ) {
+		$title = $term;
+	} else {
 		$title = strtr( $title, apply_filters( 'ctl_table', $iso9_table ) );
 
 		if ( function_exists( 'iconv' ) ) {
@@ -184,8 +186,6 @@ function ctl_sanitize_title( $title ) {
 		$title = preg_replace( '/\-+/', '-', $title );
 		$title = preg_replace( '/^-+/', '', $title );
 		$title = preg_replace( '/-+$/', '', $title );
-	} else {
-		$title = $term;
 	}
 
 	return $title;
