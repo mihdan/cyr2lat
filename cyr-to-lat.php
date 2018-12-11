@@ -171,7 +171,7 @@ function ctl_sanitize_title( $title ) {
 		}
 	}
 
-	$term = $is_term ? $wpdb->get_var( "SELECT slug FROM {$wpdb->terms} WHERE name = '$title'" ) : '';
+	$term = $is_term ? $wpdb->get_var( $wpdb->prepare( "SELECT slug FROM {$wpdb->terms} WHERE name = %s", $title ) ) : '';
 
 	if ( ! empty( $term ) ) {
 		$title = $term;
