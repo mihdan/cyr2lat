@@ -109,45 +109,7 @@ function ctl_sanitize_title( $title ) {
 		'я' => 'ya',
 	);
 
-	// Georgian table.
-	$geo2lat = array(
-		'áƒ' => 'a',
-		'áƒ‘' => 'b',
-		'áƒ’' => 'g',
-		'áƒ“' => 'd',
-		'áƒ”' => 'e',
-		'áƒ•' => 'v',
-		'áƒ–' => 'z',
-		'áƒ—' => 'th',
-		'áƒ˜' => 'i',
-		'áƒ™' => 'k',
-		'áƒš' => 'l',
-		'áƒ›' => 'm',
-		'áƒœ' => 'n',
-		'áƒ' => 'o',
-		'áƒž' => 'p',
-		'áƒŸ' => 'zh',
-		'áƒ ' => 'r',
-		'áƒ¡' => 's',
-		'áƒ¢' => 't',
-		'áƒ£' => 'u',
-		'áƒ¤' => 'ph',
-		'áƒ¥' => 'q',
-		'áƒ¦' => 'gh',
-		'áƒ§' => 'qh',
-		'áƒ¨' => 'sh',
-		'áƒ©' => 'ch',
-		'áƒª' => 'ts',
-		'áƒ«' => 'dz',
-		'áƒ¬' => 'ts',
-		'áƒ­' => 'tch',
-		'áƒ®' => 'kh',
-		'áƒ¯' => 'j',
-		'áƒ°' => 'h',
-	);
-
-	$iso9_table = array_merge( $iso9_table, $geo2lat );
-
+	// Locales list - https://make.wordpress.org/polyglots/teams/
 	$locale = get_locale();
 	switch ( $locale ) {
 		case 'bg_BG':
@@ -159,6 +121,41 @@ function ctl_sanitize_title( $title ) {
 		case 'uk':
 			$iso9_table['И'] = 'Y';
 			$iso9_table['и'] = 'y';
+			break;
+		case 'ka_GE':
+			$iso9_table['áƒ'] = 'a';
+			$iso9_table['áƒ‘'] = 'b';
+			$iso9_table['áƒ’'] = 'g';
+			$iso9_table['áƒ“'] = 'd';
+			$iso9_table['áƒ”'] = 'e';
+			$iso9_table['áƒ•'] = 'v';
+			$iso9_table['áƒ–'] = 'z';
+			$iso9_table['áƒ—'] = 'th';
+			$iso9_table['áƒ˜'] = 'i';
+			$iso9_table['áƒ™'] = 'k';
+			$iso9_table['áƒš'] = 'l';
+			$iso9_table['áƒ›'] = 'm';
+			$iso9_table['áƒœ'] = 'n';
+			$iso9_table['áƒ'] = 'o';
+			$iso9_table['áƒž'] = 'p';
+			$iso9_table['áƒŸ'] = 'zh';
+			$iso9_table['áƒ '] = 'r';
+			$iso9_table['áƒ¡'] = 's';
+			$iso9_table['áƒ¢'] = 't';
+			$iso9_table['áƒ£'] = 'u';
+			$iso9_table['áƒ¤'] = 'ph';
+			$iso9_table['áƒ¥'] = 'q';
+			$iso9_table['áƒ¦'] = 'gh';
+			$iso9_table['áƒ§'] = 'qh';
+			$iso9_table['áƒ¨'] = 'sh';
+			$iso9_table['áƒ©'] = 'ch';
+			$iso9_table['áƒª'] = 'ts';
+			$iso9_table['áƒ«'] = 'dz';
+			$iso9_table['áƒ¬'] = 'ts';
+			$iso9_table['áƒ­'] = 'tch';
+			$iso9_table['áƒ®'] = 'kh';
+			$iso9_table['áƒ¯'] = 'j';
+			$iso9_table['áƒ°'] = 'h';
 			break;
 	}
 
