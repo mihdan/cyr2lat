@@ -184,8 +184,7 @@ function ctl_sanitize_title( $title ) {
 
 		$title = preg_replace( "/[^A-Za-z0-9'_\-\.]/", '-', $title );
 		$title = preg_replace( '/\-+/', '-', $title );
-		$title = preg_replace( '/^-+/', '', $title );
-		$title = preg_replace( '/-+$/', '', $title );
+		$title = trim( $title, '-' );
 	}
 
 	return $title;
