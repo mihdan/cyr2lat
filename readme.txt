@@ -44,6 +44,7 @@ add_filter('ctl_table', 'my_cyr_to_lat_table');
 = 3.3 =
 * wpcs 1.0
 * Fixed many bugs
+* Added Gutenberg support
 
 = 3.2.1 =
 * mihdan, you are welcome :)
