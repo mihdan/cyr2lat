@@ -1,5 +1,5 @@
 === Cyr-To-Lat ===
-Contributors: Atrax, SergeyBiryukov, mihdan
+Contributors: SergeyBiryukov, mihdan
 Tags: cyrillic, georgian, latin, l10n, russian, rustolat, slugs, translations, transliteration
 Requires at least: 2.3
 Tested up to: 5.0
