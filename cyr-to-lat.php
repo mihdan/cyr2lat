@@ -8,6 +8,10 @@
  * Version: 3.3
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * @param string $title post title.
  *
@@ -221,5 +225,22 @@ function ctl_schedule_conversion() {
 	add_action( 'shutdown', 'ctl_convert_existing_slugs' );
 }
 register_activation_hook( __FILE__, 'ctl_schedule_conversion' );
+
+/**
+ * Gutenberg support
+ *
+ * @param array $data An array of slashed post data.
+ * @param array $postarr An array of sanitized, but otherwise unmodified post data.
+ *
+ * @return mixed
+ */
+function ctl_sanitize_post_name( $data, $postarr ) {
+	if ( ! $data['post_name'] && $data['post_title'] ) {
+		$data['post_name'] = sanitize_title( $data['post_title'] );
+	}
+
+	return $data;
+}
+add_filter( 'wp_insert_post_data', 'ctl_sanitize_post_name', 10, 2 );
 
 // eof;
