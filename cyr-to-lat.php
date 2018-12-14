@@ -13,9 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * @param string $title post title.
+ * Sanitize title
  *
- * @return string|string[]|null
+ * @param string $title Post title.
+ *
+ * @return string|null
  */
 function ctl_sanitize_title( $title ) {
 	global $wpdb;
