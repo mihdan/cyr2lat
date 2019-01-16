@@ -249,6 +249,8 @@ function ctl_is_classic_editor_plugin_active() {
  * Check if Block Editor is active.
  * Must only be used after plugins_loaded action is fired.
  *
+ * @link https://kagg.eu/how-to-catch-gutenberg/
+ *
  * @return bool
  */
 function ctl_is_gutenberg_editor_active() {
@@ -278,6 +280,8 @@ function ctl_is_gutenberg_editor_active() {
  *
  * @param array $data An array of slashed post data.
  * @param array $postarr An array of sanitized, but otherwise unmodified post data.
+ *
+ * @link https://kagg.eu/how-to-catch-gutenberg/
  *
  * @return mixed
  */
