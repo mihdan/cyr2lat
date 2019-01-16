@@ -237,7 +237,8 @@ register_activation_hook( __FILE__, 'ctl_schedule_conversion' );
  * @return mixed
  */
 function ctl_sanitize_post_name( $data, $postarr ) {
-	if ( ! $data['post_name'] && $data['post_title'] ) {
+
+	if ( ! $data['post_name'] && $data['post_title'] && ! in_array( $data['post_status'], array( 'auto-draft', 'revision' ) ) ) {
 		$data['post_name'] = sanitize_title( $data['post_title'] );
 	}
 
