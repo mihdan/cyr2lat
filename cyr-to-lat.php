@@ -5,7 +5,9 @@
  * Description: Converts Cyrillic characters in post and term slugs to Latin characters. Useful for creating human-readable URLs. Based on the original plugin by Anton Skorobogatov.
  * Author: Sergey Biryukov, Mikhail Kobzarev
  * Author URI: http://ru.wordpress.org/
- * Version: 3.3
+ * Requires at least: 2.3
+ * Tested up to: 5.1
+ * Version: 3.4
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -165,16 +167,17 @@ function ctl_sanitize_title( $title ) {
 			break;
 	}
 
-	$is_term   = false;
+	$is_term = false;
+	// @codingStandardsIgnoreLine
 	$backtrace = debug_backtrace();
 	foreach ( $backtrace as $backtrace_entry ) {
-		if ( 'wp_insert_term' == $backtrace_entry['function'] ) {
+		if ( 'wp_insert_term' === $backtrace_entry['function'] ) {
 			$is_term = true;
 			break;
 		}
 	}
 
-	$term = $is_term ? $wpdb->get_var( $wpdb->prepare( "SELECT slug FROM {$wpdb->terms} WHERE name = %s", $title ) ) : '';
+	$term = $is_term ? $wpdb->get_var( $wpdb->prepare( "SELECT slug FROM $wpdb->terms WHERE name = %s", $title ) ) : '';
 
 	if ( ! empty( $term ) ) {
 		$title = $term;
@@ -192,6 +195,7 @@ function ctl_sanitize_title( $title ) {
 
 	return $title;
 }
+
 add_filter( 'sanitize_title', 'ctl_sanitize_title', 9 );
 add_filter( 'sanitize_file_name', 'ctl_sanitize_title' );
 
@@ -201,23 +205,23 @@ add_filter( 'sanitize_file_name', 'ctl_sanitize_title' );
 function ctl_convert_existing_slugs() {
 	global $wpdb;
 
-	$posts = $wpdb->get_results( "SELECT ID, post_name FROM {$wpdb->posts} WHERE post_name REGEXP('[^A-Za-z0-9\-]+') AND post_status IN ('publish', 'future', 'private')" );
+	$posts = $wpdb->get_results( "SELECT ID, post_name FROM $wpdb->posts WHERE post_name REGEXP('[^A-Za-z0-9\-]+') AND post_status IN ('publish', 'future', 'private')" );
 
 	foreach ( (array) $posts as $post ) {
 		$sanitized_name = ctl_sanitize_title( urldecode( $post->post_name ) );
 
-		if ( $post->post_name != $sanitized_name ) {
+		if ( $post->post_name !== $sanitized_name ) {
 			add_post_meta( $post->ID, '_wp_old_slug', $post->post_name );
 			$wpdb->update( $wpdb->posts, array( 'post_name' => $sanitized_name ), array( 'ID' => $post->ID ) );
 		}
 	}
 
-	$terms = $wpdb->get_results( "SELECT term_id, slug FROM {$wpdb->terms} WHERE slug REGEXP('[^A-Za-z0-9\-]+') " );
+	$terms = $wpdb->get_results( "SELECT term_id, slug FROM $wpdb->terms WHERE slug REGEXP('[^A-Za-z0-9\-]+') " );
 
 	foreach ( (array) $terms as $term ) {
 		$sanitized_slug = ctl_sanitize_title( urldecode( $term->slug ) );
 
-		if ( $term->slug != $sanitized_slug ) {
+		if ( $term->slug !== $sanitized_slug ) {
 			$wpdb->update( $wpdb->terms, array( 'slug' => $sanitized_slug ), array( 'term_id' => $term->term_id ) );
 		}
 	}
@@ -226,10 +230,13 @@ function ctl_convert_existing_slugs() {
 function ctl_schedule_conversion() {
 	add_action( 'shutdown', 'ctl_convert_existing_slugs' );
 }
+
 register_activation_hook( __FILE__, 'ctl_schedule_conversion' );
 
 /**
  * Check if Classic Editor plugin is active.
+ *
+ * @link https://kagg.eu/how-to-catch-gutenberg/
  *
  * @return bool
  */
@@ -281,8 +288,6 @@ function ctl_is_gutenberg_editor_active() {
  * @param array $data An array of slashed post data.
  * @param array $postarr An array of sanitized, but otherwise unmodified post data.
  *
- * @link https://kagg.eu/how-to-catch-gutenberg/
- *
  * @return mixed
  */
 function ctl_sanitize_post_name( $data, $postarr ) {
@@ -291,12 +296,16 @@ function ctl_sanitize_post_name( $data, $postarr ) {
 		return $data;
 	}
 
-	if ( ! $data['post_name'] && $data['post_title'] && ! in_array( $data['post_status'], array( 'auto-draft', 'revision' ) ) ) {
+	if (
+		! $data['post_name'] && $data['post_title'] &&
+		! in_array( $data['post_status'], array( 'auto-draft', 'revision' ), true )
+	) {
 		$data['post_name'] = sanitize_title( $data['post_title'] );
 	}
 
 	return $data;
 }
+
 add_filter( 'wp_insert_post_data', 'ctl_sanitize_post_name', 10, 2 );
 
 // eof;
