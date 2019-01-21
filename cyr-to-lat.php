@@ -24,6 +24,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 function ctl_sanitize_title( $title ) {
 	global $wpdb;
 
+	$pre = apply_filters( 'ctl_pre_sanitize_title', false, $title );
+
+	if ( false !== $pre ) {
+		return $pre;
+	}
+
 	$iso9_table = array(
 		'А' => 'A',
 		'Б' => 'B',
