@@ -41,6 +41,13 @@ add_filter('ctl_table', 'my_cyr_to_lat_table');
 
 == Changelog ==
 
+= 3.4 (21.01.2019) =
+* Tested up to WP 5.1
+* Code formatting to follow WPCS.
+* Strict comparisons.
+* Braces {} removed from MySQL statements to allow checking of table names in PhpStorm.
+* Updated .gitignore and README.md
+
 = 3.3 (18.01.2019) =
 * wpcs 1.0
 * Fixed many bugs
