@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kagg-design
 Tags: cyrillic, georgian, latin, l10n, russian, rustolat, slugs, translations, transliteration
 Requires at least: 2.3
 Tested up to: 5.1
-Stable tag: 3.3
+Stable tag: 3.4
 
 Converts Cyrillic characters in post, page and term slugs to Latin characters.
 
@@ -47,6 +47,7 @@ add_filter('ctl_table', 'my_cyr_to_lat_table');
 * Strict comparisons.
 * Braces {} removed from MySQL statements to allow checking of table names in PhpStorm.
 * Updated .gitignore and README.md
+* Added new filter `ctl_pre_sanitize_title`
 
 = 3.3 (18.01.2019) =
 * wpcs 1.0
