@@ -37,4 +37,6 @@ For reference, [here's a discussion](https://make.wordpress.org/themes/2013/03/0
 
 # Credits
 
-The current version of the Cyr-To-Lat was developed by Sergey Biryukov, and Mikhail Kobzarev.
+The current version of the Cyr-To-Lat was developed by Sergey Biryukov and Mikhail Kobzarev.
+
+Conttributors: @SergeyBiryukov, @mihdan, @karevn, @webvitaly, @kagg-design
