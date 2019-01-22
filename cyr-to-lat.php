@@ -1,5 +1,9 @@
 <?php
 /**
+ * Cyr-To-Lat
+ *
+ * @package Cyr_To_Lat
+ *
  * Plugin Name: Cyr-To-Lat
  * Plugin URI: http://wordpress.org/extend/plugins/cyr2lat/
  * Description: Converts Cyrillic characters in post and term slugs to Latin characters. Useful for creating human-readable URLs. Based on the original plugin by Anton Skorobogatov.
@@ -123,7 +127,7 @@ function ctl_sanitize_title( $title ) {
 		'я' => 'ya',
 	);
 
-	// Locales list - https://make.wordpress.org/polyglots/teams/
+	// Locales list - https://make.wordpress.org/polyglots/teams/.
 	$locale = get_locale();
 	switch ( $locale ) {
 		case 'bg_BG':
@@ -233,6 +237,9 @@ function ctl_convert_existing_slugs() {
 	}
 }
 
+/**
+ * Add schedule to convert existing slugs
+ */
 function ctl_schedule_conversion() {
 	add_action( 'shutdown', 'ctl_convert_existing_slugs' );
 }
@@ -314,4 +321,4 @@ function ctl_sanitize_post_name( $data, $postarr ) {
 
 add_filter( 'wp_insert_post_data', 'ctl_sanitize_post_name', 10, 2 );
 
-// eof;
+// eof.

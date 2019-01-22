@@ -15,24 +15,16 @@ branches:
 matrix:
   fast_finish: true
   include:
-    - php: 5.2
+    - php: '5.4'
+    - php: '5.5'
+    - php: '5.6'
+    - php: '7.0'
+    - php: '7.1'
       env: SNIFF=1
-    - php: 5.3
-      env: SNIFF=1
-    - php: 5.4
-      env: SNIFF=1
-    - php: 5.5
-      env: SNIFF=1
-    - php: 5.6
-      env: SNIFF=1
-    - php: 7.2
-      env: SNIFF=1
-
+    - php: '7.2'
+    - php: 'nightly'
   allow_failures:
-    # Allow failures for unstable builds.
     - php: nightly
-    - env: WP_VERSION=master
-    - env: SNIFF=1
 
 cache:
   directories:
@@ -54,4 +46,4 @@ before_script:
 
 script:
   #- if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/bin/phpcs -p -v -s --standard=phpcs.ruleset.xml $(find . -name '*.php') fi
-  - if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/bin/phpcs -p . --standard=WordPress; fi
+  - if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/bin/phpcs -p -s --colors --standard=phpcs.ruleset.xml .; fi
