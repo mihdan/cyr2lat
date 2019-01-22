@@ -15,6 +15,16 @@ branches:
 matrix:
   fast_finish: true
   include:
+    - php: 5.2
+      env: SNIFF=1
+    - php: 5.3
+      env: SNIFF=1
+    - php: 5.4
+      env: SNIFF=1
+    - php: 5.5
+      env: SNIFF=1
+    - php: 5.6
+      env: SNIFF=1
     - php: 7.2
       env: SNIFF=1
 
@@ -23,6 +33,12 @@ matrix:
     - php: nightly
     - env: WP_VERSION=master
     - env: SNIFF=1
+
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
+    - node_modules
 
 before_script:
   - if [[ "$SNIFF" == "1" ]]; then export PHPCS_DIR=/tmp/phpcs; fi
@@ -37,4 +53,5 @@ before_script:
   - if [[ "$SNIFF" == "1" ]]; then phpenv rehash; fi
 
 script:
-  - if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/bin/phpcs -p -v -s --standard=phpcs.ruleset.xml $(find . -name '*.php') fi
+  #- if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/bin/phpcs -p -v -s --standard=phpcs.ruleset.xml $(find . -name '*.php') fi
+  - if [[ "$SNIFF" == "1" ]]; then $PHPCS_DIR/bin/phpcs -p . --standard=WordPress; fi
