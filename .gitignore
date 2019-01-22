@@ -1,7 +1,9 @@
 .DS_Store
 .distignore
+.travis.yml
 phpcs.xml
 phpunit.xml
+phpcs.ruleset.xml
 Thumbs.db
 wp-cli.local.yml
 node_modules/

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Plugin Coding Standards">
+    <description>A custom set of code standard rules to check for WordPress plugins.</description>
+
+    <exclude-pattern>vendor/*</exclude-pattern>
+
+    <rule ref="WordPress-VIP">
+        <exclude name="WordPress.VIP.FileSystemWritesDisallow" />
+        <exclude name="WordPress.VIP.RestrictedFunctions" />
+        <exclude name="WordPress.VIP.RestrictedVariables" />
+        <exclude name="WordPress.VIP.SuperGlobalInputUsage" />
+        <exclude name="WordPress.VIP.ValidatedSanitizedInput" />
+        <exclude name="WordPress.VIP.DirectDatabaseQuery" />
+        <exclude name="WordPress.XSS.EscapeOutput" />
+        <exclude name="WordPress.CSRF.NonceVerification" />
+        <exclude name="WordPress.PHP.YodaConditions" />
+    </rule>
+    <!--rule ref="PSR2R.ControlStructures.NoInlineAssignment" /-->
+</ruleset>
