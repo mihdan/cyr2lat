@@ -7,7 +7,7 @@
  * Author URI: http://ru.wordpress.org/
  * Requires at least: 2.3
  * Tested up to: 5.1
- * Version: 3.4
+ * Version: 3.5
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
