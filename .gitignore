@@ -1,5 +1,4 @@
 .DS_Store
-.distignore
 .travis.yml
 phpcs.xml
 phpunit.xml
@@ -13,3 +12,4 @@ vendor/
 *.sql
 *.tar.gz
 *.zip
+*.lock
