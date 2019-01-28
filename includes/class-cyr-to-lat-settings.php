@@ -6,11 +6,11 @@
  */
 
 /**
- * Class CTL_Settings
+ * Class Cyr_To_Lat_Settings
  *
- * @class CTL_Settings
+ * @class Cyr_To_Lat_Settings
  */
-class CTL_Settings {
+class Cyr_To_Lat_Settings {
 
 	/**
 	 * Admin screen id.
@@ -62,7 +62,7 @@ class CTL_Settings {
 	public $settings;
 
 	/**
-	 * CTL_Settings constructor.
+	 * Cyr_To_Lat_Settings constructor.
 	 */
 	public function __construct() {
 		$this->init_form_fields();
@@ -137,7 +137,7 @@ class CTL_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => CTL_Conversion_Tables::get(),
+				'default'      => Cyr_To_Lat_Conversion_Tables::get(),
 			),
 			'bg_BG'                  => array(
 				'label'        => __( 'bg_BG Table', 'cyr-to-lat' ),
@@ -146,7 +146,7 @@ class CTL_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => CTL_Conversion_Tables::get( 'bg_BG' ),
+				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'bg_BG' ),
 			),
 			'uk'                     => array(
 				'label'        => __( 'uk Table', 'cyr-to-lat' ),
@@ -155,7 +155,7 @@ class CTL_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => CTL_Conversion_Tables::get( 'uk' ),
+				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'uk' ),
 			),
 			'ka_GE'                  => array(
 				'label'        => __( 'ka_GE Table', 'cyr-to-lat' ),
@@ -164,7 +164,7 @@ class CTL_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => CTL_Conversion_Tables::get( 'ka_GE' ),
+				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'ka_GE' ),
 			),
 		);
 	}
@@ -245,7 +245,7 @@ class CTL_Settings {
 				?>
 			</h2>
 
-			<form id="ctl-options" action="options.php" method="POST">
+			<form id="ctl-options" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="POST">
 				<?php
 				do_settings_sections( self::PAGE ); // Sections with options.
 				settings_fields( self::OPTION_GROUP ); // Hidden protection fields.
@@ -327,15 +327,6 @@ class CTL_Settings {
 	 * @param array $arguments Section arguments.
 	 */
 	public function cyr_to_lat_section( $arguments ) {
-		switch ( $arguments['id'] ) {
-			case 'general_section':
-			case 'iso9_section':
-			case 'bg_BG_section':
-			case 'uk_section':
-			case 'ka_GE_section':
-				break;
-			default:
-		}
 	}
 
 
