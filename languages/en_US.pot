@@ -1,0 +1,81 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Cyr To Lat\n"
+"POT-Creation-Date: 2019-01-26 17:55+0200\n"
+"PO-Revision-Date: 2019-01-25 19:18+0200\n"
+"Last-Translator: KAGG Design <info@kagg.eu>\n"
+"Language-Team: KAGG Design\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.1\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"X-Poedit-KeywordsList: __;esc_html__;esc_attr__\n"
+"X-Poedit-Flags-xgettext: --add-comments\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: src\n"
+"X-Poedit-SearchPathExcluded-0: vendor\n"
+"X-Poedit-SearchPathExcluded-1: dist\n"
+"X-Poedit-SearchPathExcluded-2: src\n"
+
+#: includes/class-ctl-settings.php:77
+msgid "View Cyr To Lat settings"
+msgstr ""
+
+#: includes/class-ctl-settings.php:78
+msgid "Settings"
+msgstr ""
+
+#: includes/class-ctl-settings.php:90
+msgid "Convert Existing Slugs"
+msgstr ""
+
+#: includes/class-ctl-settings.php:98 includes/class-ctl-settings.php:264
+msgid "ISO9 Table"
+msgstr ""
+
+#: includes/class-ctl-settings.php:107 includes/class-ctl-settings.php:270
+msgid "bg_BG Table"
+msgstr ""
+
+#: includes/class-ctl-settings.php:116 includes/class-ctl-settings.php:276
+msgid "uk Table"
+msgstr ""
+
+#: includes/class-ctl-settings.php:125 includes/class-ctl-settings.php:282
+msgid "ka_GE Table"
+msgstr ""
+
+#: includes/class-ctl-settings.php:185 includes/class-ctl-settings.php:186
+msgid "Cyr To Lat"
+msgstr ""
+
+#. Admin panel title.
+#: includes/class-ctl-settings.php:208
+msgid "Cyr To Lat Plugin Options"
+msgstr ""
+
+#: includes/class-ctl-settings.php:222
+msgid "Donate"
+msgstr ""
+
+#: includes/class-ctl-settings.php:225
+msgid "Would you like to support the advancement of this plugin?"
+msgstr ""
+
+#. @todo Change to Sergey's account
+#: includes/class-ctl-settings.php:240
+msgid "Your appreciation"
+msgstr ""
+
+#: includes/class-ctl-settings.php:245
+msgid "Leave a ★★★★★ plugin review on WordPress.org"
+msgstr ""
+
+#: includes/class-ctl-settings.php:258
+msgid "General Options"
+msgstr ""

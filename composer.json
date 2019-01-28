@@ -1,0 +1,65 @@
+{
+  "name": "mihdan/Cyr-To-Lat",
+  "description": "Cyr-To-Lat",
+  "license": "GPL-2.0",
+  "keywords": [
+    "cyrillic, georgian, latin, l10n, russian, rustolat, slugs, translations, transliteration"
+  ],
+  "homepage": "https://wordpress.org/extend/plugins/cyr2lat/",
+  "type": "wordpress-plugin",
+  "authors": [
+    {
+      "name": "Sergey Biryukov",
+      "homepage": "https://profiles.wordpress.org/sergeybiryukov/"
+    },
+    {
+      "name": "Mikhail Kobzarev",
+      "email": "mikhail@kobzarev.com",
+      "homepage": "https://www.kobzarev.com/"
+    },
+    {
+      "name": "KAGG Design",
+      "email": "info@kagg.eu",
+      "homepage": "https://kagg.eu/en/"
+    }
+  ],
+  "support": {
+    "issues": "https://wordpress.org/support/plugin/cyr2lat"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "xrstf/composer-php52": "1.*",
+    "composer/installers": "*"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-master",
+    "sebastian/phpcpd": "^3.0",
+    "10up/wp_mock": "~0.3",
+    "phpunit/phpunit": "^6.5",
+    "squizlabs/php_codesniffer": "^2.9",
+    "wimg/php-compatibility": "^9.0",
+    "wp-coding-standards/wpcs": "^1.2"
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "xrstf\\Composer52\\Generator::onPostInstallCmd"
+    ],
+    "post-update-cmd": [
+      "xrstf\\Composer52\\Generator::onPostInstallCmd"
+    ],
+    "post-autoload-dump": [
+      "xrstf\\Composer52\\Generator::onPostInstallCmd"
+    ]
+  },
+  "autoload": {
+    "classmap": [
+      "includes"
+    ]
+  },
+  "autoload-dev": {
+    "classmap": [
+      "includes"
+    ]
+  }
+}
