@@ -6,14 +6,14 @@
  */
 
 /**
- * Class Cyr_To_Lat
+ * Class Cyr_To_Lat_Main
  */
-class Cyr_To_Lat {
+class Cyr_To_Lat_Main {
 
 	/**
 	 * Plugin settings.
 	 *
-	 * @var CTL_Settings
+	 * @var Cyr_To_Lat_Settings
 	 */
 	private $settings;
 
@@ -21,7 +21,6 @@ class Cyr_To_Lat {
 	 * Cyr_To_Lat constructor.
 	 */
 	public function __construct() {
-		$this->init();
 		$this->init_hooks();
 	}
 
@@ -29,7 +28,13 @@ class Cyr_To_Lat {
 	 * Init class.
 	 */
 	public function init() {
-		$this->settings = new CTL_Settings();
+		$this->load_plugin_textdomain();
+		$this->settings = new Cyr_To_Lat_Settings();
+
+		if ( 'yes' === $this->settings->get_option( 'convert_existing_slugs' ) ) {
+			$this->settings->set_option( 'convert_existing_slugs', 'no' );
+			add_action( 'shutdown', array( $this, 'convert_existing_slugs' ) );
+		}
 	}
 
 	/**
@@ -41,12 +46,8 @@ class Cyr_To_Lat {
 
 		add_filter( 'wp_insert_post_data', array( $this, 'ctl_sanitize_post_name' ), 10, 2 );
 
-		add_action( 'plugins_loaded', array( $this, 'ctl_load_textdomain' ) );
-
-		if ( 'yes' === $this->settings->get_option( 'convert_existing_slugs' ) ) {
-			$this->settings->set_option( 'convert_existing_slugs', 'no' );
-			add_action( 'shutdown', array( $this, 'ctl_convert_existing_slugs' ) );
-		}
+		// Any init action in plugin with priority higher than 5 fails due to issue in WooCommerce.
+		add_action( 'init', array( $this, 'init' ), 0 );
 	}
 
 	/**
@@ -70,7 +71,7 @@ class Cyr_To_Lat {
 		// Locales list - https://make.wordpress.org/polyglots/teams/.
 		$locale     = get_locale();
 		$iso9_table = $this->settings->get_option( $locale );
-		$iso9_table = ! empty( $iso9_table ) ? $iso9_table : CTL_Conversion_Tables::get( $locale );
+		$iso9_table = ! empty( $iso9_table ) ? $iso9_table : Cyr_To_Lat_Conversion_Tables::get( $locale );
 
 		$is_term = false;
 		// @codingStandardsIgnoreLine
@@ -106,7 +107,7 @@ class Cyr_To_Lat {
 	/**
 	 * Convert Existing Slugs
 	 */
-	public function ctl_convert_existing_slugs() {
+	public function convert_existing_slugs() {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery
@@ -215,7 +216,7 @@ class Cyr_To_Lat {
 	/**
 	 * Load plugin text domain.
 	 */
-	public function ctl_load_textdomain() {
+	public function load_plugin_textdomain() {
 		load_plugin_textdomain(
 			'cyr-to-lat',
 			false,

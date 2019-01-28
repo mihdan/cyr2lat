@@ -6,11 +6,11 @@
  */
 
 /**
- * Class CTL_Conversion_Tables
+ * Class Cyr_To_Lat_Conversion_Tables
  *
- * @class CTL_Conversion_Tables
+ * @class Cyr_To_Lat_Conversion_Tables
  */
-class CTL_Conversion_Tables {
+class Cyr_To_Lat_Conversion_Tables {
 
 	/**
 	 * Get conversion table by locale.
