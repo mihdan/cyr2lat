@@ -263,7 +263,7 @@ class Cyr_To_Lat_Settings {
 				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
 					<input type="hidden" name="cmd" value="_s-xclick">
 					<?php // @todo Change to Sergey's account ?>
-					<input type="hidden" name="hosted_button_id" value="S9UXRBU2ZKK68">
+					<input type="hidden" name="hosted_button_id" value="BENCPARA8S224">
 					<input
 							type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif"
 							name="submit" alt="PayPal - The safer, easier way to pay online!">
