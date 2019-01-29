@@ -22,6 +22,8 @@ phpcs.xml
 phpcs.ruleset.xml
 phpcs.xml.dist
 README.md
+CHANGELOG.md
+CONTRIBUTING.md
 wp-cli.local.yml
 yarn.lock
 bin
