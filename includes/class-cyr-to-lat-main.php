@@ -47,7 +47,7 @@ class Cyr_To_Lat_Main {
 		add_filter( 'wp_insert_post_data', array( $this, 'ctl_sanitize_post_name' ), 10, 2 );
 
 		// Any init action in plugin with priority higher than 5 fails due to issue in WooCommerce.
-		add_action( 'init', array( $this, 'init' ), 0 );
+		add_action( 'plugins_loaded', array( $this, 'init' ) );
 	}
 
 	/**
