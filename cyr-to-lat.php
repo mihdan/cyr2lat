@@ -11,7 +11,7 @@
  * Tested up to: 5.1
  * Version: 3.6
  *
- * Text Domain: woof-by-category
+ * Text Domain: cyr-to-lat
  * Domain Path: /languages/
  *
  * @package cyr-to-lat
@@ -55,7 +55,7 @@ if ( ! isset( $plugin ) ) {
 		require_once CYR_TO_LAT_PATH . '/vendor/autoload_52.php';
 	}
 
-	$plugin = new Cyr_To_Lat();
+	$plugin = new Cyr_To_Lat_Main();
 }
 
 // eof.

@@ -15,6 +15,15 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 1. Upload `cyr2lat` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
+## Development
+
+git clone https://github.com/mihdan/cyr2lat.git
+cd cyr2lat
+composer install
+cd src
+yarn
+yarn run build:dev
+
 ## License
 
 The WordPress Plugin Cyr-To-Lat is licensed under the GPL v2 or later.
