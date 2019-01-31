@@ -1,4 +1,4 @@
-## 3.6.0 (31.01.2019)
+## 3.6 (31.01.2019)
 * Plugin settings page added.
 * Settings page allows user to edit conversion tables online.
 * Code converted to OOP.
