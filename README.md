@@ -7,13 +7,22 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 * Automatically converts existing post, page and term slugs on activation
 * Saves existing post and page permalinks integrity
 * Performs transliteration of attachment file names
-* Includes Russian, Belarusian, Ukrainian, Bulgarian and Macedonian characters
+* Includes Russian, Ukrainian, Bulgarian and Georgian characters
 * Transliteration table can be customized without editing the plugin by itself
 
 ## Installation
 
-1. Upload `cyr2lat` folder to the `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
+git clone https://github.com/mihdan/cyr2lat.git
+
+cd cyr2lat
+
+composer install --no-dev
+
+cd src
+
+yarn
+
+yarn run build:prod
 
 ## Development
 

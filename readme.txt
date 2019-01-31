@@ -15,7 +15,7 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 * Automatically converts existing post, page and term slugs on activation
 * Saves existing post and page permalinks integrity
 * Performs transliteration of attachment file names
-* Includes Russian, Belarusian, Ukrainian, Bulgarian and Macedonian characters
+* Includes Russian, Belarusian, Ukrainian, Bulgarian and Georgian characters
 * Transliteration table can be customized without editing the plugin by itself
 
 Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
@@ -41,8 +41,15 @@ add_filter('ctl_table', 'my_cyr_to_lat_table');
 
 == Changelog ==
 
-= 3.6 (27.01.2019) =
+= 3.6 (31.01.2019) =
 * Plugin settings page added.
+* Settings page allows user to edit conversion tables online.
+* Code converted to OOP.
+* Code refactored to conform WordPress Coding Standards.
+* JS developed according to ECMA-6 script standards.
+* Settings page also works if JS is switched off in the browser.
+* Composer and yarn added.
+* Assets (banner, icon, admin icon) are added.
 
 = 3.4 (21.01.2019) =
 * Tested up to WP 5.1
@@ -69,7 +76,7 @@ add_filter('ctl_table', 'my_cyr_to_lat_table');
 * Added saving of existing post and page permalinks integrity
 * Added transliteration of attachment file names
 * Adjusted transliteration table in accordance with ISO 9 standard
-* Included Russian, Belarusian, Ukrainian, Bulgarian and Macedonian characters
+* Included Russian, Ukrainian, Bulgarian and Georgian characters
 * Added filter for the transliteration table
 
 = 2.1 =
