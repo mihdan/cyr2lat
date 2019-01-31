@@ -223,8 +223,10 @@ class Cyr_To_Lat_Settings {
 		$capability = 'manage_options';
 		$slug       = 'cyr-to-lat';
 		$callback   = array( $this, 'ctl_settings_page' );
-		$icon       = 'data:image/svg+xml;base64,' . base64_encode( '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" width="512" height="512" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><polygon fill="#EEEEEE" points="246.2 411.2 267.9 479.7 273.9 473.1 273.9 473.1 331 411.2 "/><path fill="#EEEEEE" d="M449.7 99.8H269.4l49.8 157.2 24.9-58.5h35.5l75 176.3h-40.2l-16-39.2h-54.3l23.1 72.8 -0.2 0h0.1l-71.7 77.9h154.3c23.4 0 42.4-19 42.4-42.4V142.3C492.1 118.8 473.2 99.8 449.7 99.8z"/><polygon fill="#EEEEEE" points="338.1 301.6 384.6 301.6 361.4 244.8 "/><path fill="#EEEEEE" d="M219.7 24.7H49c-16.6 0-30 13.5-30 30v301.6c0 16.6 13.5 30 30 30h285.3L219.7 24.7zM230.3 302.3c-30.5-8.3-59-21.9-82.9-39.4 -23.8 17.5-52.4 31.1-82.9 39.4l-3.4 0.9L52.7 273.2l3.5-0.9c24.7-6.6 47.2-16.8 67-30.3 -19.6-19.6-34.2-42.5-42.4-66.6H58v-27.2h75.9v-23.6h27.2v23.6h75.9v27.2h-22.7c-8.2 24.1-22.8 47-42.4 66.6 19.8 13.5 42.3 23.6 67 30.3l3.5 0.9 -8.5 30L230.3 302.3zM114 175.4c7.4 17 18.6 32.7 33.4 47 14.8-14.2 26-30 33.4-47H114z"/></svg>' );
-		$position   = null;
+		// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+		$icon = 'data:image/svg+xml;base64,' . base64_encode( '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" width="512" height="512" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><polygon fill="#EEEEEE" points="246.2 411.2 267.9 479.7 273.9 473.1 273.9 473.1 331 411.2 "/><path fill="#EEEEEE" d="M449.7 99.8H269.4l49.8 157.2 24.9-58.5h35.5l75 176.3h-40.2l-16-39.2h-54.3l23.1 72.8 -0.2 0h0.1l-71.7 77.9h154.3c23.4 0 42.4-19 42.4-42.4V142.3C492.1 118.8 473.2 99.8 449.7 99.8z"/><polygon fill="#EEEEEE" points="338.1 301.6 384.6 301.6 361.4 244.8 "/><path fill="#EEEEEE" d="M219.7 24.7H49c-16.6 0-30 13.5-30 30v301.6c0 16.6 13.5 30 30 30h285.3L219.7 24.7zM230.3 302.3c-30.5-8.3-59-21.9-82.9-39.4 -23.8 17.5-52.4 31.1-82.9 39.4l-3.4 0.9L52.7 273.2l3.5-0.9c24.7-6.6 47.2-16.8 67-30.3 -19.6-19.6-34.2-42.5-42.4-66.6H58v-27.2h75.9v-23.6h27.2v23.6h75.9v27.2h-22.7c-8.2 24.1-22.8 47-42.4 66.6 19.8 13.5 42.3 23.6 67 30.3l3.5 0.9 -8.5 30L230.3 302.3zM114 175.4c7.4 17 18.6 32.7 33.4 47 14.8-14.2 26-30 33.4-47H114z"/></svg>' );
+		// phpcs:enable
+		$position = null;
 		add_menu_page( $page_title, $menu_title, $capability, $slug, $callback, $icon );
 	}
 
@@ -260,9 +262,8 @@ class Cyr_To_Lat_Settings {
 				<p>
 					<?php echo esc_html( __( 'Would you like to support the advancement of this plugin?', 'cyr-to-lat' ) ); ?>
 				</p>
-				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
 					<input type="hidden" name="cmd" value="_s-xclick">
-					<?php // @todo Change to Sergey's account ?>
 					<input type="hidden" name="hosted_button_id" value="BENCPARA8S224">
 					<input
 							type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif"

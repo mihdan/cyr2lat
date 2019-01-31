@@ -18,10 +18,15 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 ## Development
 
 git clone https://github.com/mihdan/cyr2lat.git
+
 cd cyr2lat
+
 composer install
+
 cd src
+
 yarn
+
 yarn run build:dev
 
 ## License

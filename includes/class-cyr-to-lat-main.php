@@ -74,8 +74,9 @@ class Cyr_To_Lat_Main {
 		$iso9_table = ! empty( $iso9_table ) ? $iso9_table : Cyr_To_Lat_Conversion_Tables::get( $locale );
 
 		$is_term = false;
-		// @codingStandardsIgnoreLine
+		// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
 		$backtrace = debug_backtrace();
+		// phpcs:enable
 		foreach ( $backtrace as $backtrace_entry ) {
 			if ( 'wp_insert_term' === $backtrace_entry['function'] ) {
 				$is_term = true;

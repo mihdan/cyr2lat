@@ -9,7 +9,8 @@
  * Author URI: https://profiles.wordpress.org/sergeybiryukov/
  * Requires at least: 2.3
  * Tested up to: 5.1
- * Version: 3.6
+ * Version: 3.6.0
+ * Stable tag: 3.6.0
  *
  * Text Domain: cyr-to-lat
  * Domain Path: /languages/
