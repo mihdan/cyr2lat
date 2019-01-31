@@ -1,3 +1,6 @@
+## 3.6.2 (31.01.2019)
+* Text domain fixed.
+
 ## 3.6.1 (31.01.2019)
 * Text domain corrected.
 
