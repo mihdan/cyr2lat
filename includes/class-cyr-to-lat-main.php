@@ -29,7 +29,6 @@ class Cyr_To_Lat_Main {
 	 * Init class.
 	 */
 	public function init() {
-		$this->load_plugin_textdomain();
 		$this->settings = new Cyr_To_Lat_Settings();
 	}
 
@@ -210,20 +209,6 @@ class Cyr_To_Lat_Main {
 		}
 
 		return $data;
-	}
-
-	/**
-	 * Load plugin text domain.
-	 */
-	public function load_plugin_textdomain() {
-		if ( ! function_exists( 'wp_get_current_user' ) ) {
-			require_once ABSPATH . 'wp-includes/pluggable.php';
-		}
-		load_plugin_textdomain(
-			'cyr-to-lat',
-			false,
-			dirname( plugin_basename( CYR_TO_LAT_FILE ) ) . '/languages/'
-		);
 	}
 }
 

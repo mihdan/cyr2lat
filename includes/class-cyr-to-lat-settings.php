@@ -65,6 +65,7 @@ class Cyr_To_Lat_Settings {
 	 * Cyr_To_Lat_Settings constructor.
 	 */
 	public function __construct() {
+		$this->load_plugin_textdomain();
 		$this->init_form_fields();
 		$this->init_settings();
 		$this->init_hooks();
@@ -638,6 +639,20 @@ class Cyr_To_Lat_Settings {
 			CYR_TO_LAT_URL . '/css/cyr-to-lat-admin.css',
 			array(),
 			CYR_TO_LAT_VERSION
+		);
+	}
+
+	/**
+	 * Load plugin text domain.
+	 */
+	public function load_plugin_textdomain() {
+		if ( ! function_exists( 'wp_get_current_user' ) ) {
+			require_once ABSPATH . 'wp-includes/pluggable.php';
+		}
+		load_plugin_textdomain(
+			'cyr-to-lat',
+			false,
+			dirname( plugin_basename( CYR_TO_LAT_FILE ) ) . '/languages/'
 		);
 	}
 
