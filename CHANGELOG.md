@@ -1,3 +1,6 @@
+## 3.6.1 (31.01.2019)
+* Text domain corrected.
+
 ## 3.6 (31.01.2019)
 * Plugin settings page added.
 * Settings page allows user to edit conversion tables online.
