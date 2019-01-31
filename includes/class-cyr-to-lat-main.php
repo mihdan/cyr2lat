@@ -21,6 +21,7 @@ class Cyr_To_Lat_Main {
 	 * Cyr_To_Lat constructor.
 	 */
 	public function __construct() {
+		$this->init();
 		$this->init_hooks();
 	}
 
@@ -30,11 +31,6 @@ class Cyr_To_Lat_Main {
 	public function init() {
 		$this->load_plugin_textdomain();
 		$this->settings = new Cyr_To_Lat_Settings();
-
-		if ( 'yes' === $this->settings->get_option( 'convert_existing_slugs' ) ) {
-			$this->settings->set_option( 'convert_existing_slugs', 'no' );
-			add_action( 'shutdown', array( $this, 'convert_existing_slugs' ) );
-		}
 	}
 
 	/**
@@ -46,8 +42,10 @@ class Cyr_To_Lat_Main {
 
 		add_filter( 'wp_insert_post_data', array( $this, 'ctl_sanitize_post_name' ), 10, 2 );
 
-		// Any init action in plugin with priority higher than 5 fails due to issue in WooCommerce.
-		add_action( 'plugins_loaded', array( $this, 'init' ) );
+		if ( 'yes' === $this->settings->get_option( 'convert_existing_slugs' ) ) {
+			$this->settings->set_option( 'convert_existing_slugs', 'no' );
+			add_action( 'shutdown', array( $this, 'convert_existing_slugs' ) );
+		}
 	}
 
 	/**
@@ -218,6 +216,9 @@ class Cyr_To_Lat_Main {
 	 * Load plugin text domain.
 	 */
 	public function load_plugin_textdomain() {
+		if ( ! function_exists( 'wp_get_current_user' ) ) {
+			require_once ABSPATH . 'wp-includes/pluggable.php';
+		}
 		load_plugin_textdomain(
 			'cyr-to-lat',
 			false,
