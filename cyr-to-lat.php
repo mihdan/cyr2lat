@@ -41,7 +41,7 @@ define( 'CYR_TO_LAT_FILE', __FILE__ );
 /**
  * Plugin version.
  */
-define( 'CYR_TO_LAT_VERSION', '3.6' );
+define( 'CYR_TO_LAT_VERSION', '3.6.0' );
 
 /**
  * Init plugin class on plugin load.
