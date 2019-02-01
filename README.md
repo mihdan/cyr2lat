@@ -2,6 +2,8 @@
 
 Converts Cyrillic characters in post, page and term slugs to Latin characters. Useful for creating human-readable URLs.
 
+![](./assets/banner-772x250.png)
+
 ## Features
 
 * Automatically converts existing post, page and term slugs on activation
@@ -12,31 +14,25 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 
 ## Installation
 
+```
 git clone https://github.com/mihdan/cyr2lat.git
-
 cd cyr2lat
-
 composer install --no-dev
-
 cd src
-
 yarn
-
 yarn run build:prod
+```
 
 ## Development
 
+```
 git clone https://github.com/mihdan/cyr2lat.git
-
 cd cyr2lat
-
 composer install
-
 cd src
-
 yarn
-
 yarn run build:dev
+```
 
 ## License
 

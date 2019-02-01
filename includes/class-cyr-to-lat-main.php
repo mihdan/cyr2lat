@@ -38,7 +38,6 @@ class Cyr_To_Lat_Main {
 	public function init_hooks() {
 		add_filter( 'sanitize_title', array( $this, 'ctl_sanitize_title' ), 9, 3 );
 		add_filter( 'sanitize_file_name', array( $this, 'ctl_sanitize_title' ), 10, 2 );
-
 		add_filter( 'wp_insert_post_data', array( $this, 'ctl_sanitize_post_name' ), 10, 2 );
 
 		if ( 'yes' === $this->settings->get_option( 'convert_existing_slugs' ) ) {

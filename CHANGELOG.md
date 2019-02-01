@@ -1,4 +1,5 @@
-## 3.6.2 (31.01.2019)
+## 3.6.2 (01.02.2019)
+* Moved the menu in the settings section
 * Text domain fixed.
 
 ## 3.6.1 (31.01.2019)
