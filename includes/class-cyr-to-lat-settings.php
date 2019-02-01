@@ -659,7 +659,7 @@ class Cyr_To_Lat_Settings {
 	 * @return bool
 	 */
 	protected function is_ctl_options_screen() {
-		$current_screen = get_current_screen(); do_action('mc/notice',$current_screen);
+		$current_screen = get_current_screen();
 
 		return $current_screen && ( 'options' === $current_screen->id || self::SCREEN_ID === $current_screen->id );
 	}
