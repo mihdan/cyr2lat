@@ -65,6 +65,13 @@ class Cyr_To_Lat_Settings {
 	 * Cyr_To_Lat_Settings constructor.
 	 */
 	public function __construct() {
+		add_action( 'plugins_loaded', array( $this, 'init' ) );
+	}
+
+	/**
+	 * Init plugin.
+	 */
+	public function init() {
 		$this->load_plugin_textdomain();
 		$this->init_form_fields();
 		$this->init_settings();
@@ -643,9 +650,6 @@ class Cyr_To_Lat_Settings {
 	 * Load plugin text domain.
 	 */
 	public function load_plugin_textdomain() {
-		if ( ! function_exists( 'wp_get_current_user' ) ) {
-			require_once ABSPATH . 'wp-includes/pluggable.php';
-		}
 		load_plugin_textdomain(
 			'cyr2lat',
 			false,
