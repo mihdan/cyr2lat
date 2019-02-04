@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, georgian, latin, l10n, russian, rustolat, slugs, translations, transliteration
 Requires at least: 2.3
 Tested up to: 5.1
-Stable tag: 3.6.2
+Stable tag: 3.6.3
 Requires PHP: 5.2
 
 Converts Cyrillic characters in post, page and term slugs to Latin characters.
@@ -45,6 +45,9 @@ add_filter('ctl_table', 'my_cyr_to_lat_table');
 Yes you can! Join in on our [GitHub repository](https://github.com/mihdan/cyr2lat)
 
 == Changelog ==
+
+= 3.6.3 (04.02.2019) =
+* Fixed bug with network activation on multisite
 
 = 3.6.2 (01.02.2019) =
 * Moved the menu in the settings section

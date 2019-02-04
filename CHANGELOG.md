@@ -1,3 +1,6 @@
+## 3.6.3 (04.02.2019)
+* Fixed bug with network activation on multisite
+
 ## 3.6.2 (01.02.2019)
 * Moved the menu in the settings section
 * Text domain fixed.
