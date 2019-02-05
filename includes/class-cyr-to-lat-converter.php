@@ -1,9 +1,23 @@
 <?php
 /**
+ * Old slugs converter.
+ *
  * @package cyr-to-lat
  */
 
+/**
+ * Class Cyr_To_Lat_Converter
+ *
+ * @class Cyr_To_Lat_Converter
+ */
 class Cyr_To_Lat_Converter {
+
+	/**
+	 * Plugin main class.
+	 *
+	 * @var Cyr_To_Lat_Main
+	 */
+	private $main;
 
 	/**
 	 * Plugin settings.
@@ -12,8 +26,26 @@ class Cyr_To_Lat_Converter {
 	 */
 	private $settings;
 
-	public function __construct( Cyr_To_Lat_Settings $settings ) {
+	/**
+	 * Cyr_To_Lat_Converter constructor.
+	 *
+	 * @param Cyr_To_Lat_Main     $main     Plugin main class.
+	 * @param Cyr_To_Lat_Settings $settings Plugin settings.
+	 */
+	public function __construct( Cyr_To_Lat_Main $main, Cyr_To_Lat_Settings $settings ) {
+		$this->main     = $main;
 		$this->settings = $settings;
+		$this->init_hooks();
+	}
+
+	/**
+	 * Init class hooks.
+	 */
+	public function init_hooks() {
+		if ( 'yes' === $this->settings->get_option( 'convert_existing_slugs' ) ) {
+			$this->settings->set_option( 'convert_existing_slugs', 'no' );
+			add_action( 'shutdown', array( $this, 'convert_existing_slugs' ) );
+		}
 	}
 
 	/**
@@ -27,7 +59,7 @@ class Cyr_To_Lat_Converter {
 		// phpcs:enable
 
 		foreach ( (array) $posts as $post ) {
-			$sanitized_name = $this->ctl_sanitize_title( urldecode( $post->post_name ) );
+			$sanitized_name = $this->main->ctl_sanitize_title( urldecode( $post->post_name ) );
 
 			if ( $post->post_name !== $sanitized_name ) {
 				add_post_meta( $post->ID, '_wp_old_slug', $post->post_name );
@@ -42,7 +74,7 @@ class Cyr_To_Lat_Converter {
 		// phpcs:enable
 
 		foreach ( (array) $terms as $term ) {
-			$sanitized_slug = $this->ctl_sanitize_title( urldecode( $term->slug ) );
+			$sanitized_slug = $this->main->ctl_sanitize_title( urldecode( $term->slug ) );
 
 			if ( $term->slug !== $sanitized_slug ) {
 				// phpcs:disable WordPress.DB.DirectDatabaseQuery
