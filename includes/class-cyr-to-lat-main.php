@@ -11,13 +11,6 @@
 class Cyr_To_Lat_Main {
 
 	/**
-	 * The single instance of the class.
-	 *
-	 * @var Cyr_To_Lat_Main
-	 */
-	private static $instance = null;
-
-	/**
 	 * Plugin settings.
 	 *
 	 * @var Cyr_To_Lat_Settings
