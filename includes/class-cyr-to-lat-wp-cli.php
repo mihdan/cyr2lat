@@ -57,6 +57,7 @@ class Cyr_To_Lat_WP_CLI extends WP_CLI_Command {
 			$notify->tick();
 		}
 		$notify->finish();
+
 		WP_CLI::success( 'Regenerate Completed.' );
 	}
 }
