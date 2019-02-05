@@ -50,13 +50,15 @@ class Cyr_To_Lat_WP_CLI extends WP_CLI_Command {
 		 *
 		 * @var \cli\progress\Bar $notify
 		 */
-		$notify = \WP_CLI\Utils\make_progress_bar( 'Regenerate old slugs', 5 );
+		//$notify = \WP_CLI\Utils\make_progress_bar( 'Regenerate old slugs', 5 );
 
-		for ( $i = 0; $i < 5; $i ++ ) {
-			sleep( wp_rand( 1, 2 ) );
-			$notify->tick();
-		}
-		$notify->finish();
+		//for ( $i = 0; $i < 5; $i ++ ) {
+		///	sleep( wp_rand( 1, 2 ) );
+		//	$notify->tick();
+		//}
+		//$notify->finish();
+
+		$this->converter->convert_existing_slugs();
 
 		WP_CLI::success( 'Regenerate Completed.' );
 	}
