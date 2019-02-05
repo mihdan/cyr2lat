@@ -75,7 +75,7 @@ class Cyr_To_Lat_Main {
 	public function ctl_sanitize_title( $title, $raw_title = '', $context = '' ) {
 		global $wpdb;
 
-		// Fixed bug with `_wp_old_slug`.
+		// Fixed bug with `_wp_old_slug` redirect.
 		if ( 'query' === $context ) {
 			return $title;
 		}
