@@ -30,7 +30,8 @@
   "prefer-stable": true,
   "require": {
     "xrstf/composer-php52": "1.*",
-    "composer/installers": "*"
+    "composer/installers": "*",
+    "wp-cli/wp-cli": "*"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
@@ -54,7 +55,8 @@
   },
   "autoload": {
     "classmap": [
-      "includes"
+      "includes",
+      "vendor/wp-cli/wp-cli"
     ]
   },
   "autoload-dev": {
