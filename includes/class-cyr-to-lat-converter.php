@@ -4,6 +4,18 @@
  */
 
 class Cyr_To_Lat_Converter {
+
+	/**
+	 * Plugin settings.
+	 *
+	 * @var Cyr_To_Lat_Settings
+	 */
+	private $settings;
+
+	public function __construct( Cyr_To_Lat_Settings $settings ) {
+		$this->settings = $settings;
+	}
+
 	/**
 	 * Convert Existing Slugs
 	 */
