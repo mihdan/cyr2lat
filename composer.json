@@ -5,7 +5,7 @@
   "keywords": [
     "cyrillic, georgian, latin, l10n, russian, rustolat, slugs, translations, transliteration"
   ],
-  "homepage": "https://wordpress.org/extend/plugins/cyr2lat/",
+  "homepage": "https://wordpress.org/plugins/cyr2lat/",
   "type": "wordpress-plugin",
   "authors": [
     {
@@ -30,8 +30,7 @@
   "prefer-stable": true,
   "require": {
     "xrstf/composer-php52": "1.*",
-    "composer/installers": "*",
-    "wp-cli/wp-cli": "*"
+    "composer/installers": "*"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
@@ -40,7 +39,8 @@
     "phpunit/phpunit": "^6.5",
     "squizlabs/php_codesniffer": "^2.9",
     "phpcompatibility/php-compatibility": "^9.0",
-    "wp-coding-standards/wpcs": "^1.2"
+    "wp-coding-standards/wpcs": "^1.2",
+    "wp-cli/wp-cli": "*"
   },
   "scripts": {
     "post-install-cmd": [
@@ -55,8 +55,7 @@
   },
   "autoload": {
     "classmap": [
-      "includes",
-      "vendor/wp-cli/wp-cli"
+      "includes"
     ]
   },
   "autoload-dev": {
