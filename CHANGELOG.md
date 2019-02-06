@@ -1,3 +1,7 @@
+## 3.6.4 (06.02.2019)
+* Fixed bug with `_wp_old_slug` redirect.
+* Fixed bug with `urldecode` in posts.
+
 ## 3.6.3 (04.02.2019)
 * Fixed bug with network activation on multisite
 
