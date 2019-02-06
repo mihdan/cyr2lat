@@ -1,20 +1,32 @@
 <?php
 /**
- * WP-CLI support
+ * WP-CLI support.
  *
  * @package cyr-to-lat
- * @link https://github.com/mihdan/wp-rocket-cli/blob/master/command.php
+ * @link    https://github.com/mihdan/wp-rocket-cli/blob/master/command.php
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
-
+/**
+ * Class Cyr_To_Lat_WP_CLI
+ *
+ * @class Cyr_To_Lat_WP_CLI
+ */
 class Cyr_To_Lat_WP_CLI extends WP_CLI_Command {
 
+	/**
+	 * Converter class.
+	 *
+	 * @var Cyr_To_Lat_Converter
+	 */
 	private $converter;
 
+	/**
+	 * Cyr_To_Lat_WP_CLI constructor.
+	 *
+	 * @param Cyr_To_Lat_Converter $converter Converter.
+	 */
 	public function __construct( Cyr_To_Lat_Converter $converter ) {
+		parent::__construct();
 		$this->converter = $converter;
 	}
 
@@ -23,24 +35,33 @@ class Cyr_To_Lat_WP_CLI extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     $ wp cli cyr2lat regenerate
-	 *     Success: Regenerate Complete.
+	 *     $ wp cyr2lat regenerate
+	 *     Success: Regenerate Completed.
 	 *
 	 * @subcommand regenerate
+	 *
+	 * @param array $args       Arguments.
+	 * @param array $assoc_args Arguments in associative array.
 	 */
 	public function regenerate( $args = array(), $assoc_args = array() ) {
 
-		$notify = \WP_CLI\Utils\make_progress_bar( 'Regenerate old slugs', 5 );
+		/**
+		 * Notify instance.
+		 *
+		 * @var \cli\progress\Bar $notify
+		 */
+		$notify = \WP_CLI\Utils\make_progress_bar( 'Regenerate old slugs', 1 );
 
-		for ( $i = 0; $i < 5; $i++ ) {
-			sleep( rand( 1, 2 ) );
-			$notify->tick();
-		}
+		//for ( $i = 0; $i < 5; $i ++ ) {
+		///	sleep( wp_rand( 1, 2 ) );
+		//	$notify->tick();
+		//}
+		//$notify->finish();
+
+		$this->converter->convert_existing_slugs();
+		$notify->tick();
 		$notify->finish();
-		WP_CLI::success( 'Regenerate Complete' );
+
+		WP_CLI::success( 'Regenerate Completed.' );
 	}
 }
-
-WP_CLI::add_command( 'cyr2lat', 'Cyr_To_Lat_WP_CLI' );
-
-// eof;

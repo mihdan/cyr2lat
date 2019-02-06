@@ -39,7 +39,18 @@ class Cyr_To_Lat_Main {
 		$this->settings = new Cyr_To_Lat_Settings();
 
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			$this->cli = new Cyr_To_Lat_WP_CLI( new Cyr_To_Lat_Converter( $this->settings ) );
+			$converter = new Cyr_To_Lat_Converter( $this, $this->settings );
+			$this->cli = new Cyr_To_Lat_WP_CLI( $converter );
+			try {
+				/**
+				 * Method WP_CLI::add_command() accepts class as callable.
+				 *
+				 * @noinspection PhpParamsInspection
+				 */
+				WP_CLI::add_command( 'cyr2lat', $this->cli );
+			} catch ( Exception $e ) {
+				return;
+			}
 		}
 	}
 
@@ -50,11 +61,6 @@ class Cyr_To_Lat_Main {
 		add_filter( 'sanitize_title', array( $this, 'ctl_sanitize_title' ), 9, 3 );
 		add_filter( 'sanitize_file_name', array( $this, 'ctl_sanitize_title' ), 10, 2 );
 		add_filter( 'wp_insert_post_data', array( $this, 'ctl_sanitize_post_name' ), 10, 2 );
-
-		if ( 'yes' === $this->settings->get_option( 'convert_existing_slugs' ) ) {
-			$this->settings->set_option( 'convert_existing_slugs', 'no' );
-			add_action( 'shutdown', array( 'Cyr_To_Lat_Converter', 'convert_existing_slugs' ) );
-		}
 	}
 
 	/**
@@ -68,6 +74,11 @@ class Cyr_To_Lat_Main {
 	 */
 	public function ctl_sanitize_title( $title, $raw_title = '', $context = '' ) {
 		global $wpdb;
+
+		// Fixed bug with `_wp_old_slug` redirect.
+		if ( 'query' === $context ) {
+			return $title;
+		}
 
 		$title = urldecode( $title );
 		$pre   = apply_filters( 'ctl_pre_sanitize_title', false, $title );
