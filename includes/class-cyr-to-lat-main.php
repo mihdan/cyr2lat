@@ -119,6 +119,17 @@ class Cyr_To_Lat_Main {
 			$title = preg_replace( "/[^A-Za-z0-9'_\-\.%]/", '-', $title );
 			$title = preg_replace( '/\-+/', '-', $title );
 			$title = trim( $title, '-' );
+			
+			/**
+			 * Filters enable or disable converting file names to lower case.
+			 *
+			 * @since 3.6.5
+			 *
+			 * @param bool $disable Disables converting if true. Default false.
+			 */
+			if ( ! apply_filters( 'ctl_disable_transliterate_lower', false ) ) {
+				$title = mb_strtolower( $title, 'UTF-8' );
+			}
 		}
 
 		return $title;
