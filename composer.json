@@ -30,7 +30,8 @@
   "prefer-stable": true,
   "require": {
     "xrstf/composer-php52": "1.*",
-    "composer/installers": "*"
+    "composer/installers": "*",
+    "a5hleyrich/wp-background-processing": "~1.0"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
