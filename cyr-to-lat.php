@@ -39,6 +39,21 @@ define( 'CYR_TO_LAT_URL', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
 define( 'CYR_TO_LAT_FILE', __FILE__ );
 
 /**
+ * Plugin prefix.
+ */
+define( 'CYR_TO_LAT_PREFIX', 'cyr_to_lat' );
+
+/**
+ * Post conversion action.
+ */
+define( 'CYR_TO_LAT_POST_CONVERSION_ACTION', 'post_conversion_action' );
+
+/**
+ * Term conversion action.
+ */
+define( 'CYR_TO_LAT_TERM_CONVERSION_ACTION', 'term_conversion_action' );
+
+/**
  * Plugin version.
  */
 define( 'CYR_TO_LAT_VERSION', '3.6.4' );

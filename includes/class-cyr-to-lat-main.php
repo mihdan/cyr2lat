@@ -37,9 +37,9 @@ class Cyr_To_Lat_Main {
 	 */
 	public function init() {
 		$this->settings = new Cyr_To_Lat_Settings();
+		$converter      = new Cyr_To_Lat_Converter( $this, $this->settings );
 
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			$converter = new Cyr_To_Lat_Converter( $this, $this->settings );
 			$this->cli = new Cyr_To_Lat_WP_CLI( $converter );
 			try {
 				/**
@@ -116,7 +116,7 @@ class Cyr_To_Lat_Main {
 				$title = iconv( 'UTF-8', 'UTF-8//TRANSLIT//IGNORE', $title );
 			}
 
-			$title = preg_replace( "/[^A-Za-z0-9'_\-\.%]/", '-', $title );
+			$title = preg_replace( "/[^A-Za-z0-9'_\-\.]/", '-', $title );
 			$title = preg_replace( '/\-+/', '-', $title );
 			$title = trim( $title, '-' );
 		}
