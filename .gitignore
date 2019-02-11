@@ -11,3 +11,5 @@ vendor/
 *.tar.gz
 *.zip
 *.lock
+
+!composer.lock
