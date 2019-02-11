@@ -34,6 +34,18 @@ yarn
 yarn run build:dev
 ```
 
+## Packagist
+
+[![Total Downloads](https://poser.pugx.org/mihdan/cyr2lat/downloads)](https://packagist.org/packages/mihdan/cyr2lat)
+
+[![License](https://poser.pugx.org/mihdan/cyr2lat/license)](https://packagist.org/packages/mihdan/cyr2lat)
+
+[![Latest Stable Version](https://poser.pugx.org/mihdan/cyr2lat/v/stable)](https://packagist.org/packages/mihdan/cyr2lat)
+
+[![Latest Unstable Version](https://poser.pugx.org/mihdan/cyr2lat/v/unstable)](https://packagist.org/packages/mihdan/cyr2lat)
+
+[![composer.lock](https://poser.pugx.org/mihdan/cyr2lat/composerlock)](https://packagist.org/packages/mihdan/cyr2lat)
+
 ## License
 
 The WordPress Plugin Cyr-To-Lat is licensed under the GPL v2 or later.
