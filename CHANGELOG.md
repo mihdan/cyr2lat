@@ -1,3 +1,6 @@
+## 3.6.5 (11.02.2019)
+* Added queues for background slug conversion process
+
 ## 3.6.4 (06.02.2019)
 * Fixed bug with `_wp_old_slug` redirect.
 * Fixed bug with `urldecode` in posts.

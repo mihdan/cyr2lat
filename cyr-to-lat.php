@@ -9,8 +9,8 @@
  * Author URI: https://profiles.wordpress.org/sergeybiryukov/
  * Requires at least: 2.3
  * Tested up to: 5.1
- * Version: 3.6.4
- * Stable tag: 3.6.4
+ * Version: 3.6.5
+ * Stable tag: 3.6.5
  *
  * Text Domain: cyr-to-lat
  * Domain Path: /languages/
@@ -22,6 +22,11 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+
+/**
+ * Plugin version.
+ */
+define( 'CYR_TO_LAT_VERSION', '3.6.5' );
 
 /**
  * Path to the plugin dir.
@@ -52,11 +57,6 @@ define( 'CYR_TO_LAT_POST_CONVERSION_ACTION', 'post_conversion_action' );
  * Term conversion action.
  */
 define( 'CYR_TO_LAT_TERM_CONVERSION_ACTION', 'term_conversion_action' );
-
-/**
- * Plugin version.
- */
-define( 'CYR_TO_LAT_VERSION', '3.6.4' );
 
 /**
  * Init plugin class on plugin load.
