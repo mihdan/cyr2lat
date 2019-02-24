@@ -21,6 +21,8 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 
 Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
 
+[](http://coderisk.com/wp/plugin/cyr2lat/RIPS-nt7iXCmzoc)
+
 == Installation ==
 
 1. Upload `cyr2lat` folder to the `/wp-content/plugins/` directory.
