@@ -185,7 +185,7 @@ class Cyr_To_Lat_Settings {
 	 * or the settings stored in the database.
 	 */
 	public function init_settings() {
-		$this->settings = is_admin() ? get_option( self::OPTION_NAME, null ) : false;
+		$this->settings = is_admin() ? get_option( self::OPTION_NAME, null ) : array();
 
 		// If there are no settings defined, use defaults.
 		if ( ! is_array( $this->settings ) ) {
