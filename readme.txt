@@ -42,7 +42,10 @@ add_filter('ctl_table', 'my_cyr_to_lat_table');
 
 = Can I contribute? =
 
-Yes you can! Join in on our [GitHub repository](https://github.com/mihdan/cyr2lat)
+Yes you can!
+
+* Join in on our [GitHub repository](https://github.com/mihdan/cyr2lat)
+* Join in on our [Telegram Channel](https://t.me/cyr2lat)
 
 == Changelog ==
 
