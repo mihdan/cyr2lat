@@ -137,6 +137,7 @@ class Cyr_To_Lat_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
+				'default'      => 'no',
 			),
 			'iso9'                   => array(
 				'label'        => __( 'ISO9 Table', 'cyr2lat' ),
@@ -147,14 +148,14 @@ class Cyr_To_Lat_Settings {
 				'supplemental' => '',
 				'default'      => Cyr_To_Lat_Conversion_Tables::get(),
 			),
-			'bg_BG'                  => array(
-				'label'        => __( 'bg_BG Table', 'cyr2lat' ),
-				'section'      => 'bg_BG_section',
+			'bel'                    => array(
+				'label'        => __( 'bel Table', 'cyr2lat' ),
+				'section'      => 'bel_section',
 				'type'         => 'table',
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'bg_BG' ),
+				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'bel' ),
 			),
 			'uk'                     => array(
 				'label'        => __( 'uk Table', 'cyr2lat' ),
@@ -164,6 +165,24 @@ class Cyr_To_Lat_Settings {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'uk' ),
+			),
+			'bg_BG'                  => array(
+				'label'        => __( 'bg_BG Table', 'cyr2lat' ),
+				'section'      => 'bg_BG_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'bg_BG' ),
+			),
+			'mk_MK'                  => array(
+				'label'        => __( 'mk_MK Table', 'cyr2lat' ),
+				'section'      => 'mk_MK_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'mk_MK' ),
 			),
 			'ka_GE'                  => array(
 				'label'        => __( 'ka_GE Table', 'cyr2lat' ),
@@ -187,10 +206,15 @@ class Cyr_To_Lat_Settings {
 	public function init_settings() {
 		$this->settings = get_option( self::OPTION_NAME, null );
 
+		$form_fields = $this->get_form_fields();
+
 		// If there are no settings defined, use defaults.
 		if ( ! is_array( $this->settings ) ) {
-			$form_fields    = $this->get_form_fields();
 			$this->settings = array_merge( array_fill_keys( array_keys( $form_fields ), '' ), wp_list_pluck( $form_fields, 'default' ) );
+		} else {
+			$b = array_merge( wp_list_pluck( $form_fields, 'default' ), $this->settings );
+
+			$c = $b;
 		}
 	}
 
