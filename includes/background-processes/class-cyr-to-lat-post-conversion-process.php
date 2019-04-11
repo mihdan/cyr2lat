@@ -1,6 +1,6 @@
 <?php
 /**
- * Background old post slugs converting process.
+ * Background old post slugs converting process
  *
  * @package cyr-to-lat
  */
@@ -11,28 +11,28 @@
 class Cyr_To_Lat_Post_Conversion_Process extends WP_Background_Process {
 
 	/**
-	 * Prefix.
+	 * Prefix
 	 *
 	 * @var string
 	 */
 	protected $prefix = CYR_TO_LAT_PREFIX;
 
 	/**
-	 * Process action name.
+	 * Process action name
 	 *
 	 * @var string
 	 */
 	protected $action = CYR_TO_LAT_POST_CONVERSION_ACTION;
 
 	/**
-	 * Plugin main class.
+	 * Plugin main class
 	 *
 	 * @var Cyr_To_Lat_Main
 	 */
 	private $main;
 
 	/**
-	 * Cyr_To_Lat_Post_Conversion_Process constructor.
+	 * Cyr_To_Lat_Post_Conversion_Process constructor
 	 *
 	 * @param Cyr_To_Lat_Main $main Plugin main class.
 	 */
@@ -43,7 +43,7 @@ class Cyr_To_Lat_Post_Conversion_Process extends WP_Background_Process {
 	}
 
 	/**
-	 * Task. Updates single post.
+	 * Task. Updates single post
 	 *
 	 * @param stdClass $post Queue item to iterate over.
 	 *
@@ -76,13 +76,15 @@ class Cyr_To_Lat_Post_Conversion_Process extends WP_Background_Process {
 	}
 
 	/**
-	 * Log.
+	 * Log
 	 *
 	 * @param string $message Message to log.
 	 */
 	public function log( $message ) {
 		if ( WP_DEBUG_LOG ) {
+			// @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( $message );
+			// @phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		}
 	}
 }
