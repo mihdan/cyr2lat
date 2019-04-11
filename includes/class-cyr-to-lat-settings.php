@@ -221,9 +221,7 @@ class Cyr_To_Lat_Settings {
 		if ( ! is_array( $this->settings ) ) {
 			$this->settings = array_merge( array_fill_keys( array_keys( $form_fields ), '' ), wp_list_pluck( $form_fields, 'default' ) );
 		} else {
-			$b = array_merge( wp_list_pluck( $form_fields, 'default' ), $this->settings );
-
-			$c = $b;
+			$this->settings = array_merge( wp_list_pluck( $form_fields, 'default' ), $this->settings );
 		}
 	}
 
