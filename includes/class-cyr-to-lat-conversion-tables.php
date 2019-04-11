@@ -50,10 +50,10 @@ class Cyr_To_Lat_Conversion_Tables {
 			'Ч' => 'CH',
 			'Ш' => 'SH',
 			'Щ' => 'SHH',
-			'Ъ' => '``',
+			'Ъ' => '',
 			'Ы' => 'Y',
-			'Ь' => '`',
-			'Э' => 'E`',
+			'Ь' => '',
+			'Э' => 'E',
 			'Ю' => 'YU',
 			'Я' => 'YA',
 			'Ѣ' => 'YE',
@@ -87,10 +87,10 @@ class Cyr_To_Lat_Conversion_Tables {
 			'ч' => 'ch',
 			'ш' => 'sh',
 			'щ' => 'shh',
-			'ъ' => '``',
+			'ъ' => '',
 			'ы' => 'y',
-			'ь' => '`',
-			'э' => 'e`',
+			'ь' => '',
+			'э' => 'e',
 			'ю' => 'yu',
 			'я' => 'ya',
 			'ѣ' => 'ye',
@@ -102,8 +102,8 @@ class Cyr_To_Lat_Conversion_Tables {
 			case 'bel':
 				unset( $table['И'] );
 				unset( $table['и'] );
-				$table['Ў'] = 'U`';
-				$table['ў'] = 'u`';
+				$table['Ў'] = 'U';
+				$table['ў'] = 'u';
 				unset( $table['Щ'] );
 				unset( $table['щ'] );
 				unset( $table['Ъ'] );
@@ -117,14 +117,14 @@ class Cyr_To_Lat_Conversion_Tables {
 				break;
 			// Ukrainian.
 			case 'uk':
-				$table['Ґ'] = 'G`';
-				$table['ґ'] = 'g`';
+				$table['Ґ'] = 'G';
+				$table['ґ'] = 'g';
 				unset( $table['Ё'] );
 				unset( $table['ё'] );
 				$table['Є'] = 'YE';
 				$table['є'] = 'ye';
-				$table['И'] = 'Y`';
-				$table['и'] = 'y`';
+				$table['И'] = 'Y';
+				$table['и'] = 'y';
 				$table['Ї'] = 'YI';
 				$table['ї'] = 'yi';
 				unset( $table['Ъ'] );
@@ -146,23 +146,23 @@ class Cyr_To_Lat_Conversion_Tables {
 				unset( $table['ё'] );
 				$table['Щ'] = 'STH';
 				$table['щ'] = 'sth';
-				$table['Ъ'] = 'A`';
-				$table['ъ'] = 'a`';
+				$table['Ъ'] = 'A';
+				$table['ъ'] = 'a';
 				unset( $table['Ы'] );
 				unset( $table['ы'] );
 				unset( $table['Э'] );
 				unset( $table['э'] );
-				$table['Ѫ'] = 'О`';
-				$table['ѫ'] = 'о`';
+				$table['Ѫ'] = 'О';
+				$table['ѫ'] = 'о';
 				break;
 			// Macedonian.
 			case 'mk_MK':
-				$table['Ѓ'] = 'G`';
-				$table['ѓ'] = 'g`';
+				$table['Ѓ'] = 'G';
+				$table['ѓ'] = 'g';
 				unset( $table['Ё'] );
 				unset( $table['ё'] );
-				$table['Ѕ'] = 'Z`';
-				$table['ѕ'] = 'z`';
+				$table['Ѕ'] = 'Z';
+				$table['ѕ'] = 'z';
 				unset( $table['Й'] );
 				unset( $table['й'] );
 				$table['Ј'] = 'J';
@@ -171,10 +171,10 @@ class Cyr_To_Lat_Conversion_Tables {
 				unset( $table['i'] );
 				$table['Ќ'] = 'K';
 				$table['ќ'] = 'k';
-				$table['Љ'] = 'L`';
-				$table['љ'] = 'l`';
-				$table['Њ'] = 'N`';
-				$table['њ'] = 'n`';
+				$table['Љ'] = 'L';
+				$table['љ'] = 'l';
+				$table['Њ'] = 'N';
+				$table['њ'] = 'n';
 				$table['Џ'] = 'DH';
 				$table['џ'] = 'dh';
 				unset( $table['Щ'] );
