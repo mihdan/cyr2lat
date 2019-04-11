@@ -193,6 +193,15 @@ class Cyr_To_Lat_Settings {
 				'supplemental' => '',
 				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'ka_GE' ),
 			),
+			'kk'                     => array(
+				'label'        => __( 'kk Table', 'cyr2lat' ),
+				'section'      => 'kk_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'kk' ),
+			),
 		);
 	}
 
@@ -332,8 +341,8 @@ class Cyr_To_Lat_Settings {
 			self::PAGE
 		);
 		add_settings_section(
-			'bg_BG_section',
-			__( 'bg_BG Table', 'cyr2lat' ),
+			'bel_section',
+			__( 'bel Table', 'cyr2lat' ),
 			array( $this, 'cyr_to_lat_section' ),
 			self::PAGE
 		);
@@ -344,8 +353,26 @@ class Cyr_To_Lat_Settings {
 			self::PAGE
 		);
 		add_settings_section(
+			'bg_BG_section',
+			__( 'bg_BG Table', 'cyr2lat' ),
+			array( $this, 'cyr_to_lat_section' ),
+			self::PAGE
+		);
+		add_settings_section(
+			'mk_MK_section',
+			__( 'mk_MK Table', 'cyr2lat' ),
+			array( $this, 'cyr_to_lat_section' ),
+			self::PAGE
+		);
+		add_settings_section(
 			'ka_GE_section',
 			__( 'ka_GE Table', 'cyr2lat' ),
+			array( $this, 'cyr_to_lat_section' ),
+			self::PAGE
+		);
+		add_settings_section(
+			'kk_section',
+			__( 'kk Table', 'cyr2lat' ),
 			array( $this, 'cyr_to_lat_section' ),
 			self::PAGE
 		);

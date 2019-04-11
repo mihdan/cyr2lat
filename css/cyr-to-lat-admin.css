@@ -24,7 +24,7 @@
 }
 
 #ctl-options .nav-tab-active {
-	border-bottom: 1px solid #f1f1f1;
+	border-bottom: none;
 	background: #f1f1f1;
 }
 
