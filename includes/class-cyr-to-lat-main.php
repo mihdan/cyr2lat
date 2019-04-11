@@ -90,7 +90,7 @@ class Cyr_To_Lat_Main {
 		// Locales list - https://make.wordpress.org/polyglots/teams/.
 		$locale     = get_locale();
 		$iso9_table = $this->settings->get_option( $locale );
-		$iso9_table = ! empty( $iso9_table ) ? $iso9_table : Cyr_To_Lat_Conversion_Tables::get( $locale );
+		$iso9_table = ! empty( $iso9_table ) ? $iso9_table : $this->settings->get_option( 'iso9' );
 
 		$is_term = false;
 		// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
