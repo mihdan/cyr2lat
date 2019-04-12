@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, georgian, latin, l10n, russian, rustolat, slugs, translations, transliteration
 Requires at least: 2.3
 Tested up to: 5.1
-Stable tag: 3.6.5
+Stable tag: 3.7
 Requires PHP: 5.2
 
 Converts Cyrillic characters in post, page and term slugs to Latin characters.
@@ -16,7 +16,7 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 * Automatically converts existing post, page and term slugs on activation
 * Saves existing post and page permalinks integrity
 * Performs transliteration of attachment file names
-* Includes Russian, Belarusian, Ukrainian, Bulgarian and Georgian characters
+* Includes Russian, Belorussian, Ukrainian, Bulgarian, Macedonian, Georgian, and Kazakh characters
 * Transliteration table can be customized without editing the plugin by itself
 
 Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
@@ -50,6 +50,11 @@ Yes you can!
 * Join in on our [Telegram Channel](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 3.7 (12.04.2019) =
+* Added Belorussian, Macedonian, Kazakh tables
+* Fixed bug with MariaDB during old slug conversion
+* Fixed not saving of user modifications in default iso9 table
 
 = 3.6.5 (11.02.2019) =
 * Added queues for background slug conversion process

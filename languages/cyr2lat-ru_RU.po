@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Cyr To Lat\n"
-"POT-Creation-Date: 2019-01-31 19:21+0200\n"
-"PO-Revision-Date: 2019-01-31 19:21+0200\n"
+"POT-Creation-Date: 2019-04-12 15:35+0300\n"
+"PO-Revision-Date: 2019-04-12 15:37+0300\n"
 "Last-Translator: KAGG Design <info@kagg.eu>\n"
 "Language-Team: KAGG Design\n"
 "Language: ru_RU\n"
@@ -21,64 +21,79 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-1: dist\n"
 "X-Poedit-SearchPathExcluded-2: src\n"
 
-#: includes/class-cyr-to-lat-settings.php:114
+#: includes/class-cyr-to-lat-settings.php:121
 msgid "View Cyr To Lat settings"
 msgstr "Посмотреть настройки Cyr To Lat"
 
-#: includes/class-cyr-to-lat-settings.php:115
+#: includes/class-cyr-to-lat-settings.php:122
 msgid "Settings"
 msgstr "Настройки"
 
-#: includes/class-cyr-to-lat-settings.php:127
+#: includes/class-cyr-to-lat-settings.php:134
 msgid "Convert Existing Slugs"
 msgstr "Конвертировать существующие слаги"
 
-#: includes/class-cyr-to-lat-settings.php:135
-#: includes/class-cyr-to-lat-settings.php:302
+#: includes/class-cyr-to-lat-settings.php:143
+#: includes/class-cyr-to-lat-settings.php:337
 msgid "ISO9 Table"
 msgstr "Таблица ISO9"
 
-#: includes/class-cyr-to-lat-settings.php:144
-#: includes/class-cyr-to-lat-settings.php:308
-msgid "bg_BG Table"
-msgstr "Таблица bg_BG"
+#: includes/class-cyr-to-lat-settings.php:152
+#: includes/class-cyr-to-lat-settings.php:343
+msgid "bel Table"
+msgstr "Таблица bel"
 
-#: includes/class-cyr-to-lat-settings.php:153
-#: includes/class-cyr-to-lat-settings.php:314
+#: includes/class-cyr-to-lat-settings.php:161
+#: includes/class-cyr-to-lat-settings.php:349
 msgid "uk Table"
 msgstr "Таблица uk"
 
-#: includes/class-cyr-to-lat-settings.php:162
-#: includes/class-cyr-to-lat-settings.php:320
+#: includes/class-cyr-to-lat-settings.php:170
+#: includes/class-cyr-to-lat-settings.php:355
+msgid "bg_BG Table"
+msgstr "Таблица bg_BG"
+
+#: includes/class-cyr-to-lat-settings.php:179
+#: includes/class-cyr-to-lat-settings.php:361
+msgid "mk_MK Table"
+msgstr "Таблица mk_MK"
+
+#: includes/class-cyr-to-lat-settings.php:188
+#: includes/class-cyr-to-lat-settings.php:367
 msgid "ka_GE Table"
 msgstr "Таблица ka_GE"
 
-#: includes/class-cyr-to-lat-settings.php:222
-#: includes/class-cyr-to-lat-settings.php:223
+#: includes/class-cyr-to-lat-settings.php:197
+#: includes/class-cyr-to-lat-settings.php:373
+msgid "kk Table"
+msgstr "Таблица kk"
+
+#: includes/class-cyr-to-lat-settings.php:261
+#: includes/class-cyr-to-lat-settings.php:262
 msgid "Cyr To Lat"
 msgstr "Cyr To Lat"
 
 #. Admin panel title.
-#: includes/class-cyr-to-lat-settings.php:247
+#: includes/class-cyr-to-lat-settings.php:282
 msgid "Cyr To Lat Plugin Options"
 msgstr "Опции плагина Cyr To Lat"
 
-#: includes/class-cyr-to-lat-settings.php:261
+#: includes/class-cyr-to-lat-settings.php:296
 msgid "Donate"
 msgstr "Пожертвовать"
 
-#: includes/class-cyr-to-lat-settings.php:264
+#: includes/class-cyr-to-lat-settings.php:299
 msgid "Would you like to support the advancement of this plugin?"
 msgstr "Хотите поддержать развитие этого плагина?"
 
-#: includes/class-cyr-to-lat-settings.php:278
+#: includes/class-cyr-to-lat-settings.php:313
 msgid "Your appreciation"
 msgstr "Ваша оценка"
 
-#: includes/class-cyr-to-lat-settings.php:283
+#: includes/class-cyr-to-lat-settings.php:318
 msgid "Leave a ★★★★★ plugin review on WordPress.org"
 msgstr "Оставьте ★★★★★ обзор плагина на WordPress.org"
 
-#: includes/class-cyr-to-lat-settings.php:296
+#: includes/class-cyr-to-lat-settings.php:331
 msgid "General Options"
 msgstr "Общие настройки"

@@ -5,18 +5,18 @@
  * Plugin Name: Cyr-To-Lat
  * Plugin URI: https://wordpress.org/plugins/cyr2lat/
  * Description: Converts Cyrillic characters in post and term slugs to Latin characters. Useful for creating human-readable URLs. Based on the original plugin by Anton Skorobogatov.
- * Author: Sergey Biryukov, Mikhail Kobzarev
+ * Author: Sergey Biryukov, Mikhail Kobzarev, Igor Gergel
  * Author URI: https://profiles.wordpress.org/sergeybiryukov/
  * Requires at least: 2.3
  * Tested up to: 5.1
- * Version: 3.6.5
- * Stable tag: 3.6.5
+ * Version: 3.7
+ * Stable tag: 3.7
  *
  * Text Domain: cyr-to-lat
  * Domain Path: /languages/
  *
  * @package cyr-to-lat
- * @author  Sergey Biryukov, Mikhail Kobzarev
+ * @author  Sergey Biryukov, Mikhail Kobzarev, Igor Gergel
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin version.
  */
-define( 'CYR_TO_LAT_VERSION', '3.6.5' );
+define( 'CYR_TO_LAT_VERSION', '3.7' );
 
 /**
  * Path to the plugin dir.
