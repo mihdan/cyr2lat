@@ -116,7 +116,7 @@ class Cyr_To_Lat_Converter {
 	public function convert_existing_slugs() {
 		global $wpdb;
 
-		$regexp = '[^A-Za-z0-9[.hyphen.][.underscore.][.period.][.apostrophe.]]+';
+		$regexp = Cyr_To_Lat_Main::PROHIBITED_CHARS_REGEX . '+';
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery
 		$posts = $wpdb->get_results(
