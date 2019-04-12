@@ -11,6 +11,14 @@
 class Cyr_To_Lat_Main {
 
 	/**
+	 * Regex of prohibited chars in slugs
+	 * [^A-Za-z0-9[.apostrophe.][.underscore.][.period.][.hyphen.]]+
+	 *
+	 * @link https://dev.mysql.com/doc/refman/5.6/en/regexp.html
+	 */
+	const PROHIBITED_CHARS_REGEX = "[^A-Za-z0-9'_\.\-]";
+
+	/**
 	 * Plugin settings.
 	 *
 	 * @var Cyr_To_Lat_Settings
@@ -116,7 +124,7 @@ class Cyr_To_Lat_Main {
 				$title = iconv( 'UTF-8', 'UTF-8//TRANSLIT//IGNORE', $title );
 			}
 
-			$title = preg_replace( "/[^A-Za-z0-9'_\-\.]/", '-', $title );
+			$title = preg_replace( '/' . self::PROHIBITED_CHARS_REGEX . '/', '-', $title );
 			$title = preg_replace( '/\-+/', '-', $title );
 			$title = trim( $title, '-' );
 		}
