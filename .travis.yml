@@ -42,3 +42,4 @@ before_script:
 
 script:
   - if [[ "$SNIFF" == "1" ]]; then $SNIFFS_DIR/vendor/bin/phpcs -p -s --colors --standard=phpcs.xml .; fi
+  - cd tests/phpunit; phpunit
