@@ -34,6 +34,12 @@ yarn
 yarn run build:dev
 ```
 
+## WP-CLI support
+
+```
+wp cyr2lat regenerate
+```
+
 ## Packagist
 
 [![Total Downloads](https://poser.pugx.org/mihdan/cyr2lat/downloads)](https://packagist.org/packages/mihdan/cyr2lat)
