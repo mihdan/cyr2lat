@@ -220,13 +220,12 @@ class Cyr_To_Lat_Main {
 	 * @return mixed
 	 */
 	public function ctl_sanitize_post_name( $data, $postarr = array() ) {
-		global $current_screen;
-
 		if ( ! $this->ctl_is_gutenberg_editor_active() ) {
 			return $data;
 		}
 
 		// Run code only on post edit screen.
+		$current_screen = get_current_screen();
 		if ( $current_screen && 'post' !== $current_screen->base ) {
 			return $data;
 		}
