@@ -22,6 +22,8 @@ matrix:
     - php: '7.1'
       env: SNIFF=1
     - php: '7.2'
+    - php: '7.3'
+      env: TESTS=1
     - php: 'nightly'
   allow_failures:
     - php: nightly
@@ -39,6 +41,8 @@ before_script:
   - if [[ "$SNIFF" == "1" ]]; then composer install -d $SNIFFS_DIR; fi
   # After CodeSniffer install you should refresh your path.
   - if [[ "$SNIFF" == "1" ]]; then phpenv rehash; fi
+  - if [[ "$TESTS" == "1" ]]; then composer install; fi
 
 script:
   - if [[ "$SNIFF" == "1" ]]; then $SNIFFS_DIR/vendor/bin/phpcs -p -s --colors --standard=phpcs.xml .; fi
+  - if [[ "$TESTS" == "1" ]]; then vendor/phpunit/phpunit/phpunit --configuration tests/phpunit/phpunit.xml; fi
