@@ -41,6 +41,7 @@ before_script:
   - if [[ "$SNIFF" == "1" ]]; then composer install -d $SNIFFS_DIR; fi
   # After CodeSniffer install you should refresh your path.
   - if [[ "$SNIFF" == "1" ]]; then phpenv rehash; fi
+  - if [[ "$TESTS" == "1" ]]; then composer install; fi
 
 script:
   - if [[ "$SNIFF" == "1" ]]; then $SNIFFS_DIR/vendor/bin/phpcs -p -s --colors --standard=phpcs.xml .; fi
