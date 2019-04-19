@@ -2,6 +2,8 @@
 <ruleset name="WordPress Plugin Coding Standards">
     <description>A custom set of code standard rules to check for WordPress plugins.</description>
 
+    <config name="installed_paths" value="vendor/wp-coding-standards/wpcs" />
+
     <rule ref="WordPress" />
     <!-- https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki/Customizable-sniff-properties -->
 
