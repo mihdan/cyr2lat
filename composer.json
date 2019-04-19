@@ -18,7 +18,7 @@
       "homepage": "https://www.kobzarev.com/"
     },
     {
-      "name": "KAGG Design",
+      "name": "Igor Gergel",
       "email": "info@kagg.eu",
       "homepage": "https://kagg.eu/en/"
     }
@@ -35,13 +35,13 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "sebastian/phpcpd": "^3.0",
-    "10up/wp_mock": "~0.3",
-    "phpunit/phpunit": "^6.5",
-    "squizlabs/php_codesniffer": "^2.9",
+    "sebastian/phpcpd": "^4.0",
+    "10up/wp_mock": "^0.4",
+    "phpunit/phpunit": "^8.0",
+    "squizlabs/php_codesniffer": "^3.0",
     "phpcompatibility/php-compatibility": "^9.0",
-    "wp-coding-standards/wpcs": "^1.2",
-    "wp-cli/wp-cli": "*"
+    "wp-coding-standards/wpcs": "^2.0",
+    "wp-cli/wp-cli": "dev-master"
   },
   "scripts": {
     "post-install-cmd": [
@@ -61,7 +61,8 @@
   },
   "autoload-dev": {
     "classmap": [
-      "includes"
+      "includes",
+      "vendor/wp-cli"
     ]
   }
 }
