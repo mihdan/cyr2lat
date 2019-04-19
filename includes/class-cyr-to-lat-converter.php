@@ -112,20 +112,28 @@ class Cyr_To_Lat_Converter {
 
 	/**
 	 * Convert Existing Slugs.
+	 *
+	 * @param array $args Arguments for query.
 	 */
-	public function convert_existing_slugs() {
+	public function convert_existing_slugs( $args = array() ) {
 		global $wpdb;
 
 		$regexp = Cyr_To_Lat_Main::PROHIBITED_CHARS_REGEX . '+';
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery
+		$defaults = array(
+			'post_type'   => get_post_types( array( 'exclude_from_search' => false ) ),
+			'post_status' => array( 'publish', 'future', 'private' ),
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$posts = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT ID, post_name FROM $wpdb->posts WHERE post_name REGEXP(%s) AND post_status IN ('publish', 'future', 'private')",
+				"SELECT ID, post_name FROM $wpdb->posts WHERE post_name REGEXP(%s) AND post_status IN (" . $this->main->ctl_prepare_in( $args['post_status'] ) . ') AND post_type IN (' . $this->main->ctl_prepare_in( $args['post_type'] ) . ')', // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 				$regexp
 			)
 		);
-		// phpcs:enable
 
 		foreach ( (array) $posts as $post ) {
 			$this->process_all_posts->push_to_queue( $post );
@@ -133,14 +141,13 @@ class Cyr_To_Lat_Converter {
 
 		$this->process_all_posts->save()->dispatch();
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$terms = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT term_id, slug FROM $wpdb->terms WHERE slug REGEXP(%s)",
 				$regexp
 			)
 		);
-		// phpcs:enable
 
 		foreach ( (array) $terms as $term ) {
 			$this->process_all_terms->push_to_queue( $term );
