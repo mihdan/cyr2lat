@@ -247,12 +247,12 @@ class Cyr_To_Lat_Main {
 	 * @see https://coderwall.com/p/zepnaw
 	 * @global wpdb       $wpdb
 	 *
-	 * @param mixed|array $items  item(s) to be joined into string
-	 * @param string      $format %s or %d
+	 * @param mixed|array $items  item(s) to be joined into string.
+	 * @param string      $format %s or %d.
 	 *
 	 * @return string Items separated by comma and sql-escaped
 	 */
-	function ctl_prepare_in( $items, $format = '%s' ) {
+	public function ctl_prepare_in( $items, $format = '%s' ) {
 		global $wpdb;
 
 		$items    = (array) $items;
@@ -260,7 +260,7 @@ class Cyr_To_Lat_Main {
 		if ( $how_many > 0 ) {
 			$placeholders    = array_fill( 0, $how_many, $format );
 			$prepared_format = implode( ',', $placeholders );
-			$prepared_in     = $wpdb->prepare( $prepared_format, $items );
+			$prepared_in     = $wpdb->prepare( $prepared_format, $items ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		} else {
 			$prepared_in = '';
 		}
