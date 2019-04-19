@@ -3,7 +3,7 @@
   "description": "Cyr-To-Lat",
   "license": "GPL-2.0",
   "keywords": [
-    "cyrillic, georgian, latin, l10n, russian, rustolat, slugs, translations, transliteration"
+    "cyrillic", "georgian", "latin", "l10n", "russian", "rustolat", "slugs", "translations", "transliteration"
   ],
   "homepage": "https://wordpress.org/plugins/cyr2lat/",
   "type": "wordpress-plugin",
