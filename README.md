@@ -64,13 +64,7 @@ The WordPress Plugin Cyr-To-Lat is licensed under the GPL v2 or later.
 
 A copy of the license is included in the root of the plugin’s directory. The file is named `LICENSE`.
 
-## Important Notes
-
-### Licensing
-
-The WordPress Plugin Cyr-To-Lat is licensed under the GPL v2 or later; however, if you opt to use third-party code that is not compatible with v2, then you may need to switch to using code that is GPL v3 compatible.
-
-# Credits
+## Credits
 
 The current version of the Cyr-To-Lat was developed by Sergey Biryukov, Mikhail Kobzarev, and Igor Gergel.
 
