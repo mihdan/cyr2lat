@@ -13,11 +13,21 @@ use PHPUnit\Framework\TestCase;
 class Test_Cyr_To_Lat_Main extends TestCase {
 
 	/**
+	 * Setup test
+	 */
+	public function setUp(): void {
+		parent::setUp();
+		\WP_Mock::setUp();
+	}
+
+	/**
 	 * End test
 	 */
 	public function tearDown(): void {
 		unset( $GLOBALS['wp_version'] );
 		unset( $GLOBALS['wpdb'] );
+		unset( $GLOBALS['current_screen'] );
+		\WP_Mock::tearDown();
 		parent::tearDown();
 	}
 
@@ -68,6 +78,34 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	}
 
 	/**
+	 * Test init() with CLI when CLI throws an Exception
+	 *
+	 * @throws ReflectionException Reflection Exception.
+	 * @test
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function test_init_with_cli_error() {
+		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
+
+		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
+
+		$cli = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
+
+		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial();
+		$subject->shouldReceive( 'init_hooks' )->never();
+
+		if ( ! defined( 'WP_CLI' ) ) {
+			define( 'WP_CLI', true );
+		}
+
+		$wp_cli = \Mockery::mock( 'alias:WP_CLI' );
+
+		$subject->init( $settings, $converter, $cli );
+		$this->assertTrue( true );
+	}
+
+	/**
 	 * Test init() with CLI
 	 *
 	 * @throws ReflectionException Reflection Exception.
@@ -89,8 +127,8 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 			define( 'WP_CLI', true );
 		}
 
-		$wp_cli = \Mockery::mock( 'overload:WP_CLI' );
-		$wp_cli->shouldReceive( 'add_command' )->with( 'cyr2lat', $cli )->andReturnNull();
+		$wp_cli = \Mockery::mock( 'alias:WP_CLI' );
+		$wp_cli->shouldReceive( 'add_command' )->andReturn( null );
 
 		$subject->init( $settings, $converter, $cli );
 		$this->assertTrue( true );
@@ -217,7 +255,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	 * Test that ctl_sanitize_post_name() does nothing if no Block/Gutenberg editor is active
 	 */
 	public function test_ctl_sanitize_post_name_without_gutenberg() {
-		$subject = $this->get_subject();
+		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$data = [ 'something' ];
 
@@ -237,9 +275,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		} catch ( Exception $e ) {
 		}
 
-		$mock = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$mock->shouldReceive( 'ctl_function_exists' )->once()->andReturnTrue();
-
+		$subject->shouldReceive( 'ctl_function_exists' )->once()->andReturnTrue();
 		\WP_Mock::userFunction(
 			'is_plugin_active',
 			[
@@ -260,20 +296,15 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	}
 
 	/**
-	 * Test ctl_sanitize_post_name()
-	 *
-	 * @param array $data     Post data to sanitize.
-	 * @param array $expected Post data expected after sanitization.
-	 *
-	 * @dataProvider dp_test_ctl_sanitize_post_name
+	 * Test that ctl_sanitize_post_name() does nothing if current screen is not post edit screen
 	 */
-	public function test_ctl_sanitize_post_name( $data, $expected ) {
-		$subject = $this->get_subject();
+	public function test_ctl_sanitize_post_name_not_post_edit_screen() {
+		$data = [ 'something' ];
 
 		$GLOBALS['wp_version'] = '5.0';
 
-		$mock = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$mock->shouldReceive( 'ctl_function_exists' )->once()->andReturnTrue();
+		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'ctl_function_exists' )->once()->andReturnTrue();
 
 		\WP_Mock::userFunction(
 			'is_plugin_active',
@@ -283,6 +314,42 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 				'return' => false,
 			]
 		);
+
+		$current_screen       = \Mockery::mock( 'WP_Screen' );
+		$current_screen->base = 'not post';
+
+		\WP_Mock::userFunction( 'get_current_screen', [ 'return' => $current_screen ] );
+		$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
+	}
+
+	/**
+	 * Test ctl_sanitize_post_name()
+	 *
+	 * @param array $data     Post data to sanitize.
+	 * @param array $expected Post data expected after sanitization.
+	 *
+	 * @dataProvider dp_test_ctl_sanitize_post_name
+	 */
+	public function test_ctl_sanitize_post_name( $data, $expected ) {
+		$GLOBALS['wp_version'] = '5.0';
+
+		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'ctl_function_exists' )->once()->andReturnTrue();
+
+		\WP_Mock::userFunction(
+			'is_plugin_active',
+			[
+				'times'  => 1,
+				'args'   => [ 'classic-editor/classic-editor.php' ],
+				'return' => false,
+			]
+		);
+
+		$current_screen2       = \Mockery::mock( 'WP_Screen' );
+		$current_screen2->base = 'post';
+
+		\WP_Mock::userFunction( 'get_current_screen', [ 'return' => $current_screen2 ] );
+
 		\WP_Mock::userFunction(
 			'sanitize_title',
 			[
