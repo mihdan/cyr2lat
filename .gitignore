@@ -5,7 +5,7 @@ wp-cli.local.yml
 node_modules
 dist/**
 bin/
-tests/
+tests/**/*.cache
 vendor/
 *.sql
 *.tar.gz

@@ -26,6 +26,13 @@ class Cyr_To_Lat_Main {
 	private $settings;
 
 	/**
+	 * Converter instance.
+	 *
+	 * @var Cyr_To_Lat_Converter
+	 */
+	private $converter;
+
+	/**
 	 * WP-CLI
 	 *
 	 * @var Cyr_To_Lat_WP_CLI
@@ -33,22 +40,36 @@ class Cyr_To_Lat_Main {
 	private $cli;
 
 	/**
-	 * Cyr_To_Lat constructor.
+	 * Cyr_To_Lat_Main constructor.
+	 *
+	 * @param Cyr_To_Lat_Settings  $settings  Plugin settings.
+	 * @param Cyr_To_Lat_Converter $converter Converter instance.
+	 * @param Cyr_To_Lat_WP_CLI    $cli       CLI instance.
 	 */
-	public function __construct() {
+	public function __construct( $settings = null, $converter = null, $cli = null ) {
+		$this->settings = $settings;
+		if ( ! $this->settings ) {
+			$this->settings = new Cyr_To_Lat_Settings();
+		}
+
+		$this->converter = $converter;
+		if ( ! $this->converter ) {
+			$this->converter = new Cyr_To_Lat_Converter( $this, $this->settings );
+		}
+
+		$this->cli = $cli;
+		if ( ! $this->cli ) {
+			$this->cli = new Cyr_To_Lat_WP_CLI( $this->converter );
+		}
+
 		$this->init();
-		$this->init_hooks();
 	}
 
 	/**
 	 * Init class.
 	 */
 	public function init() {
-		$this->settings = new Cyr_To_Lat_Settings();
-		$converter      = new Cyr_To_Lat_Converter( $this, $this->settings );
-
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			$this->cli = new Cyr_To_Lat_WP_CLI( $converter );
 			try {
 				/**
 				 * Method WP_CLI::add_command() accepts class as callable.
@@ -60,6 +81,8 @@ class Cyr_To_Lat_Main {
 				return;
 			}
 		}
+
+		$this->init_hooks();
 	}
 
 	/**
@@ -133,6 +156,17 @@ class Cyr_To_Lat_Main {
 	}
 
 	/**
+	 * Helper function to make class unit-testable
+	 *
+	 * @param string $function Function name.
+	 *
+	 * @return bool
+	 */
+	protected function ctl_function_exists( $function ) {
+		return function_exists( $function );
+	}
+
+	/**
 	 * Check if Classic Editor plugin is active.
 	 *
 	 * @link https://kagg.eu/how-to-catch-gutenberg/
@@ -140,15 +174,11 @@ class Cyr_To_Lat_Main {
 	 * @return bool
 	 */
 	private function ctl_is_classic_editor_plugin_active() {
-		if ( ! function_exists( 'is_plugin_active' ) ) {
+		if ( ! $this->ctl_function_exists( 'is_plugin_active' ) ) {
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		if ( is_plugin_active( 'classic-editor/classic-editor.php' ) ) {
-			return true;
-		}
-
-		return false;
+		return is_plugin_active( 'classic-editor/classic-editor.php' );
 	}
 
 	/**
