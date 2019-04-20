@@ -127,13 +127,18 @@ class Cyr_To_Lat_Converter {
 
 		$args = wp_parse_args( $args, $defaults );
 
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$posts = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT ID, post_name FROM $wpdb->posts WHERE post_name REGEXP(%s) AND post_status IN (" . $this->main->ctl_prepare_in( $args['post_status'] ) . ') AND post_type IN (' . $this->main->ctl_prepare_in( $args['post_type'] ) . ')', // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				"SELECT ID, post_name FROM $wpdb->posts WHERE post_name REGEXP(%s) AND post_status IN (" .
+				$this->main->ctl_prepare_in( $args['post_status'] ) .
+				') AND post_type IN (' .
+				$this->main->ctl_prepare_in( $args['post_type'] ) . ')',
 				$regexp
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
 		foreach ( (array) $posts as $post ) {
 			$this->process_all_posts->push_to_queue( $post );
