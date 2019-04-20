@@ -448,6 +448,53 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	}
 
 	/**
+	 * Test ctl_prepare_in()
+	 *
+	 * @dataProvider dp_test_ctl_prepare_in
+	 */
+	public function test_ctl_prepare_in( $items, $format, $expected ) {
+		global $wpdb;
+
+		$items    = (array) $items;
+		$how_many = count( $items );
+		if ( $how_many > 0 ) {
+			$format          = $format ? "'" . $format . "'" : "'%s'";
+			$placeholders    = array_fill( 0, $how_many, $format );
+			$prepared_format = implode( ',', $placeholders );
+			$args            = array_merge( [ $prepared_format ], $items );
+			$result          = call_user_func_array( 'sprintf', $args );
+			$result          = str_replace( "''", '', $result );
+
+			$wpdb = Mockery::mock( '\wpdb' );
+			$wpdb->shouldReceive( 'prepare' )->zeroOrMoreTimes()
+			     ->andReturn( $result );
+		}
+
+		$subject = $this->get_subject();
+		if ( $format ) {
+			$this->assertSame( $expected, $subject->ctl_prepare_in( $items, $format ) );
+		} else {
+			$this->assertSame( $expected, $subject->ctl_prepare_in( $items ) );
+		}
+	}
+
+	/**
+	 * Data provider for test_ctl_prepare_in()
+	 */
+	public function dp_test_ctl_prepare_in() {
+		return [
+			[ null, null, '' ],
+			[ '', null, '' ],
+			[ [], null, '' ],
+			[ [ '' ], null, '' ],
+			[ [ 'post', 'page' ], null, "'post','page'" ],
+			[ [ 'post', 'page' ], '%s', "'post','page'" ],
+			[ [ '1', '2' ], '%d', "'1','2'" ],
+			[ [ '13.5', '2' ], '%f', "'13.500000','2.000000'" ],
+		];
+	}
+
+	/**
 	 * Get test subject
 	 *
 	 * @return Cyr_To_Lat_Main
