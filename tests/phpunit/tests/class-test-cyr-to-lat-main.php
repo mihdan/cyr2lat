@@ -275,7 +275,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		} catch ( Exception $e ) {
 		}
 
-		$subject->shouldReceive( 'ctl_function_exists' )->once()->andReturnTrue();
+		$subject->shouldReceive( 'ctl_function_exists' )->andReturnTrue();
 		\WP_Mock::userFunction(
 			'is_plugin_active',
 			[
@@ -304,12 +304,11 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$GLOBALS['wp_version'] = '5.0';
 
 		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'ctl_function_exists' )->once()->andReturnTrue();
+		$subject->shouldReceive( 'ctl_function_exists' )->andReturnTrue();
 
 		\WP_Mock::userFunction(
 			'is_plugin_active',
 			[
-				'times'  => 1,
 				'args'   => [ 'classic-editor/classic-editor.php' ],
 				'return' => false,
 			]
@@ -318,7 +317,10 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$current_screen       = \Mockery::mock( 'WP_Screen' );
 		$current_screen->base = 'not post';
 
-		\WP_Mock::userFunction( 'get_current_screen', [ 'return' => $current_screen ] );
+		$GLOBALS['current_screen'] = null;
+		$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
+
+		$GLOBALS['current_screen'] = $current_screen;
 		$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
 	}
 
@@ -334,21 +336,19 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$GLOBALS['wp_version'] = '5.0';
 
 		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'ctl_function_exists' )->once()->andReturnTrue();
+		$subject->shouldReceive( 'ctl_function_exists' )->andReturnTrue();
 
 		\WP_Mock::userFunction(
 			'is_plugin_active',
 			[
-				'times'  => 1,
 				'args'   => [ 'classic-editor/classic-editor.php' ],
 				'return' => false,
 			]
 		);
 
-		$current_screen2       = \Mockery::mock( 'WP_Screen' );
-		$current_screen2->base = 'post';
-
-		\WP_Mock::userFunction( 'get_current_screen', [ 'return' => $current_screen2 ] );
+		$current_screen            = \Mockery::mock( 'WP_Screen' );
+		$current_screen->base      = 'post';
+		$GLOBALS['current_screen'] = $current_screen;
 
 		\WP_Mock::userFunction(
 			'sanitize_title',
