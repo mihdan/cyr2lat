@@ -130,16 +130,7 @@ class Cyr_To_Lat_Settings {
 	 */
 	public function init_form_fields() {
 		$this->form_fields = array(
-			'convert_existing_slugs' => array(
-				'label'        => __( 'Convert Existing Slugs', 'cyr2lat' ),
-				'section'      => 'general_section',
-				'type'         => 'checkbox',
-				'placeholder'  => '',
-				'helper'       => '',
-				'supplemental' => '',
-				'default'      => 'no',
-			),
-			'iso9'                   => array(
+			'iso9'  => array(
 				'label'        => __( 'ISO9 Table', 'cyr2lat' ),
 				'section'      => 'iso9_section',
 				'type'         => 'table',
@@ -148,7 +139,7 @@ class Cyr_To_Lat_Settings {
 				'supplemental' => '',
 				'default'      => Cyr_To_Lat_Conversion_Tables::get(),
 			),
-			'bel'                    => array(
+			'bel'   => array(
 				'label'        => __( 'bel Table', 'cyr2lat' ),
 				'section'      => 'bel_section',
 				'type'         => 'table',
@@ -157,7 +148,7 @@ class Cyr_To_Lat_Settings {
 				'supplemental' => '',
 				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'bel' ),
 			),
-			'uk'                     => array(
+			'uk'    => array(
 				'label'        => __( 'uk Table', 'cyr2lat' ),
 				'section'      => 'uk_section',
 				'type'         => 'table',
@@ -166,7 +157,7 @@ class Cyr_To_Lat_Settings {
 				'supplemental' => '',
 				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'uk' ),
 			),
-			'bg_BG'                  => array(
+			'bg_BG' => array(
 				'label'        => __( 'bg_BG Table', 'cyr2lat' ),
 				'section'      => 'bg_BG_section',
 				'type'         => 'table',
@@ -175,7 +166,7 @@ class Cyr_To_Lat_Settings {
 				'supplemental' => '',
 				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'bg_BG' ),
 			),
-			'mk_MK'                  => array(
+			'mk_MK' => array(
 				'label'        => __( 'mk_MK Table', 'cyr2lat' ),
 				'section'      => 'mk_MK_section',
 				'type'         => 'table',
@@ -184,7 +175,7 @@ class Cyr_To_Lat_Settings {
 				'supplemental' => '',
 				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'mk_MK' ),
 			),
-			'ka_GE'                  => array(
+			'ka_GE' => array(
 				'label'        => __( 'ka_GE Table', 'cyr2lat' ),
 				'section'      => 'ka_GE_section',
 				'type'         => 'table',
@@ -193,7 +184,7 @@ class Cyr_To_Lat_Settings {
 				'supplemental' => '',
 				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'ka_GE' ),
 			),
-			'kk'                     => array(
+			'kk'    => array(
 				'label'        => __( 'kk Table', 'cyr2lat' ),
 				'section'      => 'kk_section',
 				'type'         => 'table',
@@ -283,11 +274,18 @@ class Cyr_To_Lat_Settings {
 				?>
 			</h2>
 
-			<form id="ctl-options" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="POST">
+			<form id="ctl-options" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
 				<?php
 				do_settings_sections( self::PAGE ); // Sections with options.
 				settings_fields( self::OPTION_GROUP ); // Hidden protection fields.
 				submit_button();
+				?>
+			</form>
+
+			<form id="ctl-convert-existing-slugs" action="" method="post">
+				<?php
+				wp_nonce_field( self::OPTION_GROUP . '-options' );
+				submit_button( __( 'Convert Existing Slugs', 'cyr2lat' ), 'secondary', 'cyr2lat-convert' );
 				?>
 			</form>
 
@@ -326,12 +324,6 @@ class Cyr_To_Lat_Settings {
 	 * Setup settings sections.
 	 */
 	public function setup_sections() {
-		add_settings_section(
-			'general_section',
-			__( 'General Options', 'cyr2lat' ),
-			array( $this, 'cyr_to_lat_section' ),
-			self::PAGE
-		);
 		add_settings_section(
 			'iso9_section',
 			__( 'ISO9 Table', 'cyr2lat' ),
@@ -383,7 +375,6 @@ class Cyr_To_Lat_Settings {
 	 */
 	public function cyr_to_lat_section( $arguments ) {
 	}
-
 
 	/**
 	 * Setup settings fields.
