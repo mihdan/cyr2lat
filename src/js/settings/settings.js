@@ -14,7 +14,6 @@ class Settings {
 	 */
 	hideTables() {
 		const tables = [...document.querySelectorAll( '#ctl-options table' )];
-		tables.shift();
 		tables.map(
 			( table, index ) => {
 				table.classList.add( 'ctl-table' );
@@ -27,7 +26,6 @@ class Settings {
 			}
 		);
 		const headers = [...document.querySelectorAll( '#ctl-options h2' )];
-		headers.shift();
 		headers.map(
 			( header, index ) => {
 				header.classList.add( 'nav-tab' );

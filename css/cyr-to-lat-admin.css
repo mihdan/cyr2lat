@@ -10,8 +10,8 @@
 	width: 30%;
 }
 
-#ctl-options .form-table:not(:nth-child(2)) th {
-	display: none;
+#ctl-options .form-table th {
+	 display: none;
 }
 
 .ctl-table {

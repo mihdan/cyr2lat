@@ -8,14 +8,7 @@
 /**
  * Class Cyr_To_Lat_Post_Conversion_Process
  */
-class Cyr_To_Lat_Post_Conversion_Process extends WP_Background_Process {
-
-	/**
-	 * Prefix
-	 *
-	 * @var string
-	 */
-	protected $prefix = CYR_TO_LAT_PREFIX;
+class Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_Conversion_Process {
 
 	/**
 	 * Process action name
@@ -23,24 +16,6 @@ class Cyr_To_Lat_Post_Conversion_Process extends WP_Background_Process {
 	 * @var string
 	 */
 	protected $action = CYR_TO_LAT_POST_CONVERSION_ACTION;
-
-	/**
-	 * Plugin main class
-	 *
-	 * @var Cyr_To_Lat_Main
-	 */
-	private $main;
-
-	/**
-	 * Cyr_To_Lat_Post_Conversion_Process constructor
-	 *
-	 * @param Cyr_To_Lat_Main $main Plugin main class.
-	 */
-	public function __construct( $main ) {
-		$this->main = $main;
-
-		parent::__construct();
-	}
 
 	/**
 	 * Task. Updates single post
@@ -61,7 +36,7 @@ class Cyr_To_Lat_Post_Conversion_Process extends WP_Background_Process {
 			// phpcs:enable
 		}
 
-		$this->log( $post->post_name . ' => ' . $sanitized_name );
+		$this->log( __( 'Post slug converted:', 'cyr2lat' ) . ' ' . urldecode( $post->post_name ) . ' => ' . $sanitized_name );
 
 		return false;
 	}
@@ -72,19 +47,6 @@ class Cyr_To_Lat_Post_Conversion_Process extends WP_Background_Process {
 	protected function complete() {
 		parent::complete();
 
-		$this->log( 'Post slugs conversion completed.' );
-	}
-
-	/**
-	 * Log
-	 *
-	 * @param string $message Message to log.
-	 */
-	public function log( $message ) {
-		if ( WP_DEBUG_LOG ) {
-			// @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( $message );
-			// @phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
-		}
+		$this->log( __( 'Post slugs conversion completed.', 'cyr2lat' ) );
 	}
 }
