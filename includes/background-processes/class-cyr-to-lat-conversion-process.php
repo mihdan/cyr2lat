@@ -52,10 +52,7 @@ class Cyr_To_Lat_Conversion_Process extends WP_Background_Process {
 	protected function complete() {
 		parent::complete();
 
-		$lock_duration = ( property_exists( $this, 'queue_lock_time' ) ) ? $this->queue_lock_time : 60; // 1 minute
-		$lock_duration = apply_filters( $this->identifier . '_queue_lock_time', $lock_duration );
-
-		set_site_transient( $this->identifier . '_process_completed', microtime(), $lock_duration );
+		set_site_transient( $this->identifier . '_process_completed', microtime() );
 	}
 
 	/**
