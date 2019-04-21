@@ -72,6 +72,7 @@ class Cyr_To_Lat_Converter {
 	 */
 	public function init_hooks() {
 		add_action( 'admin_init', array( $this, 'process_handler' ) );
+		add_action( 'admin_init', array( $this, 'conversion_notices' ) );
 
 		/**
 		 * Fix bug in WP_Background_Process::memory_exceeded() function.
@@ -96,11 +97,17 @@ class Cyr_To_Lat_Converter {
 			array( $this, 'time_exceeded_filter' )
 		);
 
+	}
+
+	/**
+	 * Show conversion notices.
+	 */
+	public function conversion_notices() {
 		$posts_process_running = $this->process_all_posts->is_process_running();
 		$terms_process_running = $this->process_all_terms->is_process_running();
 
 		if ( ! $posts_process_running && ! $terms_process_running ) {
-			add_action( 'admin_init', array( $this, 'start_conversion' ) );
+			add_action( 'admin_init', array( $this, 'start_conversion' ), 20 );
 		}
 
 		if ( $posts_process_running ) {
@@ -190,7 +197,12 @@ class Cyr_To_Lat_Converter {
 			}
 
 			$this->process_all_posts->save()->dispatch();
+
 			$this->log( __( 'Post slugs conversion started.', 'cyr2lat' ) );
+			$this->admin_notices->add_notice(
+				__( 'Cyr To Lat started conversion of existing post slugs.', 'cyr2lat' ),
+				'notice notice-info is-dismissible'
+			);
 		} else {
 			$this->admin_notices->add_notice(
 				__( 'Cyr To Lat has not found existing post slugs for conversion.', 'cyr2lat' ),
@@ -212,7 +224,12 @@ class Cyr_To_Lat_Converter {
 			}
 
 			$this->process_all_terms->save()->dispatch();
+
 			$this->log( __( 'Term slugs conversion started.', 'cyr2lat' ) );
+			$this->admin_notices->add_notice(
+				__( 'Cyr To Lat started conversion of existing term slugs.', 'cyr2lat' ),
+				'notice notice-info is-dismissible'
+			);
 		} else {
 			$this->admin_notices->add_notice(
 				__( 'Cyr To Lat has not found existing term slugs for conversion.', 'cyr2lat' ),
