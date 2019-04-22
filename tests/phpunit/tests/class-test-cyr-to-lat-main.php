@@ -46,6 +46,10 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$converter = \Mockery::mock( 'overload:Cyr_To_Lat_Converter' );
 		$cli       = \Mockery::mock( 'overload:Cyr_To_Lat_WP_CLI' );
 
+		if ( ! defined( 'WP_CLI' ) ) {
+			define( 'WP_CLI', true );
+		}
+
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
 
@@ -64,16 +68,10 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	 * @throws ReflectionException Reflection Exception.
 	 */
 	public function test_init() {
-		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
-
-		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
-
-		$cli = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
-
 		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial();
 		$subject->shouldReceive( 'init_hooks' )->once();
 
-		$subject->init( $settings, $converter, $cli );
+		$subject->init();
 		$this->assertTrue( true );
 	}
 
@@ -86,12 +84,6 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	 * @preserveGlobalState disabled
 	 */
 	public function test_init_with_cli_error() {
-		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
-
-		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
-
-		$cli = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
-
 		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial();
 		$subject->shouldReceive( 'init_hooks' )->never();
 
@@ -101,7 +93,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 
 		$wp_cli = \Mockery::mock( 'alias:WP_CLI' );
 
-		$subject->init( $settings, $converter, $cli );
+		$subject->init();
 		$this->assertTrue( true );
 	}
 
@@ -130,7 +122,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$wp_cli = \Mockery::mock( 'alias:WP_CLI' );
 		$wp_cli->shouldReceive( 'add_command' )->andReturn( null );
 
-		$subject->init( $settings, $converter, $cli );
+		$subject->init();
 		$this->assertTrue( true );
 	}
 
