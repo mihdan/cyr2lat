@@ -58,8 +58,10 @@ class Cyr_To_Lat_Main {
 		}
 
 		$this->cli = $cli;
-		if ( ! $this->cli ) {
-			$this->cli = new Cyr_To_Lat_WP_CLI( $this->converter );
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			if ( ! $this->cli ) {
+				$this->cli = new Cyr_To_Lat_WP_CLI( $this->converter );
+			}
 		}
 
 		$this->init();
