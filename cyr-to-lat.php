@@ -12,7 +12,7 @@
  * Version: 3.7
  * Stable tag: 3.7
  *
- * Text Domain: cyr-to-lat
+ * Text Domain: cyr2lat
  * Domain Path: /languages/
  *
  * @package cyr-to-lat
