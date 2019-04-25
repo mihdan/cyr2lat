@@ -6,7 +6,7 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 
 ## Features
 
-* Automatically converts existing post, page and term slugs on activation
+* Converts any number of existing post, page and term slugs in background processes
 * Saves existing post and page permalinks integrity
 * Performs transliteration of attachment file names
 * Includes Russian, Belorussian, Ukrainian, Bulgarian, Macedonian, Georgian, and Kazakh characters
@@ -37,8 +37,12 @@ yarn run build:dev
 ## WP-CLI support
 
 ```
-wp cyr2lat regenerate
+wp cyr2lat regenerate [--post_type=<post_type>] [--post_status=<post_status>]
 ```
+
+Where
+  `-post_type` is list of post types,
+  `-post_status` is list of post statuses.
 
 ## Packagist
 
