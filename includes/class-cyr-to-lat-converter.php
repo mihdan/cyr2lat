@@ -177,7 +177,7 @@ class Cyr_To_Lat_Converter {
 		$regexp = Cyr_To_Lat_Main::PROHIBITED_CHARS_REGEX . '+';
 
 		$defaults = array(
-			'post_type'   => get_post_types( array( 'exclude_from_search' => false ) ),
+			'post_type'   => get_post_types(),
 			'post_status' => array( 'publish', 'future', 'private' ),
 		);
 
