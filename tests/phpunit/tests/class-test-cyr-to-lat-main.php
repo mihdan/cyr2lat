@@ -9,6 +9,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class Test_Cyr_To_Lat_Main
+ *
+ * @group main
  */
 class Test_Cyr_To_Lat_Main extends TestCase {
 
@@ -64,8 +66,6 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 
 	/**
 	 * Test init()
-	 *
-	 * @throws ReflectionException Reflection Exception.
 	 */
 	public function test_init() {
 		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial();
@@ -78,7 +78,6 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	/**
 	 * Test init() with CLI when CLI throws an Exception
 	 *
-	 * @throws ReflectionException Reflection Exception.
 	 * @test
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
@@ -100,18 +99,11 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	/**
 	 * Test init() with CLI
 	 *
-	 * @throws ReflectionException Reflection Exception.
 	 * @test
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
 	public function test_init_with_cli() {
-		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
-
-		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
-
-		$cli = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
-
 		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial();
 		$subject->shouldReceive( 'init_hooks' )->once();
 
@@ -492,19 +484,13 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	 * @return Cyr_To_Lat_Main
 	 */
 	private function get_subject() {
-		try {
-			$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
+		$settings  = \Mockery::mock( 'Cyr_To_Lat_Settings' );
+		$converter = \Mockery::mock( 'Cyr_To_Lat_Converter' );
+		$cli       = \Mockery::mock( 'Cyr_To_Lat_WP_CLI' );
 
-			$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
+		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli );
 
-			$cli = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
-
-			$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli );
-
-			return $subject;
-		} catch ( ReflectionException $e ) {
-			return null;
-		}
+		return $subject;
 	}
 
 	/**

@@ -55,15 +55,33 @@ class Cyr_To_Lat_Converter {
 	/**
 	 * Cyr_To_Lat_Converter constructor.
 	 *
-	 * @param Cyr_To_Lat_Main     $main     Plugin main class.
-	 * @param Cyr_To_Lat_Settings $settings Plugin settings.
+	 * @param Cyr_To_Lat_Main                    $main              Plugin main class.
+	 * @param Cyr_To_Lat_Settings                $settings          Plugin settings.
+	 * @param Cyr_To_Lat_Post_Conversion_Process $process_all_posts Plugin settings.
+	 * @param Cyr_To_Lat_Term_Conversion_Process $process_all_terms Plugin settings.
+	 * @param Cyr_To_Lat_Admin_Notices           $admin_notices     Plugin settings.
 	 */
-	public function __construct( Cyr_To_Lat_Main $main, Cyr_To_Lat_Settings $settings ) {
-		$this->main              = $main;
-		$this->settings          = $settings;
-		$this->process_all_posts = new Cyr_To_Lat_Post_Conversion_Process( $main );
-		$this->process_all_terms = new Cyr_To_Lat_Term_Conversion_Process( $main );
-		$this->admin_notices     = new Cyr_To_Lat_Admin_Notices();
+	public function __construct(
+		$main, $settings, $process_all_posts = null, $process_all_terms = null, $admin_notices = null
+	) {
+		$this->main     = $main;
+		$this->settings = $settings;
+
+		$this->process_all_posts = $process_all_posts;
+		if ( ! $this->process_all_posts ) {
+			$this->process_all_posts = new Cyr_To_Lat_Post_Conversion_Process( $main );
+		}
+
+		$this->process_all_terms = $process_all_terms;
+		if ( ! $this->process_all_terms ) {
+			$this->process_all_terms = new Cyr_To_Lat_Term_Conversion_Process( $main );
+		}
+
+		$this->admin_notices = $admin_notices;
+		if ( ! $this->admin_notices ) {
+			$this->admin_notices = new Cyr_To_Lat_Admin_Notices();
+		}
+
 		$this->init_hooks();
 	}
 
