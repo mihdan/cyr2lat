@@ -146,7 +146,9 @@ class Cyr_To_Lat_Converter {
 		if ( ! isset( $_POST['cyr2lat-convert'] ) ) {
 			return;
 		}
-		check_admin_referer( $this->settings::OPTION_GROUP . '-options' );
+
+		$settings = $this->settings;
+		check_admin_referer( $settings::OPTION_GROUP . '-options' );
 
 		$this->convert_existing_slugs();
 	}
