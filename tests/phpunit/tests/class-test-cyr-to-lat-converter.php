@@ -28,6 +28,8 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 	public function tearDown(): void {
 		unset( $_GET[ \Cyr_To_Lat_Converter::QUERY_ARG ] );
 		unset( $_GET['_wpnonce'] );
+		unset( $_POST['cyr2lat-convert'] );
+		unset( $GLOBALS['wpdb'] );
 		\WP_Mock::tearDown();
 		parent::tearDown();
 	}
@@ -163,6 +165,8 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 
 	/**
 	 * Data provider for test_conversion_notices()
+	 *
+	 * @return array
 	 */
 	public function dp_test_conversion_notices() {
 		return [
@@ -182,6 +186,43 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 			[ true, false, true, true ],
 			[ false, true, true, true ],
 			[ true, true, true, true ],
+		];
+	}
+
+	/**
+	 * Test start_conversion()
+	 *
+	 * @param boolean $convert If $_POST['cyr2lat-convert'] set.
+	 *
+	 * @dataProvider dp_test_start_conversion
+	 */
+	public function test_start_conversion( $convert ) {
+		$subject = \Mockery::mock(
+			'Cyr_To_Lat_Converter'
+		)->makePartial();
+
+		\WP_Mock::passthruFunction( 'check_admin_referer' );
+
+		if ( $convert ) {
+			$_POST['cyr2lat-convert'] = 'something';
+			$subject->shouldReceive( 'convert_existing_slugs' )->once();
+		} else {
+			$subject->shouldReceive( 'convert_existing_slugs' )->never();
+		}
+
+		$subject->start_conversion();
+		$this->assertTrue( true );
+	}
+
+	/**
+	 * Data provider for test_start_conversion()
+	 *
+	 * @return array
+	 */
+	public function dp_test_start_conversion() {
+		return [
+			[ false ],
+			[ true ],
 		];
 	}
 
@@ -225,6 +266,8 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 
 	/**
 	 * Data provider for test_process_handler()
+	 *
+	 * @return array
 	 */
 	public function dp_test_process_handler() {
 		return [
@@ -232,6 +275,164 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 			[ \Cyr_To_Lat_Converter::QUERY_ARG, '', false ],
 			[ \Cyr_To_Lat_Converter::QUERY_ARG, 'some_nonce_value', false ],
 			[ \Cyr_To_Lat_Converter::QUERY_ARG, 'some_nonce_value', true ],
+		];
+	}
+
+	/**
+	 * Test convert_existing_slugs()
+	 *
+	 * @param array $posts Posts to convert.
+	 * @param array $terms Terms to convert.
+	 *
+	 * @dataProvider dp_test_convert_existing_slugs
+	 */
+	public function test_convert_existing_slugs( $posts, $terms ) {
+		global $wpdb;
+
+		$main              = \Mockery::mock( 'Cyr_To_Lat_Main' );
+		$settings          = \Mockery::mock( 'Cyr_To_Lat_Settings' );
+		$process_all_posts = \Mockery::mock( 'Cyr_To_Lat_Post_Conversion_Process' );
+		$process_all_terms = \Mockery::mock( 'Cyr_To_Lat_Term_Conversion_Process' );
+		$admin_notices     = \Mockery::mock( 'Cyr_To_Lat_Admin_Notices' );
+
+		$subject = new Cyr_To_Lat_Converter(
+			$main,
+			$settings,
+			$process_all_posts,
+			$process_all_terms,
+			$admin_notices
+		);
+
+		$post_types    = [
+			'post'       => 'post',
+			'page'       => 'page',
+			'attachment' => 'attachment',
+		];
+		$post_types_in = "'post', 'page', 'attachment'";
+
+		$post_statuses    = [ 'publish', 'future', 'private' ];
+		$post_statuses_in = "'publish', 'future', 'private'";
+
+		$defaults = [
+			'post_type'   => $post_types,
+			'post_status' => $post_statuses,
+		];
+		$args     = $defaults;
+
+		\WP_Mock::userFunction(
+			'get_post_types',
+			[ 'return' => $post_types ]
+		);
+
+		\WP_Mock::userFunction(
+			'wp_parse_args',
+			[ 'return' => $args ]
+		);
+
+		$main->shouldReceive( 'ctl_prepare_in' )->with( $args['post_status'] )->once()->andReturn( $post_statuses_in );
+		$main->shouldReceive( 'ctl_prepare_in' )->with( $args['post_type'] )->once()->andReturn( $post_types_in );
+
+		$wpdb        = Mockery::mock( '\wpdb' );
+		$wpdb->posts = 'wp_posts';
+		$wpdb->terms = 'wp_terms';
+
+		$regexp     = Cyr_To_Lat_Main::PROHIBITED_CHARS_REGEX . '+';
+		$post_query = "SELECT ID, post_name FROM $wpdb->posts WHERE post_name REGEXP(%s) AND post_status IN ($post_statuses_in) AND post_type IN ($post_types_in)";
+		$term_query = "SELECT term_id, slug FROM $wpdb->terms WHERE slug REGEXP(%s)";
+
+		$wpdb->shouldReceive( 'prepare' )->with( $post_query, $regexp )->once()->andReturn( '' );
+		$wpdb->shouldReceive( 'prepare' )->with( $term_query, $regexp )->once()->andReturn( '' );
+		$wpdb->shouldReceive( 'get_results' )->once()->andReturn( $posts );
+		$wpdb->shouldReceive( 'get_results' )->once()->andReturn( $terms );
+
+		if ( $posts ) {
+			$process_all_posts->expects( 'push_to_queue' )->times( count( $posts ) );
+			$process_all_posts->shouldReceive( 'save' )->andReturn( $process_all_posts );
+			$process_all_posts->expects( 'dispatch' );
+			$admin_notices->expects( 'add_notice' )->with(
+				'Cyr To Lat started conversion of existing post slugs.',
+				'notice notice-info is-dismissible'
+			);
+		} else {
+			$admin_notices->expects( 'add_notice' )->with(
+				'Cyr To Lat has not found existing post slugs for conversion.',
+				'notice notice-info is-dismissible'
+			);
+		}
+
+		if ( $terms ) {
+			$process_all_terms->expects( 'push_to_queue' )->times( count( $terms ) );
+			$process_all_terms->shouldReceive( 'save' )->andReturn( $process_all_terms );
+			$process_all_terms->expects( 'dispatch' );
+			$admin_notices->expects( 'add_notice' )->with(
+				'Cyr To Lat started conversion of existing term slugs.',
+				'notice notice-info is-dismissible'
+			);
+		} else {
+			$admin_notices->expects( 'add_notice' )->with(
+				'Cyr To Lat has not found existing term slugs for conversion.',
+				'notice notice-info is-dismissible'
+			);
+		}
+
+		$subject->convert_existing_slugs();
+		$this->assertTrue( true );
+	}
+
+	/**
+	 * Data provider for test_convert_existing_slugs()
+	 *
+	 * @return array
+	 */
+	public function dp_test_convert_existing_slugs() {
+		return [
+			[ null, null ],
+			[ [ 'post1', 'post2' ], [ 'term1', 'term2' ] ],
+		];
+	}
+
+	/**
+	 * Test log()
+	 *
+	 * @param boolean $debug Is WP_DEBUG_LOG on.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 * @dataProvider        dp_test_log
+	 */
+	public function test_log( $debug ) {
+		$subject = \Mockery::mock( 'Cyr_To_Lat_Converter' )->makePartial()->shouldAllowMockingProtectedMethods();
+
+		$test_log = 'test.log';
+		$message  = 'Test message';
+		if ( $debug ) {
+			define( 'WP_DEBUG_LOG', true );
+		}
+
+		@unlink( $test_log );
+		$error_log = ini_get( 'error_log' );
+		ini_set( 'error_log', $test_log );
+
+		$subject->log( $message );
+		if ( $debug ) {
+			$this->assertNotFalse( strpos( $this->get_log( $test_log ), 'Cyr-To-Lat: ' . $message ) );
+		} else {
+			$this->assertFalse( $this->get_log( $test_log ) );
+		}
+
+		ini_set( 'error_log', $error_log );
+		@unlink( $test_log );
+	}
+
+	/**
+	 * Data provider for test_log()
+	 *
+	 * @return array
+	 */
+	public function dp_test_log() {
+		return [
+			[ false ],
+			[ true ],
 		];
 	}
 
@@ -257,6 +458,15 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 
 		return $subject;
 	}
+
+	/**
+	 * Get test log content
+	 *
+	 * @param string $test_log Test log filename.
+	 *
+	 * @return false|string
+	 */
+	private function get_log( $test_log ) {
+		return @file_get_contents( $test_log );
+	}
 }
-
-

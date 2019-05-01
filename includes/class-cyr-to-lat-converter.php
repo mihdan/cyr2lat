@@ -53,6 +53,13 @@ class Cyr_To_Lat_Converter {
 	private $admin_notices;
 
 	/**
+	 * Option group.
+	 *
+	 * @var string
+	 */
+	private $option_group = '';
+
+	/**
 	 * Cyr_To_Lat_Converter constructor.
 	 *
 	 * @param Cyr_To_Lat_Main                    $main              Plugin main class.
@@ -64,8 +71,9 @@ class Cyr_To_Lat_Converter {
 	public function __construct(
 		$main, $settings, $process_all_posts = null, $process_all_terms = null, $admin_notices = null
 	) {
-		$this->main     = $main;
-		$this->settings = $settings;
+		$this->main         = $main;
+		$this->settings     = $settings;
+		$this->option_group = $this->settings::OPTION_GROUP;
 
 		$this->process_all_posts = $process_all_posts;
 		if ( ! $this->process_all_posts ) {
@@ -164,7 +172,7 @@ class Cyr_To_Lat_Converter {
 		if ( ! isset( $_POST['cyr2lat-convert'] ) ) {
 			return;
 		}
-		check_admin_referer( $this->settings::OPTION_GROUP . '-options' );
+		check_admin_referer( $this->option_group . '-options' );
 
 		$this->convert_existing_slugs();
 	}
@@ -206,8 +214,7 @@ class Cyr_To_Lat_Converter {
 		$posts = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT ID, post_name FROM $wpdb->posts WHERE post_name REGEXP(%s) AND post_status IN (" .
-				$this->main->ctl_prepare_in( $args['post_status'] ) .
-				') AND post_type IN (' .
+				$this->main->ctl_prepare_in( $args['post_status'] ) . ') AND post_type IN (' .
 				$this->main->ctl_prepare_in( $args['post_type'] ) . ')',
 				$regexp
 			)
@@ -345,7 +352,7 @@ class Cyr_To_Lat_Converter {
 	 * @param string $message Message to log.
 	 */
 	protected function log( $message ) {
-		if ( WP_DEBUG_LOG ) {
+		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
 			// @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( 'Cyr-To-Lat: ' . $message );
 			// @phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
