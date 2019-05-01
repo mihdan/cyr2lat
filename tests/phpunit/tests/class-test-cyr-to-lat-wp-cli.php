@@ -81,7 +81,7 @@ class Test_Cyr_To_Lat_WP_CLI extends TestCase {
 		 * $this->assertSame( $notify, $subject->make_progress_bar() );
 		 */
 
-		// Here is simplified variant.
+		// Here is the simplified variant.
 		$subject->make_progress_bar();
 		$this->assertTrue( true );
 	}
