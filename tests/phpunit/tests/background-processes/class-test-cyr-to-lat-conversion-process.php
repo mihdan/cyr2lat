@@ -43,9 +43,6 @@ class Test_Cyr_To_Lat_Conversion_Process extends TestCase {
 
 	/**
 	 * Test complete()
-	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 */
 	public function test_complete() {
 		$subject = \Mockery::mock( Cyr_To_Lat_Conversion_Process::class )->makePartial()
