@@ -33,10 +33,16 @@ class Test_Cyr_To_Lat_WP_CLI extends TestCase {
 	/**
 	 * Test regenerate()
 	 *
+	 * @param array $args           Arguments.
+	 * @param array $assoc_args     Arguments in associative array.
+	 * @param array $convert_params Params for conversion of existing slugs.
+	 *
+	 * @dataProvider        dp_test_regenerate
+	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
-	public function test_regenerate() {
+	public function test_regenerate( $args, $assoc_args, $convert_params ) {
 		$converter = \Mockery::mock( 'Cyr_To_Lat_Converter' );
 		$subject   = \Mockery::mock( 'Cyr_To_Lat_WP_CLI', [ $converter ] )->makePartial()
 		                     ->shouldAllowMockingProtectedMethods();
@@ -47,15 +53,44 @@ class Test_Cyr_To_Lat_WP_CLI extends TestCase {
 
 		$subject->shouldReceive( 'make_progress_bar' )->andReturn( $notify );
 
-		$result = [];
-
-		$converter->expects( 'convert_existing_slugs' )->with( $result );
+		$converter->expects( 'convert_existing_slugs' )->with( $convert_params );
 
 		$cli = \Mockery::mock( 'overload:WP_CLI' );
 		$cli->expects( 'success' )->with( 'Regenerate Completed.' );
 
-		$subject->regenerate();
+		$subject->regenerate( $args, $assoc_args );
 		$this->assertTrue( true );
+	}
+
+	/**
+	 * Data provider for test_regenerate()
+	 */
+	public function dp_test_regenerate() {
+		return [
+			[ [], [], [] ],
+			[
+				[],
+				[
+					'post_status' => 'status1,status2',
+					'post_type'   => 'type1,type2',
+				],
+				[
+					'post_status' => [ 'status1', 'status2' ],
+					'post_type'   => [ 'type1', 'type2' ],
+				],
+			],
+			[
+				[],
+				[
+					'post_status' => 'status1, ,, status2',
+					'post_type'   => 'type1,type2',
+				],
+				[
+					'post_status' => [ 'status1', 'status2' ],
+					'post_type'   => [ 'type1', 'type2' ],
+				],
+			],
+		];
 	}
 
 	/**
