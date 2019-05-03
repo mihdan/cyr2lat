@@ -1,0 +1,116 @@
+<?php
+
+/**
+ * Test_Cyr_To_Lat_Conversion_Process class file
+ *
+ * @package cyr-to-lat
+ */
+
+use PHPUnit\Framework\TestCase;
+
+/**
+ * Class Test_Cyr_To_Lat_Conversion_Process
+ *
+ * @group process
+ */
+class Test_Cyr_To_Lat_Conversion_Process extends TestCase {
+
+	/**
+	 * Setup test
+	 */
+	public function setUp(): void {
+		parent::setUp();
+		\WP_Mock::setUp();
+	}
+
+	/**
+	 * End test
+	 */
+	public function tearDown(): void {
+		\WP_Mock::tearDown();
+		parent::tearDown();
+	}
+
+	/**
+	 * Test task()
+	 */
+	public function test_task() {
+		$subject = \Mockery::mock( Cyr_To_Lat_Conversion_Process::class )->makePartial()
+		                   ->shouldAllowMockingProtectedMethods();
+
+		$this->assertFalse( $subject->task( new stdClass() ) );
+	}
+
+	/**
+	 * Test complete()
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 */
+	public function test_complete() {
+		$subject = \Mockery::mock( Cyr_To_Lat_Conversion_Process::class )->makePartial()
+		                   ->shouldAllowMockingProtectedMethods();
+
+		\WP_Mock::userFunction(
+			'wp_next_scheduled',
+			[
+				'return' => null,
+				'times'  => 1,
+			]
+		);
+
+		\WP_Mock::userFunction(
+			'set_site_transient',
+			[
+				'times' => 1,
+			]
+		);
+
+		$subject->complete();
+		$this->assertTrue( true );
+	}
+
+	/**
+	 * Test is_process_completed()
+	 *
+	 * @param mixed   $transient Transient.
+	 * @param boolean $expected  Expected result.
+	 *
+	 * @dataProvider dp_test_is_process_completed
+	 */
+	public function test_is_process_completed( $transient, $expected ) {
+		$main    = \Mockery::mock( Cyr_To_Lat_Main::class );
+		$subject = new Cyr_To_Lat_Conversion_Process( $main );
+
+		\WP_Mock::userFunction(
+			'get_site_transient',
+			[
+				'args'   => [ CYR_TO_LAT_PREFIX . '_background_process_process_completed' ],
+				'return' => $transient,
+				'times'  => 1,
+			]
+		);
+
+		if ( $transient ) {
+			\WP_Mock::userFunction(
+				'delete_site_transient',
+				[
+					'args'  => [ CYR_TO_LAT_PREFIX . '_background_process_process_completed' ],
+					'times' => 1,
+				]
+			);
+		}
+
+		$this->assertSame( $expected, $subject->is_process_completed() );
+	}
+
+	/**
+	 * Data provider for test_is_process_completed()
+	 */
+	public function dp_test_is_process_completed() {
+		return [
+			[ true, true ],
+			[ false, false ],
+		];
+	}
+}
