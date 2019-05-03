@@ -15,22 +15,6 @@ use PHPUnit\Framework\TestCase;
 class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
 
 	/**
-	 * Setup test
-	 */
-	public function setUp(): void {
-		parent::setUp();
-		\WP_Mock::setUp();
-	}
-
-	/**
-	 * End test
-	 */
-	public function tearDown(): void {
-		\WP_Mock::tearDown();
-		parent::tearDown();
-	}
-
-	/**
 	 * Test get()
 	 */
 	public function test_get() {
