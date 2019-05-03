@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Test_Cyr_To_Lat_Conversion_Process class file
  *

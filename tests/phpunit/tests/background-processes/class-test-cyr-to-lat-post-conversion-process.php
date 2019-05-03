@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Test_Cyr_To_Lat_Post_Conversion_Process class file
  *
@@ -27,6 +26,7 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends TestCase {
 	 * End test
 	 */
 	public function tearDown(): void {
+		unset( $GLOBALS['wpdb'] );
 		\WP_Mock::tearDown();
 		parent::tearDown();
 	}
