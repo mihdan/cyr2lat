@@ -113,4 +113,94 @@ class Test_Cyr_To_Lat_Conversion_Process extends TestCase {
 			[ false, false ],
 		];
 	}
+
+	/**
+	 * Test is_process_running()
+	 *
+	 * @param mixed   $transient Transient.
+	 * @param boolean $expected  Expected result.
+	 *
+	 * @dataProvider dp_test_is_process_running
+	 */
+	public function test_is_process_running( $transient, $expected ) {
+		$main    = \Mockery::mock( Cyr_To_Lat_Main::class );
+		$subject = new Cyr_To_Lat_Conversion_Process( $main );
+
+		\WP_Mock::userFunction(
+			'get_site_transient',
+			[
+				'args'   => [ CYR_TO_LAT_PREFIX . '_background_process_process_lock' ],
+				'return' => $transient,
+				'times'  => 1,
+			]
+		);
+
+		$this->assertSame( $expected, $subject->is_process_running() );
+	}
+
+	/**
+	 * Data provider for test_is_process_running()
+	 */
+	public function dp_test_is_process_running() {
+		return [
+			[ true, true ],
+			[ false, false ],
+		];
+	}
+
+	/**
+	 * Test log()
+	 *
+	 * @param boolean $debug Is WP_DEBUG_LOG on.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 * @dataProvider        dp_test_log
+	 */
+	public function test_log( $debug ) {
+		$subject = \Mockery::mock( 'Cyr_To_Lat_Conversion_Process' )->makePartial()->shouldAllowMockingProtectedMethods();
+
+		$test_log = 'test.log';
+		$message  = 'Test message';
+		if ( $debug ) {
+			define( 'WP_DEBUG_LOG', true );
+		}
+
+		@unlink( $test_log );
+		$error_log = ini_get( 'error_log' );
+		ini_set( 'error_log', $test_log );
+
+		$subject->log( $message );
+		if ( $debug ) {
+			$this->assertNotFalse( strpos( $this->get_log( $test_log ), 'Cyr-To-Lat: ' . $message ) );
+		} else {
+			$this->assertFalse( $this->get_log( $test_log ) );
+		}
+
+		ini_set( 'error_log', $error_log );
+		@unlink( $test_log );
+	}
+
+	/**
+	 * Data provider for test_log()
+	 *
+	 * @return array
+	 */
+	public function dp_test_log() {
+		return [
+			[ false ],
+			[ true ],
+		];
+	}
+
+	/**
+	 * Get test log content
+	 *
+	 * @param string $test_log Test log filename.
+	 *
+	 * @return false|string
+	 */
+	private function get_log( $test_log ) {
+		return @file_get_contents( $test_log );
+	}
 }

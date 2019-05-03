@@ -89,7 +89,7 @@ class Cyr_To_Lat_Conversion_Process extends WP_Background_Process {
 	 * @param string $message Message to log.
 	 */
 	protected function log( $message ) {
-		if ( WP_DEBUG_LOG ) {
+		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
 			// @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( 'Cyr-To-Lat: ' . $message );
 			// @phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
