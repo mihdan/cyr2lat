@@ -49,7 +49,7 @@ class Test_Cyr_To_Lat_Admin_Notices extends TestCase {
 		$constructor     = $reflected_class->getConstructor();
 		$constructor->invoke( $mock );
 
-		$this->assertTrue( true );
+		$this->expectNotToPerformAssertions();
 	}
 
 	/**
@@ -73,6 +73,11 @@ class Test_Cyr_To_Lat_Admin_Notices extends TestCase {
 		$subject = new Cyr_To_Lat_Admin_Notices();
 
 		\WP_Mock::passthruFunction( 'wp_kses_post' );
+
+		ob_start();
+		$subject->show_notices();
+		$result = ob_get_clean();
+		$this->assertEmpty( $result );
 
 		$subject->add_notice( 'First message' );
 		$subject->add_notice( 'Second message', 'error' );
