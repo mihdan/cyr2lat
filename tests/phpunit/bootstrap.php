@@ -11,6 +11,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Plugin version.
+ */
+define( 'CYR_TO_LAT_VERSION', 'test-version' );
+
+/**
+ * Plugin dir url.
+ */
+define( 'CYR_TO_LAT_URL', 'http://site.org/wp-content/plugins/cyr2lat' );
+
+/**
+ * Main plugin file.
+ */
+define( 'CYR_TO_LAT_FILE', PLUGIN_MAIN_FILE );
+
+/**
  * Plugin prefix.
  */
 define( 'CYR_TO_LAT_PREFIX', 'cyr_to_lat' );
