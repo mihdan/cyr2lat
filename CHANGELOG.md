@@ -1,4 +1,13 @@
-## 3.7 (12.04.2019) =
+## 4.0 (24.04.2019)
+* Added button to convert existing slugs, instead of checkbox
+* Added admin notices during conversion of existing slugs
+* Added post_type and post_status parameters to wp-cli command
+* Fixed text domain
+* Simplified package.json to make final js even smaller
+* Added phpunit tests to the plugin main class
+* Added travis.yml for continuous integration on GitHub, and improvement of code reliability
+
+## 3.7 (12.04.2019)
 * Added Belorussian, Macedonian, Kazakh tables
 * Fixed bug with MariaDB during old slug conversion
 * Fixed not saving of user modifications in default iso9 table

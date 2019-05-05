@@ -2,8 +2,8 @@
 Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 2.3
-Tested up to: 5.1
-Stable tag: 3.7
+Tested up to: 5.2
+Stable tag: 4.0
 Requires PHP: 5.2
 
 Converts Cyrillic characters in post, page and term slugs to Latin characters.
@@ -13,7 +13,7 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters.
 Converts Cyrillic characters in post, page and term slugs to Latin characters. Useful for creating human-readable URLs.
 
 = Features =
-* Automatically converts existing post, page and term slugs on activation
+* Converts any number of existing post, page and term slugs in background processes
 * Saves existing post and page permalinks integrity
 * Performs transliteration of attachment file names
 * Includes Russian, Belorussian, Ukrainian, Bulgarian, Macedonian, Georgian, and Kazakh characters
@@ -42,6 +42,18 @@ function my_cyr_to_lat_table($ctl_table) {
 add_filter('ctl_table', 'my_cyr_to_lat_table');
 `
 
+== How can I convert a large number of posts/terms using wp-cli? ==
+
+Use the following command in console:
+
+`
+wp cyr2lat regenerate [--post_type=<post_type>] [--post_status=<post_status>]
+`
+
+Where
+  `-post_type` is list of post types,
+  `-post_status` is list of post statuses.
+
 = Can I contribute? =
 
 Yes you can!
@@ -50,6 +62,15 @@ Yes you can!
 * Join in on our [Telegram Channel](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 4.0 (24.04.2019) =
+* Added button to convert existing slugs, instead of checkbox
+* Added admin notices during conversion of existing slugs
+* Added post_type and post_status parameters to wp-cli command
+* Fixed text domain
+* Simplified package.json to make final js even smaller
+* Added phpunit tests to the plugin main class
+* Added travis.yml for continuous integration on GitHub, and improvement of code reliability
 
 = 3.7 (12.04.2019) =
 * Added Belorussian, Macedonian, Kazakh tables

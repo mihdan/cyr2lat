@@ -173,7 +173,6 @@ class Cyr_To_Lat_Converter {
 			return;
 		}
 		check_admin_referer( $this->option_group . '-options' );
-
 		$this->convert_existing_slugs();
 	}
 
@@ -203,7 +202,7 @@ class Cyr_To_Lat_Converter {
 		$regexp = Cyr_To_Lat_Main::PROHIBITED_CHARS_REGEX . '+';
 
 		$defaults = array(
-			'post_type'   => get_post_types( array( 'exclude_from_search' => false ) ),
+			'post_type'   => get_post_types(),
 			'post_status' => array( 'publish', 'future', 'private' ),
 		);
 
@@ -275,6 +274,19 @@ class Cyr_To_Lat_Converter {
 	 */
 	protected function log( $message ) {
 		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+			// @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( 'Cyr-To-Lat: ' . $message );
+			// @phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		}
+	}
+
+	/**
+	 * Log
+	 *
+	 * @param string $message Message to log.
+	 */
+	protected function log( $message ) {
+		if ( WP_DEBUG_LOG ) {
 			// @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( 'Cyr-To-Lat: ' . $message );
 			// @phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
