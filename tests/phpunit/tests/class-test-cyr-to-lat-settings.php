@@ -63,7 +63,7 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 	 * Test init()
 	 */
 	public function test_init() {
-		$subject = \Mockery::mock( 'Cyr_To_Lat_Settings[load_plugin_textdomain, init_form_fields, init_settings, init_hooks]' );
+		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
 		$subject->shouldReceive( 'load_plugin_textdomain' )->once();
 		$subject->shouldReceive( 'init_form_fields' )->once();
 		$subject->shouldReceive( 'init_settings' )->once();
@@ -539,6 +539,395 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 	}
 
 	/**
+	 * Test field_callback()
+	 *
+	 * @param array  $arguments Arguments.
+	 * @param string $expected  Expected result.
+	 *
+	 * @dataProvider dp_test_field_callback
+	 */
+	public function test_field_callback( $arguments, $expected ) {
+		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
+
+		if ( isset( $arguments['field_id'] ) ) {
+			$subject->shouldReceive( 'get_option' )->with( $arguments['field_id'] )->andReturn( $arguments['default'] );
+
+			\WP_Mock::passthruFunction( 'wp_kses_post' );
+			\WP_Mock::userFunction(
+				'checked',
+				[
+					'args'   => [ '', 'yes', false ],
+					'return' => 'checked="checked"',
+				]
+			);
+			\WP_Mock::userFunction(
+				'checked',
+				[
+					'args'   => [ 'no', 'yes', false ],
+					'return' => '',
+				]
+			);
+			\WP_Mock::userFunction(
+				'checked',
+				[
+					'args'   => [ 'yes', 'yes', false ],
+					'return' => 'checked="checked"',
+				]
+			);
+			\WP_Mock::userFunction(
+				'checked',
+				[
+					'args'   => [ 1, 0, false ],
+					'return' => '',
+				]
+			);
+			\WP_Mock::userFunction(
+				'checked',
+				[
+					'args'   => [ 1, 1, false ],
+					'return' => 'checked="checked"',
+				]
+			);
+			\WP_Mock::userFunction(
+				'checked',
+				[
+					'args'   => [ 1, 2, false ],
+					'return' => '',
+				]
+			);
+
+			\WP_Mock::passthruFunction( 'wp_kses' );
+
+			\WP_Mock::userFunction(
+				'selected',
+				[
+					'args'   => [ 1, 0, false ],
+					'return' => '',
+				]
+			);
+			\WP_Mock::userFunction(
+				'selected',
+				[
+					'args'   => [ 1, 1, false ],
+					'return' => 'selected="selected"',
+				]
+			);
+			\WP_Mock::userFunction(
+				'selected',
+				[
+					'args'   => [ 2, 2, false ],
+					'return' => 'selected="selected"',
+				]
+			);
+			\WP_Mock::userFunction(
+				'selected',
+				[
+					'args'   => [ 1, 2, false ],
+					'return' => '',
+				]
+			);
+		}
+
+		ob_start();
+		$subject->field_callback( $arguments );
+		$this->assertSame( $expected, ob_get_clean() );
+	}
+
+	/**
+	 * Data provider for dp_test_field_callback()
+	 *
+	 * @return array
+	 */
+	public function dp_test_field_callback() {
+		return [
+			[ [], '' ],
+			[
+				[
+					'label'        => 'some label',
+					'section'      => 'some_section',
+					'type'         => 'unknown',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 'some_value',
+					'field_id'     => 'some_id',
+				],
+				'',
+			],
+			[
+				[
+					'label'        => 'some label',
+					'section'      => 'some_section',
+					'type'         => 'unknown',
+					'placeholder'  => '',
+					'helper'       => 'This is helper',
+					'supplemental' => '',
+					'default'      => 'some_value',
+					'field_id'     => 'some_id',
+				],
+				'<span class="helper"> This is helper</span>',
+			],
+			[
+				[
+					'label'        => 'some label',
+					'section'      => 'some_section',
+					'type'         => 'unknown',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => 'This is supplemental',
+					'default'      => 'some_value',
+					'field_id'     => 'some_id',
+				],
+				'<p class="description">This is supplemental</p>',
+			],
+			[
+				[
+					'label'        => 'some label',
+					'section'      => 'some_section',
+					'type'         => 'text',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 'some text',
+					'field_id'     => 'some_id',
+				],
+				'<input name="cyr_to_lat_settings[some_id]" id="some_id" type="text" placeholder="" value="some text" class="regular-text" />',
+			],
+			[
+				[
+					'label'        => 'some label',
+					'section'      => 'some_section',
+					'type'         => 'password',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 'some password',
+					'field_id'     => 'some_id',
+				],
+				'<input name="cyr_to_lat_settings[some_id]" id="some_id" type="password" placeholder="" value="some password" class="regular-text" />',
+			],
+			[
+				[
+					'label'        => 'some label',
+					'section'      => 'some_section',
+					'type'         => 'number',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 15,
+					'field_id'     => 'some_id',
+				],
+				'<input name="cyr_to_lat_settings[some_id]" id="some_id" type="number" placeholder="" value="15" class="regular-text" />',
+			],
+			[
+				[
+					'label'        => 'some label',
+					'section'      => 'some_section',
+					'type'         => 'textarea',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => '<p>This is some<br>textarea</p>',
+					'field_id'     => 'some_id',
+				],
+				'<textarea name="cyr_to_lat_settings[some_id]" id="some_id" placeholder="" rows="5" cols="50"><p>This is some<br>textarea</p></textarea>',
+			],
+			[
+				[
+					'label'        => 'checkbox with empty value',
+					'section'      => 'some_section',
+					'type'         => 'checkbox',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => '',
+					'field_id'     => 'some_id',
+				],
+				'<fieldset><label for="some_id_1"><input id="some_id_1" name="cyr_to_lat_settings[some_id]" type="checkbox" value="yes" checked="checked" /> </label><br/></fieldset>',
+			],
+			[
+				[
+					'label'        => 'checkbox not checked',
+					'section'      => 'some_section',
+					'type'         => 'checkbox',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 'no',
+					'field_id'     => 'some_id',
+				],
+				'<fieldset><label for="some_id_1"><input id="some_id_1" name="cyr_to_lat_settings[some_id]" type="checkbox" value="yes"  /> </label><br/></fieldset>',
+			],
+			[
+				[
+					'label'        => 'checkbox checked',
+					'section'      => 'some_section',
+					'type'         => 'checkbox',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 'yes',
+					'field_id'     => 'some_id',
+				],
+				'<fieldset><label for="some_id_1"><input id="some_id_1" name="cyr_to_lat_settings[some_id]" type="checkbox" value="yes" checked="checked" /> </label><br/></fieldset>',
+			],
+			[
+				[
+					'label'        => 'radio buttons empty options',
+					'section'      => 'some_section',
+					'type'         => 'radio',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 1,
+					'field_id'     => 'some_id',
+				],
+				'',
+			],
+			[
+				[
+					'label'        => 'radio buttons not an array',
+					'section'      => 'some_section',
+					'type'         => 'radio',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 1,
+					'options'      => 'green, yellow, red',
+					'field_id'     => 'some_id',
+				],
+				'',
+			],
+			[
+				[
+					'label'        => 'radio buttons',
+					'section'      => 'some_section',
+					'type'         => 'radio',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 1,
+					'options'      => [ 'green', 'yellow', 'red' ],
+					'field_id'     => 'some_id',
+				],
+				'<fieldset><label for="some_id_1"><input id="some_id_1" name="cyr_to_lat_settings[some_id]" type="radio" value="0"  /> green</label><br/><label for="some_id_2"><input id="some_id_2" name="cyr_to_lat_settings[some_id]" type="radio" value="1" checked="checked" /> yellow</label><br/><label for="some_id_3"><input id="some_id_3" name="cyr_to_lat_settings[some_id]" type="radio" value="2"  /> red</label><br/></fieldset>',
+			],
+			[
+				[
+					'label'        => 'select with empty options',
+					'section'      => 'some_section',
+					'type'         => 'select',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 1,
+					'field_id'     => 'some_id',
+				],
+				'',
+			],
+			[
+				[
+					'label'        => 'select with options not an array',
+					'section'      => 'some_section',
+					'type'         => 'select',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 1,
+					'options'      => 'green, yellow, red',
+					'field_id'     => 'some_id',
+				],
+				'',
+			],
+			[
+				[
+					'label'        => 'select',
+					'section'      => 'some_section',
+					'type'         => 'select',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 1,
+					'options'      => [ 'green', 'yellow', 'red' ],
+					'field_id'     => 'some_id',
+				],
+				'<select name="cyr_to_lat_settings[some_id]"><option value="0" >green</option><option value="1" selected="selected">yellow</option><option value="2" >red</option></select>',
+			],
+			[
+				[
+					'label'        => 'multiple with empty options',
+					'section'      => 'some_section',
+					'type'         => 'multiple',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 1,
+					'field_id'     => 'some_id',
+				],
+				'',
+			],
+			[
+				[
+					'label'        => 'multiple with options not an array',
+					'section'      => 'some_section',
+					'type'         => 'multiple',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 1,
+					'options'      => 'green, yellow, red',
+					'field_id'     => 'some_id',
+				],
+				'',
+			],
+			[
+				[
+					'label'        => 'multiple',
+					'section'      => 'some_section',
+					'type'         => 'multiple',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => 1,
+					'options'      => [ 'green', 'yellow', 'red' ],
+					'field_id'     => 'some_id',
+				],
+				'<select multiple="multiple" name="cyr_to_lat_settings[some_id][]"><option value="0" >green</option><option value="1" >yellow</option><option value="2" >red</option></select>',
+			],
+			[
+				[
+					'label'        => 'multiple with multiple selection',
+					'section'      => 'some_section',
+					'type'         => 'multiple',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => [ 1, 2 ],
+					'options'      => [ 'green', 'yellow', 'red' ],
+					'field_id'     => 'some_id',
+				],
+				'<select multiple="multiple" name="cyr_to_lat_settings[some_id][]"><option value="0" >green</option><option value="1" selected="selected">yellow</option><option value="2" selected="selected">red</option></select>',
+			],
+			[
+				[
+					'label'        => 'ISO9 Table',
+					'section'      => 'iso9_section',
+					'type'         => 'table',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      => [
+						'ю' => 'yu',
+						'я' => 'ya',
+					],
+					'field_id'     => 'iso9',
+				],
+				'<div class="ctl-table-cell"><label for="iso9-0">ю</label><input name="cyr_to_lat_settings[iso9][ю]" id="iso9-0" type="text" placeholder="" value="yu" class="regular-text" /></div><div class="ctl-table-cell"><label for="iso9-1">я</label><input name="cyr_to_lat_settings[iso9][я]" id="iso9-1" type="text" placeholder="" value="ya" class="regular-text" /></div>',
+			],
+		];
+	}
+
+	/**
 	 * Test get_option()
 	 *
 	 * @param array  $settings    Plugin options.
@@ -579,6 +968,35 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 			[ $this->get_test_settings(), null, null, '' ],
 			[ $this->get_test_settings(), 'iso9', null, [ 'iso9' ] ],
 			[ $this->get_test_settings(), 'non-existent-key', [ 'iso-100500' ], [ 'iso-100500' ] ],
+		];
+	}
+
+	/**
+	 * Test get_field_default()
+	 *
+	 * @param mixed $field    Field.
+	 * @param mixed $expected Expected result.
+	 *
+	 * @dataProvider dp_test_get_field_default
+	 */
+	public function test_get_field_default( $field, $expected ) {
+		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial()
+		                   ->shouldAllowMockingProtectedMethods();
+
+		$this->assertSame( $expected, $subject->get_field_default( $field ) );
+	}
+
+	/**
+	 * Data provider for test_get_field_default.
+	 *
+	 * @return array
+	 */
+	public function dp_test_get_field_default() {
+		return [
+			[ null, '' ],
+			[ '', '' ],
+			[ [], '' ],
+			[ [ 'default' => 'default_value' ], 'default_value' ],
 		];
 	}
 
@@ -796,6 +1214,42 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 		$subject->load_plugin_textdomain();
 
 		$this->assertTrue( true );
+	}
+
+	/**
+	 * Test is_ctl_options_screen()
+	 *
+	 * @param mixed   $current_screen Current admin screen.
+	 * @param boolean $expected       Expected result.
+	 *
+	 * @dataProvider dp_test_is_ctl_options_screen
+	 */
+	public function test_is_ctl_options_screen( $current_screen, $expected ) {
+		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial()
+		                   ->shouldAllowMockingProtectedMethods();
+
+		\WP_Mock::userFunction(
+			'get_current_screen',
+			[
+				'return' => $current_screen,
+			]
+		);
+
+		$this->assertSame( $expected, $subject->is_ctl_options_screen() );
+	}
+
+	/**
+	 * Data provider for dp_test_is_ctl_options_screen()
+	 *
+	 * @return array
+	 */
+	public function dp_test_is_ctl_options_screen() {
+		return [
+			[ null, false ],
+			[ (object) [ 'id' => 'something' ], false ],
+			[ (object) [ 'id' => 'options' ], true ],
+			[ (object) [ 'id' => 'settings_page_cyr-to-lat' ], true ],
+		];
 	}
 
 	/**

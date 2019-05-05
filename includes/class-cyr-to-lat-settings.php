@@ -409,6 +409,10 @@ class Cyr_To_Lat_Settings {
 	 * @param array $arguments Field arguments.
 	 */
 	public function field_callback( $arguments ) {
+		if ( ! isset( $arguments['field_id'] ) ) {
+			return;
+		}
+
 		$value = $this->get_option( $arguments['field_id'] );
 
 		// Check which type of field we want.
@@ -566,6 +570,7 @@ class Cyr_To_Lat_Settings {
 				}
 				break;
 			default:
+				break;
 		}
 
 		// If there is help text.
@@ -656,6 +661,7 @@ class Cyr_To_Lat_Settings {
 					$value[ $key ]    = $form_field_value;
 					break;
 				default:
+					break;
 			}
 		}
 
