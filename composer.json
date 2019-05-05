@@ -3,7 +3,15 @@
   "description": "Cyr-To-Lat",
   "license": "GPL-2.0",
   "keywords": [
-    "cyrillic", "georgian", "latin", "l10n", "russian", "rustolat", "slugs", "translations", "transliteration"
+    "cyrillic",
+    "georgian",
+    "latin",
+    "l10n",
+    "russian",
+    "rustolat",
+    "slugs",
+    "translations",
+    "transliteration"
   ],
   "homepage": "https://wordpress.org/plugins/cyr2lat/",
   "type": "wordpress-plugin",
@@ -26,12 +34,18 @@
   "support": {
     "issues": "https://wordpress.org/support/plugin/cyr2lat"
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/kagg-design/wp-background-processing.git"
+    }
+  ],
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
     "xrstf/composer-php52": "1.*",
     "composer/installers": "*",
-    "a5hleyrich/wp-background-processing": "~1.0"
+    "a5hleyrich/wp-background-processing": "dev-master"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",

@@ -50,16 +50,18 @@ class Cyr_To_Lat_WP_CLI extends WP_CLI_Command {
 		 *
 		 * @var \cli\progress\Bar $notify
 		 */
-		$notify = \WP_CLI\Utils\make_progress_bar( 'Regenerate old slugs', 1 );
+		$notify = $this->make_progress_bar();
 
 		$result = array();
 
 		if ( ! empty( $assoc_args['post_status'] ) ) {
 			$result['post_status'] = explode( ',', $assoc_args['post_status'] );
+			$result['post_status'] = array_values( array_filter( array_map( 'trim', $result['post_status'] ) ) );
 		}
 
 		if ( ! empty( $assoc_args['post_type'] ) ) {
 			$result['post_type'] = explode( ',', $assoc_args['post_type'] );
+			$result['post_type'] = array_values( array_filter( array_map( 'trim', $result['post_type'] ) ) );
 		}
 
 		$this->converter->convert_existing_slugs( $result );
@@ -67,5 +69,14 @@ class Cyr_To_Lat_WP_CLI extends WP_CLI_Command {
 		$notify->finish();
 
 		WP_CLI::success( 'Regenerate Completed.' );
+	}
+
+	/**
+	 * Make progress bar.
+	 *
+	 * @return \cli\progress\Bar|\WP_CLI\NoOp
+	 */
+	protected function make_progress_bar() {
+		return \WP_CLI\Utils\make_progress_bar( 'Regenerate existing slugs', 1 );
 	}
 }

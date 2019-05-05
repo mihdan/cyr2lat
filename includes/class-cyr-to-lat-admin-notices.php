@@ -48,9 +48,9 @@ class Cyr_To_Lat_Admin_Notices {
 			?>
 			<div class="<?php echo esc_attr( $notice['class'] ); ?>">
 				<p>
-				<strong>
-				<?php echo wp_kses( $notice['message'], wp_kses_allowed_html( 'post' ) ); ?>
-				</strong>
+					<strong>
+						<?php echo wp_kses_post( $notice['message'] ); ?>
+					</strong>
 				</p>
 			</div>
 			<?php

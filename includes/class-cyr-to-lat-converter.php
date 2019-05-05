@@ -53,17 +53,43 @@ class Cyr_To_Lat_Converter {
 	private $admin_notices;
 
 	/**
+	 * Option group.
+	 *
+	 * @var string
+	 */
+	private $option_group = '';
+
+	/**
 	 * Cyr_To_Lat_Converter constructor.
 	 *
-	 * @param Cyr_To_Lat_Main     $main     Plugin main class.
-	 * @param Cyr_To_Lat_Settings $settings Plugin settings.
+	 * @param Cyr_To_Lat_Main                    $main              Plugin main class.
+	 * @param Cyr_To_Lat_Settings                $settings          Plugin settings.
+	 * @param Cyr_To_Lat_Post_Conversion_Process $process_all_posts Plugin settings.
+	 * @param Cyr_To_Lat_Term_Conversion_Process $process_all_terms Plugin settings.
+	 * @param Cyr_To_Lat_Admin_Notices           $admin_notices     Plugin settings.
 	 */
-	public function __construct( Cyr_To_Lat_Main $main, Cyr_To_Lat_Settings $settings ) {
-		$this->main              = $main;
-		$this->settings          = $settings;
-		$this->process_all_posts = new Cyr_To_Lat_Post_Conversion_Process( $main );
-		$this->process_all_terms = new Cyr_To_Lat_Term_Conversion_Process( $main );
-		$this->admin_notices     = new Cyr_To_Lat_Admin_Notices();
+	public function __construct(
+		$main, $settings, $process_all_posts = null, $process_all_terms = null, $admin_notices = null
+	) {
+		$this->main         = $main;
+		$this->settings     = $settings;
+		$this->option_group = $this->settings::OPTION_GROUP;
+
+		$this->process_all_posts = $process_all_posts;
+		if ( ! $this->process_all_posts ) {
+			$this->process_all_posts = new Cyr_To_Lat_Post_Conversion_Process( $main );
+		}
+
+		$this->process_all_terms = $process_all_terms;
+		if ( ! $this->process_all_terms ) {
+			$this->process_all_terms = new Cyr_To_Lat_Term_Conversion_Process( $main );
+		}
+
+		$this->admin_notices = $admin_notices;
+		if ( ! $this->admin_notices ) {
+			$this->admin_notices = new Cyr_To_Lat_Admin_Notices();
+		}
+
 		$this->init_hooks();
 	}
 
@@ -146,10 +172,7 @@ class Cyr_To_Lat_Converter {
 		if ( ! isset( $_POST['cyr2lat-convert'] ) ) {
 			return;
 		}
-
-		$settings = $this->settings;
-		check_admin_referer( $settings::OPTION_GROUP . '-options' );
-
+		check_admin_referer( $this->option_group . '-options' );
 		$this->convert_existing_slugs();
 	}
 
@@ -190,8 +213,7 @@ class Cyr_To_Lat_Converter {
 		$posts = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT ID, post_name FROM $wpdb->posts WHERE post_name REGEXP(%s) AND post_status IN (" .
-				$this->main->ctl_prepare_in( $args['post_status'] ) .
-				') AND post_type IN (' .
+				$this->main->ctl_prepare_in( $args['post_status'] ) . ') AND post_type IN (' .
 				$this->main->ctl_prepare_in( $args['post_type'] ) . ')',
 				$regexp
 			)
@@ -246,90 +268,12 @@ class Cyr_To_Lat_Converter {
 	}
 
 	/**
-	 * Filter WP_Background_Process::memory_exceeded() result.
-	 * This function expects memory limit coded in php.ini only in megabytes ( as '128M', for instance).
-	 * Thus, it returns wrong result when memory limit is encoded in other way.
-	 *
-	 * Filter does this job again.
-	 *
-	 * @param bool $return If memory is exceeded.
-	 *
-	 * @return mixed
-	 */
-	public function memory_exceeded_filter( $return ) {
-		$memory_limit   = $this->get_memory_limit() * 0.9; // 90% of max memory
-		$current_memory = memory_get_usage( true );
-
-		return $current_memory >= $memory_limit;
-	}
-
-	/**
-	 * Get memory limit in bytes.
-	 *
-	 * @return int
-	 */
-	protected function get_memory_limit() {
-		if ( function_exists( 'ini_get' ) ) {
-			$memory_limit = ini_get( 'memory_limit' );
-		} else {
-			// Sensible default.
-			$memory_limit = '128M';
-		}
-
-		if ( ! $memory_limit || - 1 === intval( $memory_limit ) ) {
-			// Unlimited, set to 32GB.
-			$memory_limit = '32000M';
-		}
-
-		return $this->convert_shorthand_to_bytes( $memory_limit );
-	}
-
-	/**
-	 * Converts a shorthand byte value to an integer byte value.
-	 *
-	 * @param string $value A (PHP ini) byte value, either shorthand or ordinary.
-	 *
-	 * @return int An integer byte value.
-	 */
-	protected function convert_shorthand_to_bytes( $value ) {
-		$value = strtolower( trim( $value ) );
-		$bytes = (int) $value;
-
-		if ( false !== strpos( $value, 'g' ) ) {
-			$bytes *= 1024 * 1024 * 1024;
-		} elseif ( false !== strpos( $value, 'm' ) ) {
-			$bytes *= 1024 * 1024;
-		} elseif ( false !== strpos( $value, 'k' ) ) {
-			$bytes *= 1024;
-		}
-
-		// Deal with large (float) values which run into the maximum integer size.
-		return min( $bytes, PHP_INT_MAX );
-	}
-
-	/**
-	 * Filter WP_Background_Process::time_exceeded() result.
-	 * Return false with WP_CLI.
-	 *
-	 * @param bool $return If memory is exceeded.
-	 *
-	 * @return mixed
-	 */
-	public function time_exceeded_filter( $return ) {
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			return false;
-		}
-
-		return $return;
-	}
-
-	/**
 	 * Log
 	 *
 	 * @param string $message Message to log.
 	 */
 	protected function log( $message ) {
-		if ( WP_DEBUG_LOG ) {
+		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
 			// @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( 'Cyr-To-Lat: ' . $message );
 			// @phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
