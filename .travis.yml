@@ -50,9 +50,4 @@ before_script:
 script:
   - if [[ "$SNIFF" == "1" ]]; then vendor/bin/phpcs -p -s --colors --standard=phpcs.xml .; fi
   - if [[ "$TESTS" == "1" ]]; then vendor/phpunit/phpunit/phpunit --configuration tests/phpunit/phpunit.xml; fi
-  - if [[ "$COVERAGE" == "1" ]]; then vendor/phpunit/phpunit/phpunit --configuration tests/phpunit/phpunit.xml --coverage-clover coverage.xml; fi
-
-after_success:
-  # upload coverage.xml file to Coveralls to analyze it
-  # minimal required coverage is set to 80+ %
-  - if [[ "$COVERAGE" == "1" ]]; php vendor/php-coveralls/php-coveralls/bin/php-coveralls -v ;fi
+  - if [[ "$COVERAGE" == "1" ]]; then vendor/phpunit/phpunit/phpunit --configuration tests/phpunit/phpunit.xml --coverage-clover coverage.xml; php vendor/php-coveralls/php-coveralls/bin/php-coveralls -v; fi
