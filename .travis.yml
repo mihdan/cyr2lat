@@ -36,7 +36,7 @@ matrix:
         - DEV="--no-dev"
     - php: '7.3'
       env:
-        - SNIFF=1 TESTS=1 COVERAGE=1
+        - SNIFF=1 COVERAGE=1
 
 cache:
   directories:
@@ -55,4 +55,4 @@ script:
 after_success:
   # upload coverage.xml file to Coveralls to analyze it
   # minimal required coverage is set to 80+ %
-  - if [[ "$COVERAGE" === "1" ]]; travis_retry php vendor/bin/php-coveralls -v ;fi
+  - if [[ "$COVERAGE" === "1" ]]; php vendor/php-coveralls/php-coveralls/bin/php-coveralls -v ;fi
