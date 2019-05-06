@@ -55,4 +55,4 @@ script:
 after_success:
   # upload coverage.xml file to Coveralls to analyze it
   # minimal required coverage is set to 80+ %
-  - if [[ "$COVERAGE" === "1" ]]; travis_retry php vendor/bin/php-coveralls ;fi
+  - if [[ "$COVERAGE" === "1" ]]; travis_retry php vendor/bin/php-coveralls -v ;fi
