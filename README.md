@@ -56,6 +56,10 @@ Where
 
 [![composer.lock](https://poser.pugx.org/mihdan/cyr2lat/composerlock)](https://packagist.org/packages/mihdan/cyr2lat)
 
+## Code Coverage
+
+[![Coverage Status](https://coveralls.io/repos/github/mihdan/cyr2lat/badge.svg?branch=master)](https://coveralls.io/github/mihdan/cyr2lat?branch=master)
+
 ## License
 
 The WordPress Plugin Cyr-To-Lat is licensed under the GPL v2 or later.
