@@ -406,63 +406,82 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 
 	/**
 	 * Test setup_sections()
+	 *
+	 * @param boolean $is_ctl_options_screen Is plugin options screen.
+	 *
+	 * @dataProvider dp_test_setup_sections
 	 */
-	public function test_setup_sections() {
-		$subject = new Cyr_To_Lat_Settings();
+	public function test_setup_sections( $is_ctl_options_screen ) {
+		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'is_ctl_options_screen' )->andReturn( $is_ctl_options_screen );
 
-		\WP_Mock::userFunction(
-			'add_settings_section',
-			[
-				'args'  => [ 'iso9_section', 'ISO9 Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
-				'times' => 1,
-			]
-		);
-		\WP_Mock::userFunction(
-			'add_settings_section',
-			[
-				'args'  => [ 'bel_section', 'bel Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
-				'times' => 1,
-			]
-		);
-		\WP_Mock::userFunction(
-			'add_settings_section',
-			[
-				'args'  => [ 'uk_section', 'uk Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
-				'times' => 1,
-			]
-		);
-		\WP_Mock::userFunction(
-			'add_settings_section',
-			[
-				'args'  => [ 'bg_BG_section', 'bg_BG Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
-				'times' => 1,
-			]
-		);
-		\WP_Mock::userFunction(
-			'add_settings_section',
-			[
-				'args'  => [ 'mk_MK_section', 'mk_MK Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
-				'times' => 1,
-			]
-		);
-		\WP_Mock::userFunction(
-			'add_settings_section',
-			[
-				'args'  => [ 'ka_GE_section', 'ka_GE Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
-				'times' => 1,
-			]
-		);
-		\WP_Mock::userFunction(
-			'add_settings_section',
-			[
-				'args'  => [ 'kk_section', 'kk Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
-				'times' => 1,
-			]
-		);
+		if ( $is_ctl_options_screen ) {
+			\WP_Mock::userFunction(
+				'add_settings_section',
+				[
+					'args'  => [ 'iso9_section', 'ISO9 Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'times' => 1,
+				]
+			);
+			\WP_Mock::userFunction(
+				'add_settings_section',
+				[
+					'args'  => [ 'bel_section', 'bel Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'times' => 1,
+				]
+			);
+			\WP_Mock::userFunction(
+				'add_settings_section',
+				[
+					'args'  => [ 'uk_section', 'uk Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'times' => 1,
+				]
+			);
+			\WP_Mock::userFunction(
+				'add_settings_section',
+				[
+					'args'  => [ 'bg_BG_section', 'bg_BG Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'times' => 1,
+				]
+			);
+			\WP_Mock::userFunction(
+				'add_settings_section',
+				[
+					'args'  => [ 'mk_MK_section', 'mk_MK Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'times' => 1,
+				]
+			);
+			\WP_Mock::userFunction(
+				'add_settings_section',
+				[
+					'args'  => [ 'ka_GE_section', 'ka_GE Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'times' => 1,
+				]
+			);
+			\WP_Mock::userFunction(
+				'add_settings_section',
+				[
+					'args'  => [ 'kk_section', 'kk Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'times' => 1,
+				]
+			);
+		}
 
 		$subject->setup_sections();
 
 		$this->assertTrue( true );
+	}
+
+	/**
+	 * Data provider for test_setup_sections()
+	 *
+	 * @return array
+	 */
+	public function dp_test_setup_sections() {
+		return [
+			[ false ],
+			[ true ],
+		];
 	}
 
 	/**

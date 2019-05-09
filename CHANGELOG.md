@@ -1,3 +1,7 @@
+## 4.1
+* Added phpunit tests. All plugin classes are 100% covered.
+* Fix bug with Jetpack sync.
+
 ## 4.0 (24.04.2019)
 * Added button to convert existing slugs, instead of checkbox
 * Added admin notices during conversion of existing slugs
