@@ -324,6 +324,10 @@ class Cyr_To_Lat_Settings {
 	 * Setup settings sections.
 	 */
 	public function setup_sections() {
+		if ( ! $this->is_ctl_options_screen() ) {
+			return;
+		}
+
 		add_settings_section(
 			'iso9_section',
 			__( 'ISO9 Table', 'cyr2lat' ),
