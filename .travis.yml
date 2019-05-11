@@ -50,4 +50,5 @@ before_script:
 script:
   - if [[ "$SNIFF" == "1" ]]; then vendor/bin/phpcs -p -s --colors --standard=phpcs.xml .; fi
   - if [[ "$TESTS" == "1" ]]; then vendor/phpunit/phpunit/phpunit --configuration tests/phpunit/phpunit.xml; fi
-  - if [[ "$COVERAGE" == "1" ]]; then vendor/phpunit/phpunit/phpunit --configuration tests/phpunit/phpunit.xml --coverage-clover coverage.xml; php vendor/php-coveralls/php-coveralls/bin/php-coveralls -v; fi
+  - if [[ "$COVERAGE" == "1" ]]; then vendor/phpunit/phpunit/phpunit --configuration tests/phpunit/phpunit.xml --coverage-clover coverage.xml; fi
+  - if [[ "$COVERAGE" == "1" ]]; then php vendor/php-coveralls/php-coveralls/bin/php-coveralls -v; fi
