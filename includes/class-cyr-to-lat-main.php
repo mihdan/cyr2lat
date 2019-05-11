@@ -120,10 +120,10 @@ class Cyr_To_Lat_Main {
 			return $pre;
 		}
 
-		// Locales list - https://make.wordpress.org/polyglots/teams/.
-		$locale     = get_locale();
-		$iso9_table = $this->settings->get_option( $locale );
-		$iso9_table = ! empty( $iso9_table ) ? $iso9_table : $this->settings->get_option( 'iso9' );
+		// List of locales: https://make.wordpress.org/polyglots/teams/.
+		$locale = get_locale();
+		$table  = $this->settings->get_option( $locale );
+		$table  = ! empty( $table ) ? $table : $this->settings->get_option( 'iso9' );
 
 		$is_term = false;
 		// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
@@ -143,15 +143,11 @@ class Cyr_To_Lat_Main {
 		if ( ! empty( $term ) ) {
 			$title = $term;
 		} else {
-			$title = strtr( $title, apply_filters( 'ctl_table', $iso9_table ) );
+			$title = strtr( $title, apply_filters( 'ctl_table', $table ) );
 
 			if ( function_exists( 'iconv' ) ) {
 				$title = iconv( 'UTF-8', 'UTF-8//TRANSLIT//IGNORE', $title );
 			}
-
-			$title = preg_replace( '/' . self::PROHIBITED_CHARS_REGEX . '/', '-', $title );
-			$title = preg_replace( '/\-+/', '-', $title );
-			$title = trim( $title, '-' );
 		}
 
 		return $title;
