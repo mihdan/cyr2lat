@@ -18,7 +18,7 @@ class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
 	 * Test get()
 	 */
 	public function test_get() {
-		$iso9  = [
+		$iso9 = [
 			'А' => 'A',
 			'Б' => 'B',
 			'В' => 'V',
@@ -94,7 +94,8 @@ class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
 			'ѳ' => 'fh',
 			'ѵ' => 'yh',
 		];
-		$bel   = [
+
+		$bel = [
 			'А' => 'A',
 			'Б' => 'B',
 			'В' => 'V',
@@ -160,7 +161,8 @@ class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
 			'Ў' => 'U',
 			'ў' => 'u',
 		];
-		$uk    = [
+
+		$uk = [
 			'А' => 'A',
 			'Б' => 'B',
 			'В' => 'V',
@@ -228,6 +230,7 @@ class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
 			'Ї' => 'YI',
 			'ї' => 'yi',
 		];
+
 		$bg_BG = [
 			'А' => 'A',
 			'Б' => 'B',
@@ -300,6 +303,7 @@ class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
 			'Ѫ' => 'О',
 			'ѫ' => 'о',
 		];
+
 		$mk_MK = [
 			'А' => 'A',
 			'Б' => 'B',
@@ -366,6 +370,7 @@ class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
 			'Џ' => 'DH',
 			'џ' => 'dh',
 		];
+
 		$ka_GE = [
 			'А'   => 'A',
 			'Б'   => 'B',
@@ -475,7 +480,8 @@ class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
 			'áƒ¯' => 'j',
 			'áƒ°' => 'h',
 		];
-		$kk    = [
+
+		$kk = [
 			'А' => 'A',
 			'Б' => 'B',
 			'В' => 'V',
@@ -568,6 +574,31 @@ class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
 			'ý' => 'o',
 		];
 
+		$he_IL = [
+			'א'  => '',
+			'ב'  => 'b',
+			'ג'  => 'g',
+			'ד'  => 'd',
+			'ה'  => 'h',
+			'ו'  => 'w',
+			'ז'  => 'z',
+			'ח'  => 'x',
+			'ט'  => 't',
+			'י'  => 'y',
+			'‭כ' => 'kh',
+			'ל'  => 'l',
+			'‭מ' => 'm',
+			'נ'  => 'n',
+			'ס'  => 's',
+			'ע'  => '',
+			'פ'  => 'ph',
+			'צ'  => 's',
+			'ק'  => 'k',
+			'ר'  => 'r',
+			'ש'  => 'sh',
+			'ת'  => 'th',
+		];
+
 		$this->assertSame( $iso9, \Cyr_To_Lat_Conversion_Tables::get() );
 		$this->assertSame( $bel, \Cyr_To_Lat_Conversion_Tables::get( 'bel' ) );
 		$this->assertSame( $uk, \Cyr_To_Lat_Conversion_Tables::get( 'uk' ) );
@@ -575,5 +606,6 @@ class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
 		$this->assertSame( $mk_MK, \Cyr_To_Lat_Conversion_Tables::get( 'mk_MK' ) );
 		$this->assertSame( $ka_GE, \Cyr_To_Lat_Conversion_Tables::get( 'ka_GE' ) );
 		$this->assertSame( $kk, \Cyr_To_Lat_Conversion_Tables::get( 'kk' ) );
+		$this->assertSame( $he_IL, \Cyr_To_Lat_Conversion_Tables::get( 'he_IL' ) );
 	}
 }

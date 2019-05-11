@@ -145,6 +145,7 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 		$tables->shouldReceive( 'get' )->with( 'mk_MK' )->andReturn( [ 'mk_MK' ] );
 		$tables->shouldReceive( 'get' )->with( 'ka_GE' )->andReturn( [ 'ka_GE' ] );
 		$tables->shouldReceive( 'get' )->with( 'kk' )->andReturn( [ 'kk' ] );
+		$tables->shouldReceive( 'get' )->with( 'he_IL' )->andReturn( [ 'he_IL' ] );
 
 		$expected = $this->get_test_form_fields();
 
@@ -462,6 +463,13 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 				'add_settings_section',
 				[
 					'args'  => [ 'kk_section', 'kk Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'times' => 1,
+				]
+			);
+			\WP_Mock::userFunction(
+				'add_settings_section',
+				[
+					'args'  => [ 'he_IL_section', 'he_IL Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -1340,6 +1348,15 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => [ 'kk' ],
+			],
+			'he_IL' => [
+				'label'        => 'he_IL Table',
+				'section'      => 'he_IL_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'he_IL' ],
 			],
 		];
 	}
