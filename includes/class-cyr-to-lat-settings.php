@@ -193,7 +193,7 @@ class Cyr_To_Lat_Settings {
 				'supplemental' => '',
 				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'kk' ),
 			),
-			'he_IL'    => array(
+			'he_IL' => array(
 				'label'        => __( 'he_IL Table', 'cyr2lat' ),
 				'section'      => 'he_IL_section',
 				'type'         => 'table',
