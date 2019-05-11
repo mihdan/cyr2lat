@@ -16,6 +16,7 @@ class Cyr_To_Lat_Conversion_Tables {
 	 * Get conversion table by locale.
 	 *
 	 * @link https://ru.wikipedia.org/wiki/ISO_9
+	 *
 	 * @param string $locale WordPress locale.
 	 *
 	 * @return array
@@ -286,6 +287,32 @@ class Cyr_To_Lat_Conversion_Tables {
 				$table['ú'] = 'o';
 				$table['Ý'] = 'O';
 				$table['ý'] = 'o';
+				break;
+			case 'he_IL':
+				$table = array(
+					'א'  => '',
+					'ב'  => 'b',
+					'ג'  => 'g',
+					'ד'  => 'd',
+					'ה'  => 'h',
+					'ו'  => 'w',
+					'ז'  => 'z',
+					'ח'  => 'x',
+					'ט'  => 't',
+					'י'  => 'y',
+					'‭כ' => 'kh',
+					'ל'  => 'l',
+					'‭מ' => 'm',
+					'נ'  => 'n',
+					'ס'  => 's',
+					'ע'  => '',
+					'פ'  => 'ph',
+					'צ'  => 's',
+					'ק'  => 'k',
+					'ר'  => 'r',
+					'ש'  => 'sh',
+					'ת'  => 'th',
+				);
 				break;
 			default:
 		}
