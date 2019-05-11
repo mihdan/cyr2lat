@@ -214,11 +214,11 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 			],
 			'iconv'                      => [
 				'Символ евро - €.',
-				'Simvol-evro-.',
+				'Simvol evro - €.',
 			],
 			'most used prohibited chars' => [
 				'z!"#$%&()*+,/:;<=>?@[\]^`{|}`Åz',
-				'z-z',
+				'z!"#$%&()* ,/:;<=>?@[\]^`{|}`Åz',
 			],
 			'allowed chars'              => [
 				"ABC-XYZ-abc-xyz-0123456789'_.",
@@ -226,11 +226,11 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 			],
 			'plus minus'                 => [
 				'ABC-XYZ-+abc-xyz',
-				'ABC-XYZ-abc-xyz',
+				'ABC-XYZ- abc-xyz',
 			],
 			'series of minus signs'      => [
 				'-ABC---XYZ-',
-				'ABC-XYZ',
+				'-ABC---XYZ-',
 			],
 		];
 	}
