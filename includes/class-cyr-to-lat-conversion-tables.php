@@ -290,33 +290,71 @@ class Cyr_To_Lat_Conversion_Tables {
 				break;
 			case 'he_IL':
 				$table = array(
-					'א'  => '',
-					'ב'  => 'b',
-					'ג'  => 'g',
-					'ד'  => 'd',
-					'ה'  => 'h',
-					'ו'  => 'w',
-					'ז'  => 'z',
-					'ח'  => 'x',
-					'ט'  => 't',
-					'י'  => 'y',
-					'‭כ' => 'kh',
-					'ל'  => 'l',
-					'‭מ' => 'm',
-					'נ'  => 'n',
-					'ס'  => 's',
-					'ע'  => '',
-					'פ'  => 'ph',
-					'צ'  => 's',
-					'ק'  => 'k',
-					'ר'  => 'r',
-					'ש'  => 'sh',
-					'ת'  => 'th',
+					'א' => '',
+					'ב' => 'b',
+					'ג' => 'g',
+					'ד' => 'd',
+					'ה' => 'h',
+					'ו' => 'w',
+					'ז' => 'z',
+					'ח' => 'x',
+					'ט' => 't',
+					'י' => 'y',
+					'ך' => '',
+					'כ' => 'kh',
+					'ל' => 'l',
+					'ם' => '',
+					'מ' => 'm',
+					'ן' => '',
+					'נ' => 'n',
+					'ס' => 's',
+					'ע' => '',
+					'ף' => '',
+					'פ' => 'ph',
+					'ץ' => '',
+					'צ' => 's',
+					'ק' => 'k',
+					'ר' => 'r',
+					'ש' => 'sh',
+					'ת' => 'th',
 				);
+				for ( $code = 0x0590; $code <= 0x05CF; $code ++ ) {
+					$table[ self::mb_chr( $code ) ] = '';
+				}
+				for ( $code = 0x05F0; $code <= 0x05F5; $code ++ ) {
+					$table[ self::mb_chr( $code ) ] = '';
+				}
+				for ( $code = 0xFB1D; $code <= 0xFB4F; $code ++ ) {
+					$table[ self::mb_chr( $code ) ] = '';
+				}
 				break;
 			default:
 		}
 
 		return $table;
+	}
+
+	/**
+	 * Simplified polyfill of mb_chr() function, to be used without mbstring extension.
+	 *
+	 * @link https://github.com/symfony/polyfill-mbstring/blob/master/Mbstring.php
+	 *
+	 * @param int $code Character code.
+	 *
+	 * @return string
+	 */
+	private static function mb_chr( $code ) {
+		$code = $code % 0x200000;
+		if ( 0x80 > $code ) {
+			$s = \chr( $code );
+		} elseif ( 0x800 > $code ) {
+			$s = \chr( 0xC0 | $code >> 6 ) . \chr( 0x80 | $code & 0x3F );
+		} elseif ( 0x10000 > $code ) {
+			$s = \chr( 0xE0 | $code >> 12 ) . \chr( 0x80 | $code >> 6 & 0x3F ) . \chr( 0x80 | $code & 0x3F );
+		} else {
+			$s = \chr( 0xF0 | $code >> 18 ) . \chr( 0x80 | $code >> 12 & 0x3F ) . \chr( 0x80 | $code >> 6 & 0x3F ) . \chr( 0x80 | $code & 0x3F );
+		}
+
+		return $s;
 	}
 }
