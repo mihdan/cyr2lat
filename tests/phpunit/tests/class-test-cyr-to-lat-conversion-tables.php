@@ -734,4 +734,14 @@ class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
 		$this->assertSame( $kk, \Cyr_To_Lat_Conversion_Tables::get( 'kk' ) );
 		$this->assertSame( $he_IL, \Cyr_To_Lat_Conversion_Tables::get( 'he_IL' ) );
 	}
+
+	/**
+	 * Test mb_chr()
+	 */
+	public function test_mb_chr() {
+		$this->assertSame( ' ', Cyr_To_Lat_Conversion_Tables::mb_chr( 0x0020 ) );
+		$this->assertSame( 'א', Cyr_To_Lat_Conversion_Tables::mb_chr( 0x05D0 ) );
+		$this->assertSame( 'ࠀ', Cyr_To_Lat_Conversion_Tables::mb_chr( 0x0800 ) );
+		$this->assertSame( '𐂃', Cyr_To_Lat_Conversion_Tables::mb_chr( 0x10083 ) );
+	}
 }

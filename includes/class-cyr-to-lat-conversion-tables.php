@@ -343,7 +343,7 @@ class Cyr_To_Lat_Conversion_Tables {
 	 *
 	 * @return string
 	 */
-	private static function mb_chr( $code ) {
+	public static function mb_chr( $code ) {
 		$code = $code % 0x200000;
 		if ( 0x80 > $code ) {
 			$s = \chr( $code );
