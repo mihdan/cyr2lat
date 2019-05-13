@@ -58,15 +58,14 @@ class Settings {
 							header.classList.remove( 'nav-tab-active' );
 						}
 					);
-					event.target.classList.add( 'nav-tab-active' );
+					headers[index].classList.add( 'nav-tab-active' );
 
 					const tables = [...document.querySelectorAll( '.ctl-table' )];
 					tables.map(
-						( header ) => {
-							header.classList.remove( 'active' );
+						( table ) => {
+							table.classList.remove( 'active' );
 						}
 					);
-
 					tables[index].classList.add( 'active' );
 
 					return false;
