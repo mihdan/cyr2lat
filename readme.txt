@@ -64,8 +64,10 @@ Yes you can!
 == Changelog ==
 
 = 4.1 =
-* Added phpunit tests. All plugin classes are 100% covered.
-* Fix bug with Jetpack sync.
+* Added phpunit tests. All plugin classes are 100% covered
+* Added js tests. All plugin js code is 100% covered
+* Fixed bug with Jetpack sync
+* Fixed empty slug bug while using characters outside of locale
 
 = 4.0 (24.04.2019) =
 * Added button to convert existing slugs, instead of checkbox
