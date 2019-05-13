@@ -47,7 +47,7 @@ cache:
 before_script:
   - phpenv rehash
   - composer install $DEV
-  - if [[ "$COVERAGE" == "1" ]]; then cd src; yarn install; fi
+  - if [[ "$COVERAGE" == "1" ]]; then cd src; yarn install --ignore-engines; fi
 
 script:
   - if [[ "$SNIFF" == "1" ]]; then vendor/bin/phpcs -p -s --colors --standard=phpcs.xml .; fi
