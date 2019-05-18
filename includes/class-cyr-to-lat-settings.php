@@ -193,6 +193,15 @@ class Cyr_To_Lat_Settings {
 				'supplemental' => '',
 				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'kk' ),
 			),
+			'he_IL' => array(
+				'label'        => __( 'he_IL Table', 'cyr2lat' ),
+				'section'      => 'he_IL_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'he_IL' ),
+			),
 		);
 	}
 
@@ -367,6 +376,12 @@ class Cyr_To_Lat_Settings {
 		add_settings_section(
 			'kk_section',
 			__( 'kk Table', 'cyr2lat' ),
+			array( $this, 'cyr_to_lat_section' ),
+			self::PAGE
+		);
+		add_settings_section(
+			'he_IL_section',
+			__( 'he_IL Table', 'cyr2lat' ),
 			array( $this, 'cyr_to_lat_section' ),
 			self::PAGE
 		);
