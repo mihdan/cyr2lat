@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Cyr To Lat\n"
-"POT-Creation-Date: 2019-01-26 17:55+0200\n"
+"POT-Creation-Date: 2019-05-18 11:23+0300\n"
 "PO-Revision-Date: 2019-01-25 19:18+0200\n"
 "Last-Translator: KAGG Design <info@kagg.eu>\n"
 "Language-Team: KAGG Design\n"
@@ -10,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.2.2\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
@@ -22,60 +22,136 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-1: dist\n"
 "X-Poedit-SearchPathExcluded-2: src\n"
 
-#: includes/class-ctl-settings.php:77
+#: includes/background-processes/class-cyr-to-lat-post-conversion-process.php:39
+msgid "Post slug converted:"
+msgstr ""
+
+#: includes/background-processes/class-cyr-to-lat-post-conversion-process.php:50
+msgid "Post slugs conversion completed."
+msgstr ""
+
+#: includes/background-processes/class-cyr-to-lat-term-conversion-process.php:38
+msgid "Term slug converted:"
+msgstr ""
+
+#: includes/background-processes/class-cyr-to-lat-term-conversion-process.php:49
+msgid "Term slugs conversion completed."
+msgstr ""
+
+#: includes/class-cyr-to-lat-converter.php:141
+msgid "Cyr To Lat converts existing post slugs in the background process."
+msgstr ""
+
+#: includes/class-cyr-to-lat-converter.php:148
+msgid "Cyr To Lat converts existing term slugs in the background process."
+msgstr ""
+
+#: includes/class-cyr-to-lat-converter.php:155
+msgid "Cyr To Lat completed conversion of existing post slugs."
+msgstr ""
+
+#: includes/class-cyr-to-lat-converter.php:162
+msgid "Cyr To Lat completed conversion of existing term slugs."
+msgstr ""
+
+#: includes/class-cyr-to-lat-converter.php:230
+msgid "Post slugs conversion started."
+msgstr ""
+
+#: includes/class-cyr-to-lat-converter.php:232
+msgid "Cyr To Lat started conversion of existing post slugs."
+msgstr ""
+
+#: includes/class-cyr-to-lat-converter.php:237
+msgid "Cyr To Lat has not found existing post slugs for conversion."
+msgstr ""
+
+#: includes/class-cyr-to-lat-converter.php:257
+msgid "Term slugs conversion started."
+msgstr ""
+
+#: includes/class-cyr-to-lat-converter.php:259
+msgid "Cyr To Lat started conversion of existing term slugs."
+msgstr ""
+
+#: includes/class-cyr-to-lat-converter.php:264
+msgid "Cyr To Lat has not found existing term slugs for conversion."
+msgstr ""
+
+#: includes/class-cyr-to-lat-settings.php:121
 msgid "View Cyr To Lat settings"
 msgstr ""
 
-#: includes/class-ctl-settings.php:78
+#: includes/class-cyr-to-lat-settings.php:122
 msgid "Settings"
 msgstr ""
 
-#: includes/class-ctl-settings.php:90
-msgid "Convert Existing Slugs"
-msgstr ""
-
-#: includes/class-ctl-settings.php:98 includes/class-ctl-settings.php:264
+#: includes/class-cyr-to-lat-settings.php:134
+#: includes/class-cyr-to-lat-settings.php:342
 msgid "ISO9 Table"
 msgstr ""
 
-#: includes/class-ctl-settings.php:107 includes/class-ctl-settings.php:270
-msgid "bg_BG Table"
+#: includes/class-cyr-to-lat-settings.php:143
+#: includes/class-cyr-to-lat-settings.php:348
+msgid "bel Table"
 msgstr ""
 
-#: includes/class-ctl-settings.php:116 includes/class-ctl-settings.php:276
+#: includes/class-cyr-to-lat-settings.php:152
+#: includes/class-cyr-to-lat-settings.php:354
 msgid "uk Table"
 msgstr ""
 
-#: includes/class-ctl-settings.php:125 includes/class-ctl-settings.php:282
+#: includes/class-cyr-to-lat-settings.php:161
+#: includes/class-cyr-to-lat-settings.php:360
+msgid "bg_BG Table"
+msgstr ""
+
+#: includes/class-cyr-to-lat-settings.php:170
+#: includes/class-cyr-to-lat-settings.php:366
+msgid "mk_MK Table"
+msgstr ""
+
+#: includes/class-cyr-to-lat-settings.php:179
+#: includes/class-cyr-to-lat-settings.php:372
 msgid "ka_GE Table"
 msgstr ""
 
-#: includes/class-ctl-settings.php:185 includes/class-ctl-settings.php:186
+#: includes/class-cyr-to-lat-settings.php:188
+#: includes/class-cyr-to-lat-settings.php:378
+msgid "kk Table"
+msgstr ""
+
+#: includes/class-cyr-to-lat-settings.php:197
+#: includes/class-cyr-to-lat-settings.php:384
+msgid "he_IL Table"
+msgstr ""
+
+#: includes/class-cyr-to-lat-settings.php:261
+#: includes/class-cyr-to-lat-settings.php:262
 msgid "Cyr To Lat"
 msgstr ""
 
 #. Admin panel title.
-#: includes/class-ctl-settings.php:208
+#: includes/class-cyr-to-lat-settings.php:282
 msgid "Cyr To Lat Plugin Options"
 msgstr ""
 
-#: includes/class-ctl-settings.php:222
+#: includes/class-cyr-to-lat-settings.php:297
+msgid "Convert Existing Slugs"
+msgstr ""
+
+#: includes/class-cyr-to-lat-settings.php:303
 msgid "Donate"
 msgstr ""
 
-#: includes/class-ctl-settings.php:225
+#: includes/class-cyr-to-lat-settings.php:306
 msgid "Would you like to support the advancement of this plugin?"
 msgstr ""
 
-#. @todo Change to Sergey's account
-#: includes/class-ctl-settings.php:240
+#: includes/class-cyr-to-lat-settings.php:320
 msgid "Your appreciation"
 msgstr ""
 
-#: includes/class-ctl-settings.php:245
+#: includes/class-cyr-to-lat-settings.php:325
 msgid "Leave a ★★★★★ plugin review on WordPress.org"
-msgstr ""
-
-#: includes/class-ctl-settings.php:258
-msgid "General Options"
 msgstr ""

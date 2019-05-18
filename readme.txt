@@ -63,7 +63,10 @@ Yes you can!
 
 == Changelog ==
 
-= 4.1 =
+= 4.1 (18.05.2019) =
+* Added he_IL Table
+* Added plugin translation to Ukrainian
+* Added plugin translation to Swedish
 * Added phpunit tests. All plugin classes are 100% covered
 * Added js tests. All plugin js code is 100% covered
 * Fixed bug with Jetpack sync

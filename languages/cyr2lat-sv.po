@@ -1,18 +1,17 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Cyr To Lat\n"
-"POT-Creation-Date: 2019-05-18 11:23+0300\n"
-"PO-Revision-Date: 2019-05-18 11:31+0300\n"
+"Project-Id-Version: Plugins - Cyr-To-Lat - Development (trunk)\n"
+"POT-Creation-Date: 2019-05-18 11:37+0300\n"
+"PO-Revision-Date: 2019-05-18 11:37+0300\n"
 "Last-Translator: KAGG Design <info@kagg.eu>\n"
-"Language-Team: KAGG Design\n"
-"Language: ru_RU\n"
+"Language-Team: \n"
+"Language: sv_SE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Poedit 2.2.2\n"
 "X-Poedit-Basepath: ..\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 "X-Poedit-KeywordsList: __;esc_html__;esc_attr__\n"
 "X-Poedit-Flags-xgettext: --add-comments\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -22,108 +21,113 @@ msgstr ""
 
 #: includes/background-processes/class-cyr-to-lat-post-conversion-process.php:39
 msgid "Post slug converted:"
-msgstr "Ярлык поста сконвертирован:"
+msgstr "Konverterad inläggs-slug:"
 
 #: includes/background-processes/class-cyr-to-lat-post-conversion-process.php:50
 msgid "Post slugs conversion completed."
-msgstr "Конвертация ярлыков постов завершена."
+msgstr "Konvertering av inläggs-sluggar är klar."
 
 #: includes/background-processes/class-cyr-to-lat-term-conversion-process.php:38
 msgid "Term slug converted:"
-msgstr "Ярлык термина сконвертирован:"
+msgstr "Konverterad term-slug:"
 
 #: includes/background-processes/class-cyr-to-lat-term-conversion-process.php:49
 msgid "Term slugs conversion completed."
-msgstr "Конвертация ярлыков терминов завершена."
+msgstr "Konvertering av term-sluggar är klar."
 
 #: includes/class-cyr-to-lat-converter.php:141
 msgid "Cyr To Lat converts existing post slugs in the background process."
-msgstr "Cyr To Lat конвертирует существующие ярлыки постов в фоновом процессе."
+msgstr ""
+"Cyr To Lat konverterar befintliga inläggssluggar i en process som körs i "
+"bakgrunden."
 
 #: includes/class-cyr-to-lat-converter.php:148
 msgid "Cyr To Lat converts existing term slugs in the background process."
 msgstr ""
-"Cyr To Lat конвертирует существующие ярлыки терминов в фоновом процессе."
+"Cyr To Lat konverterar befintliga term-sluggar i en process som körs i "
+"bakgrunden."
 
 #: includes/class-cyr-to-lat-converter.php:155
 msgid "Cyr To Lat completed conversion of existing post slugs."
-msgstr "Cyr To Lat завершил конвертацию существующих ярлыков постов."
+msgstr "Cyr To Lat har genomfört konverteringen av befintliga inläggs-sluggar."
 
 #: includes/class-cyr-to-lat-converter.php:162
 msgid "Cyr To Lat completed conversion of existing term slugs."
-msgstr "Cyr To Lat завершил конвертацию существующих ярлыков терминов."
+msgstr "Cyr To Lat har genomfört konverteringen av befintliga term-sluggar."
 
 #: includes/class-cyr-to-lat-converter.php:230
 msgid "Post slugs conversion started."
-msgstr "Начата конвертация ярлыков постов."
+msgstr "Konverteringen av inläggs-sluggar har inletts."
 
 #: includes/class-cyr-to-lat-converter.php:232
 msgid "Cyr To Lat started conversion of existing post slugs."
-msgstr "Cyr To Lat начал конвертацию существующих ярлыков постов."
+msgstr "Cyr To Lat har inlett konverteringen av befintliga inläggs-sluggar."
 
 #: includes/class-cyr-to-lat-converter.php:237
 msgid "Cyr To Lat has not found existing post slugs for conversion."
-msgstr "Cyr To Lat не нашёл существующих ярлыков постов для конвертации."
+msgstr ""
+"Cyr To Lat hittade inga befintliga inläggs-sluggar som behöver konverteras."
 
 #: includes/class-cyr-to-lat-converter.php:257
 msgid "Term slugs conversion started."
-msgstr "Начата конвертация ярлыков терминов."
+msgstr "Konverteringen av term-sluggar har inletts."
 
 #: includes/class-cyr-to-lat-converter.php:259
 msgid "Cyr To Lat started conversion of existing term slugs."
-msgstr "Cyr To Lat начал конвертацию существующих ярлыков терминов."
+msgstr "Cyr To Lat har inlett konverteringen av befintliga term-sluggar."
 
 #: includes/class-cyr-to-lat-converter.php:264
 msgid "Cyr To Lat has not found existing term slugs for conversion."
-msgstr "Cyr To Lat не нашёл существующих ярлыков терминов для конвертации."
+msgstr ""
+"Cyr To Lat hittade inga befintliga term-sluggar som behöver konverteras."
 
 #: includes/class-cyr-to-lat-settings.php:121
 msgid "View Cyr To Lat settings"
-msgstr "Посмотреть настройки Cyr To Lat"
+msgstr "Visa inställningar för Cyr To Lat"
 
 #: includes/class-cyr-to-lat-settings.php:122
 msgid "Settings"
-msgstr "Настройки"
+msgstr "Inställningar"
 
 #: includes/class-cyr-to-lat-settings.php:134
 #: includes/class-cyr-to-lat-settings.php:342
 msgid "ISO9 Table"
-msgstr "Таблица ISO9"
+msgstr "ISO9-tabell"
 
 #: includes/class-cyr-to-lat-settings.php:143
 #: includes/class-cyr-to-lat-settings.php:348
 msgid "bel Table"
-msgstr "Таблица bel"
+msgstr "Tabell för bel"
 
 #: includes/class-cyr-to-lat-settings.php:152
 #: includes/class-cyr-to-lat-settings.php:354
 msgid "uk Table"
-msgstr "Таблица uk"
+msgstr "Tabell för uk"
 
 #: includes/class-cyr-to-lat-settings.php:161
 #: includes/class-cyr-to-lat-settings.php:360
 msgid "bg_BG Table"
-msgstr "Таблица bg_BG"
+msgstr "Tabell för bg_BG"
 
 #: includes/class-cyr-to-lat-settings.php:170
 #: includes/class-cyr-to-lat-settings.php:366
 msgid "mk_MK Table"
-msgstr "Таблица mk_MK"
+msgstr "Tabell för mk_MK"
 
 #: includes/class-cyr-to-lat-settings.php:179
 #: includes/class-cyr-to-lat-settings.php:372
 msgid "ka_GE Table"
-msgstr "Таблица ka_GE"
+msgstr "Tabell för ka_GE"
 
 #: includes/class-cyr-to-lat-settings.php:188
 #: includes/class-cyr-to-lat-settings.php:378
 msgid "kk Table"
-msgstr "Таблица kk"
+msgstr "Tabell för kk"
 
 #: includes/class-cyr-to-lat-settings.php:197
 #: includes/class-cyr-to-lat-settings.php:384
 msgid "he_IL Table"
-msgstr "Таблица he_IL"
+msgstr "Tabell för he_IL"
 
 #: includes/class-cyr-to-lat-settings.php:261
 #: includes/class-cyr-to-lat-settings.php:262
@@ -133,27 +137,45 @@ msgstr "Cyr To Lat"
 #. Admin panel title.
 #: includes/class-cyr-to-lat-settings.php:282
 msgid "Cyr To Lat Plugin Options"
-msgstr "Опции плагина Cyr To Lat"
+msgstr "Alternativ för tillägget Cyr To Lat"
 
 #: includes/class-cyr-to-lat-settings.php:297
 msgid "Convert Existing Slugs"
-msgstr "Конвертировать существующие ярлыки"
+msgstr "Konvertera befintliga sluggar"
 
 #: includes/class-cyr-to-lat-settings.php:303
 msgid "Donate"
-msgstr "Пожертвовать"
+msgstr "Donera"
 
 #: includes/class-cyr-to-lat-settings.php:306
 msgid "Would you like to support the advancement of this plugin?"
-msgstr "Хотите поддержать развитие этого плагина?"
+msgstr "Vill du stödja den vidare utvecklingen av detta tillägg?"
 
 #: includes/class-cyr-to-lat-settings.php:320
 msgid "Your appreciation"
-msgstr "Ваша оценка"
+msgstr "Din uppskattning"
 
 #: includes/class-cyr-to-lat-settings.php:325
 msgid "Leave a ★★★★★ plugin review on WordPress.org"
-msgstr "Оставьте ★★★★★ обзор плагина на WordPress.org"
+msgstr "Ge tillägget betyget ★★★★★ på WordPress.org"
 
-#~ msgid "General Options"
-#~ msgstr "Общие настройки"
+#~ msgid "https://profiles.wordpress.org/sergeybiryukov/"
+#~ msgstr "https://profiles.wordpress.org/sergeybiryukov/"
+
+#~ msgid "Sergey Biryukov, Mikhail Kobzarev, Igor Gergel"
+#~ msgstr "Sergey Biryukov, Mikhail Kobzarev, Igor Gergel"
+
+#~ msgid ""
+#~ "Converts Cyrillic characters in post and term slugs to Latin characters. "
+#~ "Useful for creating human-readable URLs. Based on the original plugin by "
+#~ "Anton Skorobogatov."
+#~ msgstr ""
+#~ "Konverterar kyrilliska bokstäver i sluggen för inlägg och termer till "
+#~ "latinska tecken. Användbart för att skapa URL:er som går att läsa. "
+#~ "Baserat på ett ursprungligt tillägg av Anton Skorobogatov."
+
+#~ msgid "https://wordpress.org/plugins/cyr2lat/"
+#~ msgstr "https://sv.wordpress.org/plugins/cyr2lat/"
+
+#~ msgid "Cyr-To-Lat"
+#~ msgstr "Cyr-To-Lat"
