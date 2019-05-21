@@ -1,3 +1,6 @@
+## 4.1.1 (22.05.2019)
+* Fixed bug with fatal error in Cyr_To_Lat_Converter with php 5.6
+
 ## 4.1 (21.05.2019)
 * Added he_IL Table
 * Added plugin translation to Ukrainian
