@@ -1,3 +1,6 @@
+## 4.1.2 (22.05.2019)
+* Fixed bug with fatal error in Cyr_To_Lat_Converter with php 5.2
+
 ## 4.1.1 (22.05.2019)
 * Fixed bug with fatal error in Cyr_To_Lat_Converter with php 5.6
 

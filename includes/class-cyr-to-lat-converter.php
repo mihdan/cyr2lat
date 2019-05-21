@@ -73,7 +73,7 @@ class Cyr_To_Lat_Converter {
 	) {
 		$this->main         = $main;
 		$this->settings     = $settings;
-		$this->option_group = $settings::OPTION_GROUP;
+		$this->option_group = Cyr_To_Lat_Settings::OPTION_GROUP;
 
 		$this->process_all_posts = $process_all_posts;
 		if ( ! $this->process_all_posts ) {
