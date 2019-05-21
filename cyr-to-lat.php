@@ -9,8 +9,8 @@
  * Author URI: https://profiles.wordpress.org/sergeybiryukov/
  * Requires at least: 2.3
  * Tested up to: 5.2
- * Version: 4.0
- * Stable tag: 4.0
+ * Version: 4.1
+ * Stable tag: 4.1
  *
  * Text Domain: cyr2lat
  * Domain Path: /languages/
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin version.
  */
-define( 'CYR_TO_LAT_VERSION', '4.0' );
+define( 'CYR_TO_LAT_VERSION', '4.1' );
 
 /**
  * Path to the plugin dir.
