@@ -1,4 +1,4 @@
-## 4.1 (18.05.2019)
+## 4.1 (21.05.2019)
 * Added he_IL Table
 * Added plugin translation to Ukrainian
 * Added plugin translation to Swedish
