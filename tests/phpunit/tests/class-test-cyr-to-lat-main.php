@@ -17,7 +17,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	/**
 	 * Setup test
 	 */
-	public function setUp(): void {
+	public function setUp() {
 		parent::setUp();
 		\WP_Mock::setUp();
 	}
@@ -25,7 +25,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	/**
 	 * End test
 	 */
-	public function tearDown(): void {
+	public function tearDown() {
 		unset( $GLOBALS['wp_version'] );
 		unset( $GLOBALS['wpdb'] );
 		unset( $GLOBALS['current_screen'] );
@@ -259,7 +259,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		} catch ( Exception $e ) {
 		}
 
-		$subject->shouldReceive( 'ctl_function_exists' )->andReturnTrue();
+		$subject->shouldReceive( 'ctl_function_exists' )->andReturn( true );
 		\WP_Mock::userFunction(
 			'is_plugin_active',
 			[
@@ -288,7 +288,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$GLOBALS['wp_version'] = '5.0';
 
 		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'ctl_function_exists' )->andReturnTrue();
+		$subject->shouldReceive( 'ctl_function_exists' )->andReturn( true );
 
 		\WP_Mock::userFunction(
 			'is_plugin_active',
@@ -320,7 +320,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$GLOBALS['wp_version'] = '5.0';
 
 		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'ctl_function_exists' )->andReturnTrue();
+		$subject->shouldReceive( 'ctl_function_exists' )->andReturn( true );
 
 		\WP_Mock::userFunction(
 			'is_plugin_active',

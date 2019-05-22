@@ -3,8 +3,8 @@ Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 2.3
 Tested up to: 5.2
-Stable tag: 4.1.2
-Requires PHP: 5.2
+Stable tag: 4.2
+Requires PHP: 5.6
 
 Converts Cyrillic characters in post, page and term slugs to Latin characters.
 
@@ -62,6 +62,10 @@ Yes you can!
 * Join in on our [Telegram Channel](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 4.2 (22.05.2019) =
+* Bumped up required php version - to 5.6
+* Added phpunit tests for all php versions from 5.6 to 7.3
 
 = 4.1.2 (22.05.2019) =
 * Fixed bug with fatal error in Cyr_To_Lat_Converter with php 5.2

@@ -42,16 +42,20 @@
   ],
   "minimum-stability": "dev",
   "prefer-stable": true,
+  "config": {
+    "platform": {
+      "php": "5.6"
+    }
+  },
   "require": {
-    "xrstf/composer-php52": "1.*",
     "composer/installers": "*",
     "a5hleyrich/wp-background-processing": "dev-master"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "sebastian/phpcpd": "^4.0",
-    "10up/wp_mock": "^0.4",
-    "phpunit/phpunit": "^8.0",
+    "sebastian/phpcpd": "^3.0",
+    "10up/wp_mock": "~0.2",
+    "phpunit/phpunit": "^5.7",
     "squizlabs/php_codesniffer": "^3.0",
     "phpcompatibility/php-compatibility": "^9.0",
     "wp-coding-standards/wpcs": "^2.0",

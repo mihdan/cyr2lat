@@ -17,7 +17,7 @@ class Test_Cyr_To_Lat_Term_Conversion_Process extends TestCase {
 	/**
 	 * Setup test
 	 */
-	public function setUp(): void {
+	public function setUp() {
 		parent::setUp();
 		\WP_Mock::setUp();
 	}
@@ -25,7 +25,7 @@ class Test_Cyr_To_Lat_Term_Conversion_Process extends TestCase {
 	/**
 	 * End test
 	 */
-	public function tearDown(): void {
+	public function tearDown() {
 		unset( $GLOBALS['wpdb'] );
 		\WP_Mock::tearDown();
 		parent::tearDown();

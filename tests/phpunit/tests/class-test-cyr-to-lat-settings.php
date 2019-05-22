@@ -24,7 +24,7 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 	/**
 	 * Setup test
 	 */
-	public function setUp(): void {
+	public function setUp() {
 		parent::setUp();
 		\WP_Mock::setUp();
 	}
@@ -32,7 +32,7 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 	/**
 	 * End test
 	 */
-	public function tearDown(): void {
+	public function tearDown() {
 		\WP_Mock::tearDown();
 		parent::tearDown();
 	}
@@ -1054,7 +1054,7 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 		\WP_Mock::userFunction(
 			'update_option',
 			[
-				'args'  => [ $this->subject::OPTION_NAME, $expected ],
+				'args'  => [ Cyr_To_Lat_Settings::OPTION_NAME, $expected ],
 				'times' => 1,
 			]
 		);

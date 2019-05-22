@@ -17,7 +17,7 @@ class Test_Cyr_To_Lat_Admin_Notices extends TestCase {
 	/**
 	 * Setup test
 	 */
-	public function setUp(): void {
+	public function setUp() {
 		parent::setUp();
 		\WP_Mock::setUp();
 	}
@@ -25,7 +25,7 @@ class Test_Cyr_To_Lat_Admin_Notices extends TestCase {
 	/**
 	 * End test
 	 */
-	public function tearDown(): void {
+	public function tearDown() {
 		\WP_Mock::tearDown();
 		parent::tearDown();
 	}
@@ -49,7 +49,7 @@ class Test_Cyr_To_Lat_Admin_Notices extends TestCase {
 		$constructor     = $reflected_class->getConstructor();
 		$constructor->invoke( $mock );
 
-		$this->expectNotToPerformAssertions();
+		$this->assertTrue( true );
 	}
 
 	/**
