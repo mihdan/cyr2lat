@@ -49,7 +49,7 @@ class Test_Cyr_To_Lat_Admin_Notices extends TestCase {
 		$constructor     = $reflected_class->getConstructor();
 		$constructor->invoke( $mock );
 
-		$this->expectNotToPerformAssertions();
+		$this->assertTrue( true );
 	}
 
 	/**

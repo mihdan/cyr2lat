@@ -72,24 +72,6 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 		\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'process_handler' ] );
 		\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'conversion_notices' ] );
 
-		\WP_Mock::expectFilterAdded(
-			CYR_TO_LAT_PREFIX . '_' . CYR_TO_LAT_POST_CONVERSION_ACTION . '_memory_exceeded',
-			[ $subject, 'memory_exceeded_filter' ]
-		);
-		\WP_Mock::expectFilterAdded(
-			CYR_TO_LAT_PREFIX . '_' . CYR_TO_LAT_TERM_CONVERSION_ACTION . '_memory_exceeded',
-			[ $subject, 'memory_exceeded_filter' ]
-		);
-
-		\WP_Mock::expectFilterAdded(
-			CYR_TO_LAT_PREFIX . '_' . CYR_TO_LAT_POST_CONVERSION_ACTION . '_time_exceeded',
-			[ $subject, 'time_exceeded_filter' ]
-		);
-		\WP_Mock::expectFilterAdded(
-			CYR_TO_LAT_PREFIX . '_' . CYR_TO_LAT_TERM_CONVERSION_ACTION . '_time_exceeded',
-			[ $subject, 'time_exceeded_filter' ]
-		);
-
 		$subject->init_hooks();
 		$this->assertTrue( true );
 	}

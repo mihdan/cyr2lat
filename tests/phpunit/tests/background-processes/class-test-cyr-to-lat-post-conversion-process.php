@@ -3,6 +3,7 @@
  * Test_Cyr_To_Lat_Post_Conversion_Process class file
  *
  * @package cyr-to-lat
+ * @group   process
  */
 
 use PHPUnit\Framework\TestCase;
@@ -66,6 +67,20 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends TestCase {
 
 		$subject = \Mockery::mock( Cyr_To_Lat_Post_Conversion_Process::class, [ $main ] )->makePartial()
 		                   ->shouldAllowMockingProtectedMethods();
+
+		\WP_Mock::expectFilterAdded(
+			'locale',
+			[ $subject, 'filter_post_locale' ],
+			);
+
+		\WP_Mock::userFunction(
+			'remove_filter',
+			[
+				'args'  => [ 'locale', [ $subject, 'filter_post_locale' ] ],
+				'times' => 1,
+			]
+		);
+
 		$subject->shouldReceive( 'log' )->with( 'Post slug converted: ' . $post->post_name . ' => ' . $sanitized_name )
 		        ->once();
 
@@ -107,5 +122,69 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends TestCase {
 
 		$subject->complete();
 		$this->assertTrue( true );
+	}
+
+	/**
+	 * Tests filter_post_locale()
+	 *
+	 * @param array  $wpml_post_language_details Post language details.
+	 * @param string $locale                     Site locale.
+	 * @param string $expected                   Expected result.
+	 *
+	 * @dataProvider dp_test_filter_post_locale
+	 * @throws ReflectionException Reflection exception.
+	 */
+	public function test_filter_post_locale( $wpml_post_language_details, $locale, $expected ) {
+		$post = (object) [
+			'ID' => 5,
+		];
+
+		\WP_Mock::onFilter( 'wpml_post_language_details' )
+		       ->with( false, $post->ID )
+		       ->reply( $wpml_post_language_details );
+
+		\WP_Mock::userFunction(
+			'get_locale',
+			[
+				'return' => $locale,
+			]
+		);
+
+		$main    = \Mockery::mock( Cyr_To_Lat_Main::class );
+		$subject = new Cyr_To_Lat_Post_Conversion_Process( $main );
+		$this->mock_property( $subject, 'post', $post );
+		$this->assertSame( $expected, $subject->filter_post_locale() );
+	}
+
+	/**
+	 * Data provider for test_filter_post_locale()
+	 *
+	 * @return array
+	 */
+	public function dp_test_filter_post_locale() {
+		return [
+			[ null, 'ru_RU', 'ru_RU' ],
+			[ [], 'ru_RU', 'ru_RU' ],
+			[ [ 'some' => 'uk' ], 'ru_RU', 'ru_RU' ],
+			[ [ 'locale' => 'uk' ], 'ru_RU', 'uk' ],
+		];
+	}
+
+	/**
+	 * Mock an object property.
+	 *
+	 * @param object $object        Object.
+	 * @param string $property_name Property name.
+	 * @param mixed  $value         Property vale.
+	 *
+	 * @throws ReflectionException Reflection exception.
+	 */
+	private function mock_property( $object, string $property_name, $value ) {
+		$reflection_class = new \ReflectionClass( $object );
+
+		$property = $reflection_class->getProperty( $property_name );
+		$property->setAccessible( true );
+		$property->setValue( $object, $value );
+		$property->setAccessible( false );
 	}
 }

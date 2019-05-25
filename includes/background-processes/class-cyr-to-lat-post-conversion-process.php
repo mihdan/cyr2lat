@@ -64,12 +64,12 @@ class Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_Conversion_Process {
 	}
 
 	/**
-	 * Filter post locale.
+	 * Filter post locale
 	 *
 	 * @return string
 	 */
 	public function filter_post_locale() {
-		$wpml_post_language_details = apply_filters( 'wpml_post_language_details', null, $this->post->ID );
+		$wpml_post_language_details = apply_filters( 'wpml_post_language_details', false, $this->post->ID );
 
 		return isset( $wpml_post_language_details['locale'] ) ? $wpml_post_language_details['locale'] : get_locale();
 	}
