@@ -99,30 +99,6 @@ class Cyr_To_Lat_Converter {
 	public function init_hooks() {
 		add_action( 'admin_init', array( $this, 'process_handler' ) );
 		add_action( 'admin_init', array( $this, 'conversion_notices' ) );
-
-		/**
-		 * Fix bug in WP_Background_Process::memory_exceeded() function.
-		 * See hook.
-		 */
-		add_filter(
-			CYR_TO_LAT_PREFIX . '_' . CYR_TO_LAT_POST_CONVERSION_ACTION . '_memory_exceeded',
-			array( $this, 'memory_exceeded_filter' )
-		);
-		add_filter(
-			CYR_TO_LAT_PREFIX . '_' . CYR_TO_LAT_TERM_CONVERSION_ACTION . '_memory_exceeded',
-			array( $this, 'memory_exceeded_filter' )
-		);
-
-		// Do not limit execution time with WP_CLI.
-		add_filter(
-			CYR_TO_LAT_PREFIX . '_' . CYR_TO_LAT_POST_CONVERSION_ACTION . '_time_exceeded',
-			array( $this, 'time_exceeded_filter' )
-		);
-		add_filter(
-			CYR_TO_LAT_PREFIX . '_' . CYR_TO_LAT_TERM_CONVERSION_ACTION . '_time_exceeded',
-			array( $this, 'time_exceeded_filter' )
-		);
-
 	}
 
 	/**

@@ -11,6 +11,13 @@
 class Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_Conversion_Process {
 
 	/**
+	 * Current post to convert.
+	 *
+	 * @var stdClass
+	 */
+	private $post;
+
+	/**
 	 * Process action name
 	 *
 	 * @var string
@@ -27,7 +34,13 @@ class Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_Conversion_Process {
 	protected function task( $post ) {
 		global $wpdb;
 
+		$this->post = $post;
+
+		add_filter( 'locale', array( $this, 'filter_post_locale' ) );
+
 		$sanitized_name = $this->main->ctl_sanitize_title( $post->post_name );
+
+		remove_filter( 'locale', array( $this, 'filter_post_locale' ) );
 
 		if ( $sanitized_name !== $post->post_name ) {
 			add_post_meta( $post->ID, '_wp_old_slug', $post->post_name );
@@ -48,5 +61,16 @@ class Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_Conversion_Process {
 		parent::complete();
 
 		$this->log( __( 'Post slugs conversion completed.', 'cyr2lat' ) );
+	}
+
+	/**
+	 * Filter post locale.
+	 *
+	 * @return string
+	 */
+	public function filter_post_locale() {
+		$wpml_post_language_details = apply_filters( 'wpml_post_language_details', null, $this->post->ID );
+
+		return isset( $wpml_post_language_details['locale'] ) ? $wpml_post_language_details['locale'] : get_locale();
 	}
 }
