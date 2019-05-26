@@ -82,8 +82,8 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends TestCase {
 
 		\WP_Mock::expectFilterAdded(
 			'locale',
-			[ $subject, 'filter_post_locale' ],
-			);
+			[ $subject, 'filter_post_locale' ]
+		);
 
 		\WP_Mock::userFunction(
 			'remove_filter',

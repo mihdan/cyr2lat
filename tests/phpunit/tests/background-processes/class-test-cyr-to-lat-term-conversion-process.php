@@ -76,8 +76,8 @@ class Test_Cyr_To_Lat_Term_Conversion_Process extends TestCase {
 
 		\WP_Mock::expectFilterAdded(
 			'locale',
-			[ $subject, 'filter_term_locale' ],
-			);
+			[ $subject, 'filter_term_locale' ]
+		);
 
 		\WP_Mock::userFunction(
 			'remove_filter',
