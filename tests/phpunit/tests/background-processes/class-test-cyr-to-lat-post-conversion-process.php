@@ -65,6 +65,11 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends TestCase {
 			     ->with( $wpdb->posts, [ 'post_name' => $sanitized_name ], [ 'ID' => $post->ID ] );
 		}
 
+		\WP_Mock::userFunction(
+			'get_locale',
+			[ 'return' => 'ru_RU' ]
+		);
+
 		$subject = \Mockery::mock( Cyr_To_Lat_Post_Conversion_Process::class, [ $main ] )->makePartial()
 		                   ->shouldAllowMockingProtectedMethods();
 
@@ -140,8 +145,8 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends TestCase {
 		];
 
 		\WP_Mock::onFilter( 'wpml_post_language_details' )
-		       ->with( false, $post->ID )
-		       ->reply( $wpml_post_language_details );
+		        ->with( false, $post->ID )
+		        ->reply( $wpml_post_language_details );
 
 		\WP_Mock::userFunction(
 			'get_locale',

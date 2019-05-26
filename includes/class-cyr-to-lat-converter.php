@@ -218,7 +218,8 @@ class Cyr_To_Lat_Converter {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$terms = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT term_id, slug FROM $wpdb->terms WHERE slug REGEXP(%s)",
+				"SELECT t.term_id, slug, tt.taxonomy, tt.term_taxonomy_id FROM $wpdb->terms t, $wpdb->term_taxonomy tt
+					WHERE t.slug REGEXP(%s) AND tt.term_id = t.term_id",
 				$regexp
 			)
 		);

@@ -11,6 +11,13 @@
 class Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_Conversion_Process {
 
 	/**
+	 * Site locale.
+	 *
+	 * @var string
+	 */
+	private $locale;
+
+	/**
 	 * Current post to convert.
 	 *
 	 * @var stdClass
@@ -23,6 +30,16 @@ class Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_Conversion_Process {
 	 * @var string
 	 */
 	protected $action = CYR_TO_LAT_POST_CONVERSION_ACTION;
+
+	/**
+	 * Cyr_To_Lat_Post_Conversion_Process constructor.
+	 *
+	 * @param Cyr_To_Lat_Main $main Plugin main class.
+	 */
+	public function __construct( $main ) {
+		parent::__construct( $main );
+		$this->locale = get_locale();
+	}
 
 	/**
 	 * Task. Updates single post
@@ -71,6 +88,6 @@ class Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_Conversion_Process {
 	public function filter_post_locale() {
 		$wpml_post_language_details = apply_filters( 'wpml_post_language_details', false, $this->post->ID );
 
-		return isset( $wpml_post_language_details['locale'] ) ? $wpml_post_language_details['locale'] : get_locale();
+		return isset( $wpml_post_language_details['locale'] ) ? $wpml_post_language_details['locale'] : $this->locale;
 	}
 }

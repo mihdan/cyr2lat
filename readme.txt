@@ -90,7 +90,8 @@ Yes you can!
 * Bumped up required php version - to 5.6
 * Added phpunit tests for all php versions from 5.6 to 7.3
 * Fixed php warning during conversion of existing slugs
-* Fixed locale selection during conversion of existing post slugs when WPML is installed
+* Fixed locale selection during conversion of existing post slugs when WPML is activated
+* Fixed locale selection during conversion of existing term slugs when WPML is activated
 
 = 4.1.2 (22.05.2019) =
 * Fixed bug with fatal error in Cyr_To_Lat_Converter with php 5.2
