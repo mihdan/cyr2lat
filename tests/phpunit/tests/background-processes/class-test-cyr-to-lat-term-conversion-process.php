@@ -201,7 +201,7 @@ class Test_Cyr_To_Lat_Term_Conversion_Process extends TestCase {
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	private function mock_property( $object, string $property_name, $value ) {
+	private function mock_property( $object, $property_name, $value ) {
 		$reflection_class = new \ReflectionClass( $object );
 
 		$property = $reflection_class->getProperty( $property_name );
