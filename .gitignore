@@ -14,3 +14,4 @@ vendor/
 *.opt
 
 !composer.lock
+!composer-56.lock

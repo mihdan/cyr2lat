@@ -17,7 +17,7 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 	/**
 	 * Setup test
 	 */
-	public function setUp(): void {
+	public function setUp() {
 		parent::setUp();
 		\WP_Mock::setUp();
 	}
@@ -25,7 +25,7 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 	/**
 	 * End test
 	 */
-	public function tearDown(): void {
+	public function tearDown() {
 		unset( $_GET[ \Cyr_To_Lat_Converter::QUERY_ARG ] );
 		unset( $_GET['_wpnonce'] );
 		unset( $_POST['cyr2lat-convert'] );
@@ -91,8 +91,8 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 	) {
 		$main              = \Mockery::mock( 'Cyr_To_Lat_Main' );
 		$settings          = \Mockery::mock( 'Cyr_To_Lat_Settings' );
-		$process_all_posts = \Mockery::mock( 'Cyr_To_Lat_Post_Conversion_Process' );
-		$process_all_terms = \Mockery::mock( 'Cyr_To_Lat_Term_Conversion_Process' );
+		$process_all_posts = \Mockery::mock( 'Cyr_To_Lat_Post_Conversion_Process' )->shouldAllowMockingProtectedMethods();
+		$process_all_terms = \Mockery::mock( 'Cyr_To_Lat_Term_Conversion_Process' )->shouldAllowMockingProtectedMethods();
 		$admin_notices     = \Mockery::mock( 'Cyr_To_Lat_Admin_Notices' );
 
 		$subject = new Cyr_To_Lat_Converter(
@@ -103,39 +103,39 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 			$admin_notices
 		);
 
-		$process_all_posts->expects( 'is_process_running' )->andReturn( $posts_process_running );
-		$process_all_terms->expects( 'is_process_running' )->andReturn( $terms_process_running );
+		$process_all_posts->shouldReceive( 'is_process_running' )->andReturn( $posts_process_running );
+		$process_all_terms->shouldReceive( 'is_process_running' )->andReturn( $terms_process_running );
 
-		$process_all_posts->expects( 'is_process_completed' )->andReturn( $posts_process_completed );
-		$process_all_terms->expects( 'is_process_completed' )->andReturn( $terms_process_completed );
+		$process_all_posts->shouldReceive( 'is_process_completed' )->andReturn( $posts_process_completed );
+		$process_all_terms->shouldReceive( 'is_process_completed' )->andReturn( $terms_process_completed );
 
 		if ( ! $posts_process_running && ! $terms_process_running ) {
 			\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'start_conversion' ], 20 );
 		}
 
 		if ( $posts_process_running ) {
-			$admin_notices->expects( 'add_notice' )->with(
+			$admin_notices->shouldReceive( 'add_notice' )->with(
 				'Cyr To Lat converts existing post slugs in the background process.',
 				'notice notice-info is-dismissible'
 			);
 		}
 
 		if ( $terms_process_running ) {
-			$admin_notices->expects( 'add_notice' )->with(
+			$admin_notices->shouldReceive( 'add_notice' )->with(
 				'Cyr To Lat converts existing term slugs in the background process.',
 				'notice notice-info is-dismissible'
 			);
 		}
 
 		if ( $posts_process_completed ) {
-			$admin_notices->expects( 'add_notice' )->with(
+			$admin_notices->shouldReceive( 'add_notice' )->with(
 				'Cyr To Lat completed conversion of existing post slugs.',
 				'notice notice-success is-dismissible'
 			);
 		}
 
 		if ( $terms_process_completed ) {
-			$admin_notices->expects( 'add_notice' )->with(
+			$admin_notices->shouldReceive( 'add_notice' )->with(
 				'Cyr To Lat completed conversion of existing term slugs.',
 				'notice notice-success is-dismissible'
 			);
@@ -330,30 +330,30 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 		$wpdb->shouldReceive( 'get_results' )->once()->andReturn( $terms );
 
 		if ( $posts ) {
-			$process_all_posts->expects( 'push_to_queue' )->times( count( $posts ) );
+			$process_all_posts->shouldReceive( 'push_to_queue' )->times( count( $posts ) );
 			$process_all_posts->shouldReceive( 'save' )->andReturn( $process_all_posts );
-			$process_all_posts->expects( 'dispatch' );
-			$admin_notices->expects( 'add_notice' )->with(
+			$process_all_posts->shouldReceive( 'dispatch' );
+			$admin_notices->shouldReceive( 'add_notice' )->with(
 				'Cyr To Lat started conversion of existing post slugs.',
 				'notice notice-info is-dismissible'
 			);
 		} else {
-			$admin_notices->expects( 'add_notice' )->with(
+			$admin_notices->shouldReceive( 'add_notice' )->with(
 				'Cyr To Lat has not found existing post slugs for conversion.',
 				'notice notice-info is-dismissible'
 			);
 		}
 
 		if ( $terms ) {
-			$process_all_terms->expects( 'push_to_queue' )->times( count( $terms ) );
+			$process_all_terms->shouldReceive( 'push_to_queue' )->times( count( $terms ) );
 			$process_all_terms->shouldReceive( 'save' )->andReturn( $process_all_terms );
-			$process_all_terms->expects( 'dispatch' );
-			$admin_notices->expects( 'add_notice' )->with(
+			$process_all_terms->shouldReceive( 'dispatch' );
+			$admin_notices->shouldReceive( 'add_notice' )->with(
 				'Cyr To Lat started conversion of existing term slugs.',
 				'notice notice-info is-dismissible'
 			);
 		} else {
-			$admin_notices->expects( 'add_notice' )->with(
+			$admin_notices->shouldReceive( 'add_notice' )->with(
 				'Cyr To Lat has not found existing term slugs for conversion.',
 				'notice notice-info is-dismissible'
 			);

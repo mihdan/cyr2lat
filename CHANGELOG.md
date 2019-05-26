@@ -1,3 +1,7 @@
+## 4.2 (22.05.2019)
+* Bumped up required php version - to 5.6
+* Added phpunit tests for all php versions from 5.6 to 7.3
+
 ## 4.1.2 (22.05.2019)
 * Fixed bug with fatal error in Cyr_To_Lat_Converter with php 5.2
 

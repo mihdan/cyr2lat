@@ -16,8 +16,10 @@ class Test_Cyr_To_Lat_Conversion_Process extends TestCase {
 
 	/**
 	 * Setup test
+	 *
+	 * @return void
 	 */
-	public function setUp(): void {
+	public function setUp() {
 		parent::setUp();
 		\WP_Mock::setUp();
 	}
@@ -25,7 +27,7 @@ class Test_Cyr_To_Lat_Conversion_Process extends TestCase {
 	/**
 	 * End test
 	 */
-	public function tearDown(): void {
+	public function tearDown() {
 		\WP_Mock::tearDown();
 		parent::tearDown();
 	}

@@ -17,7 +17,7 @@ class Test_Cyr_To_Lat_WP_CLI extends TestCase {
 	/**
 	 * Setup test
 	 */
-	public function setUp(): void {
+	public function setUp() {
 		parent::setUp();
 		\WP_Mock::setUp();
 	}
@@ -25,7 +25,7 @@ class Test_Cyr_To_Lat_WP_CLI extends TestCase {
 	/**
 	 * End test
 	 */
-	public function tearDown(): void {
+	public function tearDown() {
 		\WP_Mock::tearDown();
 		parent::tearDown();
 	}
@@ -48,15 +48,15 @@ class Test_Cyr_To_Lat_WP_CLI extends TestCase {
 		                     ->shouldAllowMockingProtectedMethods();
 
 		$notify = \Mockery::mock( '\cli\progress\Bar' );
-		$notify->expects( 'tick' );
-		$notify->expects( 'finish' );
+		$notify->shouldReceive( 'tick' );
+		$notify->shouldReceive( 'finish' );
 
 		$subject->shouldReceive( 'make_progress_bar' )->andReturn( $notify );
 
-		$converter->expects( 'convert_existing_slugs' )->with( $convert_params );
+		$converter->shouldReceive( 'convert_existing_slugs' )->with( $convert_params );
 
 		$cli = \Mockery::mock( 'overload:WP_CLI' );
-		$cli->expects( 'success' )->with( 'Regenerate Completed.' );
+		$cli->shouldReceive( 'success' )->with( 'Regenerate Completed.' );
 
 		$subject->regenerate( $args, $assoc_args );
 		$this->assertTrue( true );

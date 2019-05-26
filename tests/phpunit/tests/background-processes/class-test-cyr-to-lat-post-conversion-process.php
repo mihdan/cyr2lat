@@ -18,7 +18,7 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends TestCase {
 	/**
 	 * Setup test
 	 */
-	public function setUp(): void {
+	public function setUp() {
 		parent::setUp();
 		\WP_Mock::setUp();
 	}
@@ -26,7 +26,7 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends TestCase {
 	/**
 	 * End test
 	 */
-	public function tearDown(): void {
+	public function tearDown() {
 		unset( $GLOBALS['wpdb'] );
 		\WP_Mock::tearDown();
 		parent::tearDown();
@@ -194,7 +194,7 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends TestCase {
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	private function mock_property( $object, string $property_name, $value ) {
+	private function mock_property( $object, $property_name, $value ) {
 		$reflection_class = new \ReflectionClass( $object );
 
 		$property = $reflection_class->getProperty( $property_name );
