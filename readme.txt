@@ -42,7 +42,30 @@ function my_cyr_to_lat_table($ctl_table) {
 add_filter('ctl_table', 'my_cyr_to_lat_table');
 `
 
-== How can I convert a large number of posts/terms using wp-cli? ==
+= How can I redefine non-standard locale ? =
+
+For instance, if your non-standard locale is uk_UA, you can redefine it to `uk` by adding the following code to your theme's `function.php` file:
+`
+/**
+ * Use conversion table for non-standard locale.
+ *
+ * @param array $table Conversion table.
+ *
+ * @return array
+ */
+function my_ctl_table( $table ) {
+	if ( 'uk_UA' === get_locale() ) {
+		$settings = new Cyr_To_Lat_Settings();
+		$table    = $settings->get_option( 'uk' );
+	}
+
+	return $table;
+}
+
+add_filter( 'ctl_table', 'my_ctl_table' );
+`
+
+= How can I convert a large number of posts/terms using wp-cli? =
 
 Use the following command in console:
 
@@ -62,6 +85,14 @@ Yes you can!
 * Join in on our [Telegram Channel](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 4.2 (22.05.2019) =
+* Bumped up required php version - to 5.6
+* Added phpunit tests for all php versions from 5.6 to 7.3
+* Fixed php warning during conversion of existing slugs
+* Fixed locale selection during conversion of existing post slugs when WPML is activated
+* Fixed locale selection during conversion of existing term slugs when WPML is activated
+* Fixed bug with infinite redirection of some slugs after conversion of existing slugs
 
 = 4.1.2 (22.05.2019) =
 * Fixed bug with fatal error in Cyr_To_Lat_Converter with php 5.2

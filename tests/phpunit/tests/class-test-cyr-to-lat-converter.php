@@ -72,24 +72,6 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 		\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'process_handler' ] );
 		\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'conversion_notices' ] );
 
-		\WP_Mock::expectFilterAdded(
-			CYR_TO_LAT_PREFIX . '_' . CYR_TO_LAT_POST_CONVERSION_ACTION . '_memory_exceeded',
-			[ $subject, 'memory_exceeded_filter' ]
-		);
-		\WP_Mock::expectFilterAdded(
-			CYR_TO_LAT_PREFIX . '_' . CYR_TO_LAT_TERM_CONVERSION_ACTION . '_memory_exceeded',
-			[ $subject, 'memory_exceeded_filter' ]
-		);
-
-		\WP_Mock::expectFilterAdded(
-			CYR_TO_LAT_PREFIX . '_' . CYR_TO_LAT_POST_CONVERSION_ACTION . '_time_exceeded',
-			[ $subject, 'time_exceeded_filter' ]
-		);
-		\WP_Mock::expectFilterAdded(
-			CYR_TO_LAT_PREFIX . '_' . CYR_TO_LAT_TERM_CONVERSION_ACTION . '_time_exceeded',
-			[ $subject, 'time_exceeded_filter' ]
-		);
-
 		$subject->init_hooks();
 		$this->assertTrue( true );
 	}
@@ -332,13 +314,15 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 		$main->shouldReceive( 'ctl_prepare_in' )->with( $args['post_status'] )->once()->andReturn( $post_statuses_in );
 		$main->shouldReceive( 'ctl_prepare_in' )->with( $args['post_type'] )->once()->andReturn( $post_types_in );
 
-		$wpdb        = Mockery::mock( '\wpdb' );
-		$wpdb->posts = 'wp_posts';
-		$wpdb->terms = 'wp_terms';
+		$wpdb                = Mockery::mock( '\wpdb' );
+		$wpdb->posts         = 'wp_posts';
+		$wpdb->terms         = 'wp_terms';
+		$wpdb->term_taxonomy = 'wp_term_taxonomy';
 
 		$regexp     = Cyr_To_Lat_Main::PROHIBITED_CHARS_REGEX . '+';
 		$post_query = "SELECT ID, post_name FROM $wpdb->posts WHERE post_name REGEXP(%s) AND post_status IN ($post_statuses_in) AND post_type IN ($post_types_in)";
-		$term_query = "SELECT term_id, slug FROM $wpdb->terms WHERE slug REGEXP(%s)";
+		$term_query = "SELECT t.term_id, slug, tt.taxonomy, tt.term_taxonomy_id FROM $wpdb->terms t, $wpdb->term_taxonomy tt
+					WHERE t.slug REGEXP(%s) AND tt.term_id = t.term_id";
 
 		$wpdb->shouldReceive( 'prepare' )->with( $post_query, $regexp )->once()->andReturn( '' );
 		$wpdb->shouldReceive( 'prepare' )->with( $term_query, $regexp )->once()->andReturn( '' );
