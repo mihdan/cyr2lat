@@ -92,6 +92,7 @@ Yes you can!
 * Fixed php warning during conversion of existing slugs
 * Fixed locale selection during conversion of existing post slugs when WPML is activated
 * Fixed locale selection during conversion of existing term slugs when WPML is activated
+* Fixed bug with infinite redirection of some slugs after conversion of existing slugs
 
 = 4.1.2 (22.05.2019) =
 * Fixed bug with fatal error in Cyr_To_Lat_Converter with php 5.2

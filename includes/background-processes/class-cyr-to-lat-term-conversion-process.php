@@ -52,20 +52,19 @@ class Cyr_To_Lat_Term_Conversion_Process extends Cyr_To_Lat_Conversion_Process {
 		global $wpdb;
 
 		$this->term = $term;
+		$slug       = urldecode( $term->slug );
 
 		add_filter( 'locale', array( $this, 'filter_term_locale' ) );
-
-		$sanitized_slug = $this->main->ctl_sanitize_title( $term->slug );
-
+		$sanitized_slug = sanitize_title( $slug );
 		remove_filter( 'locale', array( $this, 'filter_term_locale' ) );
 
-		if ( $sanitized_slug !== $term->slug ) {
+		if ( urldecode( $sanitized_slug ) !== $slug ) {
 			// phpcs:disable WordPress.DB.DirectDatabaseQuery
 			$wpdb->update( $wpdb->terms, array( 'slug' => $sanitized_slug ), array( 'term_id' => $term->term_id ) );
 			// phpcs:enable
-		}
 
-		$this->log( __( 'Term slug converted:', 'cyr2lat' ) . ' ' . urldecode( $term->slug ) . ' => ' . $sanitized_slug );
+			$this->log( __( 'Term slug converted:', 'cyr2lat' ) . ' ' . $slug . ' => ' . urldecode( $sanitized_slug ) );
+		}
 
 		return false;
 	}

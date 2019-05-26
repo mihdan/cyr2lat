@@ -52,21 +52,20 @@ class Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_Conversion_Process {
 		global $wpdb;
 
 		$this->post = $post;
+		$post_name  = urldecode( $post->post_name );
 
 		add_filter( 'locale', array( $this, 'filter_post_locale' ) );
-
-		$sanitized_name = $this->main->ctl_sanitize_title( $post->post_name );
-
+		$sanitized_name = sanitize_title( $post_name );
 		remove_filter( 'locale', array( $this, 'filter_post_locale' ) );
 
-		if ( $sanitized_name !== $post->post_name ) {
-			add_post_meta( $post->ID, '_wp_old_slug', $post->post_name );
+		if ( urldecode( $sanitized_name ) !== $post_name ) {
+			update_post_meta( $post->ID, '_wp_old_slug', $post_name );
 			// phpcs:disable WordPress.DB.DirectDatabaseQuery
 			$wpdb->update( $wpdb->posts, array( 'post_name' => $sanitized_name ), array( 'ID' => $post->ID ) );
 			// phpcs:enable
-		}
 
-		$this->log( __( 'Post slug converted:', 'cyr2lat' ) . ' ' . urldecode( $post->post_name ) . ' => ' . $sanitized_name );
+			$this->log( __( 'Post slug converted:', 'cyr2lat' ) . ' ' . $post_name . ' => ' . urldecode( $sanitized_name ) );
+		}
 
 		return false;
 	}

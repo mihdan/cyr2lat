@@ -49,11 +49,18 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends TestCase {
 		];
 
 		$main = \Mockery::mock( Cyr_To_Lat_Main::class );
-		$main->shouldReceive( 'ctl_sanitize_title' )->andReturn( $sanitized_name );
+
+		\WP_Mock::userFunction(
+			'sanitize_title',
+			[
+				'args'   => [ $post_name ],
+				'return' => $sanitized_name,
+			]
+		);
 
 		if ( $sanitized_name !== $post->post_name ) {
 			\WP_Mock::userFunction(
-				'add_post_meta',
+				'update_post_meta',
 				[
 					'args'  => [ $post->ID, '_wp_old_slug', $post->post_name ],
 					'times' => 1,
@@ -86,8 +93,11 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends TestCase {
 			]
 		);
 
-		$subject->shouldReceive( 'log' )->with( 'Post slug converted: ' . $post->post_name . ' => ' . $sanitized_name )
-		        ->once();
+		if ( $sanitized_name !== $post->post_name ) {
+			$subject->shouldReceive( 'log' )
+			        ->with( 'Post slug converted: ' . $post->post_name . ' => ' . $sanitized_name )
+			        ->once();
+		}
 
 		$this->assertFalse( $subject->task( $post ) );
 	}

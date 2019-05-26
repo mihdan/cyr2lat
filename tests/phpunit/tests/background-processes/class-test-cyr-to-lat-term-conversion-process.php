@@ -50,7 +50,14 @@ class Test_Cyr_To_Lat_Term_Conversion_Process extends TestCase {
 		];
 
 		$main = \Mockery::mock( Cyr_To_Lat_Main::class );
-		$main->shouldReceive( 'ctl_sanitize_title' )->andReturn( $sanitized_slug );
+
+		\WP_Mock::userFunction(
+			'sanitize_title',
+			[
+				'args'   => [ $term_slug ],
+				'return' => $sanitized_slug,
+			]
+		);
 
 		if ( $sanitized_slug !== $term->slug ) {
 			$wpdb        = Mockery::mock( '\wpdb' );
@@ -80,8 +87,10 @@ class Test_Cyr_To_Lat_Term_Conversion_Process extends TestCase {
 			]
 		);
 
-		$subject->shouldReceive( 'log' )->with( 'Term slug converted: ' . $term->slug . ' => ' . $sanitized_slug )
-		        ->once();
+		if ( $sanitized_slug !== $term->slug ) {
+			$subject->shouldReceive( 'log' )->with( 'Term slug converted: ' . $term->slug . ' => ' . $sanitized_slug )
+			        ->once();
+		}
 
 		$this->assertFalse( $subject->task( $term ) );
 	}
