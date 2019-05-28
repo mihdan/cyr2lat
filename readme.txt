@@ -86,7 +86,7 @@ Yes you can!
 
 == Changelog ==
 
-= 4.2 (22.05.2019) =
+= 4.2 (28.05.2019) =
 * Bumped up required php version - to 5.6
 * Added phpunit tests for all php versions from 5.6 to 7.3
 * Fixed php warning during conversion of existing slugs
