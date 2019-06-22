@@ -62,17 +62,6 @@
     "php-coveralls/php-coveralls": "^2.1",
     "wp-cli/wp-cli": "dev-master"
   },
-  "scripts": {
-    "post-install-cmd": [
-      "xrstf\\Composer52\\Generator::onPostInstallCmd"
-    ],
-    "post-update-cmd": [
-      "xrstf\\Composer52\\Generator::onPostInstallCmd"
-    ],
-    "post-autoload-dump": [
-      "xrstf\\Composer52\\Generator::onPostInstallCmd"
-    ]
-  },
   "autoload": {
     "classmap": [
       "includes"
