@@ -100,15 +100,14 @@ class Test_Cyr_To_Lat_Requirements extends TestCase {
 		\WP_Mock::passthruFunction( '__' );
 		\WP_Mock::passthruFunction( 'esc_html' );
 
-		ob_start();
-		?>
-		<div class="message error">
-			<p>
-				<?php echo 'Your server is running PHP version ' . phpversion() . ' but Cyr To Lat ' . CYR_TO_LAT_VERSION . ' requires at least ' . CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION . '.'; ?>
-			</p>
-		</div>
-		<?php
-		$expected = ob_get_clean();
+		$message  = 'Your server is running PHP version ' . phpversion() . ' but Cyr To Lat ' . CYR_TO_LAT_VERSION . ' requires at least ' . CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION . '.';
+		$expected = <<<MOCK
+			<div class="message error">
+				<p>
+					$message				</p>
+			</div>
+			
+MOCK;
 
 		$subject = new Cyr_To_Lat_Requirements();
 
