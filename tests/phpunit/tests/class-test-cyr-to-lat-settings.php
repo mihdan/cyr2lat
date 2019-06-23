@@ -358,8 +358,8 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 			<form id="ctl-convert-existing-slugs" action="" method="post">
 							</form>
 
-			<div>
-				<h2 id="donate">
+			<div id="donate">
+				<h2>
 					Donate				</h2>
 				<p>
 					Would you like to support the advancement of this plugin?				</p>

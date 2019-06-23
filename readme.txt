@@ -90,6 +90,7 @@ Yes you can!
 * Fixed problem with sessions
 * Fixed message sequence for conversion of existing slugs.
 * Added php version check to avoid fatal error on activation on old sites.
+* Added vertical tabs in plugin settings.
 
 = 4.2 (28.05.2019) =
 * Bumped up required php version - to 5.6

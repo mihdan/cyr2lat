@@ -298,8 +298,8 @@ class Cyr_To_Lat_Settings {
 				?>
 			</form>
 
-			<div>
-				<h2 id="donate">
+			<div id="donate">
+				<h2>
 					<?php echo esc_html( __( 'Donate', 'cyr2lat' ) ); ?>
 				</h2>
 				<p>

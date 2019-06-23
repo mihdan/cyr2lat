@@ -1,31 +1,48 @@
-.ctl-col {
-	float: left;
-}
-
-.ctl-col.left {
-	/* width: 70%; */
-}
-
-.ctl-col.right {
-	width: 30%;
-}
-
 #ctl-options .form-table th {
-	 display: none;
+	display: none;
 }
 
 .ctl-table {
 	display: none;
 }
 
+#ctl-options .nav-tab-wrapper {
+	width: 125px;
+	float: left;
+	padding-top: 22px;
+	border-bottom: none;
+	text-align: center;
+}
+
+body.js #ctl-options .ctl-table {
+	width: calc(100% - 125px);
+	float: left;
+	clear: none;
+}
+
 #ctl-options .nav-tab {
 	cursor: pointer;
-	margin-bottom: -1px;
+	margin: 0 0 23px 0;
+	clear: both;
+	width: 100%;
+	box-sizing: border-box;
+	border: 1px solid #ccc;
+}
+
+#ctl-options .submit, #ctl-convert-existing-slugs {
+	clear: both;
+	float: left;
+	margin-top: 0;
+	padding-bottom: 0;
+}
+
+#ctl-convert-existing-slugs .submit {
+	margin-top: 0;
 }
 
 #ctl-options .nav-tab-active {
-	border-bottom: none;
 	background: #f1f1f1;
+	border-bottom: 1px solid #ccc;
 }
 
 .ctl-table.active {
@@ -48,14 +65,20 @@
 	display: inline-block !important;
 }
 
-.ctl-col.right form input[name="submit"] {
-	cursor: pointer;
-	padding: 0;
-	margin: 0;
+#donate {
+	clear: both;
 }
 
 @media screen and (max-width: 767px) {
-	.ctl-col.left, .ctl-col.right {
-		width: 100%;
+	.ctl-table-cell label {
+		width: 2.2em;
+	}
+
+	.ctl-table-cell input {
+		width: 2.8em !important;
+	}
+
+	#ctl-options .submit {
+		padding-top: 20px;
 	}
 }

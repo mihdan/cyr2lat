@@ -68,8 +68,9 @@ class Test_Cyr_To_Lat_Requirements extends TestCase {
 				$wrong_version    = array_slice( $required_version, 0, 2 );
 				$wrong_version    = (float) implode( '.', $wrong_version );
 				$wrong_version    = $wrong_version - 0.1;
+				$wrong_version    = number_format( $wrong_version, 1, '.', '' );
 
-				return number_format( $wrong_version, 1, '.', '' );
+				return $wrong_version;
 			}
 		);
 
