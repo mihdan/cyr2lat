@@ -5,8 +5,6 @@
  * @package cyr-to-lat
  */
 
-use tad\FunctionMocker\FunctionMocker;
-
 define( 'PLUGIN_TESTS_DIR', __DIR__ );
 
 define( 'PLUGIN_MAIN_FILE', __DIR__ . '/../../cyr-to-lat.php' );
@@ -55,10 +53,3 @@ define( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', '5.6' );
 
 // Now call the bootstrap method of WP Mock.
 \WP_Mock::bootstrap();
-
-FunctionMocker::init(
-	[
-		'blacklist'             => dirname( __DIR__ ),
-		'redefinable-internals' => [ 'phpversion' ],
-	]
-);

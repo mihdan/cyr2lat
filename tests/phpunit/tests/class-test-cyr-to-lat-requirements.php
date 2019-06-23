@@ -19,6 +19,13 @@ class Test_Cyr_To_Lat_Requirements extends TestCase {
 	 * Setup test
 	 */
 	public function setUp() {
+		FunctionMocker::init(
+			[
+				'redefinable-internals' => [ 'phpversion' ],
+			]
+		);
+
+		FunctionMocker::setUp();
 		parent::setUp();
 		\WP_Mock::setUp();
 	}
@@ -29,6 +36,7 @@ class Test_Cyr_To_Lat_Requirements extends TestCase {
 	public function tearDown() {
 		\WP_Mock::tearDown();
 		parent::tearDown();
+		FunctionMocker::tearDown();
 	}
 
 	/**
