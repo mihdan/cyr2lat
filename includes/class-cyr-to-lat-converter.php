@@ -252,7 +252,7 @@ class Cyr_To_Lat_Converter {
 	protected function log( $message ) {
 		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
 			// @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( 'Cyr-To-Lat: ' . $message );
+			error_log( 'Cyr To Lat: ' . $message );
 			// @phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		}
 	}

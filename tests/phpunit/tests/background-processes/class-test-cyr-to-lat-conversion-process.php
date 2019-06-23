@@ -170,7 +170,7 @@ class Test_Cyr_To_Lat_Conversion_Process extends TestCase {
 
 		$subject->log( $message );
 		if ( $debug ) {
-			$this->assertNotFalse( strpos( $this->get_log( $test_log ), 'Cyr-To-Lat: ' . $message ) );
+			$this->assertNotFalse( strpos( $this->get_log( $test_log ), 'Cyr To Lat: ' . $message ) );
 		} else {
 			$this->assertFalse( $this->get_log( $test_log ) );
 		}

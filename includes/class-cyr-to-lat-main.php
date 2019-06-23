@@ -266,5 +266,3 @@ class Cyr_To_Lat_Main {
 		return $prepared_in;
 	}
 }
-
-// eof.

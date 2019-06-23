@@ -733,5 +733,3 @@ class Cyr_To_Lat_Settings {
 		return $current_screen && ( 'options' === $current_screen->id || self::SCREEN_ID === $current_screen->id );
 	}
 }
-
-// eof.
