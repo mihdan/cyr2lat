@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Cyr To Lat\n"
-"POT-Creation-Date: 2019-05-18 11:23+0300\n"
-"PO-Revision-Date: 2019-05-18 11:31+0300\n"
+"POT-Creation-Date: 2019-06-23 11:48+0300\n"
+"PO-Revision-Date: 2019-06-23 11:48+0300\n"
 "Last-Translator: KAGG Design <info@kagg.eu>\n"
 "Language-Team: KAGG Design\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.2\n"
+"X-Generator: Poedit 2.2.3\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
@@ -20,60 +20,72 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-1: dist\n"
 "X-Poedit-SearchPathExcluded-2: src\n"
 
-#: includes/background-processes/class-cyr-to-lat-post-conversion-process.php:39
+#. translators: 1: Current PHP version number, 2: Cyr To Lat version, 3: Minimum required PHP version number
+#: cyr-to-lat.php:85
+#, php-format
+msgid ""
+"Your server is running PHP version %1$s but Cyr To Lat %2$s requires at "
+"least %3$s."
+msgstr ""
+"На сервере установлен PHP версии %1$s, однако для Cyr To Lat %2$s требуется "
+"хотя бы %3$s."
+
+#. phpcs:enable
+#: includes/background-processes/class-cyr-to-lat-post-conversion-process.php:67
 msgid "Post slug converted:"
 msgstr "Ярлык поста сконвертирован:"
 
-#: includes/background-processes/class-cyr-to-lat-post-conversion-process.php:50
+#: includes/background-processes/class-cyr-to-lat-post-conversion-process.php:79
 msgid "Post slugs conversion completed."
 msgstr "Конвертация ярлыков постов завершена."
 
-#: includes/background-processes/class-cyr-to-lat-term-conversion-process.php:38
+#. phpcs:enable
+#: includes/background-processes/class-cyr-to-lat-term-conversion-process.php:66
 msgid "Term slug converted:"
 msgstr "Ярлык термина сконвертирован:"
 
-#: includes/background-processes/class-cyr-to-lat-term-conversion-process.php:49
+#: includes/background-processes/class-cyr-to-lat-term-conversion-process.php:78
 msgid "Term slugs conversion completed."
 msgstr "Конвертация ярлыков терминов завершена."
 
-#: includes/class-cyr-to-lat-converter.php:141
+#: includes/class-cyr-to-lat-converter.php:117
 msgid "Cyr To Lat converts existing post slugs in the background process."
 msgstr "Cyr To Lat конвертирует существующие ярлыки постов в фоновом процессе."
 
-#: includes/class-cyr-to-lat-converter.php:148
+#: includes/class-cyr-to-lat-converter.php:124
 msgid "Cyr To Lat converts existing term slugs in the background process."
 msgstr ""
 "Cyr To Lat конвертирует существующие ярлыки терминов в фоновом процессе."
 
-#: includes/class-cyr-to-lat-converter.php:155
+#: includes/class-cyr-to-lat-converter.php:131
 msgid "Cyr To Lat completed conversion of existing post slugs."
 msgstr "Cyr To Lat завершил конвертацию существующих ярлыков постов."
 
-#: includes/class-cyr-to-lat-converter.php:162
+#: includes/class-cyr-to-lat-converter.php:138
 msgid "Cyr To Lat completed conversion of existing term slugs."
 msgstr "Cyr To Lat завершил конвертацию существующих ярлыков терминов."
 
-#: includes/class-cyr-to-lat-converter.php:230
+#: includes/class-cyr-to-lat-converter.php:204
 msgid "Post slugs conversion started."
 msgstr "Начата конвертация ярлыков постов."
 
-#: includes/class-cyr-to-lat-converter.php:232
+#: includes/class-cyr-to-lat-converter.php:206
 msgid "Cyr To Lat started conversion of existing post slugs."
 msgstr "Cyr To Lat начал конвертацию существующих ярлыков постов."
 
-#: includes/class-cyr-to-lat-converter.php:237
+#: includes/class-cyr-to-lat-converter.php:213
 msgid "Cyr To Lat has not found existing post slugs for conversion."
 msgstr "Cyr To Lat не нашёл существующих ярлыков постов для конвертации."
 
-#: includes/class-cyr-to-lat-converter.php:257
+#: includes/class-cyr-to-lat-converter.php:232
 msgid "Term slugs conversion started."
 msgstr "Начата конвертация ярлыков терминов."
 
-#: includes/class-cyr-to-lat-converter.php:259
+#: includes/class-cyr-to-lat-converter.php:234
 msgid "Cyr To Lat started conversion of existing term slugs."
 msgstr "Cyr To Lat начал конвертацию существующих ярлыков терминов."
 
-#: includes/class-cyr-to-lat-converter.php:264
+#: includes/class-cyr-to-lat-converter.php:241
 msgid "Cyr To Lat has not found existing term slugs for conversion."
 msgstr "Cyr To Lat не нашёл существующих ярлыков терминов для конвертации."
 
@@ -154,6 +166,13 @@ msgstr "Ваша оценка"
 #: includes/class-cyr-to-lat-settings.php:325
 msgid "Leave a ★★★★★ plugin review on WordPress.org"
 msgstr "Оставьте ★★★★★ обзор плагина на WordPress.org"
+
+#~ msgid ""
+#~ "Your server is running PHP version %1$s but Cyr To Lat version %2$s "
+#~ "requires at least %3$s."
+#~ msgstr ""
+#~ "На сервере установлен PHP версии %1$s, однако для Cyr To Lat %2$s "
+#~ "требуется хотя бы %3$s."
 
 #~ msgid "General Options"
 #~ msgstr "Общие настройки"

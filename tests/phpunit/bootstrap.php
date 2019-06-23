@@ -1,4 +1,12 @@
 <?php
+/**
+ * Bootstrap file for Cyr-To-Lat phpunit tests.
+ *
+ * @package cyr-to-lat
+ */
+
+use tad\FunctionMocker\FunctionMocker;
+
 define( 'PLUGIN_TESTS_DIR', __DIR__ );
 
 define( 'PLUGIN_MAIN_FILE', __DIR__ . '/../../cyr-to-lat.php' );
@@ -40,5 +48,17 @@ define( 'CYR_TO_LAT_POST_CONVERSION_ACTION', 'post_conversion_action' );
  */
 define( 'CYR_TO_LAT_TERM_CONVERSION_ACTION', 'term_conversion_action' );
 
+/**
+ * Minimum required php version.
+ */
+define( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', '5.6' );
+
 // Now call the bootstrap method of WP Mock.
 \WP_Mock::bootstrap();
+
+FunctionMocker::init(
+	[
+		'blacklist'             => dirname( __DIR__ ),
+		'redefinable-internals' => [ 'phpversion' ],
+	]
+);

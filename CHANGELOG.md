@@ -1,3 +1,8 @@
+## 4.2.1 (23.06.2019)
+* Fixed problem with sessions
+* Fixed message sequence for conversion of existing slugs.
+* Added php version check to avoid fatal error on activation on old sites.
+
 ## 4.2 (22.05.2019)
 * Bumped up required php version - to 5.6
 * Added phpunit tests for all php versions from 5.6 to 7.3
