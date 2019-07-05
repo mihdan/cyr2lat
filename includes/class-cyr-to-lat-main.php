@@ -40,13 +40,21 @@ class Cyr_To_Lat_Main {
 	private $cli;
 
 	/**
+	 * ACF
+	 *
+	 * @var Cyr_To_Lat_ACF
+	 */
+	private $acf;
+
+	/**
 	 * Cyr_To_Lat_Main constructor.
 	 *
 	 * @param Cyr_To_Lat_Settings  $settings  Plugin settings.
 	 * @param Cyr_To_Lat_Converter $converter Converter instance.
 	 * @param Cyr_To_Lat_WP_CLI    $cli       CLI instance.
+	 * @param Cyr_To_Lat_ACF       $acf       ACF.
 	 */
-	public function __construct( $settings = null, $converter = null, $cli = null ) {
+	public function __construct( $settings = null, $converter = null, $cli = null, $acf = null ) {
 		$this->settings = $settings;
 		if ( ! $this->settings ) {
 			$this->settings = new Cyr_To_Lat_Settings();
@@ -62,6 +70,11 @@ class Cyr_To_Lat_Main {
 			if ( ! $this->cli ) {
 				$this->cli = new Cyr_To_Lat_WP_CLI( $this->converter );
 			}
+		}
+
+		$this->acf = $acf;
+		if ( ! $this->acf ) {
+			$this->acf = new Cyr_To_Lat_ACF();
 		}
 
 		$this->init();
