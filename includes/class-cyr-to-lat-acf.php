@@ -9,10 +9,22 @@
  * Class Cyr_To_Lat_ACF
  */
 class Cyr_To_Lat_ACF {
+
+	/**
+	 * Plugin settings.
+	 *
+	 * @var Cyr_To_Lat_Settings
+	 */
+	private $settings;
+
 	/**
 	 * Cyr_To_Lat_ACF constructor.
+	 *
+	 * @param Cyr_To_Lat_Settings $settings Plugin settings.
 	 */
-	public function __construct() {
+	public function __construct( $settings ) {
+		$this->settings = $settings;
+
 		$this->init_hooks();
 	}
 
@@ -27,7 +39,7 @@ class Cyr_To_Lat_ACF {
 	 * Enqueue script in ACF field group page.
 	 */
 	public function enqueue_script() {
-		$table = Cyr_To_Lat_Conversion_Tables::get();
+		$table = $this->settings->get_table();
 		ob_start();
 		?>
 		( function( $ ) {
@@ -65,8 +77,7 @@ class Cyr_To_Lat_ACF {
 			} );
 		} )( jQuery );
 		<?php
-		$data = ob_get_contents();
-		ob_end_clean();
+		$data = ob_get_clean();
 		wp_add_inline_script( 'acf-field-group', $data );
 	}
 }

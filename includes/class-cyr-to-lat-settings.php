@@ -723,6 +723,22 @@ class Cyr_To_Lat_Settings {
 	}
 
 	/**
+	 * Get transliteration table.
+	 *
+	 * @return string
+	 */
+	public function get_table() {
+		// List of locales: https://make.wordpress.org/polyglots/teams/.
+		$locale = get_locale();
+		$table  = $this->get_option( $locale );
+		if ( empty( $table ) ) {
+			$table = $this->get_option( 'iso9' );
+		}
+
+		return $table;
+	}
+
+	/**
 	 * Is current admin screen the plugin options screen.
 	 *
 	 * @return bool

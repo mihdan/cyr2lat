@@ -27,9 +27,6 @@ if ( ! class_exists( 'Cyr_To_Lat_Requirements' ) ) {
 		 * @return bool
 		 */
 		private function is_php_version_required() {
-			/**
-			 * Check php version number.
-			 */
 			if ( version_compare( CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION, phpversion(), '>' ) ) {
 				add_action( 'admin_notices', array( $this, 'php_requirement_message' ) );
 

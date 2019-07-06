@@ -33,14 +33,14 @@ class Cyr_To_Lat_Main {
 	private $converter;
 
 	/**
-	 * WP-CLI
+	 * Cyr_To_Lat_WP_CLI instance.
 	 *
 	 * @var Cyr_To_Lat_WP_CLI
 	 */
 	private $cli;
 
 	/**
-	 * ACF
+	 * Cyr_To_Lat_ACF instance.
 	 *
 	 * @var Cyr_To_Lat_ACF
 	 */
@@ -52,7 +52,7 @@ class Cyr_To_Lat_Main {
 	 * @param Cyr_To_Lat_Settings  $settings  Plugin settings.
 	 * @param Cyr_To_Lat_Converter $converter Converter instance.
 	 * @param Cyr_To_Lat_WP_CLI    $cli       CLI instance.
-	 * @param Cyr_To_Lat_ACF       $acf       ACF.
+	 * @param Cyr_To_Lat_ACF       $acf       ACF instance.
 	 */
 	public function __construct( $settings = null, $converter = null, $cli = null, $acf = null ) {
 		$this->settings = $settings;
@@ -74,7 +74,7 @@ class Cyr_To_Lat_Main {
 
 		$this->acf = $acf;
 		if ( ! $this->acf ) {
-			$this->acf = new Cyr_To_Lat_ACF();
+			$this->acf = new Cyr_To_Lat_ACF( $this->settings );
 		}
 
 		$this->init();
@@ -133,10 +133,7 @@ class Cyr_To_Lat_Main {
 			return $pre;
 		}
 
-		// List of locales: https://make.wordpress.org/polyglots/teams/.
-		$locale = get_locale();
-		$table  = $this->settings->get_option( $locale );
-		$table  = ! empty( $table ) ? $table : $this->settings->get_option( 'iso9' );
+		$table = $this->settings->get_table();
 
 		$is_term = false;
 		// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
