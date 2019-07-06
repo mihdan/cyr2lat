@@ -47,6 +47,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$settings  = \Mockery::mock( 'overload:Cyr_To_Lat_Settings' );
 		$converter = \Mockery::mock( 'overload:Cyr_To_Lat_Converter' );
 		$cli       = \Mockery::mock( 'overload:Cyr_To_Lat_WP_CLI' );
+		$acf       = \Mockery::mock( 'overload:Cyr_To_Lat_ACF' );
 
 		if ( ! defined( 'WP_CLI' ) ) {
 			define( 'WP_CLI', true );
@@ -183,8 +184,9 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
 
 		$cli = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
+		$acf = $this->getMockBuilder( 'Cyr_To_Lat_ACF' )->disableOriginalConstructor()->getMock();
 
-		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli );
+		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli, $acf );
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 		$this->assertSame( $expected, $subject->ctl_sanitize_title( $title ) );
@@ -394,8 +396,9 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
 
 		$cli = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
+		$acf = $this->getMockBuilder( 'Cyr_To_Lat_ACF' )->disableOriginalConstructor()->getMock();
 
-		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli );
+		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli, $acf );
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
@@ -419,6 +422,10 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 
 	/**
 	 * Test ctl_prepare_in()
+	 *
+	 * @param mixed  $items    Items to prepare.
+	 * @param string $format   Format.
+	 * @param string $expected Expected result.
 	 *
 	 * @dataProvider dp_test_ctl_prepare_in
 	 */
@@ -473,8 +480,9 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$settings  = \Mockery::mock( 'Cyr_To_Lat_Settings' );
 		$converter = \Mockery::mock( 'Cyr_To_Lat_Converter' );
 		$cli       = \Mockery::mock( 'Cyr_To_Lat_WP_CLI' );
+		$acf       = \Mockery::mock( 'Cyr_To_Lat_ACF' );
 
-		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli );
+		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli, $acf );
 
 		return $subject;
 	}
