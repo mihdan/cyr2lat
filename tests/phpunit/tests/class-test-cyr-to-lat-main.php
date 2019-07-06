@@ -178,7 +178,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$iso9_table = $this->get_conversion_table( $locale );
 
 		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
-		$settings->shouldReceive( 'get_option' )->with( $locale )->andReturn( $iso9_table );
+		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
 
 		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
 
@@ -187,13 +187,6 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli );
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
-		\WP_Mock::userFunction(
-			'get_locale',
-			[
-				'times'  => 1,
-				'return' => $locale,
-			]
-		);
 		$this->assertSame( $expected, $subject->ctl_sanitize_title( $title ) );
 	}
 
@@ -396,7 +389,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$iso9_table = $this->get_conversion_table( $locale );
 
 		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
-		$settings->shouldReceive( 'get_option' )->with( $locale )->andReturn( $iso9_table );
+		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
 
 		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
 
@@ -405,13 +398,6 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli );
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
-		\WP_Mock::userFunction(
-			'get_locale',
-			[
-				'times'  => 1,
-				'return' => $locale,
-			]
-		);
 
 		$wpdb        = Mockery::mock( '\wpdb' );
 		$wpdb->terms = 'wp_terms';
