@@ -40,44 +40,19 @@ class Cyr_To_Lat_ACF {
 	 */
 	public function enqueue_script() {
 		$table = $this->settings->get_table();
-		ob_start();
-		?>
-		( function( $ ) {
-			var table = <?php echo wp_json_encode( $table, JSON_UNESCAPED_UNICODE ); ?>;
-			var convert = function( str ) {
-				$.each( table, function( k, v ) {
-					var regex = new RegExp( k, 'g' );
-					str = str.replace( regex, v );
-				} );
-				str = str.replace( /[^\w\d-_]/g, '' );
-				str = str.replace( /_+/g, '_' );
-				str = str.replace( /^_?(.*)$/g, '$1' );
-				str = str.replace( /^(.*)_$/g, '$1' );
 
-				return str;
-			}
-			acf.addFilter( 'generate_field_object_name', function( val ) {
-				return convert( val );
-			} );
+		wp_enqueue_script(
+			'cyr-to-lat-acf-field-group',
+			CYR_TO_LAT_URL . '/js/acf-field-group.js',
+			array(),
+			CYR_TO_LAT_VERSION,
+			true
+		);
 
-			$( document ).on( 'change', '.acf-field .field-name', function() {
-				var $this = $( this );
+		$object = array(
+			'table' => $table,
+		);
 
-				if ( $(this).is(':focus') ) {
-					return false;
-				} else {
-					var str = $this.val();
-
-					str = convert( str );
-
-					if ( str !== $this.val() ) {
-						$this.val( str );
-					}
-				}
-			} );
-		} )( jQuery );
-		<?php
-		$data = ob_get_clean();
-		wp_add_inline_script( 'acf-field-group', $data );
+		wp_localize_script( 'cyr-to-lat-acf-field-group', 'CyrToLatAcfFieldGroup', $object );
 	}
 }
