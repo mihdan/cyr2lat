@@ -1605,8 +1605,8 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 				break;
 			// Serbian.
 			case 'sr_RS':
-				$table['Ђ'] = 'Đ';
-				$table['ђ'] = 'đ';
+				$table['Ђ'] = 'Dj';
+				$table['ђ'] = 'dj';
 				unset( $table['Ё'] );
 				unset( $table['ё'] );
 				$table['Ж'] = 'Z';
