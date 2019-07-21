@@ -199,6 +199,55 @@ class Cyr_To_Lat_Conversion_Tables {
 				unset( $table['Ѵ'] );
 				unset( $table['ѵ'] );
 				break;
+			// Serbian.
+			case 'sr_RS':
+				$table['Ђ'] = 'Đ';
+				$table['ђ'] = 'đ';
+				unset( $table['Ё'] );
+				unset( $table['ё'] );
+				$table['Ж'] = 'Z';
+				$table['ж'] = 'z';
+				unset( $table['Й'] );
+				unset( $table['й'] );
+				unset( $table['І'] );
+				unset( $table['і'] );
+				$table['J'] = 'J';
+				$table['j'] = 'j';
+				$table['Љ'] = 'Lj';
+				$table['љ'] = 'lj';
+				$table['Њ'] = 'Nj';
+				$table['њ'] = 'nj';
+				$table['Ћ'] = 'C';
+				$table['ћ'] = 'c';
+				$table['Ц'] = 'C';
+				$table['ц'] = 'c';
+				$table['Ч'] = 'C';
+				$table['ч'] = 'c';
+				$table['Џ'] = 'Dz';
+				$table['џ'] = 'dz';
+				$table['Ш'] = 'S';
+				$table['ш'] = 's';
+				unset( $table['Щ'] );
+				unset( $table['щ'] );
+				unset( $table['Ъ'] );
+				unset( $table['ъ'] );
+				unset( $table['Ы'] );
+				unset( $table['ы'] );
+				unset( $table['Ь'] );
+				unset( $table['ь'] );
+				unset( $table['Э'] );
+				unset( $table['э'] );
+				unset( $table['Ю'] );
+				unset( $table['ю'] );
+				unset( $table['Я'] );
+				unset( $table['я'] );
+				unset( $table['Ѣ'] );
+				unset( $table['ѣ'] );
+				unset( $table['Ѳ'] );
+				unset( $table['ѳ'] );
+				unset( $table['Ѵ'] );
+				unset( $table['ѵ'] );
+				break;
 			// Georgian.
 			case 'ka_GE':
 				$table['áƒ'] = 'a';
@@ -288,6 +337,7 @@ class Cyr_To_Lat_Conversion_Tables {
 				$table['Ý'] = 'O';
 				$table['ý'] = 'o';
 				break;
+			// Hebrew.
 			case 'he_IL':
 				$table = array(
 					'א' => '',

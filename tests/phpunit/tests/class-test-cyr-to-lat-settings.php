@@ -143,6 +143,7 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 		$tables->shouldReceive( 'get' )->with( 'uk' )->andReturn( [ 'uk' ] );
 		$tables->shouldReceive( 'get' )->with( 'bg_BG' )->andReturn( [ 'bg_BG' ] );
 		$tables->shouldReceive( 'get' )->with( 'mk_MK' )->andReturn( [ 'mk_MK' ] );
+		$tables->shouldReceive( 'get' )->with( 'sr_RS' )->andReturn( [ 'sr_RS' ] );
 		$tables->shouldReceive( 'get' )->with( 'ka_GE' )->andReturn( [ 'ka_GE' ] );
 		$tables->shouldReceive( 'get' )->with( 'kk' )->andReturn( [ 'kk' ] );
 		$tables->shouldReceive( 'get' )->with( 'he_IL' )->andReturn( [ 'he_IL' ] );
@@ -449,6 +450,13 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 				'add_settings_section',
 				[
 					'args'  => [ 'mk_MK_section', 'mk_MK Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'times' => 1,
+				]
+			);
+			\WP_Mock::userFunction(
+				'add_settings_section',
+				[
+					'args'  => [ 'sr_RS_section', 'sr_RS Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -1352,6 +1360,15 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 				'supplemental' => '',
 				'default'      => [ 'mk_MK' ],
 			],
+			'sr_RS' => [
+				'label'        => 'sr_RS Table',
+				'section'      => 'sr_RS_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'sr_RS' ],
+			],
 			'ka_GE' => [
 				'label'        => 'ka_GE Table',
 				'section'      => 'ka_GE_section',
@@ -1586,6 +1603,55 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 				unset( $table['Ѵ'] );
 				unset( $table['ѵ'] );
 				break;
+			// Serbian.
+			case 'sr_RS':
+				$table['Ђ'] = 'Đ';
+				$table['ђ'] = 'đ';
+				unset( $table['Ё'] );
+				unset( $table['ё'] );
+				$table['Ж'] = 'Z';
+				$table['ж'] = 'z';
+				unset( $table['Й'] );
+				unset( $table['й'] );
+				unset( $table['І'] );
+				unset( $table['і'] );
+				$table['J'] = 'J';
+				$table['j'] = 'j';
+				$table['Љ'] = 'Lj';
+				$table['љ'] = 'lj';
+				$table['Њ'] = 'Nj';
+				$table['њ'] = 'nj';
+				$table['Ћ'] = 'C';
+				$table['ћ'] = 'c';
+				$table['Ц'] = 'C';
+				$table['ц'] = 'c';
+				$table['Ч'] = 'C';
+				$table['ч'] = 'c';
+				$table['Џ'] = 'Dz';
+				$table['џ'] = 'dz';
+				$table['Ш'] = 'S';
+				$table['ш'] = 's';
+				unset( $table['Щ'] );
+				unset( $table['щ'] );
+				unset( $table['Ъ'] );
+				unset( $table['ъ'] );
+				unset( $table['Ы'] );
+				unset( $table['ы'] );
+				unset( $table['Ь'] );
+				unset( $table['ь'] );
+				unset( $table['Э'] );
+				unset( $table['э'] );
+				unset( $table['Ю'] );
+				unset( $table['ю'] );
+				unset( $table['Я'] );
+				unset( $table['я'] );
+				unset( $table['Ѣ'] );
+				unset( $table['ѣ'] );
+				unset( $table['Ѳ'] );
+				unset( $table['ѳ'] );
+				unset( $table['Ѵ'] );
+				unset( $table['ѵ'] );
+				break;
 			// Georgian.
 			case 'ka_GE':
 				$table['áƒ'] = 'a';
@@ -1674,6 +1740,47 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 				$table['ú'] = 'o';
 				$table['Ý'] = 'O';
 				$table['ý'] = 'o';
+				break;
+			// Hebrew.
+			case 'he_IL':
+				$table = array(
+					'א' => '',
+					'ב' => 'b',
+					'ג' => 'g',
+					'ד' => 'd',
+					'ה' => 'h',
+					'ו' => 'w',
+					'ז' => 'z',
+					'ח' => 'x',
+					'ט' => 't',
+					'י' => 'y',
+					'ך' => '',
+					'כ' => 'kh',
+					'ל' => 'l',
+					'ם' => '',
+					'מ' => 'm',
+					'ן' => '',
+					'נ' => 'n',
+					'ס' => 's',
+					'ע' => '',
+					'ף' => '',
+					'פ' => 'ph',
+					'ץ' => '',
+					'צ' => 's',
+					'ק' => 'k',
+					'ר' => 'r',
+					'ש' => 'sh',
+					'ת' => 'th',
+				);
+				for ( $code = 0x0590; $code <= 0x05CF; $code ++ ) {
+					$table[ self::mb_chr( $code ) ] = '';
+				}
+				for ( $code = 0x05F0; $code <= 0x05F5; $code ++ ) {
+					$table[ self::mb_chr( $code ) ] = '';
+				}
+				for ( $code = 0xFB1D; $code <= 0xFB4F; $code ++ ) {
+					$table[ self::mb_chr( $code ) ] = '';
+				}
 				break;
 			default:
 		}
