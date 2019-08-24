@@ -808,4 +808,18 @@ class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
 		$this->assertSame( 'ࠀ', Cyr_To_Lat_Conversion_Tables::mb_chr( 0x0800 ) );
 		$this->assertSame( '𐂃', Cyr_To_Lat_Conversion_Tables::mb_chr( 0x10083 ) );
 	}
+
+	/**
+	 * Test get_fix_table_for_mac()
+	 */
+	public function test_get_fix_table_for_mac() {
+		$fix_table = [
+			'Ё' => urldecode( '%d0%95%cc%88' ),
+			'ё' => urldecode( '%d0%B5%cc%88' ),
+			'Й' => urldecode( '%d0%98%cc%86' ),
+			'й' => urldecode( '%d0%B8%cc%86' ),
+		];
+
+		$this->assertSame( $fix_table, Cyr_To_Lat_Conversion_Tables::get_fix_table_for_mac() );
+	}
 }

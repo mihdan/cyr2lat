@@ -131,7 +131,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	}
 
 	/**
-	 * Test that ctl_sanitize_title does nothing when context is 'query'
+	 * Test that ctl_sanitize_title() does nothing when context is 'query'
 	 */
 	public function test_ctl_sanitize_title_query_context() {
 		$subject = $this->get_subject();
@@ -144,7 +144,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	}
 
 	/**
-	 * Test that ctl_sanitize_title returns ctl_pre_sanitize_title filter value if set
+	 * Test that ctl_sanitize_title() returns ctl_pre_sanitize_title filter value if set
 	 */
 	public function test_ctl_sanitize_title_filter_set() {
 		$subject = $this->get_subject();
@@ -229,7 +229,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	}
 
 	/**
-	 * Test that ctl_sanitize_filename returns ctl_pre_sanitize_filename filter value if set
+	 * Test that ctl_sanitize_filename() returns ctl_pre_sanitize_filename filter value if set
 	 */
 	public function test_ctl_pre_sanitize_filename_filter_set() {
 		$subject = $this->get_subject();
@@ -266,7 +266,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 
 		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli, $acf );
 
-		\WP_Mock::onFilter( 'ctl_pre_sanitize_filname' )->with( false, $filename )->reply( false );
+		\WP_Mock::onFilter( 'ctl_pre_sanitize_filename' )->with( false, $filename )->reply( false );
 		$this->assertSame( $expected, $subject->ctl_sanitize_filename( $filename, '' ) );
 	}
 
@@ -304,6 +304,54 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 			'series of minus signs'      => [
 				'-ABC---XYZ-',
 				'-ABC---XYZ-',
+			],
+		];
+	}
+
+	/**
+	 * Test ctl_fix_mac_filename()
+	 *
+	 * @param string $filename Filename to sanitize.
+	 * @param string $expected Expected result.
+	 *
+	 * @dataProvider dp_test_ctl_fix_mac_filename
+	 */
+	public function test_ctl_fix_mac_filename( $filename, $expected ) {
+		$locale     = 'ru_RU';
+		$iso9_table = $this->get_conversion_table( $locale );
+
+		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
+		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
+
+		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
+
+		$cli = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
+		$acf = $this->getMockBuilder( 'Cyr_To_Lat_ACF' )->disableOriginalConstructor()->getMock();
+
+		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli, $acf );
+
+		$this->assertSame( $expected, $subject->ctl_fix_mac_filename( $filename, '' ) );
+	}
+
+	/**
+	 * Data provider for test_ctl_fix_mac_filename
+	 *
+	 * @return array
+	 */
+	public function dp_test_ctl_fix_mac_filename() {
+		return [
+			'empty string'     => [
+				'',
+				'',
+			],
+			'normal filename'  => [
+				'filename.jpg',
+				'filename.jpg',
+			],
+			'problem filename' => [
+				urldecode( '%d0%95%cc%88' ) . '-' . urldecode( '%d0%B5%cc%88' ) . '-' .
+				urldecode( '%d0%98%cc%86' ) . '-' . urldecode( '%d0%B8%cc%86' ) . '.jpg',
+				'YO-yo-J-j.jpg',
 			],
 		];
 	}
