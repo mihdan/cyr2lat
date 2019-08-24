@@ -371,6 +371,69 @@ class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
 			'џ' => 'dh',
 		];
 
+		$sr_RS = [
+			'А' => 'A',
+			'Б' => 'B',
+			'В' => 'V',
+			'Г' => 'G',
+			'Д' => 'D',
+			'Е' => 'E',
+			'Ж' => 'Z',
+			'З' => 'Z',
+			'И' => 'I',
+			'К' => 'K',
+			'Л' => 'L',
+			'М' => 'M',
+			'Н' => 'N',
+			'О' => 'O',
+			'П' => 'P',
+			'Р' => 'R',
+			'С' => 'S',
+			'Т' => 'T',
+			'У' => 'U',
+			'Ф' => 'F',
+			'Х' => 'H',
+			'Ц' => 'C',
+			'Ч' => 'C',
+			'Ш' => 'S',
+			'а' => 'a',
+			'б' => 'b',
+			'в' => 'v',
+			'г' => 'g',
+			'д' => 'd',
+			'е' => 'e',
+			'ж' => 'z',
+			'з' => 'z',
+			'и' => 'i',
+			'к' => 'k',
+			'л' => 'l',
+			'м' => 'm',
+			'н' => 'n',
+			'о' => 'o',
+			'п' => 'p',
+			'р' => 'r',
+			'с' => 's',
+			'т' => 't',
+			'у' => 'u',
+			'ф' => 'f',
+			'х' => 'h',
+			'ц' => 'c',
+			'ч' => 'c',
+			'ш' => 's',
+			'Ђ' => 'Dj',
+			'ђ' => 'dj',
+			'J' => 'J',
+			'j' => 'j',
+			'Љ' => 'Lj',
+			'љ' => 'lj',
+			'Њ' => 'Nj',
+			'њ' => 'nj',
+			'Ћ' => 'C',
+			'ћ' => 'c',
+			'Џ' => 'Dz',
+			'џ' => 'dz',
+		];
+
 		$ka_GE = [
 			'А'   => 'A',
 			'Б'   => 'B',
@@ -730,6 +793,7 @@ class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
 		$this->assertSame( $uk, \Cyr_To_Lat_Conversion_Tables::get( 'uk' ) );
 		$this->assertSame( $bg_BG, \Cyr_To_Lat_Conversion_Tables::get( 'bg_BG' ) );
 		$this->assertSame( $mk_MK, \Cyr_To_Lat_Conversion_Tables::get( 'mk_MK' ) );
+		$this->assertSame( $sr_RS, \Cyr_To_Lat_Conversion_Tables::get( 'sr_RS' ) );
 		$this->assertSame( $ka_GE, \Cyr_To_Lat_Conversion_Tables::get( 'ka_GE' ) );
 		$this->assertSame( $kk, \Cyr_To_Lat_Conversion_Tables::get( 'kk' ) );
 		$this->assertSame( $he_IL, \Cyr_To_Lat_Conversion_Tables::get( 'he_IL' ) );

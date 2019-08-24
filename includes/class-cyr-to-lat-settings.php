@@ -175,6 +175,15 @@ class Cyr_To_Lat_Settings {
 				'supplemental' => '',
 				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'mk_MK' ),
 			),
+			'sr_RS' => array(
+				'label'        => __( 'sr_RS Table', 'cyr2lat' ),
+				'section'      => 'sr_RS_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'sr_RS' ),
+			),
 			'ka_GE' => array(
 				'label'        => __( 'ka_GE Table', 'cyr2lat' ),
 				'section'      => 'ka_GE_section',
@@ -364,6 +373,12 @@ class Cyr_To_Lat_Settings {
 		add_settings_section(
 			'mk_MK_section',
 			__( 'mk_MK Table', 'cyr2lat' ),
+			array( $this, 'cyr_to_lat_section' ),
+			self::PAGE
+		);
+		add_settings_section(
+			'sr_RS_section',
+			__( 'sr_RS Table', 'cyr2lat' ),
 			array( $this, 'cyr_to_lat_section' ),
 			self::PAGE
 		);

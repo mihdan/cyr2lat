@@ -16,7 +16,7 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 * Converts any number of existing post, page and term slugs in background processes
 * Saves existing post and page permalinks integrity
 * Performs transliteration of attachment file names
-* Includes Russian, Belorussian, Ukrainian, Bulgarian, Macedonian, Georgian, and Kazakh characters
+* Includes Russian, Belorussian, Ukrainian, Bulgarian, Macedonian, Serbian, Georgian, Kazakh, and Hebrew characters
 * Transliteration table can be customized without editing the plugin by itself
 
 Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
@@ -86,6 +86,9 @@ Yes you can!
 * Join in on our [Telegram Channel](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 4.2.2 =
+* Serbian table added
 
 = 4.2.1 (23.06.2019) =
 * Fixed problem with sessions
