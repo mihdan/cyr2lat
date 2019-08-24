@@ -407,4 +407,20 @@ class Cyr_To_Lat_Conversion_Tables {
 
 		return $s;
 	}
+
+	/**
+	 * Get fix table for MacOS.
+	 * On MacOS, files containing characters in the table, are sometimes encoded improperly.
+	 * Table returned contains encoding problems.
+	 *
+	 * @return array
+	 */
+	public static function get_fix_table_for_mac() {
+		return [
+			'Ё' => urldecode( '%d0%95%cc%88' ),
+			'ё' => urldecode( '%d0%B5%cc%88' ),
+			'Й' => urldecode( '%d0%98%cc%86' ),
+			'й' => urldecode( '%d0%B8%cc%86' ),
+		];
+	}
 }

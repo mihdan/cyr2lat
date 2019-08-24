@@ -105,7 +105,8 @@ class Cyr_To_Lat_Main {
 	 */
 	public function init_hooks() {
 		add_filter( 'sanitize_title', array( $this, 'ctl_sanitize_title' ), 9, 3 );
-		add_filter( 'sanitize_file_name', array( $this, 'ctl_sanitize_title' ), 10, 2 );
+		add_filter( 'sanitize_file_name', array( $this, 'ctl_sanitize_filename' ), 10, 2 );
+		add_filter( 'sanitize_file_name', array( $this, 'ctl_fix_mac_filename' ), 11, 2 );
 		add_filter( 'wp_insert_post_data', array( $this, 'ctl_sanitize_post_name' ), 10, 2 );
 	}
 
@@ -121,6 +122,10 @@ class Cyr_To_Lat_Main {
 	public function ctl_sanitize_title( $title, $raw_title = '', $context = '' ) {
 		global $wpdb;
 
+		if ( ! $title ) {
+			return $title;
+		}
+
 		// Fixed bug with `_wp_old_slug` redirect.
 		if ( 'query' === $context ) {
 			return $title;
@@ -132,8 +137,6 @@ class Cyr_To_Lat_Main {
 		if ( false !== $pre ) {
 			return $pre;
 		}
-
-		$table = $this->settings->get_table();
 
 		$is_term = false;
 		// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
@@ -153,18 +156,85 @@ class Cyr_To_Lat_Main {
 		if ( ! empty( $term ) ) {
 			$title = $term;
 		} else {
-			$title = strtr( $title, apply_filters( 'ctl_table', $table ) );
-
-			if ( function_exists( 'iconv' ) ) {
-				$title = iconv( 'UTF-8', 'UTF-8//TRANSLIT//IGNORE', $title );
-			}
+			$title = $this->transliterate( $title );
 		}
 
 		return $title;
 	}
 
 	/**
-	 * Helper function to make class unit-testable
+	 * Sanitize filename.
+	 *
+	 * @param string $filename     Sanitized filename.
+	 * @param string $filename_raw The filename prior to sanitization.
+	 *
+	 * @return string
+	 */
+	public function ctl_sanitize_filename( $filename, $filename_raw ) {
+		$pre = apply_filters( 'ctl_pre_sanitize_filename', false, $filename );
+
+		if ( false !== $pre ) {
+			return $pre;
+		}
+
+		return $this->transliterate( $filename );
+	}
+
+	/**
+	 * Fix filename encoding on MacOS.
+	 *
+	 * @param string $filename     Sanitized filename.
+	 * @param string $filename_raw The filename prior to sanitization.
+	 *
+	 * @return string
+	 */
+	public function ctl_fix_mac_filename( $filename, $filename_raw ) {
+		$table     = $this->get_filtered_table();
+		$fix_table = Cyr_To_Lat_Conversion_Tables::get_fix_table_for_mac();
+
+		$fix = [];
+		foreach ( $fix_table as $key => $value ) {
+			if ( isset( $table[ $key ] ) ) {
+				$fix[ $value ] = $table[ $key ];
+			}
+		}
+
+		$filename = strtr( $filename, $fix );
+
+		return $filename;
+	}
+
+	/**
+	 * Get transliteration table.
+	 *
+	 * @return array
+	 */
+	private function get_filtered_table() {
+		return (array) apply_filters( 'ctl_table', $this->settings->get_table() );
+	}
+
+	/**
+	 * Transliterate string using a table.
+	 *
+	 * @param string $string Abstract string.
+	 *
+	 * @return string
+	 */
+	private function transliterate( $string ) {
+		$table = $this->get_filtered_table();
+
+		$string = strtr( $string, $table );
+
+		if ( function_exists( 'iconv' ) ) {
+			$new_string = iconv( 'UTF-8', 'UTF-8//TRANSLIT//IGNORE', $string );
+			$string     = $new_string ? $new_string : $string;
+		}
+
+		return $string;
+	}
+
+	/**
+	 * Helper function to make class unit-testable.
 	 *
 	 * @param string $function Function name.
 	 *
