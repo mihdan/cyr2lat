@@ -24,7 +24,9 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 * Performs transliteration of attachment file names
 * Includes Russian, Belorussian, Ukrainian, Bulgarian, Macedonian, Serbian, Georgian, Kazakh, and Hebrew characters
 * Transliteration table can be customized without editing the plugin by itself
-* [Officially compatible with WPML](https://wpml.org/plugin/cyr-to-lat/) ![WPML Certificate](https://ps.w.org/cyr2lat/assets/Cyr-To-Lat---WPML-Compatibility-Certificate)
+* [Officially compatible with WPML](https://wpml.org/plugin/cyr-to-lat/)
+
+![WPML Certificate](https://ps.w.org/cyr2lat/assets/Cyr-To-Lat---WPML-Compatibility-Certificate-240x250.png)
 
 Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
 
