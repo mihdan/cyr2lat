@@ -1,9 +1,15 @@
 === Cyr-To-Lat ===
+
 Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
+
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
+
 Requires at least: 2.3
+
 Tested up to: 5.2
-Stable tag: 4.2.1
+
+Stable tag: 4.2.2
+
 Requires PHP: 5.6
 
 Converts Cyrillic characters in post, page and term slugs to Latin characters.
@@ -18,6 +24,7 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 * Performs transliteration of attachment file names
 * Includes Russian, Belorussian, Ukrainian, Bulgarian, Macedonian, Serbian, Georgian, Kazakh, and Hebrew characters
 * Transliteration table can be customized without editing the plugin by itself
+* [Officially compatible with WPML](https://wpml.org/plugin/cyr-to-lat/) ![WPML Certificate](https://ps.w.org/cyr2lat/assets/Cyr-To-Lat---WPML-Compatibility-Certificate)
 
 Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
 
@@ -33,7 +40,8 @@ Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
 = How can I define my own substitutions? =
 
 Add this code to your theme's `functions.php` file:
-`
+
+```
 function my_cyr_to_lat_table( $ctl_table ) {
    $ctl_table['Ъ'] = 'U';
    $ctl_table['ъ'] = 'u';
@@ -41,12 +49,13 @@ function my_cyr_to_lat_table( $ctl_table ) {
    return $ctl_table;
 }
 add_filter( 'ctl_table', 'my_cyr_to_lat_table' );
-`
+```
 
 = How can I redefine non-standard locale ? =
 
 For instance, if your non-standard locale is uk_UA, you can redefine it to `uk` by adding the following code to your theme's `function.php` file:
-`
+
+```
 /**
  * Use conversion table for non-standard locale.
  *
@@ -64,15 +73,15 @@ function my_ctl_table( $table ) {
 }
 
 add_filter( 'ctl_table', 'my_ctl_table' );
-`
+```
 
 = How can I convert a large number of posts/terms using wp-cli? =
 
 Use the following command in console:
 
-`
+```
 wp cyr2lat regenerate [--post_type=<post_type>] [--post_status=<post_status>]
-`
+```
 
 Where
   `-post_type` is list of post types,
@@ -90,7 +99,7 @@ Yes you can!
 = 4.2.2 =
 * Added Serbian table
 * Added new filter `ctl_pre_sanitize_filename`
-* Fixed improper encoding of `Ё`, `ё`, `Й`, `й` characters in file names on some Mac computers (old know problem on Mac's)
+* Fixed improper encoding of `Ё`, `ё`, `Й`, `й` characters in file names on some Mac computers (old known problem on Mac's)
 
 = 4.2.1 (23.06.2019) =
 * Fixed problem with sessions

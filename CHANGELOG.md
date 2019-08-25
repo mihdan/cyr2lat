@@ -1,3 +1,8 @@
+## 4.2.2 (25.08.2019)
+* Added Serbian table
+* Added new filter `ctl_pre_sanitize_filename`
+* Fixed improper encoding of `Ё`, `ё`, `Й`, `й` characters in file names on some Mac computers (old known problem on Mac's)
+
 ## 4.2.1 (23.06.2019)
 * Fixed problem with sessions
 * Fixed message sequence for conversion of existing slugs.
