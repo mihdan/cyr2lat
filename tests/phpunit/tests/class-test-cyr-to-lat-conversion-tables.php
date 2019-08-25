@@ -5,14 +5,12 @@
  * @package cyr-to-lat
  */
 
-use PHPUnit\Framework\TestCase;
-
 /**
  * Class Test_Cyr_To_Lat_Conversion_Tables
  *
  * @group tables
  */
-class Test_Cyr_To_Lat_Conversion_Tables extends TestCase {
+class Test_Cyr_To_Lat_Conversion_Tables extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test get()

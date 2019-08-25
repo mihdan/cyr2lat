@@ -5,30 +5,18 @@
  * @package cyr-to-lat
  */
 
-use PHPUnit\Framework\TestCase;
-
 /**
  * Class Test_Cyr_To_Lat_Term_Conversion_Process
  *
  * @group process
  */
-class Test_Cyr_To_Lat_Term_Conversion_Process extends TestCase {
-
-	/**
-	 * Setup test
-	 */
-	public function setUp() {
-		parent::setUp();
-		\WP_Mock::setUp();
-	}
+class Test_Cyr_To_Lat_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * End test
 	 */
 	public function tearDown() {
 		unset( $GLOBALS['wpdb'] );
-		\WP_Mock::tearDown();
-		parent::tearDown();
 	}
 
 	/**

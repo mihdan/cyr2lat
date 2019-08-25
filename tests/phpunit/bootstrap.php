@@ -5,14 +5,29 @@
  * @package cyr-to-lat
  */
 
+use tad\FunctionMocker\FunctionMocker;
+
+/**
+ * Plugin test dir.
+ */
 define( 'PLUGIN_TESTS_DIR', __DIR__ );
 
+/**
+ * Plugin main file.
+ */
 define( 'PLUGIN_MAIN_FILE', __DIR__ . '/../../cyr-to-lat.php' );
+
+/**
+ * Plugin path.
+ */
 define( 'PLUGIN_PATH', dirname( PLUGIN_MAIN_FILE ) );
 
 require_once PLUGIN_PATH . '/vendor/autoload.php';
 
 if ( ! defined( 'ABSPATH' ) ) {
+	/**
+	 * WordPress ABSPATH.
+	 */
 	define( 'ABSPATH', PLUGIN_PATH . '/../../' );
 }
 
@@ -56,5 +71,16 @@ define( 'CYR_TO_LAT_TERM_CONVERSION_ACTION', 'term_conversion_action' );
  */
 define( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', '5.6' );
 
-// Now call the bootstrap method of WP Mock.
+FunctionMocker::init(
+	[
+		'whitelist'             => [
+			realpath( CYR_TO_LAT_PATH . '/includes' ),
+		],
+		'blacklist'             => [
+			realpath( CYR_TO_LAT_PATH ),
+		],
+		'redefinable-internals' => [ 'phpversion' ],
+	]
+);
+
 \WP_Mock::bootstrap();

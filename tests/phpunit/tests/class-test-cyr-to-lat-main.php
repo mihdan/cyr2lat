@@ -5,22 +5,13 @@
  * @package cyr-to-lat
  */
 
-use PHPUnit\Framework\TestCase;
-
 /**
  * Class Test_Cyr_To_Lat_Main
  *
  * @group main
+ * @group requirements
  */
-class Test_Cyr_To_Lat_Main extends TestCase {
-
-	/**
-	 * Setup test
-	 */
-	public function setUp() {
-		parent::setUp();
-		\WP_Mock::setUp();
-	}
+class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * End test
@@ -29,8 +20,6 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		unset( $GLOBALS['wp_version'] );
 		unset( $GLOBALS['wpdb'] );
 		unset( $GLOBALS['current_screen'] );
-		\WP_Mock::tearDown();
-		parent::tearDown();
 	}
 
 	/**
@@ -43,10 +32,10 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	public function test_constructor() {
 		$classname = 'Cyr_To_Lat_Main';
 
-		$settings  = \Mockery::mock( 'overload:Cyr_To_Lat_Settings' );
-		$converter = \Mockery::mock( 'overload:Cyr_To_Lat_Converter' );
-		$cli       = \Mockery::mock( 'overload:Cyr_To_Lat_WP_CLI' );
-		$acf       = \Mockery::mock( 'overload:Cyr_To_Lat_ACF' );
+		\Mockery::mock( 'overload:Cyr_To_Lat_Settings' );
+		\Mockery::mock( 'overload:Cyr_To_Lat_Converter' );
+		\Mockery::mock( 'overload:Cyr_To_Lat_WP_CLI' );
+		\Mockery::mock( 'overload:Cyr_To_Lat_ACF' );
 
 		if ( ! defined( 'WP_CLI' ) ) {
 			define( 'WP_CLI', true );
@@ -371,16 +360,12 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 				'return' => false,
 			]
 		);
+
 		$GLOBALS['wp_version'] = '4.9';
 		$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
 
-		$GLOBALS['wp_version'] = '5.0';
-		try {
-			$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
-		} catch ( Exception $e ) {
-		}
-
 		$subject->shouldReceive( 'ctl_function_exists' )->andReturn( true );
+
 		\WP_Mock::userFunction(
 			'is_plugin_active',
 			[
@@ -389,6 +374,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 				'return' => true,
 			]
 		);
+
 		\WP_Mock::userFunction(
 			'get_option',
 			[
@@ -397,6 +383,8 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 				'return' => 'replace',
 			]
 		);
+
+		$GLOBALS['wp_version'] = '5.0';
 		$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
 	}
 
@@ -405,6 +393,14 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	 */
 	public function test_ctl_sanitize_post_name_not_post_edit_screen() {
 		$data = [ 'something' ];
+
+		\WP_Mock::userFunction(
+			'has_filter',
+			[
+				'args'   => [ 'replace_editor', 'gutenberg_init' ],
+				'return' => false,
+			]
+		);
 
 		$GLOBALS['wp_version'] = '5.0';
 

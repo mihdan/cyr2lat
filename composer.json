@@ -76,6 +76,7 @@
   "autoload-dev": {
     "classmap": [
       "includes",
+      "tests/phpunit/classes",
       "vendor/wp-cli"
     ]
   }

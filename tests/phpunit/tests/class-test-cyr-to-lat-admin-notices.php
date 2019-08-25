@@ -5,30 +5,12 @@
  * @package cyr-to-lat
  */
 
-use PHPUnit\Framework\TestCase;
-
 /**
  * Class Test_Cyr_To_Lat_Admin_Notices
  *
  * @group admin-notices
  */
-class Test_Cyr_To_Lat_Admin_Notices extends TestCase {
-
-	/**
-	 * Setup test
-	 */
-	public function setUp() {
-		parent::setUp();
-		\WP_Mock::setUp();
-	}
-
-	/**
-	 * End test
-	 */
-	public function tearDown() {
-		\WP_Mock::tearDown();
-		parent::tearDown();
-	}
+class Test_Cyr_To_Lat_Admin_Notices extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test constructor
