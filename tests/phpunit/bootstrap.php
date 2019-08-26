@@ -73,13 +73,13 @@ define( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', '5.6' );
 
 FunctionMocker::init(
 	[
-		'whitelist'             => [
-			realpath( CYR_TO_LAT_PATH . '/includes' ),
-		],
 		'blacklist'             => [
 			realpath( CYR_TO_LAT_PATH ),
 		],
-		'redefinable-internals' => [ 'phpversion' ],
+		'whitelist'             => [
+			realpath( CYR_TO_LAT_PATH . '/includes' ),
+		],
+		'redefinable-internals' => [ 'phpversion', 'function_exists' ],
 	]
 );
 

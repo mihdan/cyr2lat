@@ -5,6 +5,8 @@
  * @package cyr-to-lat
  */
 
+use tad\FunctionMocker\FunctionMocker;
+
 /**
  * Class Test_Cyr_To_Lat_Main
  *
@@ -364,7 +366,7 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 		$GLOBALS['wp_version'] = '4.9';
 		$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
 
-		$subject->shouldReceive( 'ctl_function_exists' )->andReturn( true );
+		FunctionMocker::replace( 'function_exists', true );
 
 		\WP_Mock::userFunction(
 			'is_plugin_active',
@@ -405,7 +407,7 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 		$GLOBALS['wp_version'] = '5.0';
 
 		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'ctl_function_exists' )->andReturn( true );
+		FunctionMocker::replace( 'function_exists', true );
 
 		\WP_Mock::userFunction(
 			'is_plugin_active',
@@ -437,7 +439,7 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 		$GLOBALS['wp_version'] = '5.0';
 
 		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'ctl_function_exists' )->andReturn( true );
+		FunctionMocker::replace( 'function_exists', true );
 
 		\WP_Mock::userFunction(
 			'is_plugin_active',

@@ -234,17 +234,6 @@ class Cyr_To_Lat_Main {
 	}
 
 	/**
-	 * Helper function to make class unit-testable.
-	 *
-	 * @param string $function Function name.
-	 *
-	 * @return bool
-	 */
-	protected function ctl_function_exists( $function ) {
-		return function_exists( $function );
-	}
-
-	/**
 	 * Check if Classic Editor plugin is active.
 	 *
 	 * @link https://kagg.eu/how-to-catch-gutenberg/
@@ -252,7 +241,7 @@ class Cyr_To_Lat_Main {
 	 * @return bool
 	 */
 	private function ctl_is_classic_editor_plugin_active() {
-		if ( ! $this->ctl_function_exists( 'is_plugin_active' ) ) {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
