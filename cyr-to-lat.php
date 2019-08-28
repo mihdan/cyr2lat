@@ -10,7 +10,7 @@
  * Requires at least: 2.3
  * Tested up to: 5.2
  * Version: 4.2.2
- * Stable tag: 4.2.2
+ * Stable tag: 4.2.3
  *
  * Text Domain: cyr2lat
  * Domain Path: /languages/
@@ -28,7 +28,7 @@ if ( ! defined( 'CYR_TO_LAT_VERSION' ) ) {
 	/**
 	 * Plugin version.
 	 */
-	define( 'CYR_TO_LAT_VERSION', '4.2.2' );
+	define( 'CYR_TO_LAT_VERSION', '4.2.3' );
 }
 
 if ( ! defined( 'CYR_TO_LAT_PATH' ) ) {

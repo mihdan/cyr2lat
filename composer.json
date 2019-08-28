@@ -53,8 +53,7 @@
   },
   "require": {
     "composer/installers": "*",
-    "a5hleyrich/wp-background-processing": "dev-master",
-    "symfony/polyfill-mbstring": "~1.0"
+    "a5hleyrich/wp-background-processing": "dev-master"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
@@ -71,7 +70,8 @@
   },
   "autoload": {
     "classmap": [
-      "includes"
+      "includes",
+      "lib"
     ]
   },
   "autoload-dev": {

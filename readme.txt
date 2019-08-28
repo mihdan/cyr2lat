@@ -92,6 +92,9 @@ Yes you can!
 
 == Changelog ==
 
+= 4.2.3 (29.08.2019) =
+* Scoped Symphony polyfill to avoid problems with composer autoloader on some sites.
+
 = 4.2.2 (28.08.2019) =
 * Added ACF (Advanced Custom Fields) plugin support
 * Added Serbian table

@@ -5,7 +5,7 @@
  * @package cyr-to-lat
  */
 
-use Symfony\Polyfill\Mbstring\Mbstring;
+use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
 
 /**
  * Class Cyr_To_Lat_Conversion_Tables
@@ -398,7 +398,7 @@ class Cyr_To_Lat_Conversion_Tables {
 		 *
 		 * Example of wrong encoding on Mac:
 		 * берЁзовыЙ-белозёрский - original input,
-		 * берЁзовыЙ-белозёрский.png - actual filename created on Mac,
+		 * берЁзовыЙ-белозёрский.png - actual filename created on Mac (ЁёЙй are already wrongly encoded),
 		 * ber%d0%95%cc%88zovy%d0%98%cc%86-beloz%d0%B5%cc%88rski%d0%B8%cc%86.png - urlencode() of the above,
 		 * berËzovyĬ-belozërskiĭ.png - actual filename passed via standard ISO9 transliteration table,
 		 * berE%CC%88zovyI%CC%86-beloze%CC%88rskii%CC%86.png - urlencode() of the above.
