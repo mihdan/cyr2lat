@@ -4,6 +4,7 @@
 .git
 .gitignore
 .gitlab-ci.yml
+.coveralls.yml
 .travis.yml
 .DS_Store
 Thumbs.db
