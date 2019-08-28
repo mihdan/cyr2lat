@@ -33,5 +33,5 @@ node_modules
 *.sql
 *.tar.gz
 *.zip
-/assets
-/src
+assets
+src
