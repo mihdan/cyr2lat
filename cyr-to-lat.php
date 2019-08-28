@@ -19,6 +19,7 @@
  * @author  Sergey Biryukov, Mikhail Kobzarev, Igor Gergel
  */
 
+// @codeCoverageIgnoreStart
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -78,6 +79,7 @@ if ( ! defined( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION' ) ) {
 	 */
 	define( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', '5.6' );
 }
+// @codeCoverageIgnoreEnd
 
 /**
  * Init plugin class on plugin load.

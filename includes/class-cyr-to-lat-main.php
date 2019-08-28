@@ -249,7 +249,9 @@ class Cyr_To_Lat_Main {
 	 */
 	private function ctl_is_classic_editor_plugin_active() {
 		if ( ! function_exists( 'is_plugin_active' ) ) {
+			// @codeCoverageIgnoreStart
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
+			// @codeCoverageIgnoreEnd
 		}
 
 		return is_plugin_active( 'classic-editor/classic-editor.php' );
