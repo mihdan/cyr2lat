@@ -79,7 +79,7 @@ FunctionMocker::init(
 		'whitelist'             => [
 			realpath( CYR_TO_LAT_PATH . '/includes' ),
 		],
-		'redefinable-internals' => [ 'phpversion', 'function_exists' ],
+		'redefinable-internals' => [ 'phpversion', 'function_exists', 'mb_strtolower' ],
 	]
 );
 

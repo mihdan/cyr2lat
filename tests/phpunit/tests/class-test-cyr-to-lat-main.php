@@ -11,7 +11,6 @@ use tad\FunctionMocker\FunctionMocker;
  * Class Test_Cyr_To_Lat_Main
  *
  * @group main
- * @group requirements
  */
 class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 
@@ -247,17 +246,41 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 		$locale     = 'ru_RU';
 		$iso9_table = $this->get_conversion_table( $locale );
 
+		\WP_Mock::userFunction(
+			'seems_utf8',
+			[
+				'args'   => [ $filename ],
+				'return' => true,
+			]
+		);
+
 		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
 		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
 
 		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
-
-		$cli = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
-		$acf = $this->getMockBuilder( 'Cyr_To_Lat_ACF' )->disableOriginalConstructor()->getMock();
+		$cli       = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
+		$acf       = $this->getMockBuilder( 'Cyr_To_Lat_ACF' )->disableOriginalConstructor()->getMock();
 
 		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli, $acf );
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_filename' )->with( false, $filename )->reply( false );
+
+		FunctionMocker::replace(
+			'function_exists',
+			function( $arg ) {
+				return 'mb_strtolower' === $arg;
+			}
+		);
+
+		$this->assertSame( $expected, $subject->ctl_sanitize_filename( $filename, '' ) );
+
+		FunctionMocker::replace(
+			'function_exists',
+			function( $arg ) {
+				return 'mb_strtolower' !== $arg;
+			}
+		);
+
 		$this->assertSame( $expected, $subject->ctl_sanitize_filename( $filename, '' ) );
 	}
 
@@ -274,75 +297,27 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 			],
 			'default table'              => [
 				'АБВГДЕЁЖЗИЙІКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯѢѲѴабвгдеёжзийіклмнопрстуфхцчшщъыьэюяѣѳѵ',
-				'ABVGDEYOZHZIJIKLMNOPRSTUFHCZCHSHSHHYEYUYAYEFHYHabvgdeyozhzijiklmnoprstufhczchshshhyeyuyayefhyh',
+				'abvgdeyozhzijiklmnoprstufhczchshshhyeyuyayefhyhabvgdeyozhzijiklmnoprstufhczchshshhyeyuyayefhyh',
 			],
 			'iconv'                      => [
 				'Символ евро - €.',
-				'Simvol evro - €.',
+				'simvol evro - €.',
 			],
 			'most used prohibited chars' => [
 				'z!"#$%&()*+,/:;<=>?@[\]^`{|}`Åz',
-				'z!"#$%&()*+,/:;<=>?@[\]^`{|}`Åz',
+				'z!"#$%&()*+,/:;<=>?@[\]^`{|}`åz',
 			],
 			'allowed chars'              => [
 				"ABC-XYZ-abc-xyz-0123456789'_.",
-				"ABC-XYZ-abc-xyz-0123456789'_.",
+				"abc-xyz-abc-xyz-0123456789'_.",
 			],
 			'plus minus'                 => [
 				'ABC-XYZ-+abc-xyz',
-				'ABC-XYZ-+abc-xyz',
+				'abc-xyz-+abc-xyz',
 			],
 			'series of minus signs'      => [
 				'-ABC---XYZ-',
-				'-ABC---XYZ-',
-			],
-		];
-	}
-
-	/**
-	 * Test ctl_fix_mac_filename()
-	 *
-	 * @param string $filename Filename to sanitize.
-	 * @param string $expected Expected result.
-	 *
-	 * @dataProvider dp_test_ctl_fix_mac_filename
-	 */
-	public function test_ctl_fix_mac_filename( $filename, $expected ) {
-		$locale     = 'ru_RU';
-		$iso9_table = $this->get_conversion_table( $locale );
-
-		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
-		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
-
-		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
-
-		$cli = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
-		$acf = $this->getMockBuilder( 'Cyr_To_Lat_ACF' )->disableOriginalConstructor()->getMock();
-
-		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli, $acf );
-
-		$this->assertSame( $expected, $subject->ctl_fix_mac_filename( $filename, '' ) );
-	}
-
-	/**
-	 * Data provider for test_ctl_fix_mac_filename
-	 *
-	 * @return array
-	 */
-	public function dp_test_ctl_fix_mac_filename() {
-		return [
-			'empty string'     => [
-				'',
-				'',
-			],
-			'normal filename'  => [
-				'filename.jpg',
-				'filename.jpg',
-			],
-			'problem filename' => [
-				urldecode( '%d0%95%cc%88' ) . '-' . urldecode( '%d0%B5%cc%88' ) . '-' .
-				urldecode( '%d0%98%cc%86' ) . '-' . urldecode( '%d0%B8%cc%86' ) . '.jpg',
-				'YO-yo-J-j.jpg',
+				'-abc---xyz-',
 			],
 		];
 	}

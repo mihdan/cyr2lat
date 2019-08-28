@@ -98,7 +98,7 @@ Yes you can!
 
 == Changelog ==
 
-= 4.2.2 =
+= 4.2.2 (28.08.2019) =
 * Added Serbian table
 * Added new filter `ctl_pre_sanitize_filename`
 * Fixed improper encoding of `Ё`, `ё`, `Й`, `й` characters in file names on some Mac computers (old known problem on Mac's)

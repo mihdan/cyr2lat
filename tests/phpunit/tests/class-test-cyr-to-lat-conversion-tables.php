@@ -798,16 +798,6 @@ class Test_Cyr_To_Lat_Conversion_Tables extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test mb_chr()
-	 */
-	public function test_mb_chr() {
-		$this->assertSame( ' ', Cyr_To_Lat_Conversion_Tables::mb_chr( 0x0020 ) );
-		$this->assertSame( 'א', Cyr_To_Lat_Conversion_Tables::mb_chr( 0x05D0 ) );
-		$this->assertSame( 'ࠀ', Cyr_To_Lat_Conversion_Tables::mb_chr( 0x0800 ) );
-		$this->assertSame( '𐂃', Cyr_To_Lat_Conversion_Tables::mb_chr( 0x10083 ) );
-	}
-
-	/**
 	 * Test get_fix_table_for_mac()
 	 */
 	public function test_get_fix_table_for_mac() {

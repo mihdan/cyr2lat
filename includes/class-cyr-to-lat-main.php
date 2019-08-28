@@ -5,6 +5,8 @@
  * @package cyr-to-lat
  */
 
+use Symfony\Polyfill\Mbstring\Mbstring;
+
 /**
  * Class Cyr_To_Lat_Main
  */
@@ -106,7 +108,6 @@ class Cyr_To_Lat_Main {
 	public function init_hooks() {
 		add_filter( 'sanitize_title', array( $this, 'ctl_sanitize_title' ), 9, 3 );
 		add_filter( 'sanitize_file_name', array( $this, 'ctl_sanitize_filename' ), 10, 2 );
-		add_filter( 'sanitize_file_name', array( $this, 'ctl_fix_mac_filename' ), 11, 2 );
 		add_filter( 'wp_insert_post_data', array( $this, 'ctl_sanitize_post_name' ), 10, 2 );
 	}
 
@@ -177,18 +178,25 @@ class Cyr_To_Lat_Main {
 			return $pre;
 		}
 
+		if ( seems_utf8( $filename ) ) {
+			if ( function_exists( 'mb_strtolower' ) ) {
+				$filename = mb_strtolower( $filename, 'UTF-8' );
+			} else {
+				$filename = Mbstring::mb_strtolower( $filename );
+			}
+		}
+
 		return $this->transliterate( $filename );
 	}
 
 	/**
-	 * Fix filename encoding on MacOS.
+	 * Fix string encoding on MacOS.
 	 *
-	 * @param string $filename     Sanitized filename.
-	 * @param string $filename_raw The filename prior to sanitization.
+	 * @param string $string String.
 	 *
 	 * @return string
 	 */
-	public function ctl_fix_mac_filename( $filename, $filename_raw ) {
+	private function fix_mac_string( $string ) {
 		$table     = $this->get_filtered_table();
 		$fix_table = Cyr_To_Lat_Conversion_Tables::get_fix_table_for_mac();
 
@@ -199,9 +207,7 @@ class Cyr_To_Lat_Main {
 			}
 		}
 
-		$filename = strtr( $filename, $fix );
-
-		return $filename;
+		return strtr( $string, $fix );
 	}
 
 	/**
@@ -216,13 +222,14 @@ class Cyr_To_Lat_Main {
 	/**
 	 * Transliterate string using a table.
 	 *
-	 * @param string $string Abstract string.
+	 * @param string $string String.
 	 *
 	 * @return string
 	 */
 	private function transliterate( $string ) {
 		$table = $this->get_filtered_table();
 
+		$string = $this->fix_mac_string( $string );
 		$string = strtr( $string, $table );
 
 		if ( function_exists( 'iconv' ) ) {
