@@ -1,15 +1,9 @@
 === Cyr-To-Lat ===
-
 Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
-
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
-
 Requires at least: 2.3
-
 Tested up to: 5.2
-
 Stable tag: 4.2.2
-
 Requires PHP: 5.6
 
 Converts Cyrillic characters in post, page and term slugs to Latin characters.
