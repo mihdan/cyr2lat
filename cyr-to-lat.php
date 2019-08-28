@@ -7,9 +7,9 @@
  * Description: Converts Cyrillic characters in post and term slugs to Latin characters. Useful for creating human-readable URLs. Based on the original plugin by Anton Skorobogatov.
  * Author: Sergey Biryukov, Mikhail Kobzarev, Igor Gergel
  * Author URI: https://profiles.wordpress.org/sergeybiryukov/
- * Requires at least: 2.3
+ * Requires at least: 5.1
  * Tested up to: 5.2
- * Version: 4.2.2
+ * Version: 4.2.3
  * Stable tag: 4.2.3
  *
  * Text Domain: cyr2lat
