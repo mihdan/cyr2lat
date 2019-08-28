@@ -15,8 +15,13 @@
 		<whitelist>
 			<directory suffix=".php">../../</directory>
 			<exclude>
-				<directory>../../build</directory>
-				<directory>../../locale</directory>
+				<directory>../../assets</directory>
+				<directory>../../css</directory>
+				<directory>../../dist</directory>
+				<directory>../../js</directory>
+				<directory>../../languages</directory>
+				<directory>../../lib</directory>
+				<directory>../../src</directory>
 				<directory>../../tests</directory>
 				<directory>../../vendor</directory>
 			</exclude>
