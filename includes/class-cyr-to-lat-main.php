@@ -5,7 +5,7 @@
  * @package cyr-to-lat
  */
 
-use Symfony\Polyfill\Mbstring\Mbstring;
+use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
 
 /**
  * Class Cyr_To_Lat_Main
