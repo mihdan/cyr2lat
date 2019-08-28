@@ -5,37 +5,12 @@
  * @package cyr-to-lat
  */
 
-use PHPUnit\Framework\TestCase;
-
 /**
  * Class Test_Cyr_To_Lat_Settings
  *
  * @group settings
  */
-class Test_Cyr_To_Lat_Settings extends TestCase {
-
-	/**
-	 * Test subject.
-	 *
-	 * @var object
-	 */
-	private $subject;
-
-	/**
-	 * Setup test
-	 */
-	public function setUp() {
-		parent::setUp();
-		\WP_Mock::setUp();
-	}
-
-	/**
-	 * End test
-	 */
-	public function tearDown() {
-		\WP_Mock::tearDown();
-		parent::tearDown();
-	}
+class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test constructor
@@ -226,21 +201,21 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 	 * @dataProvider dp_test_get_form_fields
 	 */
 	public function test_get_form_fields( $form_fields, $expected ) {
-		$this->subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
+		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
 
-		$this->subject->form_fields = null;
+		$subject->form_fields = null;
 
 		if ( empty( $form_fields ) ) {
-			$this->subject->shouldReceive( 'init_form_fields' )->andReturnUsing(
-				function () {
-					$this->subject->form_fields = $this->get_test_form_fields();
+			$subject->shouldReceive( 'init_form_fields' )->andReturnUsing(
+				function () use ( $subject ) {
+					$subject->form_fields = $this->get_test_form_fields();
 				}
 			)->once();
 		} else {
-			$this->subject->form_fields = $form_fields;
+			$subject->form_fields = $form_fields;
 		}
 
-		$this->assertSame( $expected, $this->subject->get_form_fields() );
+		$this->assertSame( $expected, $subject->get_form_fields() );
 	}
 
 	/**
@@ -973,25 +948,25 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 	 * @dataProvider dp_test_get_option
 	 */
 	public function test_get_option( $settings, $key, $empty_value, $expected ) {
-		$this->subject           = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
-		$this->subject->settings = null;
+		$subject           = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
+		$subject->settings = null;
 		if ( empty( $settings ) ) {
-			$this->subject->shouldReceive( 'init_settings' )->once()->andReturnUsing(
-				function () {
-					$this->subject->settings = $this->get_test_settings();
+			$subject->shouldReceive( 'init_settings' )->once()->andReturnUsing(
+				function () use ( $subject ) {
+					$subject->settings = $this->get_test_settings();
 				}
 			);
 		} else {
-			$this->subject->shouldReceive( 'init_settings' )->never();
-			$this->subject->settings = $settings;
+			$subject->shouldReceive( 'init_settings' )->never();
+			$subject->settings = $settings;
 
 			if ( ! isset( $settings[ $key ] ) ) {
 				$form_fields = $this->get_test_settings();
-				$this->subject->shouldReceive( 'get_form_fields' )->andReturn( $form_fields )->once();
+				$subject->shouldReceive( 'get_form_fields' )->andReturn( $form_fields )->once();
 			}
 		}
 
-		$this->assertSame( $expected, $this->subject->get_option( $key, $empty_value ) );
+		$this->assertSame( $expected, $subject->get_option( $key, $empty_value ) );
 	}
 
 	/**
@@ -1046,17 +1021,17 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 	 * @dataProvider dp_test_set_option
 	 */
 	public function test_set_option( $settings, $key, $value, $expected ) {
-		$this->subject           = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
-		$this->subject->settings = null;
+		$subject           = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
+		$subject->settings = null;
 		if ( empty( $settings ) ) {
-			$this->subject->shouldReceive( 'init_settings' )->once()->andReturnUsing(
-				function () {
-					$this->subject->settings = $this->get_test_settings();
+			$subject->shouldReceive( 'init_settings' )->once()->andReturnUsing(
+				function () use ( $subject ) {
+					$subject->settings = $this->get_test_settings();
 				}
 			);
 		} else {
-			$this->subject->shouldReceive( 'init_settings' )->never();
-			$this->subject->settings = $settings;
+			$subject->shouldReceive( 'init_settings' )->never();
+			$subject->settings = $settings;
 		}
 
 		\WP_Mock::userFunction(
@@ -1067,9 +1042,9 @@ class Test_Cyr_To_Lat_Settings extends TestCase {
 			]
 		);
 
-		$this->subject->set_option( $key, $value );
+		$subject->set_option( $key, $value );
 
-		$this->assertSame( $expected, $this->subject->settings );
+		$this->assertSame( $expected, $subject->settings );
 	}
 
 	/**

@@ -5,7 +5,6 @@
  * @package cyr-to-lat
  */
 
-use PHPUnit\Framework\TestCase;
 use tad\FunctionMocker\FunctionMocker;
 
 /**
@@ -13,31 +12,7 @@ use tad\FunctionMocker\FunctionMocker;
  *
  * @group requirements
  */
-class Test_Cyr_To_Lat_Requirements extends TestCase {
-
-	/**
-	 * Setup test
-	 */
-	public function setUp() {
-		FunctionMocker::init(
-			[
-				'redefinable-internals' => [ 'phpversion' ],
-			]
-		);
-
-		FunctionMocker::setUp();
-		parent::setUp();
-		\WP_Mock::setUp();
-	}
-
-	/**
-	 * End test
-	 */
-	public function tearDown() {
-		\WP_Mock::tearDown();
-		parent::tearDown();
-		FunctionMocker::tearDown();
-	}
+class Test_Cyr_To_Lat_Requirements extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test if are_requirements_met() returns true when requirements met.
@@ -45,9 +20,7 @@ class Test_Cyr_To_Lat_Requirements extends TestCase {
 	public function test_requirements_met() {
 		FunctionMocker::replace(
 			'phpversion',
-			function () {
-				return CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION;
-			}
+			CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION
 		);
 
 		$subject = new Cyr_To_Lat_Requirements();
@@ -61,18 +34,17 @@ class Test_Cyr_To_Lat_Requirements extends TestCase {
 	 * Test if are_requirements_met() returns false when requirements not met.
 	 */
 	public function test_requirements_not_met() {
+		$required_version = explode( '.', CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION );
+		$wrong_version    = array_slice( $required_version, 0, 2 );
+		$wrong_version    = (float) implode( '.', $wrong_version );
+		$wrong_version    = $wrong_version - 0.1;
+		$wrong_version    = number_format( $wrong_version, 1, '.', '' );
+
 		FunctionMocker::replace(
 			'phpversion',
-			function () {
-				$required_version = explode( '.', CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION );
-				$wrong_version    = array_slice( $required_version, 0, 2 );
-				$wrong_version    = (float) implode( '.', $wrong_version );
-				$wrong_version    = $wrong_version - 0.1;
-				$wrong_version    = number_format( $wrong_version, 1, '.', '' );
-
-				return $wrong_version;
-			}
+			$wrong_version
 		);
+
 
 		$subject = new Cyr_To_Lat_Requirements();
 

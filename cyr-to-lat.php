@@ -9,8 +9,8 @@
  * Author URI: https://profiles.wordpress.org/sergeybiryukov/
  * Requires at least: 2.3
  * Tested up to: 5.2
- * Version: 4.2.1
- * Stable tag: 4.2.1
+ * Version: 4.2.2
+ * Stable tag: 4.2.2
  *
  * Text Domain: cyr2lat
  * Domain Path: /languages/
@@ -19,6 +19,7 @@
  * @author  Sergey Biryukov, Mikhail Kobzarev, Igor Gergel
  */
 
+// @codeCoverageIgnoreStart
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -27,7 +28,7 @@ if ( ! defined( 'CYR_TO_LAT_VERSION' ) ) {
 	/**
 	 * Plugin version.
 	 */
-	define( 'CYR_TO_LAT_VERSION', '4.2.1' );
+	define( 'CYR_TO_LAT_VERSION', '4.2.2' );
 }
 
 if ( ! defined( 'CYR_TO_LAT_PATH' ) ) {
@@ -78,6 +79,7 @@ if ( ! defined( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION' ) ) {
 	 */
 	define( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', '5.6' );
 }
+// @codeCoverageIgnoreEnd
 
 /**
  * Init plugin class on plugin load.

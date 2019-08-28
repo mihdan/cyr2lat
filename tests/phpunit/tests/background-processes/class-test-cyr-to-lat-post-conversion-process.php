@@ -6,29 +6,18 @@
  * @group   process
  */
 
-use PHPUnit\Framework\TestCase;
-
 /**
  * Class Test_Cyr_To_Lat_Post_Conversion_Process
  *
  * @group process
  */
-class Test_Cyr_To_Lat_Post_Conversion_Process extends TestCase {
-
-	/**
-	 * Setup test
-	 */
-	public function setUp() {
-		parent::setUp();
-		\WP_Mock::setUp();
-	}
+class Test_Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * End test
 	 */
 	public function tearDown() {
 		unset( $GLOBALS['wpdb'] );
-		\WP_Mock::tearDown();
 		parent::tearDown();
 	}
 
@@ -94,9 +83,10 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends TestCase {
 		);
 
 		if ( $sanitized_name !== $post->post_name ) {
-			$subject->shouldReceive( 'log' )
-			        ->with( 'Post slug converted: ' . $post->post_name . ' => ' . $sanitized_name )
-			        ->once();
+			$subject
+				->shouldReceive( 'log' )
+				->with( 'Post slug converted: ' . $post->post_name . ' => ' . $sanitized_name )
+				->once();
 		}
 
 		$this->assertFalse( $subject->task( $post ) );
@@ -116,7 +106,8 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends TestCase {
 	 * Test complete()
 	 */
 	public function test_complete() {
-		$subject = \Mockery::mock( Cyr_To_Lat_Post_Conversion_Process::class )->makePartial()
+		$subject = \Mockery::mock( Cyr_To_Lat_Post_Conversion_Process::class )
+		                   ->makePartial()
 		                   ->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'log' )->with( 'Post slugs conversion completed.' )->once();
 

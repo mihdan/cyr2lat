@@ -5,22 +5,14 @@
  * @package cyr-to-lat
  */
 
-use PHPUnit\Framework\TestCase;
+use tad\FunctionMocker\FunctionMocker;
 
 /**
  * Class Test_Cyr_To_Lat_Main
  *
  * @group main
  */
-class Test_Cyr_To_Lat_Main extends TestCase {
-
-	/**
-	 * Setup test
-	 */
-	public function setUp() {
-		parent::setUp();
-		\WP_Mock::setUp();
-	}
+class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * End test
@@ -29,25 +21,22 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		unset( $GLOBALS['wp_version'] );
 		unset( $GLOBALS['wpdb'] );
 		unset( $GLOBALS['current_screen'] );
-		\WP_Mock::tearDown();
-		parent::tearDown();
 	}
 
 	/**
 	 * Test constructor
 	 *
 	 * @throws ReflectionException Reflection Exception.
-	 * @test
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
 	public function test_constructor() {
 		$classname = 'Cyr_To_Lat_Main';
 
-		$settings  = \Mockery::mock( 'overload:Cyr_To_Lat_Settings' );
-		$converter = \Mockery::mock( 'overload:Cyr_To_Lat_Converter' );
-		$cli       = \Mockery::mock( 'overload:Cyr_To_Lat_WP_CLI' );
-		$acf       = \Mockery::mock( 'overload:Cyr_To_Lat_ACF' );
+		\Mockery::mock( 'overload:Cyr_To_Lat_Settings' );
+		\Mockery::mock( 'overload:Cyr_To_Lat_Converter' );
+		\Mockery::mock( 'overload:Cyr_To_Lat_WP_CLI' );
+		\Mockery::mock( 'overload:Cyr_To_Lat_ACF' );
 
 		if ( ! defined( 'WP_CLI' ) ) {
 			define( 'WP_CLI', true );
@@ -79,7 +68,6 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	/**
 	 * Test init() with CLI when CLI throws an Exception
 	 *
-	 * @test
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
@@ -100,7 +88,6 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	/**
 	 * Test init() with CLI
 	 *
-	 * @test
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
@@ -126,7 +113,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'ctl_sanitize_title' ], 9, 3 );
-		\WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'ctl_sanitize_title' ], 10, 2 );
+		\WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'ctl_sanitize_filename' ], 10, 2 );
 		\WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'ctl_sanitize_post_name' ], 10, 2 );
 
 		$subject->init_hooks();
@@ -134,7 +121,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	}
 
 	/**
-	 * Test that ctl_sanitize_title does nothing when context is 'query'
+	 * Test that ctl_sanitize_title() does nothing when context is 'query'
 	 */
 	public function test_ctl_sanitize_title_query_context() {
 		$subject = $this->get_subject();
@@ -147,7 +134,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	}
 
 	/**
-	 * Test that ctl_sanitize_title returns ctl_pre_sanitize_title filter value if set
+	 * Test that ctl_sanitize_title() returns ctl_pre_sanitize_title filter value if set
 	 */
 	public function test_ctl_sanitize_title_filter_set() {
 		$subject = $this->get_subject();
@@ -160,7 +147,6 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( $filtered_title );
 
-		$subject->ctl_sanitize_title( $title, $raw_title, $context );
 		$this->assertSame( $filtered_title, $subject->ctl_sanitize_title( $title ) );
 	}
 
@@ -170,9 +156,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	 * @param string $title    Title to sanitize.
 	 * @param string $expected Expected result.
 	 *
-	 * @test
 	 * @dataProvider dp_test_ctl_sanitize_title
-	 * @throws ReflectionException Reflection Exception.
 	 */
 	public function test_ctl_sanitize_title( $title, $expected ) {
 		$locale     = 'ru_RU';
@@ -227,6 +211,114 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 				'-ABC---XYZ-',
 				'-ABC---XYZ-',
 			],
+			'urldecode'                  => [
+				'%D0%81',
+				'YO',
+			],
+		];
+	}
+
+	/**
+	 * Test that ctl_sanitize_filename() returns ctl_pre_sanitize_filename filter value if set
+	 */
+	public function test_ctl_pre_sanitize_filename_filter_set() {
+		$subject = $this->get_subject();
+
+		$filename     = 'filename.jpg';
+		$filename_raw = '';
+
+		$filtered_filename = 'filtered-filename.jpg';
+
+		\WP_Mock::onFilter( 'ctl_pre_sanitize_filename' )->with( false, $filename )->reply( $filtered_filename );
+
+		$this->assertSame( $filtered_filename, $subject->ctl_sanitize_filename( $filename, $filename_raw ) );
+	}
+
+	/**
+	 * Test ctl_sanitize_filename()
+	 *
+	 * @param string $filename Filename to sanitize.
+	 * @param string $expected Expected result.
+	 *
+	 * @dataProvider dp_test_ctl_sanitize_filename
+	 */
+	public function test_ctl_sanitize_filename( $filename, $expected ) {
+		$locale     = 'ru_RU';
+		$iso9_table = $this->get_conversion_table( $locale );
+
+		\WP_Mock::userFunction(
+			'seems_utf8',
+			[
+				'args'   => [ $filename ],
+				'return' => true,
+			]
+		);
+
+		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
+		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
+
+		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
+		$cli       = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
+		$acf       = $this->getMockBuilder( 'Cyr_To_Lat_ACF' )->disableOriginalConstructor()->getMock();
+
+		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli, $acf );
+
+		\WP_Mock::onFilter( 'ctl_pre_sanitize_filename' )->with( false, $filename )->reply( false );
+
+		FunctionMocker::replace(
+			'function_exists',
+			function( $arg ) {
+				return 'mb_strtolower' === $arg;
+			}
+		);
+
+		$this->assertSame( $expected, $subject->ctl_sanitize_filename( $filename, '' ) );
+
+		FunctionMocker::replace(
+			'function_exists',
+			function( $arg ) {
+				return 'mb_strtolower' !== $arg;
+			}
+		);
+
+		$this->assertSame( $expected, $subject->ctl_sanitize_filename( $filename, '' ) );
+	}
+
+	/**
+	 * Data provider for test_ctl_sanitize_title
+	 *
+	 * @return array
+	 */
+	public function dp_test_ctl_sanitize_filename() {
+		return [
+			'empty string'               => [
+				'',
+				'',
+			],
+			'default table'              => [
+				'АБВГДЕЁЖЗИЙІКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯѢѲѴабвгдеёжзийіклмнопрстуфхцчшщъыьэюяѣѳѵ',
+				'abvgdeyozhzijiklmnoprstufhczchshshhyeyuyayefhyhabvgdeyozhzijiklmnoprstufhczchshshhyeyuyayefhyh',
+			],
+			'iconv'                      => [
+				'Символ евро - €.',
+				'simvol evro - €.',
+			],
+			'most used prohibited chars' => [
+				'z!"#$%&()*+,/:;<=>?@[\]^`{|}`Åz',
+				'z!"#$%&()*+,/:;<=>?@[\]^`{|}`åz',
+			],
+			'allowed chars'              => [
+				"ABC-XYZ-abc-xyz-0123456789'_.",
+				"abc-xyz-abc-xyz-0123456789'_.",
+			],
+			'plus minus'                 => [
+				'ABC-XYZ-+abc-xyz',
+				'abc-xyz-+abc-xyz',
+			],
+			'series of minus signs'      => [
+				'-ABC---XYZ-',
+				'-abc---xyz-',
+			],
 		];
 	}
 
@@ -245,16 +337,12 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 				'return' => false,
 			]
 		);
+
 		$GLOBALS['wp_version'] = '4.9';
 		$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
 
-		$GLOBALS['wp_version'] = '5.0';
-		try {
-			$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
-		} catch ( Exception $e ) {
-		}
+		FunctionMocker::replace( 'function_exists', true );
 
-		$subject->shouldReceive( 'ctl_function_exists' )->andReturn( true );
 		\WP_Mock::userFunction(
 			'is_plugin_active',
 			[
@@ -263,6 +351,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 				'return' => true,
 			]
 		);
+
 		\WP_Mock::userFunction(
 			'get_option',
 			[
@@ -271,6 +360,8 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 				'return' => 'replace',
 			]
 		);
+
+		$GLOBALS['wp_version'] = '5.0';
 		$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
 	}
 
@@ -280,10 +371,18 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	public function test_ctl_sanitize_post_name_not_post_edit_screen() {
 		$data = [ 'something' ];
 
+		\WP_Mock::userFunction(
+			'has_filter',
+			[
+				'args'   => [ 'replace_editor', 'gutenberg_init' ],
+				'return' => false,
+			]
+		);
+
 		$GLOBALS['wp_version'] = '5.0';
 
 		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'ctl_function_exists' )->andReturn( true );
+		FunctionMocker::replace( 'function_exists', true );
 
 		\WP_Mock::userFunction(
 			'is_plugin_active',
@@ -315,7 +414,7 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 		$GLOBALS['wp_version'] = '5.0';
 
 		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'ctl_function_exists' )->andReturn( true );
+		FunctionMocker::replace( 'function_exists', true );
 
 		\WP_Mock::userFunction(
 			'is_plugin_active',
@@ -382,7 +481,6 @@ class Test_Cyr_To_Lat_Main extends TestCase {
 	 *
 	 * @test
 	 * @dataProvider dp_wp_insert_term
-	 * @throws ReflectionException Reflection Exception.
 	 */
 	public function wp_insert_term( $title, $term, $expected ) {
 		global $wpdb;

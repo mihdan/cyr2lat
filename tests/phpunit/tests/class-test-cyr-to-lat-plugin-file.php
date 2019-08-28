@@ -5,8 +5,6 @@
  * @package cyr-to-lat
  */
 
-use PHPUnit\Framework\TestCase;
-
 /**
  * Class Test_Cyr_To_Lat_Plugin_File
  *
@@ -15,23 +13,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @group plugin-file
  */
-class Test_Cyr_To_Lat_Plugin_File  extends TestCase {
-
-	/**
-	 * Setup test
-	 */
-	public function setUp() {
-		parent::setUp();
-		\WP_Mock::setUp();
-	}
-
-	/**
-	 * End test
-	 */
-	public function tearDown() {
-		\WP_Mock::tearDown();
-		parent::tearDown();
-	}
+class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test loading of main plugin file.
@@ -41,7 +23,7 @@ class Test_Cyr_To_Lat_Plugin_File  extends TestCase {
 		$requirements->shouldReceive( 'are_requirements_met' )->with()->once()->andReturn( true );
 		\Mockery::mock( 'overload:Cyr_To_Lat_Main' );
 
-		require PLUGIN_MAIN_FILE;
+		require_once PLUGIN_MAIN_FILE;
 
 		$this->assertInstanceOf( 'Cyr_To_Lat_Main', $plugin );
 	}

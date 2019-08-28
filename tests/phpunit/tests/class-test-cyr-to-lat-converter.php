@@ -5,22 +5,12 @@
  * @package cyr-to-lat
  */
 
-use PHPUnit\Framework\TestCase;
-
 /**
  * Class Test_Cyr_To_Lat_Converter
  *
  * @group converter
  */
-class Test_Cyr_To_Lat_Converter extends TestCase {
-
-	/**
-	 * Setup test
-	 */
-	public function setUp() {
-		parent::setUp();
-		\WP_Mock::setUp();
-	}
+class Test_Cyr_To_Lat_Converter extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * End test
@@ -30,8 +20,6 @@ class Test_Cyr_To_Lat_Converter extends TestCase {
 		unset( $_GET['_wpnonce'] );
 		unset( $_POST['cyr2lat-convert'] );
 		unset( $GLOBALS['wpdb'] );
-		\WP_Mock::tearDown();
-		parent::tearDown();
 	}
 
 	/**

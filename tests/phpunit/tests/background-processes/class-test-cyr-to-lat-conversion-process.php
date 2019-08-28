@@ -5,32 +5,12 @@
  * @package cyr-to-lat
  */
 
-use PHPUnit\Framework\TestCase;
-
 /**
  * Class Test_Cyr_To_Lat_Conversion_Process
  *
  * @group process
  */
-class Test_Cyr_To_Lat_Conversion_Process extends TestCase {
-
-	/**
-	 * Setup test
-	 *
-	 * @return void
-	 */
-	public function setUp() {
-		parent::setUp();
-		\WP_Mock::setUp();
-	}
-
-	/**
-	 * End test
-	 */
-	public function tearDown() {
-		\WP_Mock::tearDown();
-		parent::tearDown();
-	}
+class Test_Cyr_To_Lat_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test task()
@@ -156,7 +136,8 @@ class Test_Cyr_To_Lat_Conversion_Process extends TestCase {
 	 * @dataProvider        dp_test_log
 	 */
 	public function test_log( $debug ) {
-		$subject = \Mockery::mock( 'Cyr_To_Lat_Conversion_Process' )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = \Mockery::mock( 'Cyr_To_Lat_Conversion_Process' )->makePartial()
+		                   ->shouldAllowMockingProtectedMethods();
 
 		$test_log = 'test.log';
 		$message  = 'Test message';

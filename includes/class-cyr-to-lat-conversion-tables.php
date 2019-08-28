@@ -5,6 +5,8 @@
  * @package cyr-to-lat
  */
 
+use Symfony\Polyfill\Mbstring\Mbstring;
+
 /**
  * Class Cyr_To_Lat_Conversion_Tables
  *
@@ -369,13 +371,13 @@ class Cyr_To_Lat_Conversion_Tables {
 					'ת' => 'th',
 				);
 				for ( $code = 0x0590; $code <= 0x05CF; $code ++ ) {
-					$table[ self::mb_chr( $code ) ] = '';
+					$table[ Mbstring::mb_chr( $code ) ] = '';
 				}
 				for ( $code = 0x05F0; $code <= 0x05F5; $code ++ ) {
-					$table[ self::mb_chr( $code ) ] = '';
+					$table[ Mbstring::mb_chr( $code ) ] = '';
 				}
 				for ( $code = 0xFB1D; $code <= 0xFB4F; $code ++ ) {
-					$table[ self::mb_chr( $code ) ] = '';
+					$table[ Mbstring::mb_chr( $code ) ] = '';
 				}
 				break;
 			default:
@@ -385,26 +387,29 @@ class Cyr_To_Lat_Conversion_Tables {
 	}
 
 	/**
-	 * Simplified polyfill of mb_chr() function, to be used without mbstring extension.
+	 * Get fix table for MacOS.
+	 * On MacOS, files containing characters in the table, are sometimes encoded improperly.
 	 *
-	 * @link https://github.com/symfony/polyfill-mbstring/blob/master/Mbstring.php
-	 *
-	 * @param int $code Character code.
-	 *
-	 * @return string
+	 * @return array
 	 */
-	public static function mb_chr( $code ) {
-		$code = $code % 0x200000;
-		if ( 0x80 > $code ) {
-			$s = \chr( $code );
-		} elseif ( 0x800 > $code ) {
-			$s = \chr( 0xC0 | $code >> 6 ) . \chr( 0x80 | $code & 0x3F );
-		} elseif ( 0x10000 > $code ) {
-			$s = \chr( 0xE0 | $code >> 12 ) . \chr( 0x80 | $code >> 6 & 0x3F ) . \chr( 0x80 | $code & 0x3F );
-		} else {
-			$s = \chr( 0xF0 | $code >> 18 ) . \chr( 0x80 | $code >> 12 & 0x3F ) . \chr( 0x80 | $code >> 6 & 0x3F ) . \chr( 0x80 | $code & 0x3F );
-		}
-
-		return $s;
+	public static function get_fix_table_for_mac() {
+		/**
+		 * Keys in the table are standard ISO9 characters.
+		 *
+		 * Example of wrong encoding on Mac:
+		 * берЁзовыЙ-белозёрский - original input,
+		 * берЁзовыЙ-белозёрский.png - actual filename created on Mac,
+		 * ber%d0%95%cc%88zovy%d0%98%cc%86-beloz%d0%B5%cc%88rski%d0%B8%cc%86.png - urlencode() of the above,
+		 * berËzovyĬ-belozërskiĭ.png - actual filename passed via standard ISO9 transliteration table,
+		 * berE%CC%88zovyI%CC%86-beloze%CC%88rskii%CC%86.png - urlencode() of the above.
+		 *
+		 * To avoid misunderstanding, we use urldecode() here.
+		 */
+		return [
+			'Ё' => urldecode( '%d0%95%cc%88' ),
+			'ё' => urldecode( '%d0%B5%cc%88' ),
+			'Й' => urldecode( '%d0%98%cc%86' ),
+			'й' => urldecode( '%d0%B8%cc%86' ),
+		];
 	}
 }
