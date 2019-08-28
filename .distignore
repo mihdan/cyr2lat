@@ -2,6 +2,7 @@
 .distignore
 .editorconfig
 .git
+.idea
 .gitignore
 .gitlab-ci.yml
 .coveralls.yml
