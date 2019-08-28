@@ -398,8 +398,9 @@ class Cyr_To_Lat_Conversion_Tables {
 		 *
 		 * Example of wrong encoding on Mac:
 		 * берЁзовыЙ-белозёрский - original input,
-		 * берЁзовыЙ-белозёрский.png - actual file name created on Mac,
-		 * berËzovyĬ-belozërskiĭ.png - passed via standard ISO9 transliteration table,
+		 * берЁзовыЙ-белозёрский.png - actual filename created on Mac,
+		 * ber%d0%95%cc%88zovy%d0%98%cc%86-beloz%d0%B5%cc%88rski%d0%B8%cc%86.png - urlencode() of the above,
+		 * berËzovyĬ-belozërskiĭ.png - actual filename passed via standard ISO9 transliteration table,
 		 * berE%CC%88zovyI%CC%86-beloze%CC%88rskii%CC%86.png - urlencode() of the above.
 		 *
 		 * To avoid misunderstanding, we use urldecode() here.

@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	/**
 	 * WordPress ABSPATH.
 	 */
-	define( 'ABSPATH', PLUGIN_PATH . '/../../' );
+	define( 'ABSPATH', PLUGIN_PATH . '/../../../' );
 }
 
 /**
