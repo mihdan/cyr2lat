@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Plugins - Cyr-To-Lat - Development (trunk)\n"
-"POT-Creation-Date: 2019-06-23 11:48+0300\n"
-"PO-Revision-Date: 2019-06-23 11:48+0300\n"
+"POT-Creation-Date: 2019-12-01 15:27+0200\n"
+"PO-Revision-Date: 2019-12-01 15:28+0200\n"
 "Last-Translator: KAGG Design <info@kagg.eu>\n"
 "Language-Team: \n"
 "Language: uk_UA\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 2.2.3\n"
+"X-Generator: Poedit 2.2.4\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;esc_html__;esc_attr__\n"
 "X-Poedit-Flags-xgettext: --add-comments\n"
@@ -19,14 +19,6 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-0: vendor\n"
 "X-Poedit-SearchPathExcluded-1: dist\n"
 "X-Poedit-SearchPathExcluded-2: src\n"
-
-#. translators: 1: Current PHP version number, 2: Cyr To Lat version, 3: Minimum required PHP version number
-#: cyr-to-lat.php:85
-#, php-format
-msgid ""
-"Your server is running PHP version %1$s but Cyr To Lat %2$s requires at "
-"least %3$s."
-msgstr ""
 
 #. phpcs:enable
 #: includes/background-processes/class-cyr-to-lat-post-conversion-process.php:67
@@ -86,6 +78,14 @@ msgstr "Cyr To Lat почав конвертацію існуючих посил
 msgid "Cyr To Lat has not found existing term slugs for conversion."
 msgstr "Cyr To Lat не знайшов існуючих посилань термінів для конвертації."
 
+#. translators: 1: Current PHP version number, 2: Cyr To Lat version, 3: Minimum required PHP version number
+#: includes/class-cyr-to-lat-requirements.php:50
+#, php-format
+msgid ""
+"Your server is running PHP version %1$s but Cyr To Lat %2$s requires at "
+"least %3$s."
+msgstr ""
+
 #: includes/class-cyr-to-lat-settings.php:121
 msgid "View Cyr To Lat settings"
 msgstr "Подивитися налаштування Cyr To Lat"
@@ -95,72 +95,82 @@ msgid "Settings"
 msgstr "Налаштування"
 
 #: includes/class-cyr-to-lat-settings.php:134
-#: includes/class-cyr-to-lat-settings.php:342
+#: includes/class-cyr-to-lat-settings.php:360
 msgid "ISO9 Table"
 msgstr "Таблиця ISO9"
 
 #: includes/class-cyr-to-lat-settings.php:143
-#: includes/class-cyr-to-lat-settings.php:348
+#: includes/class-cyr-to-lat-settings.php:366
 msgid "bel Table"
 msgstr "Таблиця bel"
 
 #: includes/class-cyr-to-lat-settings.php:152
-#: includes/class-cyr-to-lat-settings.php:354
+#: includes/class-cyr-to-lat-settings.php:372
 msgid "uk Table"
 msgstr "Таблиця uk"
 
 #: includes/class-cyr-to-lat-settings.php:161
-#: includes/class-cyr-to-lat-settings.php:360
+#: includes/class-cyr-to-lat-settings.php:378
 msgid "bg_BG Table"
 msgstr "Таблиця bg_BG"
 
 #: includes/class-cyr-to-lat-settings.php:170
-#: includes/class-cyr-to-lat-settings.php:366
+#: includes/class-cyr-to-lat-settings.php:384
 msgid "mk_MK Table"
 msgstr "Таблиця mk_MK"
 
 #: includes/class-cyr-to-lat-settings.php:179
-#: includes/class-cyr-to-lat-settings.php:372
+#: includes/class-cyr-to-lat-settings.php:390
+msgid "sr_RS Table"
+msgstr "Таблиця sr_RS"
+
+#: includes/class-cyr-to-lat-settings.php:188
+#: includes/class-cyr-to-lat-settings.php:396
 msgid "ka_GE Table"
 msgstr "Таблиця ka_GE"
 
-#: includes/class-cyr-to-lat-settings.php:188
-#: includes/class-cyr-to-lat-settings.php:378
+#: includes/class-cyr-to-lat-settings.php:197
+#: includes/class-cyr-to-lat-settings.php:402
 msgid "kk Table"
 msgstr "Таблиця kk"
 
-#: includes/class-cyr-to-lat-settings.php:197
-#: includes/class-cyr-to-lat-settings.php:384
+#: includes/class-cyr-to-lat-settings.php:206
+#: includes/class-cyr-to-lat-settings.php:408
 msgid "he_IL Table"
 msgstr "Таблиця he_IL"
 
-#: includes/class-cyr-to-lat-settings.php:261
-#: includes/class-cyr-to-lat-settings.php:262
+#: includes/class-cyr-to-lat-settings.php:215
+#: includes/class-cyr-to-lat-settings.php:414
+msgid "zh_CN Table"
+msgstr "Таблиця zh_CN"
+
+#: includes/class-cyr-to-lat-settings.php:279
+#: includes/class-cyr-to-lat-settings.php:280
 msgid "Cyr To Lat"
 msgstr "Cyr To Lat"
 
 #. Admin panel title.
-#: includes/class-cyr-to-lat-settings.php:282
+#: includes/class-cyr-to-lat-settings.php:300
 msgid "Cyr To Lat Plugin Options"
 msgstr "Опції плагіну Cyr To Lat"
 
-#: includes/class-cyr-to-lat-settings.php:297
+#: includes/class-cyr-to-lat-settings.php:315
 msgid "Convert Existing Slugs"
 msgstr "Конвертувати існуючі посилання"
 
-#: includes/class-cyr-to-lat-settings.php:303
+#: includes/class-cyr-to-lat-settings.php:321
 msgid "Donate"
 msgstr "Пожертвувати"
 
-#: includes/class-cyr-to-lat-settings.php:306
+#: includes/class-cyr-to-lat-settings.php:324
 msgid "Would you like to support the advancement of this plugin?"
 msgstr "Хочете підтримати розвиток цього плагіну?"
 
-#: includes/class-cyr-to-lat-settings.php:320
+#: includes/class-cyr-to-lat-settings.php:338
 msgid "Your appreciation"
 msgstr "Ваша оцінка"
 
-#: includes/class-cyr-to-lat-settings.php:325
+#: includes/class-cyr-to-lat-settings.php:343
 msgid "Leave a ★★★★★ plugin review on WordPress.org"
 msgstr "Залиште ★★★★★ огляд плагіну на WordPress.org"
 

@@ -5,6 +5,8 @@
  * @package cyr-to-lat
  */
 
+use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
+
 /**
  * Class Cyr_To_Lat_Settings
  *
@@ -211,6 +213,15 @@ class Cyr_To_Lat_Settings {
 				'supplemental' => '',
 				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'he_IL' ),
 			),
+			'zh_CN' => array(
+				'label'        => __( 'zh_CN Table', 'cyr2lat' ),
+				'section'      => 'zh_CN_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'zh_CN' ),
+			),
 		);
 	}
 
@@ -397,6 +408,12 @@ class Cyr_To_Lat_Settings {
 		add_settings_section(
 			'he_IL_section',
 			__( 'he_IL Table', 'cyr2lat' ),
+			array( $this, 'cyr_to_lat_section' ),
+			self::PAGE
+		);
+		add_settings_section(
+			'zh_CN_section',
+			__( 'zh_CN Table', 'cyr2lat' ),
 			array( $this, 'cyr_to_lat_section' ),
 			self::PAGE
 		);
@@ -626,7 +643,7 @@ class Cyr_To_Lat_Settings {
 	 * @param string $key         Setting name.
 	 * @param mixed  $empty_value Empty value for this setting.
 	 *
-	 * @return string The value specified for the option or a default value for the option.
+	 * @return string|array The value specified for the option or a default value for the option.
 	 */
 	public function get_option( $key, $empty_value = null ) {
 		if ( empty( $this->settings ) ) {
@@ -740,7 +757,7 @@ class Cyr_To_Lat_Settings {
 	/**
 	 * Get transliteration table.
 	 *
-	 * @return string
+	 * @return array
 	 */
 	public function get_table() {
 		// List of locales: https://make.wordpress.org/polyglots/teams/.
@@ -750,7 +767,43 @@ class Cyr_To_Lat_Settings {
 			$table = $this->get_option( 'iso9' );
 		}
 
-		return $table;
+		return $this->transpose_chinese_table( $table );
+	}
+
+	/**
+	 * Is current locale a Chinese one.
+	 *
+	 * @return bool
+	 */
+	public function is_chinese_locale() {
+		$chinese_locales = [ 'zh_CN', 'zh_HK', 'zh_SG', 'zh_TW' ];
+
+		return in_array( get_locale(), $chinese_locales, true );
+	}
+
+	/**
+	 * Transpose Chinese table.
+	 *
+	 * Chinese tables are stored in different way, to show them compact.
+	 *
+	 * @param array $table Table.
+	 *
+	 * @return array
+	 */
+	protected function transpose_chinese_table( $table ) {
+		if ( ! $this->is_chinese_locale() ) {
+			return $table;
+		}
+
+		$transposed_table = [];
+		foreach ( $table as $key => $item ) {
+			$hieroglyphs = Mbstring::mb_str_split( $item );
+			foreach ( $hieroglyphs as $hieroglyph ) {
+				$transposed_table[ $hieroglyph ] = $key;
+			}
+		}
+
+		return $transposed_table;
 	}
 
 	/**

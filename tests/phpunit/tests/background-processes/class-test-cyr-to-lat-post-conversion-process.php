@@ -175,22 +175,4 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 			[ [ 'locale' => 'uk' ], 'ru_RU', 'uk' ],
 		];
 	}
-
-	/**
-	 * Mock an object property.
-	 *
-	 * @param object $object        Object.
-	 * @param string $property_name Property name.
-	 * @param mixed  $value         Property vale.
-	 *
-	 * @throws ReflectionException Reflection exception.
-	 */
-	private function mock_property( $object, $property_name, $value ) {
-		$reflection_class = new \ReflectionClass( $object );
-
-		$property = $reflection_class->getProperty( $property_name );
-		$property->setAccessible( true );
-		$property->setValue( $object, $value );
-		$property->setAccessible( false );
-	}
 }

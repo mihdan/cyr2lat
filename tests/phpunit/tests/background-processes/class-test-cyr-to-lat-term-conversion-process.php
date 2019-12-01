@@ -179,22 +179,4 @@ class Test_Cyr_To_Lat_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 			[ (object) [ 'language_code' => 'ua' ], [ 'ua' => [ 'default_locale' => 'uk_UA' ] ], 'ru_RU', 'uk_UA' ],
 		];
 	}
-
-	/**
-	 * Mock an object property.
-	 *
-	 * @param object $object        Object.
-	 * @param string $property_name Property name.
-	 * @param mixed  $value         Property vale.
-	 *
-	 * @throws ReflectionException Reflection exception.
-	 */
-	private function mock_property( $object, $property_name, $value ) {
-		$reflection_class = new \ReflectionClass( $object );
-
-		$property = $reflection_class->getProperty( $property_name );
-		$property->setAccessible( true );
-		$property->setValue( $object, $value );
-		$property->setAccessible( false );
-	}
 }

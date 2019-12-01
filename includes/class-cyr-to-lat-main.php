@@ -25,28 +25,28 @@ class Cyr_To_Lat_Main {
 	 *
 	 * @var Cyr_To_Lat_Settings
 	 */
-	private $settings;
+	protected $settings;
 
 	/**
 	 * Converter instance.
 	 *
 	 * @var Cyr_To_Lat_Converter
 	 */
-	private $converter;
+	protected $converter;
 
 	/**
 	 * Cyr_To_Lat_WP_CLI instance.
 	 *
 	 * @var Cyr_To_Lat_WP_CLI
 	 */
-	private $cli;
+	protected $cli;
 
 	/**
 	 * Cyr_To_Lat_ACF instance.
 	 *
 	 * @var Cyr_To_Lat_ACF
 	 */
-	private $acf;
+	protected $acf;
 
 	/**
 	 * Cyr_To_Lat_Main constructor.
@@ -179,11 +179,7 @@ class Cyr_To_Lat_Main {
 		}
 
 		if ( seems_utf8( $filename ) ) {
-			if ( function_exists( 'mb_strtolower' ) ) {
-				$filename = mb_strtolower( $filename, 'UTF-8' );
-			} else {
-				$filename = Mbstring::mb_strtolower( $filename );
-			}
+			$filename = Mbstring::mb_strtolower( $filename );
 		}
 
 		return $this->transliterate( $filename );
@@ -211,6 +207,33 @@ class Cyr_To_Lat_Main {
 	}
 
 	/**
+	 * Split Chinese string by hyphens.
+	 *
+	 * @param string $string String.
+	 * @param array  $table  Conversion table.
+	 *
+	 * @return string
+	 */
+	protected function split_chinese_string( $string, $table ) {
+		if ( ! $this->settings->is_chinese_locale() || Mbstring::mb_strlen( $string ) < 4 ) {
+			return $string;
+		}
+
+		$chars  = Mbstring::mb_str_split( $string );
+		$string = '';
+
+		foreach ( $chars as $char ) {
+			if ( isset( $table[ $char ] ) ) {
+				$string .= '-' . $char . '-';
+			} else {
+				$string .= $char;
+			}
+		}
+
+		return $string;
+	}
+
+	/**
 	 * Get transliteration table.
 	 *
 	 * @return array
@@ -230,6 +253,7 @@ class Cyr_To_Lat_Main {
 		$table = $this->get_filtered_table();
 
 		$string = $this->fix_mac_string( $string );
+		$string = $this->split_chinese_string( $string, $table );
 		$string = strtr( $string, $table );
 
 		if ( function_exists( 'iconv' ) ) {
