@@ -5,10 +5,14 @@
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
+use WP_Background_Process;
+
 /**
- * Class Cyr_To_Lat_Conversion_Process
+ * Class Conversion_Process
  */
-class Cyr_To_Lat_Conversion_Process extends WP_Background_Process {
+class Conversion_Process extends WP_Background_Process {
 
 	/**
 	 * Prefix
@@ -20,14 +24,14 @@ class Cyr_To_Lat_Conversion_Process extends WP_Background_Process {
 	/**
 	 * Plugin main class
 	 *
-	 * @var Cyr_To_Lat_Main
+	 * @var Main
 	 */
 	protected $main;
 
 	/**
-	 * Cyr_To_Lat_Conversion_Process constructor
+	 * Conversion_Process constructor
 	 *
-	 * @param Cyr_To_Lat_Main $main Plugin main class.
+	 * @param Main $main Plugin main class.
 	 */
 	public function __construct( $main ) {
 		$this->main = $main;
@@ -71,6 +75,7 @@ class Cyr_To_Lat_Conversion_Process extends WP_Background_Process {
 		return false;
 	}
 
+	// phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod.Found
 	/**
 	 * Is process running
 	 *
@@ -78,10 +83,9 @@ class Cyr_To_Lat_Conversion_Process extends WP_Background_Process {
 	 * in a background process.
 	 */
 	public function is_process_running() {
-		$is_process_running = parent::is_process_running();
-
-		return $is_process_running;
+		return parent::is_process_running();
 	}
+	// phpcs:enable Generic.CodeAnalysis.UselessOverridingMethod.Found
 
 	/**
 	 * Log

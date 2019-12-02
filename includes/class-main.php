@@ -5,12 +5,16 @@
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
+use wpdb;
+use Exception;
 use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
 
 /**
- * Class Cyr_To_Lat_Main
+ * Class Main
  */
-class Cyr_To_Lat_Main {
+class Main {
 
 	/**
 	 * Regex of prohibited chars in slugs
@@ -23,60 +27,60 @@ class Cyr_To_Lat_Main {
 	/**
 	 * Plugin settings.
 	 *
-	 * @var Cyr_To_Lat_Settings
+	 * @var Settings
 	 */
 	protected $settings;
 
 	/**
 	 * Converter instance.
 	 *
-	 * @var Cyr_To_Lat_Converter
+	 * @var Converter
 	 */
 	protected $converter;
 
 	/**
-	 * Cyr_To_Lat_WP_CLI instance.
+	 * WP_CLI instance.
 	 *
-	 * @var Cyr_To_Lat_WP_CLI
+	 * @var WP_CLI
 	 */
 	protected $cli;
 
 	/**
-	 * Cyr_To_Lat_ACF instance.
+	 * ACF instance.
 	 *
-	 * @var Cyr_To_Lat_ACF
+	 * @var ACF
 	 */
 	protected $acf;
 
 	/**
-	 * Cyr_To_Lat_Main constructor.
+	 * Main constructor.
 	 *
-	 * @param Cyr_To_Lat_Settings  $settings  Plugin settings.
-	 * @param Cyr_To_Lat_Converter $converter Converter instance.
-	 * @param Cyr_To_Lat_WP_CLI    $cli       CLI instance.
-	 * @param Cyr_To_Lat_ACF       $acf       ACF instance.
+	 * @param Settings  $settings  Plugin settings.
+	 * @param Converter $converter Converter instance.
+	 * @param WP_CLI    $cli       CLI instance.
+	 * @param ACF       $acf       ACF instance.
 	 */
 	public function __construct( $settings = null, $converter = null, $cli = null, $acf = null ) {
 		$this->settings = $settings;
 		if ( ! $this->settings ) {
-			$this->settings = new Cyr_To_Lat_Settings();
+			$this->settings = new Settings();
 		}
 
 		$this->converter = $converter;
 		if ( ! $this->converter ) {
-			$this->converter = new Cyr_To_Lat_Converter( $this, $this->settings );
+			$this->converter = new Converter( $this, $this->settings );
 		}
 
 		$this->cli = $cli;
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			if ( ! $this->cli ) {
-				$this->cli = new Cyr_To_Lat_WP_CLI( $this->converter );
+				$this->cli = new WP_CLI( $this->converter );
 			}
 		}
 
 		$this->acf = $acf;
 		if ( ! $this->acf ) {
-			$this->acf = new Cyr_To_Lat_ACF( $this->settings );
+			$this->acf = new ACF( $this->settings );
 		}
 
 		$this->init();
@@ -93,7 +97,7 @@ class Cyr_To_Lat_Main {
 				 *
 				 * @noinspection PhpParamsInspection
 				 */
-				WP_CLI::add_command( 'cyr2lat', $this->cli );
+				\WP_CLI::add_command( 'cyr2lat', $this->cli );
 			} catch ( Exception $e ) {
 				return;
 			}
@@ -194,7 +198,7 @@ class Cyr_To_Lat_Main {
 	 */
 	private function fix_mac_string( $string ) {
 		$table     = $this->get_filtered_table();
-		$fix_table = Cyr_To_Lat_Conversion_Tables::get_fix_table_for_mac();
+		$fix_table = Conversion_Tables::get_fix_table_for_mac();
 
 		$fix = [];
 		foreach ( $fix_table as $key => $value ) {
@@ -274,6 +278,11 @@ class Cyr_To_Lat_Main {
 	private function ctl_is_classic_editor_plugin_active() {
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			// @codeCoverageIgnoreStart
+			/**
+			 * Do not inspect include path.
+			 *
+			 * @noinspection PhpIncludeInspection
+			 */
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 			// @codeCoverageIgnoreEnd
 		}

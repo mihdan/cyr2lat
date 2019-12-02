@@ -1,16 +1,21 @@
 <?php
 /**
- * Test_Cyr_To_Lat_WP_CLI class file
+ * Test_WP_CLI class file
  *
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
+use cli\progress\Bar;
+use Mockery;
+
 /**
- * Class Test_Cyr_To_Lat_WP_CLI
+ * Class Test_WP_CLI
  *
  * @group wp-cli
  */
-class Test_Cyr_To_Lat_WP_CLI extends Cyr_To_Lat_TestCase {
+class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test regenerate()
@@ -25,11 +30,10 @@ class Test_Cyr_To_Lat_WP_CLI extends Cyr_To_Lat_TestCase {
 	 * @preserveGlobalState disabled
 	 */
 	public function test_regenerate( $args, $assoc_args, $convert_params ) {
-		$converter = \Mockery::mock( 'Cyr_To_Lat_Converter' );
-		$subject   = \Mockery::mock( 'Cyr_To_Lat_WP_CLI', [ $converter ] )->makePartial()
-		                     ->shouldAllowMockingProtectedMethods();
+		$converter = Mockery::mock( Converter::class );
+		$subject   = Mockery::mock( WP_CLI::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		$notify = \Mockery::mock( '\cli\progress\Bar' );
+		$notify = Mockery::mock( Bar::class );
 		$notify->shouldReceive( 'tick' );
 		$notify->shouldReceive( 'finish' );
 
@@ -79,11 +83,10 @@ class Test_Cyr_To_Lat_WP_CLI extends Cyr_To_Lat_TestCase {
 	 * Test make_progress_bar()
 	 */
 	public function test_make_progress_bar() {
-		$converter = \Mockery::mock( 'Cyr_To_Lat_Converter' );
-		$subject   = \Mockery::mock( 'Cyr_To_Lat_WP_CLI', [ $converter ] )->makePartial()
-		                     ->shouldAllowMockingProtectedMethods();
+		$converter = Mockery::mock( Converter::class );
+		$subject   = Mockery::mock( WP_CLI::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		$notify = \Mockery::mock( 'overload:\cli\progress\Bar' );
+		$notify = Mockery::mock( 'overload:' . Bar::class );
 
 		\WP_Mock::userFunction(
 			'\WP_CLI\Utils\make_progress_bar',

@@ -1,21 +1,24 @@
 <?php
 /**
- * Test_Cyr_To_Lat_Conversion_Tables class file
+ * Test_Conversion_Tables class file
  *
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
 /**
- * Class Test_Cyr_To_Lat_Conversion_Tables
+ * Class Test_Conversion_Tables
  *
  * @group tables
  */
-class Test_Cyr_To_Lat_Conversion_Tables extends Cyr_To_Lat_TestCase {
+class Test_Conversion_Tables extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test get()
 	 */
 	public function test_get() {
+		// phpcs:disable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 		$iso9 = [
 			'А' => 'A',
 			'Б' => 'B',
@@ -1189,19 +1192,20 @@ class Test_Cyr_To_Lat_Conversion_Tables extends Cyr_To_Lat_TestCase {
 			'Zuo'    => '昨左佐做作坐座阼唑嘬怍胙祚酢',
 		];
 
-		$this->assertSame( $iso9, \Cyr_To_Lat_Conversion_Tables::get() );
-		$this->assertSame( $bel, \Cyr_To_Lat_Conversion_Tables::get( 'bel' ) );
-		$this->assertSame( $uk, \Cyr_To_Lat_Conversion_Tables::get( 'uk' ) );
-		$this->assertSame( $bg_BG, \Cyr_To_Lat_Conversion_Tables::get( 'bg_BG' ) );
-		$this->assertSame( $mk_MK, \Cyr_To_Lat_Conversion_Tables::get( 'mk_MK' ) );
-		$this->assertSame( $sr_RS, \Cyr_To_Lat_Conversion_Tables::get( 'sr_RS' ) );
-		$this->assertSame( $ka_GE, \Cyr_To_Lat_Conversion_Tables::get( 'ka_GE' ) );
-		$this->assertSame( $kk, \Cyr_To_Lat_Conversion_Tables::get( 'kk' ) );
-		$this->assertSame( $he_IL, \Cyr_To_Lat_Conversion_Tables::get( 'he_IL' ) );
-		$this->assertSame( $chinese, \Cyr_To_Lat_Conversion_Tables::get( 'zh_CN' ) );
-		$this->assertSame( $chinese, \Cyr_To_Lat_Conversion_Tables::get( 'zh_HK' ) );
-		$this->assertSame( $chinese, \Cyr_To_Lat_Conversion_Tables::get( 'zh_SG' ) );
-		$this->assertSame( $chinese, \Cyr_To_Lat_Conversion_Tables::get( 'zh_TW' ) );
+		$this->assertSame( $iso9, Conversion_Tables::get() );
+		$this->assertSame( $bel, Conversion_Tables::get( 'bel' ) );
+		$this->assertSame( $uk, Conversion_Tables::get( 'uk' ) );
+		$this->assertSame( $bg_BG, Conversion_Tables::get( 'bg_BG' ) );
+		$this->assertSame( $mk_MK, Conversion_Tables::get( 'mk_MK' ) );
+		$this->assertSame( $sr_RS, Conversion_Tables::get( 'sr_RS' ) );
+		$this->assertSame( $ka_GE, Conversion_Tables::get( 'ka_GE' ) );
+		$this->assertSame( $kk, Conversion_Tables::get( 'kk' ) );
+		$this->assertSame( $he_IL, Conversion_Tables::get( 'he_IL' ) );
+		$this->assertSame( $chinese, Conversion_Tables::get( 'zh_CN' ) );
+		$this->assertSame( $chinese, Conversion_Tables::get( 'zh_HK' ) );
+		$this->assertSame( $chinese, Conversion_Tables::get( 'zh_SG' ) );
+		$this->assertSame( $chinese, Conversion_Tables::get( 'zh_TW' ) );
+		// phpcs:enable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 	}
 
 	/**
@@ -1215,6 +1219,6 @@ class Test_Cyr_To_Lat_Conversion_Tables extends Cyr_To_Lat_TestCase {
 			'й' => urldecode( '%d0%B8%cc%86' ),
 		];
 
-		$this->assertSame( $fix_table, Cyr_To_Lat_Conversion_Tables::get_fix_table_for_mac() );
+		$this->assertSame( $fix_table, Conversion_Tables::get_fix_table_for_mac() );
 	}
 }

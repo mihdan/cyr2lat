@@ -1,19 +1,26 @@
 <?php
 /**
- * Test_Cyr_To_Lat_Main class file
+ * Test_Main class file
  *
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
 use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
+use Mockery;
+use ReflectionClass;
+use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
+use WP_Screen;
+use wpdb;
 
 /**
- * Class Test_Cyr_To_Lat_Main
+ * Class Test_Main
  *
  * @group main
  */
-class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
+class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * End test
@@ -32,12 +39,12 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 	 * @preserveGlobalState disabled
 	 */
 	public function test_constructor() {
-		$classname = 'Cyr_To_Lat_Main';
+		$classname = __NAMESPACE__ . '\Main';
 
-		\Mockery::mock( 'overload:Cyr_To_Lat_Settings' );
-		\Mockery::mock( 'overload:Cyr_To_Lat_Converter' );
-		\Mockery::mock( 'overload:Cyr_To_Lat_WP_CLI' );
-		\Mockery::mock( 'overload:Cyr_To_Lat_ACF' );
+		Mockery::mock( 'overload:' . Settings::class );
+		Mockery::mock( 'overload:' . Converter::class );
+		Mockery::mock( 'overload:' . WP_CLI::class );
+		Mockery::mock( 'overload:' . ACF::class );
 
 		if ( ! defined( 'WP_CLI' ) ) {
 			define( 'WP_CLI', true );
@@ -59,7 +66,7 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 	 * Test init()
 	 */
 	public function test_init() {
-		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial();
+		$subject = Mockery::mock( Main::class )->makePartial();
 		$subject->shouldReceive( 'init_hooks' )->once();
 
 		$subject->init();
@@ -73,7 +80,7 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 	 * @preserveGlobalState disabled
 	 */
 	public function test_init_with_cli_error() {
-		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial();
+		$subject = Mockery::mock( Main::class )->makePartial();
 		$subject->shouldReceive( 'init_hooks' )->never();
 
 		if ( ! defined( 'WP_CLI' ) ) {
@@ -93,7 +100,7 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 	 * @preserveGlobalState disabled
 	 */
 	public function test_init_with_cli() {
-		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial();
+		$subject = Mockery::mock( Main::class )->makePartial();
 		$subject->shouldReceive( 'init_hooks' )->once();
 
 		if ( ! defined( 'WP_CLI' ) ) {
@@ -163,15 +170,15 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 		$locale     = 'ru_RU';
 		$iso9_table = $this->get_conversion_table( $locale );
 
-		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
+		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
 		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
 
-		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
-		$cli       = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
-		$acf       = $this->getMockBuilder( 'Cyr_To_Lat_ACF' )->disableOriginalConstructor()->getMock();
+		$converter = $this->getMockBuilder( 'Converter' )->disableOriginalConstructor()->getMock();
+		$cli       = $this->getMockBuilder( 'WP_CLI' )->disableOriginalConstructor()->getMock();
+		$acf       = $this->getMockBuilder( 'ACF' )->disableOriginalConstructor()->getMock();
 
-		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli, $acf );
+		$subject = new Main( $settings, $converter, $cli, $acf );
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 		$this->assertSame( $expected, $subject->ctl_sanitize_title( $title ) );
@@ -235,10 +242,10 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 		$table  = $this->get_conversion_table( $locale );
 		$table  = $this->transpose_chinese_table( $table );
 
-		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
+		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( true );
 
-		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial();
+		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->mock_property( $subject, 'settings', $settings );
 
 		$this->assertSame( $expected, $subject->split_chinese_string( $string, $table ) );
@@ -302,15 +309,15 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
+		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
 		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
 
-		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
-		$cli       = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
-		$acf       = $this->getMockBuilder( 'Cyr_To_Lat_ACF' )->disableOriginalConstructor()->getMock();
+		$converter = $this->getMockBuilder( 'Converter' )->disableOriginalConstructor()->getMock();
+		$cli       = $this->getMockBuilder( 'WP_CLI' )->disableOriginalConstructor()->getMock();
+		$acf       = $this->getMockBuilder( 'ACF' )->disableOriginalConstructor()->getMock();
 
-		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli, $acf );
+		$subject = new Main( $settings, $converter, $cli, $acf );
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_filename' )->with( false, $filename )->reply( false );
 
@@ -375,7 +382,7 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 	 * Test that ctl_sanitize_post_name() does nothing if no Block/Gutenberg editor is active
 	 */
 	public function test_ctl_sanitize_post_name_without_gutenberg() {
-		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$data = [ 'something' ];
 
@@ -430,7 +437,7 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 
 		$GLOBALS['wp_version'] = '5.0';
 
-		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		FunctionMocker::replace( 'function_exists', true );
 
 		\WP_Mock::userFunction(
@@ -441,7 +448,7 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		$current_screen       = \Mockery::mock( 'WP_Screen' );
+		$current_screen       = Mockery::mock( WP_Screen::class );
 		$current_screen->base = 'not post';
 
 		$GLOBALS['current_screen'] = null;
@@ -462,7 +469,7 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 	public function test_ctl_sanitize_post_name( $data, $expected ) {
 		$GLOBALS['wp_version'] = '5.0';
 
-		$subject = \Mockery::mock( Cyr_To_Lat_Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		FunctionMocker::replace( 'function_exists', true );
 
 		\WP_Mock::userFunction(
@@ -473,7 +480,7 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		$current_screen            = \Mockery::mock( 'WP_Screen' );
+		$current_screen            = Mockery::mock( WP_Screen::class );
 		$current_screen->base      = 'post';
 		$GLOBALS['current_screen'] = $current_screen;
 
@@ -537,19 +544,19 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 		$locale     = 'ru_RU';
 		$iso9_table = $this->get_conversion_table( $locale );
 
-		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
+		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
 		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
 
-		$converter = $this->getMockBuilder( 'Cyr_To_Lat_Converter' )->disableOriginalConstructor()->getMock();
-		$cli       = $this->getMockBuilder( 'Cyr_To_Lat_WP_CLI' )->disableOriginalConstructor()->getMock();
-		$acf       = $this->getMockBuilder( 'Cyr_To_Lat_ACF' )->disableOriginalConstructor()->getMock();
+		$converter = $this->getMockBuilder( 'Converter' )->disableOriginalConstructor()->getMock();
+		$cli       = $this->getMockBuilder( 'WP_CLI' )->disableOriginalConstructor()->getMock();
+		$acf       = $this->getMockBuilder( 'ACF' )->disableOriginalConstructor()->getMock();
 
-		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli, $acf );
+		$subject = new Main( $settings, $converter, $cli, $acf );
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
-		$wpdb        = Mockery::mock( '\wpdb' );
+		$wpdb        = Mockery::mock( wpdb::class );
 		$wpdb->terms = 'wp_terms';
 		$wpdb->shouldReceive( 'prepare' )->once()->andReturn( '' );
 		$wpdb->shouldReceive( 'get_var' )->once()->andReturn( $term );
@@ -589,9 +596,8 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 			$result          = call_user_func_array( 'sprintf', $args );
 			$result          = str_replace( "''", '', $result );
 
-			$wpdb = Mockery::mock( '\wpdb' );
-			$wpdb->shouldReceive( 'prepare' )->zeroOrMoreTimes()
-			     ->andReturn( $result );
+			$wpdb = Mockery::mock( wpdb::class );
+			$wpdb->shouldReceive( 'prepare' )->zeroOrMoreTimes()->andReturn( $result );
 		}
 
 		$subject = $this->get_subject();
@@ -621,15 +627,15 @@ class Test_Cyr_To_Lat_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * Get test subject
 	 *
-	 * @return Cyr_To_Lat_Main
+	 * @return Main
 	 */
 	private function get_subject() {
-		$settings  = \Mockery::mock( 'Cyr_To_Lat_Settings' );
-		$converter = \Mockery::mock( 'Cyr_To_Lat_Converter' );
-		$cli       = \Mockery::mock( 'Cyr_To_Lat_WP_CLI' );
-		$acf       = \Mockery::mock( 'Cyr_To_Lat_ACF' );
+		$settings  = Mockery::mock( Settings::class );
+		$converter = Mockery::mock( Converter::class );
+		$cli       = Mockery::mock( WP_CLI::class );
+		$acf       = Mockery::mock( ACF::class );
 
-		$subject = new Cyr_To_Lat_Main( $settings, $converter, $cli, $acf );
+		$subject = new Main( $settings, $converter, $cli, $acf );
 
 		return $subject;
 	}

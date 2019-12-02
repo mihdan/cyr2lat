@@ -1,16 +1,22 @@
 <?php
 /**
- * Test_Cyr_To_Lat_ACF class file
+ * Test_ACF class file
  *
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
+use Mockery;
+use ReflectionClass;
+use ReflectionException;
+
 /**
- * Class Test_Cyr_To_Lat_ACF
+ * Class Test_ACF
  *
  * @group acf
  */
-class Test_Cyr_To_Lat_ACF extends Cyr_To_Lat_TestCase {
+class Test_ACF extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test constructor
@@ -18,9 +24,9 @@ class Test_Cyr_To_Lat_ACF extends Cyr_To_Lat_TestCase {
 	 * @throws ReflectionException Reflection Exception.
 	 */
 	public function test_constructor() {
-		$classname = 'Cyr_To_Lat_ACF';
+		$classname = __NAMESPACE__ . '\ACF';
 
-		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
+		$settings = Mockery::mock( Settings::class );
 
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
@@ -40,8 +46,8 @@ class Test_Cyr_To_Lat_ACF extends Cyr_To_Lat_TestCase {
 	 * Test init_hooks()
 	 */
 	public function test_init_hooks() {
-		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
-		$subject  = new Cyr_To_Lat_ACF( $settings );
+		$settings = Mockery::mock( Settings::class );
+		$subject  = new ACF( $settings );
 
 		\WP_Mock::expectActionAdded(
 			'acf/field_group/admin_enqueue_scripts',
@@ -58,7 +64,7 @@ class Test_Cyr_To_Lat_ACF extends Cyr_To_Lat_TestCase {
 		$table  = [ 'я' => 'ya' ];
 		$object = [ 'table' => $table ];
 
-		$settings = \Mockery::mock( 'Cyr_To_Lat_Settings' );
+		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'get_table' )->andReturn( $table );
 
 		\WP_Mock::userFunction(
@@ -86,7 +92,7 @@ class Test_Cyr_To_Lat_ACF extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		$subject = new Cyr_To_Lat_ACF( $settings );
+		$subject = new ACF( $settings );
 		$subject->enqueue_script();
 	}
 }

@@ -1,16 +1,22 @@
 <?php
 /**
- * Test_Cyr_To_Lat_Settings class file
+ * Test_Settings class file
  *
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
+use Mockery;
+use ReflectionClass;
+use ReflectionException;
+
 /**
- * Class Test_Cyr_To_Lat_Settings
+ * Class Test_Settings
  *
  * @group settings
  */
-class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
+class Test_Settings extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test constructor
@@ -18,7 +24,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @throws ReflectionException Reflection Exception.
 	 */
 	public function test_constructor() {
-		$classname = 'Cyr_To_Lat_Settings';
+		$classname = __NAMESPACE__ . '\Settings';
 
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
@@ -38,7 +44,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * Test init()
 	 */
 	public function test_init() {
-		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
+		$subject = Mockery::mock( Settings::class )->makePartial();
 		$subject->shouldReceive( 'load_plugin_textdomain' )->once();
 		$subject->shouldReceive( 'init_form_fields' )->once();
 		$subject->shouldReceive( 'init_settings' )->once();
@@ -52,16 +58,13 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * Test init_hooks()
 	 */
 	public function test_init_hooks() {
-		$subject = new Cyr_To_Lat_Settings();
+		$subject = new Settings();
 
 		\WP_Mock::passthruFunction( 'plugin_basename' );
 
 		\WP_Mock::expectFilterAdded(
 			'plugin_action_links_' . CYR_TO_LAT_FILE,
-			[
-				$subject,
-				'add_settings_link',
-			],
+			[ $subject, 'add_settings_link', ],
 			10,
 			4
 		);
@@ -72,10 +75,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 
 		\WP_Mock::expectFilterAdded(
 			'pre_update_option_' . $subject::OPTION_NAME,
-			[
-				$subject,
-				'pre_update_option_filter',
-			],
+			[ $subject, 'pre_update_option_filter', ],
 			10,
 			3
 		);
@@ -90,7 +90,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * Test add_settings_link()
 	 */
 	public function test_add_settings_link() {
-		$subject = new Cyr_To_Lat_Settings();
+		$subject = new Settings();
 
 		\WP_Mock::passthruFunction( 'admin_url' );
 
@@ -110,9 +110,9 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @preserveGlobalState disabled
 	 */
 	public function test_init_form_fields() {
-		$subject = new Cyr_To_Lat_Settings();
+		$subject = new Settings();
 
-		$tables = Mockery::mock( 'overload:Cyr_To_Lat_Conversion_Tables' );
+		$tables = Mockery::mock( 'overload:' . Conversion_Tables::class );
 		$tables->shouldReceive( 'get' )->with()->andReturn( [ 'iso9' ] );
 		$tables->shouldReceive( 'get' )->with( 'bel' )->andReturn( [ 'bel' ] );
 		$tables->shouldReceive( 'get' )->with( 'uk' )->andReturn( [ 'uk' ] );
@@ -138,7 +138,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_init_settings
 	 */
 	public function test_init_settings( $settings ) {
-		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
+		$subject = Mockery::mock( Settings::class )->makePartial();
 
 		\WP_Mock::userFunction(
 			'get_option',
@@ -202,7 +202,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_get_form_fields
 	 */
 	public function test_get_form_fields( $form_fields, $expected ) {
-		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
+		$subject = Mockery::mock( Settings::class )->makePartial();
 
 		$subject->form_fields = null;
 
@@ -257,7 +257,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * Test add_settings_page()
 	 */
 	public function test_add_settings_page() {
-		$subject = new Cyr_To_Lat_Settings();
+		$subject = new Settings();
 
 		$parent_slug = 'options-general.php';
 		$page_title  = 'Cyr To Lat';
@@ -285,7 +285,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_ctl_settings_page
 	 */
 	public function test_ctl_settings_page( $is_ctl_options_screen ) {
-		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_ctl_options_screen' )->andReturn( $is_ctl_options_screen );
 
 		if ( $is_ctl_options_screen ) {
@@ -390,7 +390,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_setup_sections
 	 */
 	public function test_setup_sections( $is_ctl_options_screen ) {
-		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_ctl_options_screen' )->andReturn( $is_ctl_options_screen );
 
 		if ( $is_ctl_options_screen ) {
@@ -487,7 +487,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * Test cyr_to_lat_section()
 	 */
 	public function test_cyr_to_lat_section() {
-		$subject = new Cyr_To_Lat_Settings();
+		$subject = new Settings();
 		$subject->cyr_to_lat_section( [] );
 		$this->assertTrue( true );
 	}
@@ -500,7 +500,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_setup_fields
 	 */
 	public function test_setup_fields( $is_ctl_options_screen ) {
-		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_ctl_options_screen' )->andReturn( $is_ctl_options_screen );
 
 		if ( $is_ctl_options_screen ) {
@@ -565,7 +565,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_field_callback
 	 */
 	public function test_field_callback( $arguments, $expected ) {
-		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
+		$subject = Mockery::mock( Settings::class )->makePartial();
 
 		if ( isset( $arguments['field_id'] ) ) {
 			$subject->shouldReceive( 'get_option' )->with( $arguments['field_id'] )->andReturn( $arguments['default'] );
@@ -956,7 +956,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_get_option
 	 */
 	public function test_get_option( $settings, $key, $empty_value, $expected ) {
-		$subject           = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
+		$subject           = Mockery::mock( Settings::class )->makePartial();
 		$subject->settings = null;
 		if ( empty( $settings ) ) {
 			$subject->shouldReceive( 'init_settings' )->once()->andReturnUsing(
@@ -998,8 +998,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_get_field_default
 	 */
 	public function test_get_field_default( $field, $expected ) {
-		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial()
-		                   ->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$this->assertSame( $expected, $subject->get_field_default( $field ) );
 	}
@@ -1029,7 +1028,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_set_option
 	 */
 	public function test_set_option( $settings, $key, $value, $expected ) {
-		$subject           = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
+		$subject           = Mockery::mock( Settings::class )->makePartial();
 		$subject->settings = null;
 		if ( empty( $settings ) ) {
 			$subject->shouldReceive( 'init_settings' )->once()->andReturnUsing(
@@ -1045,7 +1044,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 		\WP_Mock::userFunction(
 			'update_option',
 			[
-				'args'  => [ Cyr_To_Lat_Settings::OPTION_NAME, $expected ],
+				'args'  => [ Settings::OPTION_NAME, $expected ],
 				'times' => 1,
 			]
 		);
@@ -1089,7 +1088,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_pre_update_option_filter
 	 */
 	public function test_pre_update_option_filter( $form_fields, $value, $old_value, $expected ) {
-		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
+		$subject = Mockery::mock( Settings::class )->makePartial();
 		$subject->shouldReceive( 'get_form_fields' )->andReturn( $form_fields );
 
 		$option = 'option';
@@ -1165,7 +1164,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_admin_enqueue_scripts
 	 */
 	public function test_admin_enqueue_scripts( $is_ctl_options_screen ) {
-		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_ctl_options_screen' )->andReturn( $is_ctl_options_screen );
 
 		if ( $is_ctl_options_screen ) {
@@ -1217,7 +1216,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * Test load_plugin_textdomain()
 	 */
 	public function test_load_plugin_textdomain() {
-		$subject = new Cyr_To_Lat_Settings();
+		$subject = new Settings();
 
 		\WP_Mock::passthruFunction( 'plugin_basename' );
 		\WP_Mock::userFunction(
@@ -1238,7 +1237,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * Test get_table()
 	 */
 	public function test_get_table() {
-		$subject    = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial();
+		$subject    = Mockery::mock( Settings::class )->makePartial();
 		$locale     = 'not_existing_locale';
 		$iso9_table = $this->get_conversion_table( $locale );
 
@@ -1264,7 +1263,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_is_chinese_locale
 	 */
 	public function test_is_chinese_locale( $locale, $expected ) {
-		$subject = new Cyr_To_Lat_Settings();
+		$subject = new Settings();
 
 		\WP_Mock::userFunction(
 			'get_locale',
@@ -1301,7 +1300,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_transpose_chinese_table
 	 */
 	public function test_transpose_chinese_table( $is_chinese_locale, $table, $expected ) {
-		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_chinese_locale' )->andReturn( $is_chinese_locale );
 
 		$this->assertSame( $expected, $subject->transpose_chinese_table( $table ) );
@@ -1342,7 +1341,7 @@ class Test_Cyr_To_Lat_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_is_ctl_options_screen
 	 */
 	public function test_is_ctl_options_screen( $current_screen, $expected ) {
-		$subject = \Mockery::mock( Cyr_To_Lat_Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		\WP_Mock::userFunction(
 			'get_current_screen',

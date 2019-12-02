@@ -5,12 +5,14 @@
  * @package cyr-to-lat
  */
 
-if ( ! class_exists( 'Cyr_To_Lat_Requirements' ) ) {
+namespace Cyr_To_Lat;
+
+if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 
 	/**
-	 * Class Cyr_To_Lat_Requirements
+	 * Class Requirements
 	 */
-	class Cyr_To_Lat_Requirements {
+	class Requirements {
 
 		/**
 		 * Check if requirements are met.
@@ -28,7 +30,7 @@ if ( ! class_exists( 'Cyr_To_Lat_Requirements' ) ) {
 		 */
 		private function is_php_version_required() {
 			if ( version_compare( CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION, phpversion(), '>' ) ) {
-				add_action( 'admin_notices', array( $this, 'php_requirement_message' ) );
+				add_action( 'admin_notices', [ $this, 'php_requirement_message' ] );
 
 				return false;
 			}

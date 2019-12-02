@@ -5,10 +5,14 @@
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
+use stdClass;
+
 /**
- * Class Cyr_To_Lat_Term_Conversion_Process
+ * Class Term_Conversion_Process
  */
-class Cyr_To_Lat_Term_Conversion_Process extends Cyr_To_Lat_Conversion_Process {
+class Term_Conversion_Process extends Conversion_Process {
 
 	/**
 	 * Site locale.
@@ -32,9 +36,9 @@ class Cyr_To_Lat_Term_Conversion_Process extends Cyr_To_Lat_Conversion_Process {
 	protected $action = CYR_TO_LAT_TERM_CONVERSION_ACTION;
 
 	/**
-	 * Cyr_To_Lat_Term_Conversion_Process constructor.
+	 * Term_Conversion_Process constructor.
 	 *
-	 * @param Cyr_To_Lat_Main $main Plugin main class.
+	 * @param Main $main Plugin main class.
 	 */
 	public function __construct( $main ) {
 		parent::__construct( $main );

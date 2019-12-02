@@ -5,7 +5,12 @@
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
+use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
+use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
 
 /**

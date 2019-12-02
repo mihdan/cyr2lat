@@ -1,16 +1,21 @@
 <?php
 /**
- * Test_Cyr_To_Lat_Term_Conversion_Process class file
+ * Test_Term_Conversion_Process class file
  *
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
+use Mockery;
+use ReflectionException;
+
 /**
- * Class Test_Cyr_To_Lat_Term_Conversion_Process
+ * Class Test_Term_Conversion_Process
  *
  * @group process
  */
-class Test_Cyr_To_Lat_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
+class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * End test
@@ -37,7 +42,7 @@ class Test_Cyr_To_Lat_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 			'term_taxonomy_id' => 5,
 		];
 
-		$main = \Mockery::mock( Cyr_To_Lat_Main::class );
+		$main = Mockery::mock( Main::class );
 
 		\WP_Mock::userFunction(
 			'sanitize_title',
@@ -48,10 +53,10 @@ class Test_Cyr_To_Lat_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 		);
 
 		if ( $sanitized_slug !== $term->slug ) {
-			$wpdb        = Mockery::mock( '\wpdb' );
+			$wpdb        = Mockery::mock( wpdb::class );
 			$wpdb->terms = 'wp_terms';
-			$wpdb->shouldReceive( 'update' )->once()
-			     ->with( $wpdb->terms, [ 'slug' => $sanitized_slug ], [ 'term_id' => $term->term_id ] );
+			$wpdb->shouldReceive( 'update' )->once()->
+			with( $wpdb->terms, [ 'slug' => $sanitized_slug ], [ 'term_id' => $term->term_id ] );
 		}
 
 		\WP_Mock::userFunction(
@@ -59,8 +64,8 @@ class Test_Cyr_To_Lat_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 			[ 'return' => 'ru_RU' ]
 		);
 
-		$subject = \Mockery::mock( Cyr_To_Lat_Term_Conversion_Process::class, [ $main ] )->makePartial()
-		                   ->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Term_Conversion_Process::class, [ $main ] )->makePartial()->
+		shouldAllowMockingProtectedMethods();
 
 		\WP_Mock::expectFilterAdded(
 			'locale',
@@ -76,8 +81,8 @@ class Test_Cyr_To_Lat_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 		);
 
 		if ( $sanitized_slug !== $term->slug ) {
-			$subject->shouldReceive( 'log' )->with( 'Term slug converted: ' . $term->slug . ' => ' . $sanitized_slug )
-			        ->once();
+			$subject->shouldReceive( 'log' )->
+			with( 'Term slug converted: ' . $term->slug . ' => ' . $sanitized_slug )->once();
 		}
 
 		$this->assertFalse( $subject->task( $term ) );
@@ -97,8 +102,7 @@ class Test_Cyr_To_Lat_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 	 * Test complete()
 	 */
 	public function test_complete() {
-		$subject = \Mockery::mock( Cyr_To_Lat_Term_Conversion_Process::class )->makePartial()
-		                   ->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Term_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'log' )->with( 'Term slugs conversion completed.' )->once();
 
 		\WP_Mock::userFunction(
@@ -142,13 +146,11 @@ class Test_Cyr_To_Lat_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 			'element_id'   => $term->term_taxonomy_id,
 		];
 
-		\WP_Mock::onFilter( 'wpml_element_language_details' )
-		        ->with( false, $args )
-		        ->reply( $wpml_element_language_details );
+		\WP_Mock::onFilter( 'wpml_element_language_details' )->
+		with( false, $args )->reply( $wpml_element_language_details );
 
-		\WP_Mock::onFilter( 'wpml_active_languages' )
-		        ->with( false, [] )
-		        ->reply( $wpml_active_languages );
+		\WP_Mock::onFilter( 'wpml_active_languages' )->
+		with( false, [] )->reply( $wpml_active_languages );
 
 		\WP_Mock::userFunction(
 			'get_locale',
@@ -157,8 +159,8 @@ class Test_Cyr_To_Lat_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		$main    = \Mockery::mock( Cyr_To_Lat_Main::class );
-		$subject = new Cyr_To_Lat_Term_Conversion_Process( $main );
+		$main    = Mockery::mock( Main::class );
+		$subject = new Term_Conversion_Process( $main );
 		$this->mock_property( $subject, 'term', $term );
 		$this->assertSame( $expected, $subject->filter_term_locale() );
 	}

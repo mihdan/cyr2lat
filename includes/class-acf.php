@@ -5,22 +5,24 @@
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
 /**
- * Class Cyr_To_Lat_ACF
+ * Class ACF
  */
-class Cyr_To_Lat_ACF {
+class ACF {
 
 	/**
 	 * Plugin settings.
 	 *
-	 * @var Cyr_To_Lat_Settings
+	 * @var Settings
 	 */
 	private $settings;
 
 	/**
-	 * Cyr_To_Lat_ACF constructor.
+	 * ACF constructor.
 	 *
-	 * @param Cyr_To_Lat_Settings $settings Plugin settings.
+	 * @param Settings $settings Plugin settings.
 	 */
 	public function __construct( $settings ) {
 		$this->settings = $settings;

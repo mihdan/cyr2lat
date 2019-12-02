@@ -1,16 +1,21 @@
 <?php
 /**
- * Test_Cyr_To_Lat_Admin_Notices class file
+ * Test_Admin_Notices class file
  *
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
+use ReflectionClass;
+use ReflectionException;
+
 /**
- * Class Test_Cyr_To_Lat_Admin_Notices
+ * Class Test_Admin_Notices
  *
  * @group admin-notices
  */
-class Test_Cyr_To_Lat_Admin_Notices extends Cyr_To_Lat_TestCase {
+class Test_Admin_Notices extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test constructor
@@ -18,7 +23,7 @@ class Test_Cyr_To_Lat_Admin_Notices extends Cyr_To_Lat_TestCase {
 	 * @throws ReflectionException Reflection Exception.
 	 */
 	public function test_constructor() {
-		$classname = 'Cyr_To_Lat_Admin_Notices';
+		$classname = __NAMESPACE__ . '\Admin_Notices';
 
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
@@ -52,7 +57,7 @@ class Test_Cyr_To_Lat_Admin_Notices extends Cyr_To_Lat_TestCase {
 			</div>
 			';
 
-		$subject = new Cyr_To_Lat_Admin_Notices();
+		$subject = new Admin_Notices();
 
 		\WP_Mock::passthruFunction( 'wp_kses_post' );
 

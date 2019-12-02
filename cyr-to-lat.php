@@ -19,6 +19,8 @@
  * @author  Sergey Biryukov, Mikhail Kobzarev, Igor Gergel
  */
 
+namespace Cyr_To_Lat;
+
 // @codeCoverageIgnoreStart
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -89,8 +91,8 @@ static $requirements;
 static $plugin;
 
 if ( ! isset( $requirements ) ) {
-	require_once CYR_TO_LAT_PATH . '/includes/class-cyr-to-lat-requirements.php'; // We cannot use composer autoloader here.
-	$requirements = new Cyr_To_Lat_Requirements();
+	require_once CYR_TO_LAT_PATH . '/includes/class-requirements.php';
+	$requirements = new Requirements();
 }
 
 if ( ! $requirements->are_requirements_met() ) {
@@ -101,6 +103,6 @@ if ( ! $requirements->are_requirements_met() ) {
 if ( ! isset( $plugin ) ) {
 	require_once CYR_TO_LAT_PATH . '/vendor/autoload.php';
 
-	$plugin = new Cyr_To_Lat_Main();
+	$plugin = new Main();
 }
 

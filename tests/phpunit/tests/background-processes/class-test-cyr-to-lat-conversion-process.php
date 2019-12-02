@@ -1,23 +1,27 @@
 <?php
 /**
- * Test_Cyr_To_Lat_Conversion_Process class file
+ * Test_Conversion_Process class file
  *
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
+use Mockery;
+use stdClass;
+
 /**
- * Class Test_Cyr_To_Lat_Conversion_Process
+ * Class Test_Conversion_Process
  *
  * @group process
  */
-class Test_Cyr_To_Lat_Conversion_Process extends Cyr_To_Lat_TestCase {
+class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test task()
 	 */
 	public function test_task() {
-		$subject = \Mockery::mock( Cyr_To_Lat_Conversion_Process::class )->makePartial()
-		                   ->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$this->assertFalse( $subject->task( new stdClass() ) );
 	}
@@ -26,8 +30,7 @@ class Test_Cyr_To_Lat_Conversion_Process extends Cyr_To_Lat_TestCase {
 	 * Test complete()
 	 */
 	public function test_complete() {
-		$subject = \Mockery::mock( Cyr_To_Lat_Conversion_Process::class )->makePartial()
-		                   ->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		\WP_Mock::userFunction(
 			'wp_next_scheduled',
@@ -57,8 +60,8 @@ class Test_Cyr_To_Lat_Conversion_Process extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_is_process_completed
 	 */
 	public function test_is_process_completed( $transient, $expected ) {
-		$main    = \Mockery::mock( Cyr_To_Lat_Main::class );
-		$subject = new Cyr_To_Lat_Conversion_Process( $main );
+		$main    = Mockery::mock( Main::class );
+		$subject = new Conversion_Process( $main );
 
 		\WP_Mock::userFunction(
 			'get_site_transient',
@@ -101,8 +104,8 @@ class Test_Cyr_To_Lat_Conversion_Process extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_is_process_running
 	 */
 	public function test_is_process_running( $transient, $expected ) {
-		$main    = \Mockery::mock( Cyr_To_Lat_Main::class );
-		$subject = new Cyr_To_Lat_Conversion_Process( $main );
+		$main    = Mockery::mock( Main::class );
+		$subject = new Conversion_Process( $main );
 
 		\WP_Mock::userFunction(
 			'get_site_transient',
@@ -136,8 +139,7 @@ class Test_Cyr_To_Lat_Conversion_Process extends Cyr_To_Lat_TestCase {
 	 * @dataProvider        dp_test_log
 	 */
 	public function test_log( $debug ) {
-		$subject = \Mockery::mock( 'Cyr_To_Lat_Conversion_Process' )->makePartial()
-		                   ->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$test_log = 'test.log';
 		$message  = 'Test message';

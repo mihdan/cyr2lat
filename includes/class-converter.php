@@ -5,12 +5,14 @@
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
 /**
- * Class Cyr_To_Lat_Converter
+ * Class Converter
  *
- * @class Cyr_To_Lat_Converter
+ * @class Converter
  */
-class Cyr_To_Lat_Converter {
+class Converter {
 
 	/**
 	 * Query arg in url to start conversion.
@@ -20,35 +22,35 @@ class Cyr_To_Lat_Converter {
 	/**
 	 * Plugin main class.
 	 *
-	 * @var Cyr_To_Lat_Main
+	 * @var Main
 	 */
 	private $main;
 
 	/**
 	 * Plugin settings.
 	 *
-	 * @var Cyr_To_Lat_Settings
+	 * @var Settings
 	 */
 	private $settings;
 
 	/**
 	 * Background process to convert posts.
 	 *
-	 * @var Cyr_To_Lat_Post_Conversion_Process
+	 * @var Post_Conversion_Process
 	 */
 	private $process_all_posts;
 
 	/**
 	 * Background process to convert terms.
 	 *
-	 * @var Cyr_To_Lat_Term_Conversion_Process
+	 * @var Term_Conversion_Process
 	 */
 	private $process_all_terms;
 
 	/**
 	 * Admin notices.
 	 *
-	 * @var Cyr_To_Lat_Admin_Notices
+	 * @var Admin_Notices
 	 */
 	private $admin_notices;
 
@@ -60,34 +62,34 @@ class Cyr_To_Lat_Converter {
 	private $option_group = '';
 
 	/**
-	 * Cyr_To_Lat_Converter constructor.
+	 * Converter constructor.
 	 *
-	 * @param Cyr_To_Lat_Main                    $main              Plugin main class.
-	 * @param Cyr_To_Lat_Settings                $settings          Plugin settings.
-	 * @param Cyr_To_Lat_Post_Conversion_Process $process_all_posts Plugin settings.
-	 * @param Cyr_To_Lat_Term_Conversion_Process $process_all_terms Plugin settings.
-	 * @param Cyr_To_Lat_Admin_Notices           $admin_notices     Plugin settings.
+	 * @param Main                    $main              Plugin main class.
+	 * @param Settings                $settings          Plugin settings.
+	 * @param Post_Conversion_Process $process_all_posts Plugin settings.
+	 * @param Term_Conversion_Process $process_all_terms Plugin settings.
+	 * @param Admin_Notices           $admin_notices     Plugin settings.
 	 */
 	public function __construct(
 		$main, $settings, $process_all_posts = null, $process_all_terms = null, $admin_notices = null
 	) {
 		$this->main         = $main;
 		$this->settings     = $settings;
-		$this->option_group = Cyr_To_Lat_Settings::OPTION_GROUP;
+		$this->option_group = Settings::OPTION_GROUP;
 
 		$this->process_all_posts = $process_all_posts;
 		if ( ! $this->process_all_posts ) {
-			$this->process_all_posts = new Cyr_To_Lat_Post_Conversion_Process( $main );
+			$this->process_all_posts = new Post_Conversion_Process( $main );
 		}
 
 		$this->process_all_terms = $process_all_terms;
 		if ( ! $this->process_all_terms ) {
-			$this->process_all_terms = new Cyr_To_Lat_Term_Conversion_Process( $main );
+			$this->process_all_terms = new Term_Conversion_Process( $main );
 		}
 
 		$this->admin_notices = $admin_notices;
 		if ( ! $this->admin_notices ) {
-			$this->admin_notices = new Cyr_To_Lat_Admin_Notices();
+			$this->admin_notices = new Admin_Notices();
 		}
 
 		$this->init_hooks();
@@ -175,7 +177,7 @@ class Cyr_To_Lat_Converter {
 	public function convert_existing_slugs( $args = array() ) {
 		global $wpdb;
 
-		$regexp = Cyr_To_Lat_Main::PROHIBITED_CHARS_REGEX . '+';
+		$regexp = Main::PROHIBITED_CHARS_REGEX . '+';
 
 		$defaults = array(
 			'post_type'   => get_post_types(),

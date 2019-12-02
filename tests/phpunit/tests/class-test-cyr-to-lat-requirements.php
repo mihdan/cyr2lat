@@ -1,18 +1,20 @@
 <?php
 /**
- * Test_Cyr_To_Lat_Requirements class file
+ * Test_Requirements class file
  *
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
 use tad\FunctionMocker\FunctionMocker;
 
 /**
- * Class Test_Cyr_To_Lat_Requirements
+ * Class Test_Requirements
  *
  * @group requirements
  */
-class Test_Cyr_To_Lat_Requirements extends Cyr_To_Lat_TestCase {
+class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test if are_requirements_met() returns true when requirements met.
@@ -23,7 +25,7 @@ class Test_Cyr_To_Lat_Requirements extends Cyr_To_Lat_TestCase {
 			CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION
 		);
 
-		$subject = new Cyr_To_Lat_Requirements();
+		$subject = new Requirements();
 
 		\WP_Mock::expectActionNotAdded( 'admin_notices', [ $subject, 'php_requirement_message' ] );
 
@@ -46,7 +48,7 @@ class Test_Cyr_To_Lat_Requirements extends Cyr_To_Lat_TestCase {
 		);
 
 
-		$subject = new Cyr_To_Lat_Requirements();
+		$subject = new Requirements();
 
 		\WP_Mock::expectActionAdded( 'admin_notices', [ $subject, 'php_requirement_message' ] );
 
@@ -79,13 +81,12 @@ class Test_Cyr_To_Lat_Requirements extends Cyr_To_Lat_TestCase {
 				<p>
 					$message				</p>
 			</div>
-			
 MOCK;
 
-		$subject = new Cyr_To_Lat_Requirements();
+		$subject = new Requirements();
 
 		ob_start();
 		$subject->php_requirement_message();
-		$this->assertSame( $expected, ob_get_clean() );
+		$this->assertSame( trim( $expected ), trim( ob_get_clean() ) );
 	}
 }

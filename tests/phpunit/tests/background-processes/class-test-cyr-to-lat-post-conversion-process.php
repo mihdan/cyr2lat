@@ -1,17 +1,23 @@
 <?php
 /**
- * Test_Cyr_To_Lat_Post_Conversion_Process class file
+ * Test_Post_Conversion_Process class file
  *
  * @package cyr-to-lat
  * @group   process
  */
 
+namespace Cyr_To_Lat;
+
+use Mockery;
+use ReflectionException;
+use wpdb;
+
 /**
- * Class Test_Cyr_To_Lat_Post_Conversion_Process
+ * Class Test_Post_Conversion_Process
  *
  * @group process
  */
-class Test_Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
+class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * End test
@@ -37,7 +43,7 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 			'post_name' => $post_name,
 		];
 
-		$main = \Mockery::mock( Cyr_To_Lat_Main::class );
+		$main = Mockery::mock( Main::class );
 
 		\WP_Mock::userFunction(
 			'sanitize_title',
@@ -55,10 +61,10 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 					'times' => 1,
 				]
 			);
-			$wpdb        = Mockery::mock( '\wpdb' );
+			$wpdb        = Mockery::mock( wpdb::class );
 			$wpdb->posts = 'wp_posts';
-			$wpdb->shouldReceive( 'update' )->once()
-			     ->with( $wpdb->posts, [ 'post_name' => $sanitized_name ], [ 'ID' => $post->ID ] );
+			$wpdb->shouldReceive( 'update' )->once()->
+			with( $wpdb->posts, [ 'post_name' => $sanitized_name ], [ 'ID' => $post->ID ] );
 		}
 
 		\WP_Mock::userFunction(
@@ -66,8 +72,8 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 			[ 'return' => 'ru_RU' ]
 		);
 
-		$subject = \Mockery::mock( Cyr_To_Lat_Post_Conversion_Process::class, [ $main ] )->makePartial()
-		                   ->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()->
+		shouldAllowMockingProtectedMethods();
 
 		\WP_Mock::expectFilterAdded(
 			'locale',
@@ -106,9 +112,7 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 	 * Test complete()
 	 */
 	public function test_complete() {
-		$subject = \Mockery::mock( Cyr_To_Lat_Post_Conversion_Process::class )
-		                   ->makePartial()
-		                   ->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'log' )->with( 'Post slugs conversion completed.' )->once();
 
 		\WP_Mock::userFunction(
@@ -145,9 +149,7 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 			'ID' => 5,
 		];
 
-		\WP_Mock::onFilter( 'wpml_post_language_details' )
-		        ->with( false, $post->ID )
-		        ->reply( $wpml_post_language_details );
+		\WP_Mock::onFilter( 'wpml_post_language_details' )->with( false, $post->ID )->reply( $wpml_post_language_details );
 
 		\WP_Mock::userFunction(
 			'get_locale',
@@ -156,8 +158,8 @@ class Test_Cyr_To_Lat_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		$main    = \Mockery::mock( Cyr_To_Lat_Main::class );
-		$subject = new Cyr_To_Lat_Post_Conversion_Process( $main );
+		$main    = Mockery::mock( Main::class );
+		$subject = new Post_Conversion_Process( $main );
 		$this->mock_property( $subject, 'post', $post );
 		$this->assertSame( $expected, $subject->filter_post_locale() );
 	}

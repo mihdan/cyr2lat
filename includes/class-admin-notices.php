@@ -5,12 +5,14 @@
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
 /**
- * Class Cyr_To_Lat_Admin_Notices
+ * Class Admin_Notices
  *
- * @class Cyr_To_Lat_Admin_Notices
+ * @class Admin_Notices
  */
-class Cyr_To_Lat_Admin_Notices {
+class Admin_Notices {
 
 	/**
 	 * Admin notices array.
@@ -20,7 +22,7 @@ class Cyr_To_Lat_Admin_Notices {
 	private $notices = array();
 
 	/**
-	 * Cyr_To_Lat_Admin_Notices constructor.
+	 * Admin_Notices constructor.
 	 */
 	public function __construct() {
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );

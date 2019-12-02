@@ -5,14 +5,16 @@
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
 use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
 
 /**
- * Class Cyr_To_Lat_Settings
+ * Class Settings
  *
- * @class Cyr_To_Lat_Settings
+ * @class Settings
  */
-class Cyr_To_Lat_Settings {
+class Settings {
 
 	/**
 	 * Admin screen id.
@@ -64,7 +66,7 @@ class Cyr_To_Lat_Settings {
 	public $settings;
 
 	/**
-	 * Cyr_To_Lat_Settings constructor.
+	 * Settings constructor.
 	 */
 	public function __construct() {
 		add_action( 'plugins_loaded', array( $this, 'init' ) );
@@ -139,7 +141,7 @@ class Cyr_To_Lat_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => Cyr_To_Lat_Conversion_Tables::get(),
+				'default'      => Conversion_Tables::get(),
 			),
 			'bel'   => array(
 				'label'        => __( 'bel Table', 'cyr2lat' ),
@@ -148,7 +150,7 @@ class Cyr_To_Lat_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'bel' ),
+				'default'      => Conversion_Tables::get( 'bel' ),
 			),
 			'uk'    => array(
 				'label'        => __( 'uk Table', 'cyr2lat' ),
@@ -157,7 +159,7 @@ class Cyr_To_Lat_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'uk' ),
+				'default'      => Conversion_Tables::get( 'uk' ),
 			),
 			'bg_BG' => array(
 				'label'        => __( 'bg_BG Table', 'cyr2lat' ),
@@ -166,7 +168,7 @@ class Cyr_To_Lat_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'bg_BG' ),
+				'default'      => Conversion_Tables::get( 'bg_BG' ),
 			),
 			'mk_MK' => array(
 				'label'        => __( 'mk_MK Table', 'cyr2lat' ),
@@ -175,7 +177,7 @@ class Cyr_To_Lat_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'mk_MK' ),
+				'default'      => Conversion_Tables::get( 'mk_MK' ),
 			),
 			'sr_RS' => array(
 				'label'        => __( 'sr_RS Table', 'cyr2lat' ),
@@ -184,7 +186,7 @@ class Cyr_To_Lat_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'sr_RS' ),
+				'default'      => Conversion_Tables::get( 'sr_RS' ),
 			),
 			'ka_GE' => array(
 				'label'        => __( 'ka_GE Table', 'cyr2lat' ),
@@ -193,7 +195,7 @@ class Cyr_To_Lat_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'ka_GE' ),
+				'default'      => Conversion_Tables::get( 'ka_GE' ),
 			),
 			'kk'    => array(
 				'label'        => __( 'kk Table', 'cyr2lat' ),
@@ -202,7 +204,7 @@ class Cyr_To_Lat_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'kk' ),
+				'default'      => Conversion_Tables::get( 'kk' ),
 			),
 			'he_IL' => array(
 				'label'        => __( 'he_IL Table', 'cyr2lat' ),
@@ -211,7 +213,7 @@ class Cyr_To_Lat_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'he_IL' ),
+				'default'      => Conversion_Tables::get( 'he_IL' ),
 			),
 			'zh_CN' => array(
 				'label'        => __( 'zh_CN Table', 'cyr2lat' ),
@@ -220,7 +222,7 @@ class Cyr_To_Lat_Settings {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => Cyr_To_Lat_Conversion_Tables::get( 'zh_CN' ),
+				'default'      => Conversion_Tables::get( 'zh_CN' ),
 			),
 		);
 	}

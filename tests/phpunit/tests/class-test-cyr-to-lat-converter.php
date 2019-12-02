@@ -1,22 +1,28 @@
 <?php
 /**
- * Test_Cyr_To_Lat_Converter class file
+ * Test_Converter class file
  *
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
+use Mockery;
+use ReflectionClass;
+use ReflectionException;
+
 /**
- * Class Test_Cyr_To_Lat_Converter
+ * Class Test_Converter
  *
  * @group converter
  */
-class Test_Cyr_To_Lat_Converter extends Cyr_To_Lat_TestCase {
+class Test_Converter extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * End test
 	 */
 	public function tearDown() {
-		unset( $_GET[ \Cyr_To_Lat_Converter::QUERY_ARG ] );
+		unset( $_GET[ Converter::QUERY_ARG ] );
 		unset( $_GET['_wpnonce'] );
 		unset( $_POST['cyr2lat-convert'] );
 		unset( $GLOBALS['wpdb'] );
@@ -26,18 +32,17 @@ class Test_Cyr_To_Lat_Converter extends Cyr_To_Lat_TestCase {
 	 * Test constructor
 	 *
 	 * @throws ReflectionException Reflection Exception.
-	 * @test
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
 	public function test_constructor() {
-		$classname = 'Cyr_To_Lat_Converter';
+		$classname = __NAMESPACE__ . '\Converter';
 
-		$main          = \Mockery::mock( 'Cyr_To_Lat_Main' );
-		$settings      = \Mockery::mock( 'Cyr_To_Lat_Settings' );
-		$post_cp       = \Mockery::mock( 'overload:Cyr_To_Lat_Post_Conversion_Process' );
-		$term_cp       = \Mockery::mock( 'overload:Cyr_To_Lat_Term_Conversion_Process' );
-		$admin_notices = \Mockery::mock( 'overload:Cyr_To_Lat_Admin_Notices' );
+		$main          = Mockery::mock( Main::class );
+		$settings      = Mockery::mock( Settings::class );
+		$post_cp       = Mockery::mock( 'overload:' . Post_Conversion_Process::class );
+		$term_cp       = Mockery::mock( 'overload:' . Term_Conversion_Process::class );
+		$admin_notices = Mockery::mock( 'overload:' . Admin_Notices::class );
 
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
@@ -77,13 +82,13 @@ class Test_Cyr_To_Lat_Converter extends Cyr_To_Lat_TestCase {
 	public function test_conversion_notices(
 		$posts_process_running, $terms_process_running, $posts_process_completed, $terms_process_completed
 	) {
-		$main              = \Mockery::mock( 'Cyr_To_Lat_Main' );
-		$settings          = \Mockery::mock( 'Cyr_To_Lat_Settings' );
-		$process_all_posts = \Mockery::mock( 'Cyr_To_Lat_Post_Conversion_Process' )->shouldAllowMockingProtectedMethods();
-		$process_all_terms = \Mockery::mock( 'Cyr_To_Lat_Term_Conversion_Process' )->shouldAllowMockingProtectedMethods();
-		$admin_notices     = \Mockery::mock( 'Cyr_To_Lat_Admin_Notices' );
+		$main              = Mockery::mock( Main::class );
+		$settings          = Mockery::mock( Settings::class );
+		$process_all_posts = Mockery::mock( Post_Conversion_Process::class )->shouldAllowMockingProtectedMethods();
+		$process_all_terms = Mockery::mock( Term_Conversion_Process::class )->shouldAllowMockingProtectedMethods();
+		$admin_notices     = Mockery::mock( Admin_Notices::class );
 
-		$subject = new Cyr_To_Lat_Converter(
+		$subject = new Converter(
 			$main,
 			$settings,
 			$process_all_posts,
@@ -167,9 +172,7 @@ class Test_Cyr_To_Lat_Converter extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_start_conversion
 	 */
 	public function test_start_conversion( $convert ) {
-		$subject = \Mockery::mock(
-			'Cyr_To_Lat_Converter'
-		)->makePartial();
+		$subject = Mockery::mock( Converter::class )->makePartial();
 
 		\WP_Mock::passthruFunction( 'check_admin_referer' );
 
@@ -206,10 +209,10 @@ class Test_Cyr_To_Lat_Converter extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_process_handler
 	 */
 	public function test_process_handler( $query_arg, $nonce, $verify_nonce ) {
-		$subject = \Mockery::mock( Cyr_To_Lat_Converter::class )->makePartial();
+		$subject = Mockery::mock( Converter::class )->makePartial();
 
 		if ( $query_arg ) {
-			$_GET[ \Cyr_To_Lat_Converter::QUERY_ARG ] = '1';
+			$_GET[ Converter::QUERY_ARG ] = '1';
 		}
 		if ( $nonce ) {
 			$_GET['_wpnonce'] = $nonce;
@@ -221,7 +224,7 @@ class Test_Cyr_To_Lat_Converter extends Cyr_To_Lat_TestCase {
 				'wp_verify_nonce',
 				[
 					'times'  => 1,
-					'args'   => [ $nonce, \Cyr_To_Lat_Converter::QUERY_ARG ],
+					'args'   => [ $nonce, Converter::QUERY_ARG ],
 					'return' => $verify_nonce,
 				]
 			);
@@ -242,9 +245,9 @@ class Test_Cyr_To_Lat_Converter extends Cyr_To_Lat_TestCase {
 	public function dp_test_process_handler() {
 		return [
 			[ '', '', false ],
-			[ \Cyr_To_Lat_Converter::QUERY_ARG, '', false ],
-			[ \Cyr_To_Lat_Converter::QUERY_ARG, 'some_nonce_value', false ],
-			[ \Cyr_To_Lat_Converter::QUERY_ARG, 'some_nonce_value', true ],
+			[ Converter::QUERY_ARG, '', false ],
+			[ Converter::QUERY_ARG, 'some_nonce_value', false ],
+			[ Converter::QUERY_ARG, 'some_nonce_value', true ],
 		];
 	}
 
@@ -259,13 +262,13 @@ class Test_Cyr_To_Lat_Converter extends Cyr_To_Lat_TestCase {
 	public function test_convert_existing_slugs( $posts, $terms ) {
 		global $wpdb;
 
-		$main              = \Mockery::mock( 'Cyr_To_Lat_Main' );
-		$settings          = \Mockery::mock( 'Cyr_To_Lat_Settings' );
-		$process_all_posts = \Mockery::mock( 'Cyr_To_Lat_Post_Conversion_Process' );
-		$process_all_terms = \Mockery::mock( 'Cyr_To_Lat_Term_Conversion_Process' );
-		$admin_notices     = \Mockery::mock( 'Cyr_To_Lat_Admin_Notices' );
+		$main              = Mockery::mock( Main::class );
+		$settings          = Mockery::mock( Settings::class );
+		$process_all_posts = Mockery::mock( Post_Conversion_Process::class );
+		$process_all_terms = Mockery::mock( Term_Conversion_Process::class );
+		$admin_notices     = Mockery::mock( Admin_Notices::class );
 
-		$subject = new Cyr_To_Lat_Converter(
+		$subject = new Converter(
 			$main,
 			$settings,
 			$process_all_posts,
@@ -302,12 +305,12 @@ class Test_Cyr_To_Lat_Converter extends Cyr_To_Lat_TestCase {
 		$main->shouldReceive( 'ctl_prepare_in' )->with( $args['post_status'] )->once()->andReturn( $post_statuses_in );
 		$main->shouldReceive( 'ctl_prepare_in' )->with( $args['post_type'] )->once()->andReturn( $post_types_in );
 
-		$wpdb                = Mockery::mock( '\wpdb' );
+		$wpdb                = Mockery::mock( wpdb::class );
 		$wpdb->posts         = 'wp_posts';
 		$wpdb->terms         = 'wp_terms';
 		$wpdb->term_taxonomy = 'wp_term_taxonomy';
 
-		$regexp     = Cyr_To_Lat_Main::PROHIBITED_CHARS_REGEX . '+';
+		$regexp     = Main::PROHIBITED_CHARS_REGEX . '+';
 		$post_query = "SELECT ID, post_name FROM $wpdb->posts WHERE post_name REGEXP(%s) AND post_status IN ($post_statuses_in) AND post_type IN ($post_types_in)";
 		$term_query = "SELECT t.term_id, slug, tt.taxonomy, tt.term_taxonomy_id FROM $wpdb->terms t, $wpdb->term_taxonomy tt
 					WHERE t.slug REGEXP(%s) AND tt.term_id = t.term_id";
@@ -373,7 +376,7 @@ class Test_Cyr_To_Lat_Converter extends Cyr_To_Lat_TestCase {
 	 * @dataProvider        dp_test_log
 	 */
 	public function test_log( $debug ) {
-		$subject = \Mockery::mock( 'Cyr_To_Lat_Converter' )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$test_log = 'test.log';
 		$message  = 'Test message';
@@ -411,16 +414,16 @@ class Test_Cyr_To_Lat_Converter extends Cyr_To_Lat_TestCase {
 	/**
 	 * Get test subject
 	 *
-	 * @return Cyr_To_Lat_Converter
+	 * @return Converter
 	 */
 	private function get_subject() {
-		$main              = \Mockery::mock( 'Cyr_To_Lat_Main' );
-		$settings          = \Mockery::mock( 'Cyr_To_Lat_Settings' );
-		$process_all_posts = \Mockery::mock( 'Cyr_To_Lat_Post_Conversion_Process' );
-		$process_all_terms = \Mockery::mock( 'Cyr_To_Lat_Term_Conversion_Process' );
-		$admin_notices     = \Mockery::mock( 'Cyr_To_Lat_Admin_Notices' );
+		$main              = Mockery::mock( Main::class );
+		$settings          = Mockery::mock( Settings::class );
+		$process_all_posts = Mockery::mock( Post_Conversion_Process::class );
+		$process_all_terms = Mockery::mock( Term_Conversion_Process::class );
+		$admin_notices     = Mockery::mock( Admin_Notices::class );
 
-		$subject = new Cyr_To_Lat_Converter(
+		$subject = new Converter(
 			$main,
 			$settings,
 			$process_all_posts,

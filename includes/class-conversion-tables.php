@@ -5,14 +5,16 @@
  * @package cyr-to-lat
  */
 
+namespace Cyr_To_Lat;
+
 use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
 
 /**
- * Class Cyr_To_Lat_Conversion_Tables
+ * Class Conversion_Tables
  *
- * @class Cyr_To_Lat_Conversion_Tables
+ * @class Conversion_Tables
  */
-class Cyr_To_Lat_Conversion_Tables {
+class Conversion_Tables {
 
 	/**
 	 * Get conversion table by locale.
