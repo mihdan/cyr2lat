@@ -34,6 +34,7 @@ vendor/humbug/php-scoper/bin/php-scoper add-prefix -vv --no-interaction --prefix
 vendor/squizlabs/php_codesniffer/bin/phpcbf --standard=phpcs.xml build
 
 composer remove humbug/php-scoper --ignore-platform-reqs
+composer update
 
 rm -rf ${CYR2LAT_LIB_PATH:?}/*
 cp -r ${CYR2LAT_BUILD_PATH}/* ${CYR2LAT_LIB_PATH}
