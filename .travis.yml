@@ -39,6 +39,12 @@ matrix:
         - DEV="--no-dev"
     - php: '7.3'
       env:
+        - SNIFF=1 TESTS=1
+    - php: '7.4'
+      env:
+        - DEV="--no-dev"
+    - php: '7.4'
+      env:
         - SNIFF=1 COVERAGE=1
 
 cache:
