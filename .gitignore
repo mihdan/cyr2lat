@@ -4,7 +4,7 @@ Thumbs.db
 wp-cli.local.yml
 node_modules
 dist/**
-bin/
+build/**
 tests/**/*.cache
 vendor/
 *.sql
