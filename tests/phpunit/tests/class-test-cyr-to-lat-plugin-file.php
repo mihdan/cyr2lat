@@ -29,7 +29,7 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 
 		require_once PLUGIN_MAIN_FILE;
 
-		$this->assertInstanceOf( Main::class, $plugin );
+		$this->assertInstanceOf( Main::class, $cyr_to_lat_plugin );
 	}
 
 	/**
@@ -41,6 +41,6 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 
 		require_once PLUGIN_MAIN_FILE;
 
-		$this->assertFalse( $plugin );
+		$this->assertFalse( $cyr_to_lat_plugin );
 	}
 }
