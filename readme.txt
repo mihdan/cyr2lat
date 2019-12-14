@@ -94,7 +94,7 @@ Yes you can!
 
 = 4.3 (14.12.2019) =
 * Added Chinese table
-* php-scoper added to have libraries in own namespace
+* External library wp-background-procesing scoped into own namespace to prevent errors in some cases
 * Tested up of WordPress 5.3
 
 = 4.2.3 (29.08.2019) =

@@ -20,10 +20,7 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 ```
 git clone https://github.com/mihdan/cyr2lat.git
 cd cyr2lat
-composer install --no-dev
-cd src
-yarn
-yarn run build:prod
+make install-prod
 ```
 
 ## Development
@@ -31,10 +28,7 @@ yarn run build:prod
 ```
 git clone https://github.com/mihdan/cyr2lat.git
 cd cyr2lat
-composer install
-cd src
-yarn
-yarn run build:dev
+make install
 ```
 
 ## WP-CLI support
