@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c6b02cd45dfddf287ec3eceb32c2b9d5",
+    "content-hash": "b4e534e05c2ca6f987c7936a9b574141",
     "packages": [
         {
             "name": "composer/installers",
@@ -171,44 +171,6 @@
             ],
             "description": "A mocking library to take the pain out of unit testing for WordPress",
             "time": "2017-07-19T03:10:11+00:00"
-        },
-        {
-            "name": "a5hleyrich/wp-background-processing",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/kagg-design/wp-background-processing.git",
-                "reference": "661b7e63e0fb14da69ed93d336b40b04f4687184"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/kagg-design/wp-background-processing/zipball/661b7e63e0fb14da69ed93d336b40b04f4687184",
-                "reference": "661b7e63e0fb14da69ed93d336b40b04f4687184",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.2"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "classes/"
-                ]
-            },
-            "license": [
-                "GPL-2.0-only"
-            ],
-            "authors": [
-                {
-                    "name": "Ashley Rich",
-                    "email": "hello@ashleyrich.com"
-                }
-            ],
-            "description": "WP Background Processing can be used to fire off non-blocking asynchronous requests or as a background processing tool, allowing you to queue tasks.",
-            "support": {
-                "source": "https://github.com/kagg-design/wp-background-processing/tree/1.1.1"
-            },
-            "time": "2019-12-08T16:36:54+00:00"
         },
         {
             "name": "antecedent/patchwork",
@@ -3329,16 +3291,16 @@
         },
         {
             "name": "wp-cli/wp-cli",
-            "version": "dev-master",
+            "version": "v2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-cli/wp-cli.git",
-                "reference": "8e8b207a42573aa1d88a22d774998d54f473fd74"
+                "reference": "74c949c74708e3a88ad0add70f3236c8675dfd85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-cli/wp-cli/zipball/8e8b207a42573aa1d88a22d774998d54f473fd74",
-                "reference": "8e8b207a42573aa1d88a22d774998d54f473fd74",
+                "url": "https://api.github.com/repos/wp-cli/wp-cli/zipball/74c949c74708e3a88ad0add70f3236c8675dfd85",
+                "reference": "74c949c74708e3a88ad0add70f3236c8675dfd85",
                 "shasum": ""
             },
             "require": {
@@ -3370,7 +3332,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.5.x-dev"
+                    "dev-master": "2.4.x-dev"
                 },
                 "patches": {
                     "mustache/mustache": {
@@ -3393,7 +3355,7 @@
                 "cli",
                 "wordpress"
             ],
-            "time": "2019-11-13T17:14:38+00:00"
+            "time": "2019-11-12T15:26:05+00:00"
         },
         {
             "name": "wp-coding-standards/wpcs",
@@ -3475,9 +3437,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "a5hleyrich/wp-background-processing": 20,
-        "roave/security-advisories": 20,
-        "wp-cli/wp-cli": 20
+        "roave/security-advisories": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
