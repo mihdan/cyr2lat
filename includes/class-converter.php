@@ -99,8 +99,8 @@ class Converter {
 	 * Init class hooks.
 	 */
 	public function init_hooks() {
-		add_action( 'admin_init', array( $this, 'process_handler' ) );
-		add_action( 'admin_init', array( $this, 'conversion_notices' ) );
+		add_action( 'admin_init', [ $this, 'process_handler' ] );
+		add_action( 'admin_init', [ $this, 'conversion_notices' ] );
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Converter {
 		$terms_process_running = $this->process_all_terms->is_process_running();
 
 		if ( ! $posts_process_running && ! $terms_process_running ) {
-			add_action( 'admin_init', array( $this, 'start_conversion' ), 20 );
+			add_action( 'admin_init', [ $this, 'start_conversion' ], 20 );
 		}
 
 		if ( $posts_process_running ) {
@@ -174,15 +174,15 @@ class Converter {
 	 *
 	 * @param array $args Arguments for query.
 	 */
-	public function convert_existing_slugs( $args = array() ) {
+	public function convert_existing_slugs( $args = [] ) {
 		global $wpdb;
 
 		$regexp = Main::PROHIBITED_CHARS_REGEX . '+';
 
-		$defaults = array(
+		$defaults = [
 			'post_type'   => get_post_types(),
-			'post_status' => array( 'publish', 'future', 'private' ),
-		);
+			'post_status' => [ 'publish', 'future', 'private' ],
+		];
 
 		$args = wp_parse_args( $args, $defaults );
 

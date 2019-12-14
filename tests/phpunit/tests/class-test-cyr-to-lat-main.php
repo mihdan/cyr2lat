@@ -323,7 +323,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'function_exists',
-			function( $arg ) {
+			function ( $arg ) {
 				return 'mb_strtolower' === $arg;
 			}
 		);
@@ -332,7 +332,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'function_exists',
-			function( $arg ) {
+			function ( $arg ) {
 				return 'mb_strtolower' !== $arg;
 			}
 		);

@@ -65,7 +65,7 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 	 * @return array
 	 */
 	protected function get_conversion_table( $locale = '' ) {
-		$table = array(
+		$table = [
 			'А' => 'A',
 			'Б' => 'B',
 			'В' => 'V',
@@ -140,7 +140,7 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 			'ѣ' => 'ye',
 			'ѳ' => 'fh',
 			'ѵ' => 'yh',
-		);
+		];
 		switch ( $locale ) {
 			// Belorussian.
 			case 'bel':

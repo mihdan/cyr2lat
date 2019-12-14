@@ -69,7 +69,7 @@ class Settings {
 	 * Settings constructor.
 	 */
 	public function __construct() {
-		add_action( 'plugins_loaded', array( $this, 'init' ) );
+		add_action( 'plugins_loaded', [ $this, 'init' ] );
 	}
 
 	/**
@@ -88,21 +88,18 @@ class Settings {
 	public function init_hooks() {
 		add_filter(
 			'plugin_action_links_' . plugin_basename( CYR_TO_LAT_FILE ),
-			array(
-				$this,
-				'add_settings_link',
-			),
+			[ $this, 'add_settings_link' ],
 			10,
 			4
 		);
 
-		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
-		add_action( 'current_screen', array( $this, 'setup_sections' ) );
-		add_action( 'current_screen', array( $this, 'setup_fields' ) );
+		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
+		add_action( 'current_screen', [ $this, 'setup_sections' ] );
+		add_action( 'current_screen', [ $this, 'setup_fields' ] );
 
-		add_filter( 'pre_update_option_' . self::OPTION_NAME, array( $this, 'pre_update_option_filter' ), 10, 3 );
+		add_filter( 'pre_update_option_' . self::OPTION_NAME, [ $this, 'pre_update_option_filter' ], 10, 3 );
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
 	}
 
 	/**
@@ -119,12 +116,12 @@ class Settings {
 	 * @return array|mixed Plugin links
 	 */
 	public function add_settings_link( $actions, $plugin_file, $plugin_data, $context ) {
-		$ctl_actions = array(
+		$ctl_actions = [
 			'settings' =>
 				'<a href="' . admin_url( 'options-general.php?page=' . self::PAGE ) .
 				'" aria-label="' . esc_attr__( 'View Cyr To Lat settings', 'cyr2lat' ) . '">' .
 				esc_html__( 'Settings', 'cyr2lat' ) . '</a>',
-		);
+		];
 
 		return array_merge( $ctl_actions, $actions );
 	}
@@ -133,8 +130,8 @@ class Settings {
 	 * Init options form fields.
 	 */
 	public function init_form_fields() {
-		$this->form_fields = array(
-			'iso9'  => array(
+		$this->form_fields = [
+			'iso9'  => [
 				'label'        => __( 'ISO9 Table', 'cyr2lat' ),
 				'section'      => 'iso9_section',
 				'type'         => 'table',
@@ -142,8 +139,8 @@ class Settings {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => Conversion_Tables::get(),
-			),
-			'bel'   => array(
+			],
+			'bel'   => [
 				'label'        => __( 'bel Table', 'cyr2lat' ),
 				'section'      => 'bel_section',
 				'type'         => 'table',
@@ -151,8 +148,8 @@ class Settings {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => Conversion_Tables::get( 'bel' ),
-			),
-			'uk'    => array(
+			],
+			'uk'    => [
 				'label'        => __( 'uk Table', 'cyr2lat' ),
 				'section'      => 'uk_section',
 				'type'         => 'table',
@@ -160,8 +157,8 @@ class Settings {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => Conversion_Tables::get( 'uk' ),
-			),
-			'bg_BG' => array(
+			],
+			'bg_BG' => [
 				'label'        => __( 'bg_BG Table', 'cyr2lat' ),
 				'section'      => 'bg_BG_section',
 				'type'         => 'table',
@@ -169,8 +166,8 @@ class Settings {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => Conversion_Tables::get( 'bg_BG' ),
-			),
-			'mk_MK' => array(
+			],
+			'mk_MK' => [
 				'label'        => __( 'mk_MK Table', 'cyr2lat' ),
 				'section'      => 'mk_MK_section',
 				'type'         => 'table',
@@ -178,8 +175,8 @@ class Settings {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => Conversion_Tables::get( 'mk_MK' ),
-			),
-			'sr_RS' => array(
+			],
+			'sr_RS' => [
 				'label'        => __( 'sr_RS Table', 'cyr2lat' ),
 				'section'      => 'sr_RS_section',
 				'type'         => 'table',
@@ -187,8 +184,8 @@ class Settings {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => Conversion_Tables::get( 'sr_RS' ),
-			),
-			'ka_GE' => array(
+			],
+			'ka_GE' => [
 				'label'        => __( 'ka_GE Table', 'cyr2lat' ),
 				'section'      => 'ka_GE_section',
 				'type'         => 'table',
@@ -196,8 +193,8 @@ class Settings {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => Conversion_Tables::get( 'ka_GE' ),
-			),
-			'kk'    => array(
+			],
+			'kk'    => [
 				'label'        => __( 'kk Table', 'cyr2lat' ),
 				'section'      => 'kk_section',
 				'type'         => 'table',
@@ -205,8 +202,8 @@ class Settings {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => Conversion_Tables::get( 'kk' ),
-			),
-			'he_IL' => array(
+			],
+			'he_IL' => [
 				'label'        => __( 'he_IL Table', 'cyr2lat' ),
 				'section'      => 'he_IL_section',
 				'type'         => 'table',
@@ -214,8 +211,8 @@ class Settings {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => Conversion_Tables::get( 'he_IL' ),
-			),
-			'zh_CN' => array(
+			],
+			'zh_CN' => [
 				'label'        => __( 'zh_CN Table', 'cyr2lat' ),
 				'section'      => 'zh_CN_section',
 				'type'         => 'table',
@@ -223,8 +220,8 @@ class Settings {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => Conversion_Tables::get( 'zh_CN' ),
-			),
-		);
+			],
+		];
 	}
 
 	/**
@@ -257,7 +254,7 @@ class Settings {
 			$this->init_form_fields();
 		}
 
-		return array_map( array( $this, 'set_defaults' ), $this->form_fields );
+		return array_map( [ $this, 'set_defaults' ], $this->form_fields );
 	}
 
 	/**
@@ -284,7 +281,7 @@ class Settings {
 		$menu_title  = __( 'Cyr To Lat', 'cyr2lat' );
 		$capability  = 'manage_options';
 		$slug        = self::PAGE;
-		$callback    = array( $this, 'ctl_settings_page' );
+		$callback    = [ $this, 'ctl_settings_page' ];
 		add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $slug, $callback );
 	}
 
@@ -331,19 +328,19 @@ class Settings {
 					<input type="hidden" name="cmd" value="_s-xclick">
 					<input type="hidden" name="hosted_button_id" value="BENCPARA8S224">
 					<input
-							type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"
-							name="submit" alt="PayPal - The safer, easier way to pay online!">
+						type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"
+						name="submit" alt="PayPal - The safer, easier way to pay online!">
 					<img
-							alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
-							height="1">
+						alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
+						height="1">
 				</form>
 
 				<h2 id="appreciation">
 					<?php echo esc_html( __( 'Your appreciation', 'cyr2lat' ) ); ?>
 				</h2>
 				<a
-						target="_blank"
-						href="https://wordpress.org/support/view/plugin-reviews/cyr2lat?rate=5#postform">
+					target="_blank"
+					href="https://wordpress.org/support/view/plugin-reviews/cyr2lat?rate=5#postform">
 					<?php echo esc_html( __( 'Leave a ★★★★★ plugin review on WordPress.org', 'cyr2lat' ) ); ?>
 				</a>
 			</div>
@@ -362,61 +359,61 @@ class Settings {
 		add_settings_section(
 			'iso9_section',
 			__( 'ISO9 Table', 'cyr2lat' ),
-			array( $this, 'cyr_to_lat_section' ),
+			[ $this, 'cyr_to_lat_section' ],
 			self::PAGE
 		);
 		add_settings_section(
 			'bel_section',
 			__( 'bel Table', 'cyr2lat' ),
-			array( $this, 'cyr_to_lat_section' ),
+			[ $this, 'cyr_to_lat_section' ],
 			self::PAGE
 		);
 		add_settings_section(
 			'uk_section',
 			__( 'uk Table', 'cyr2lat' ),
-			array( $this, 'cyr_to_lat_section' ),
+			[ $this, 'cyr_to_lat_section' ],
 			self::PAGE
 		);
 		add_settings_section(
 			'bg_BG_section',
 			__( 'bg_BG Table', 'cyr2lat' ),
-			array( $this, 'cyr_to_lat_section' ),
+			[ $this, 'cyr_to_lat_section' ],
 			self::PAGE
 		);
 		add_settings_section(
 			'mk_MK_section',
 			__( 'mk_MK Table', 'cyr2lat' ),
-			array( $this, 'cyr_to_lat_section' ),
+			[ $this, 'cyr_to_lat_section' ],
 			self::PAGE
 		);
 		add_settings_section(
 			'sr_RS_section',
 			__( 'sr_RS Table', 'cyr2lat' ),
-			array( $this, 'cyr_to_lat_section' ),
+			[ $this, 'cyr_to_lat_section' ],
 			self::PAGE
 		);
 		add_settings_section(
 			'ka_GE_section',
 			__( 'ka_GE Table', 'cyr2lat' ),
-			array( $this, 'cyr_to_lat_section' ),
+			[ $this, 'cyr_to_lat_section' ],
 			self::PAGE
 		);
 		add_settings_section(
 			'kk_section',
 			__( 'kk Table', 'cyr2lat' ),
-			array( $this, 'cyr_to_lat_section' ),
+			[ $this, 'cyr_to_lat_section' ],
 			self::PAGE
 		);
 		add_settings_section(
 			'he_IL_section',
 			__( 'he_IL Table', 'cyr2lat' ),
-			array( $this, 'cyr_to_lat_section' ),
+			[ $this, 'cyr_to_lat_section' ],
 			self::PAGE
 		);
 		add_settings_section(
 			'zh_CN_section',
 			__( 'zh_CN Table', 'cyr2lat' ),
-			array( $this, 'cyr_to_lat_section' ),
+			[ $this, 'cyr_to_lat_section' ],
 			self::PAGE
 		);
 	}
@@ -448,7 +445,7 @@ class Settings {
 			add_settings_field(
 				$key,
 				$field['label'],
-				array( $this, 'field_callback' ),
+				[ $this, 'field_callback' ],
 				self::PAGE,
 				$field['section'],
 				$field
@@ -494,7 +491,7 @@ class Settings {
 			case 'checkbox':
 			case 'radio':
 				if ( 'checkbox' === $arguments['type'] ) {
-					$arguments['options'] = array( 'yes' => '' );
+					$arguments['options'] = [ 'yes' => '' ];
 				}
 
 				if ( ! empty( $arguments['options'] ) && is_array( $arguments['options'] ) ) {
@@ -517,19 +514,19 @@ class Settings {
 						'<fieldset>%s</fieldset>',
 						wp_kses(
 							$options_markup,
-							array(
-								'label' => array(
-									'for' => array(),
-								),
-								'input' => array(
-									'id'      => array(),
-									'name'    => array(),
-									'type'    => array(),
-									'value'   => array(),
-									'checked' => array(),
-								),
-								'br'    => array(),
-							)
+							[
+								'label' => [
+									'for' => [],
+								],
+								'input' => [
+									'id'      => [],
+									'name'    => [],
+									'type'    => [],
+									'value'   => [],
+									'checked' => [],
+								],
+								'br'    => [],
+							]
 						)
 					);
 				}
@@ -551,12 +548,12 @@ class Settings {
 						esc_html( $arguments['field_id'] ),
 						wp_kses(
 							$options_markup,
-							array(
-								'option' => array(
-									'value'    => array(),
-									'selected' => array(),
-								),
-							)
+							[
+								'option' => [
+									'value'    => [],
+									'selected' => [],
+								],
+							]
 						)
 					);
 				}
@@ -584,12 +581,12 @@ class Settings {
 						esc_html( $arguments['field_id'] ),
 						wp_kses(
 							$options_markup,
-							array(
-								'option' => array(
-									'value'    => array(),
-									'selected' => array(),
-								),
-							)
+							[
+								'option' => [
+									'value'    => [],
+									'selected' => [],
+								],
+							]
 						)
 					);
 				}
@@ -732,7 +729,7 @@ class Settings {
 		wp_enqueue_script(
 			'cyr-to-lat-settings',
 			CYR_TO_LAT_URL . '/dist/js/settings/app.js',
-			array(),
+			[],
 			CYR_TO_LAT_VERSION,
 			true
 		);
@@ -740,7 +737,7 @@ class Settings {
 		wp_enqueue_style(
 			'cyr-to-lat-admin',
 			CYR_TO_LAT_URL . '/css/cyr-to-lat-admin.css',
-			array(),
+			[],
 			CYR_TO_LAT_VERSION
 		);
 	}

@@ -26,7 +26,7 @@ class Conversion_Tables {
 	 * @return array
 	 */
 	public static function get( $locale = '' ) {
-		$table = array(
+		$table = [
 			'А' => 'A',
 			'Б' => 'B',
 			'В' => 'V',
@@ -101,7 +101,7 @@ class Conversion_Tables {
 			'ѣ' => 'ye',
 			'ѳ' => 'fh',
 			'ѵ' => 'yh',
-		);
+		];
 		switch ( $locale ) {
 			// Belorussian.
 			case 'bel':
@@ -343,7 +343,7 @@ class Conversion_Tables {
 				break;
 			// Hebrew.
 			case 'he_IL':
-				$table = array(
+				$table = [
 					'א' => '',
 					'ב' => 'b',
 					'ג' => 'g',
@@ -371,7 +371,7 @@ class Conversion_Tables {
 					'ר' => 'r',
 					'ש' => 'sh',
 					'ת' => 'th',
-				);
+				];
 				for ( $code = 0x0590; $code <= 0x05CF; $code ++ ) {
 					$table[ Mbstring::mb_chr( $code ) ] = '';
 				}

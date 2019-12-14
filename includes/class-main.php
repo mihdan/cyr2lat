@@ -110,9 +110,9 @@ class Main {
 	 * Init class hooks.
 	 */
 	public function init_hooks() {
-		add_filter( 'sanitize_title', array( $this, 'ctl_sanitize_title' ), 9, 3 );
-		add_filter( 'sanitize_file_name', array( $this, 'ctl_sanitize_filename' ), 10, 2 );
-		add_filter( 'wp_insert_post_data', array( $this, 'ctl_sanitize_post_name' ), 10, 2 );
+		add_filter( 'sanitize_title', [ $this, 'ctl_sanitize_title' ], 9, 3 );
+		add_filter( 'sanitize_file_name', [ $this, 'ctl_sanitize_filename' ], 10, 2 );
+		add_filter( 'wp_insert_post_data', [ $this, 'ctl_sanitize_post_name' ], 10, 2 );
 	}
 
 	/**
@@ -145,7 +145,7 @@ class Main {
 
 		$is_term = false;
 		// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
-		$backtrace = debug_backtrace( ~ DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS );
+		$backtrace = debug_backtrace( ~DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS );
 		// phpcs:enable
 		foreach ( $backtrace as $backtrace_entry ) {
 			if ( 'wp_insert_term' === $backtrace_entry['function'] ) {
@@ -312,7 +312,7 @@ class Main {
 
 		if ( $this->ctl_is_classic_editor_plugin_active() ) {
 			$editor_option       = get_option( 'classic-editor-replace' );
-			$block_editor_active = array( 'no-replace', 'block' );
+			$block_editor_active = [ 'no-replace', 'block' ];
 
 			return in_array( $editor_option, $block_editor_active, true );
 		}
@@ -328,7 +328,7 @@ class Main {
 	 *
 	 * @return mixed
 	 */
-	public function ctl_sanitize_post_name( $data, $postarr = array() ) {
+	public function ctl_sanitize_post_name( $data, $postarr = [] ) {
 		global $current_screen;
 
 		if ( ! $this->ctl_is_gutenberg_editor_active() ) {
@@ -342,7 +342,7 @@ class Main {
 
 		if (
 			! $data['post_name'] && $data['post_title'] &&
-			! in_array( $data['post_status'], array( 'auto-draft', 'revision' ), true )
+			! in_array( $data['post_status'], [ 'auto-draft', 'revision' ], true )
 		) {
 			$data['post_name'] = sanitize_title( $data['post_title'] );
 		}

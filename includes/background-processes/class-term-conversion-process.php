@@ -58,13 +58,13 @@ class Term_Conversion_Process extends Conversion_Process {
 		$this->term = $term;
 		$slug       = urldecode( $term->slug );
 
-		add_filter( 'locale', array( $this, 'filter_term_locale' ) );
+		add_filter( 'locale', [ $this, 'filter_term_locale' ] );
 		$sanitized_slug = sanitize_title( $slug );
-		remove_filter( 'locale', array( $this, 'filter_term_locale' ) );
+		remove_filter( 'locale', [ $this, 'filter_term_locale' ] );
 
 		if ( urldecode( $sanitized_slug ) !== $slug ) {
 			// phpcs:disable WordPress.DB.DirectDatabaseQuery
-			$wpdb->update( $wpdb->terms, array( 'slug' => $sanitized_slug ), array( 'term_id' => $term->term_id ) );
+			$wpdb->update( $wpdb->terms, [ 'slug' => $sanitized_slug ], [ 'term_id' => $term->term_id ] );
 			// phpcs:enable
 
 			$this->log( __( 'Term slug converted:', 'cyr2lat' ) . ' ' . $slug . ' => ' . urldecode( $sanitized_slug ) );
@@ -88,10 +88,10 @@ class Term_Conversion_Process extends Conversion_Process {
 	 * @return string
 	 */
 	public function filter_term_locale() {
-		$args = array(
+		$args = [
 			'element_type' => $this->term->taxonomy,
 			'element_id'   => $this->term->term_taxonomy_id,
-		);
+		];
 
 		$wpml_element_language_details = apply_filters( 'wpml_element_language_details', false, $args );
 
@@ -101,7 +101,7 @@ class Term_Conversion_Process extends Conversion_Process {
 
 		$language_code = $wpml_element_language_details->language_code;
 
-		$wpml_active_languages = apply_filters( 'wpml_active_languages', false, array() );
+		$wpml_active_languages = apply_filters( 'wpml_active_languages', false, [] );
 
 		return isset( $wpml_active_languages[ $language_code ]['default_locale'] ) ?
 			$wpml_active_languages[ $language_code ]['default_locale'] : $this->locale;
