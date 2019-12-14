@@ -28,12 +28,17 @@ fi
 
 rm -rf ${CYR2LAT_BUILD_PATH:?}/*
 
-composer require a5hleyrich/wp-background-processing:dev-master humbug/php-scoper:dev-master --ignore-platform-reqs
+composer config repositories.wp-background-processing '{"type": "vcs", "url": "https://github.com/kagg-design/wp-background-processing.git", "no-api": true}'
+composer config repositories.php-scoper '{"type": "vcs", "url": "https://github.com/humbug/php-scoper.git", "no-api": true}'
+composer config github-protocols https
+composer config platform.php 7.2
+
+composer require a5hleyrich/wp-background-processing:dev-master humbug/php-scoper:dev-master
 
 vendor/humbug/php-scoper/bin/php-scoper add-prefix -vv --no-interaction --prefix=$CYR2LAT_SCOPER_PREFIX --config=.make/wp-background-processing.scoper.inc.php
 vendor/squizlabs/php_codesniffer/bin/phpcbf --standard=phpcs.xml build
 
-composer remove a5hleyrich/wp-background-processing humbug/php-scoper --ignore-platform-reqs
+composer remove a5hleyrich/wp-background-processing humbug/php-scoper
 
 RESULT=$?
 

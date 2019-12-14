@@ -92,8 +92,9 @@ Yes you can!
 
 == Changelog ==
 
-= 4.3 (01.12.2019) =
+= 4.3 (14.12.2019) =
 * Added Chinese table
+* php-scoper added to have libraries in own namespace
 * Tested up of WordPress 5.3
 
 = 4.2.3 (29.08.2019) =
