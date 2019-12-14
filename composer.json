@@ -73,13 +73,13 @@
   },
   "autoload": {
     "classmap": [
-      "includes",
+      "classes",
       "lib"
     ]
   },
   "autoload-dev": {
     "classmap": [
-      "includes",
+      "classes",
       "tests/phpunit/classes",
       "vendor/wp-cli"
     ]

@@ -91,7 +91,7 @@ static $requirements;
 static $cyr_to_lat_plugin;
 
 if ( ! isset( $requirements ) ) {
-	require_once CYR_TO_LAT_PATH . '/includes/class-requirements.php';
+	require_once CYR_TO_LAT_PATH . '/classes/class-requirements.php';
 	$requirements = new Requirements();
 }
 
