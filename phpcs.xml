@@ -16,4 +16,8 @@
     <exclude-pattern>*.css</exclude-pattern>
     <exclude-pattern>*.scss</exclude-pattern>
 
+	<rule ref="Generic.Arrays.DisallowShortArraySyntax.Found">
+		<severity>0</severity>
+	</rule>
+
 </ruleset>

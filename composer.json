@@ -42,6 +42,10 @@
     {
       "type": "vcs",
       "url": "https://github.com/kagg-design/wp-background-processing.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/humbug/php-scoper.git"
     }
   ],
   "minimum-stability": "dev",
@@ -52,8 +56,7 @@
     }
   },
   "require": {
-    "composer/installers": "*",
-    "a5hleyrich/wp-background-processing": "dev-master"
+    "composer/installers": "^1.7"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
@@ -65,18 +68,18 @@
     "squizlabs/php_codesniffer": "^3.0",
     "phpcompatibility/php-compatibility": "^9.0",
     "wp-coding-standards/wpcs": "^2.0",
-    "php-coveralls/php-coveralls": "^2.1",
-    "wp-cli/wp-cli": "dev-master"
+    "php-coveralls/php-coveralls": "^2.2",
+    "wp-cli/wp-cli": "^2.4"
   },
   "autoload": {
     "classmap": [
-      "includes",
+      "classes",
       "lib"
     ]
   },
   "autoload-dev": {
     "classmap": [
-      "includes",
+      "classes",
       "tests/phpunit/classes",
       "vendor/wp-cli"
     ]

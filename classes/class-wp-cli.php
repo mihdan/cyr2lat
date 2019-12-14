@@ -50,7 +50,7 @@ class WP_CLI extends WP_CLI_Command {
 	 * @param array $args       Arguments.
 	 * @param array $assoc_args Arguments in associative array.
 	 */
-	public function regenerate( $args = array(), $assoc_args = array() ) {
+	public function regenerate( $args = [], $assoc_args = [] ) {
 
 		/**
 		 * Notify instance.
@@ -59,7 +59,7 @@ class WP_CLI extends WP_CLI_Command {
 		 */
 		$notify = $this->make_progress_bar();
 
-		$result = array();
+		$result = [];
 
 		if ( ! empty( $assoc_args['post_status'] ) ) {
 			$result['post_status'] = explode( ',', $assoc_args['post_status'] );

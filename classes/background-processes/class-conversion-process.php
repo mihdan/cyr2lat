@@ -7,7 +7,7 @@
 
 namespace Cyr_To_Lat;
 
-use WP_Background_Process;
+use Cyr_To_Lat\KAGG\WP_Background_Processing\WP_Background_Process;
 
 /**
  * Class Conversion_Process

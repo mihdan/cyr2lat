@@ -19,13 +19,13 @@ class Admin_Notices {
 	 *
 	 * @var array
 	 */
-	private $notices = array();
+	private $notices = [];
 
 	/**
 	 * Admin_Notices constructor.
 	 */
 	public function __construct() {
-		add_action( 'admin_notices', array( $this, 'show_notices' ) );
+		add_action( 'admin_notices', [ $this, 'show_notices' ] );
 	}
 
 	/**
@@ -36,10 +36,10 @@ class Admin_Notices {
 	 *                        is-dismissible.
 	 */
 	public function add_notice( $message, $class = 'notice' ) {
-		$this->notices[] = array(
+		$this->notices[] = [
 			'message' => $message,
 			'class'   => $class,
-		);
+		];
 	}
 
 	/**

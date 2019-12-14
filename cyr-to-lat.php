@@ -88,21 +88,21 @@ if ( ! defined( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION' ) ) {
  */
 
 static $requirements;
-static $plugin;
+static $cyr_to_lat_plugin;
 
 if ( ! isset( $requirements ) ) {
-	require_once CYR_TO_LAT_PATH . '/includes/class-requirements.php';
+	require_once CYR_TO_LAT_PATH . '/classes/class-requirements.php';
 	$requirements = new Requirements();
 }
 
 if ( ! $requirements->are_requirements_met() ) {
-	$plugin = false;
+	$cyr_to_lat_plugin = false;
 	return;
 }
 
-if ( ! isset( $plugin ) ) {
+if ( ! isset( $cyr_to_lat_plugin ) ) {
 	require_once CYR_TO_LAT_PATH . '/vendor/autoload.php';
 
-	$plugin = new Main();
+	$cyr_to_lat_plugin = new Main();
 }
 

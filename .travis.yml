@@ -15,29 +15,35 @@ matrix:
         - DEV="--no-dev"
     - php: '5.6'
       env:
-        - SNIFF=1 TESTS=1
+        - TESTS=1
     - php: '7.0'
       env:
         - DEV="--no-dev"
     - php: '7.0'
       env:
-        - SNIFF=1 TESTS=1
+        - TESTS=1
     - php: '7.1'
       env:
         - DEV="--no-dev"
     - php: '7.1'
       env:
-        - SNIFF=1 TESTS=1
+        - TESTS=1
     - php: '7.2'
       env:
         - DEV="--no-dev"
     - php: '7.2'
       env:
-        - SNIFF=1 TESTS=1
+        - TESTS=1
     - php: '7.3'
       env:
         - DEV="--no-dev"
     - php: '7.3'
+      env:
+        - TESTS=1
+    - php: '7.4'
+      env:
+        - DEV="--no-dev"
+    - php: '7.4'
       env:
         - SNIFF=1 COVERAGE=1
 

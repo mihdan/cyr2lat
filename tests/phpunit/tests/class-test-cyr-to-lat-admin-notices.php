@@ -29,7 +29,7 @@ class Test_Admin_Notices extends Cyr_To_Lat_TestCase {
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
 
 		// Set expectations for constructor calls.
-		\WP_Mock::expectActionAdded( 'admin_notices', array( $mock, 'show_notices' ) );
+		\WP_Mock::expectActionAdded( 'admin_notices', [ $mock, 'show_notices' ] );
 
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );

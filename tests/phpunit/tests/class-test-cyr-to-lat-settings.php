@@ -344,18 +344,18 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 					<input type="hidden" name="cmd" value="_s-xclick">
 					<input type="hidden" name="hosted_button_id" value="BENCPARA8S224">
 					<input
-							type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"
-							name="submit" alt="PayPal - The safer, easier way to pay online!">
+						type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"
+						name="submit" alt="PayPal - The safer, easier way to pay online!">
 					<img
-							alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
-							height="1">
+						alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
+						height="1">
 				</form>
 
 				<h2 id="appreciation">
 					Your appreciation				</h2>
 				<a
-						target="_blank"
-						href="https://wordpress.org/support/view/plugin-reviews/cyr2lat?rate=5#postform">
+					target="_blank"
+					href="https://wordpress.org/support/view/plugin-reviews/cyr2lat?rate=5#postform">
 					Leave a ★★★★★ plugin review on WordPress.org				</a>
 			</div>
 		</div>
