@@ -38,8 +38,6 @@ class Test_ACF extends Cyr_To_Lat_TestCase {
 		$reflected_class = new ReflectionClass( $classname );
 		$constructor     = $reflected_class->getConstructor();
 		$constructor->invoke( $mock, [ $settings ] );
-
-		$this->assertTrue( true );
 	}
 
 	/**

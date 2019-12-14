@@ -66,7 +66,6 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'conversion_notices' ] );
 
 		$subject->init_hooks();
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -135,7 +134,6 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		}
 
 		$subject->conversion_notices();
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -184,7 +182,6 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		}
 
 		$subject->start_conversion();
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -234,7 +231,6 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		}
 
 		$subject->process_handler();
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -351,7 +347,6 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		}
 
 		$subject->convert_existing_slugs();
-		$this->assertTrue( true );
 	}
 
 	/**

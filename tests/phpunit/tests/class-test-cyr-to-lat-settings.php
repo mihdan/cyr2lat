@@ -36,8 +36,6 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		$reflected_class = new ReflectionClass( $classname );
 		$constructor     = $reflected_class->getConstructor();
 		$constructor->invoke( $mock );
-
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -51,7 +49,6 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		$subject->shouldReceive( 'init_hooks' )->once();
 
 		$subject->init();
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -83,7 +80,6 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		\WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $subject, 'admin_enqueue_scripts' ] );
 
 		$subject->init_hooks();
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -274,7 +270,6 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		);
 
 		$subject->add_settings_page();
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -467,8 +462,6 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		}
 
 		$subject->setup_sections();
-
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -489,7 +482,6 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	public function test_cyr_to_lat_section() {
 		$subject = new Settings();
 		$subject->cyr_to_lat_section( [] );
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -540,8 +532,6 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		}
 
 		$subject->setup_fields();
-
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -1196,8 +1186,6 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		}
 
 		$subject->admin_enqueue_scripts();
-
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -1229,8 +1217,6 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		);
 
 		$subject->load_plugin_textdomain();
-
-		$this->assertTrue( true );
 	}
 
 	/**

@@ -121,7 +121,6 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 		);
 
 		$subject->complete();
-		$this->assertTrue( true );
 	}
 
 	/**

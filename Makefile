@@ -18,8 +18,8 @@ help:
 	$(info  $(indent) Run `make yarn-install-prod` to only install Yarn dependencies in production mode)
 	$(info :: Deployment)
 	$(info  $(indent) Run `make scope` to scope external libraries)
-	#	$(info  $(indent) Run `make update-phpunit [PHP="x.x"]` to install the phpunit library according to php version. If PHP is omitted, update will be done for current PHP version)
-	#	$(info  $(indent) Run `make prod` to prepare plugin for publishing)
+	$(info  $(indent) Run `make update-phpunit [PHP="x.x"]` to install the phpunit library according to php version. If PHP is omitted, update will be done for current PHP version)
+#	$(info  $(indent) Run `make prod` to prepare plugin for publishing)
 
 
 # Install
@@ -62,3 +62,11 @@ yarn-install-prod:
 scope:
 	$(info Scoping external libraries)
 	@.make/scoper.sh
+
+
+# Update phpunit
+.PHONY: update-phpunit
+
+update-phpunit:
+	$(info Updating phpunit library)
+	@.make/update-phpunit.sh ${PHP}

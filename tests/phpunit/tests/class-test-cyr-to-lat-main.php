@@ -70,7 +70,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$subject->shouldReceive( 'init_hooks' )->once();
 
 		$subject->init();
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -90,7 +89,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$wp_cli = \Mockery::mock( 'alias:WP_CLI' );
 
 		$subject->init();
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -111,7 +109,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$wp_cli->shouldReceive( 'add_command' )->andReturn( null );
 
 		$subject->init();
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -125,7 +122,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		\WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'ctl_sanitize_post_name' ], 10, 2 );
 
 		$subject->init_hooks();
-		$this->assertTrue( true );
 	}
 
 	/**

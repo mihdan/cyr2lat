@@ -45,7 +45,6 @@ class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 		$cli->shouldReceive( 'success' )->with( 'Regenerate Completed.' );
 
 		$subject->regenerate( $args, $assoc_args );
-		$this->assertTrue( true );
 	}
 
 	/**
@@ -103,6 +102,5 @@ class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 
 		// Here is the simplified variant.
 		$subject->make_progress_bar();
-		$this->assertTrue( true );
 	}
 }

@@ -35,8 +35,6 @@ class Test_Admin_Notices extends Cyr_To_Lat_TestCase {
 		$reflected_class = new ReflectionClass( $classname );
 		$constructor     = $reflected_class->getConstructor();
 		$constructor->invoke( $mock );
-
-		$this->assertTrue( true );
 	}
 
 	/**

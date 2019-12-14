@@ -45,7 +45,7 @@ matrix:
         - DEV="--no-dev"
     - php: '7.4'
       env:
-        - SNIFF=1 COVERAGE=1 JEST=1
+        - SNIFF=1 TESTS=1 JEST=1 COVERAGE=1
 
 cache:
   directories:
@@ -60,6 +60,7 @@ before_script:
 
 script:
   - if [[ "$SNIFF" == "1" ]]; then vendor/bin/phpcs -p -s --colors --standard=phpcs.xml .; fi
+  - if [[ "$TESTS" == "1" ]]; then make update-phpunit; fi
   - if [[ "$TESTS" == "1" ]]; then vendor/phpunit/phpunit/phpunit --configuration tests/phpunit/phpunit.xml; fi
   - if [[ "$JEST" == "1" ]]; then cd src; yarn run test; cd ..; fi
   - if [[ "$COVERAGE" == "1" ]]; then vendor/phpunit/phpunit/phpunit --configuration tests/phpunit/phpunit.xml --coverage-clover coverage.xml; fi
