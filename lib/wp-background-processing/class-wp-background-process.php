@@ -56,9 +56,9 @@ abstract class WP_Background_Process extends \Cyr_To_Lat\KAGG\WP_Background_Proc
 		parent::__construct();
 		$this->cron_hook_identifier     = $this->identifier . '_cron';
 		$this->cron_interval_identifier = $this->identifier . '_cron_interval';
-		add_action( $this->cron_hook_identifier, array( $this, 'handle_cron_healthcheck' ) );
+		add_action( $this->cron_hook_identifier, [ $this, 'handle_cron_healthcheck' ] );
         // phpcs:ignore WordPress.WP.CronInterval.ChangeDetected
-		add_filter( 'cron_schedules', array( $this, 'schedule_cron_healthcheck' ) );
+		add_filter( 'cron_schedules', [ $this, 'schedule_cron_healthcheck' ] );
 	}
 	/**
 	 * Dispatch
@@ -170,6 +170,7 @@ abstract class WP_Background_Process extends \Cyr_To_Lat\KAGG\WP_Background_Proc
 			$column = 'meta_key';
 		}
 		$key = $wpdb->esc_like( $this->identifier . '_batch_' ) . '%';
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
@@ -178,6 +179,7 @@ abstract class WP_Background_Process extends \Cyr_To_Lat\KAGG\WP_Background_Proc
 				$key
 			)
 		);
+        // phpcs:enable WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $count > 0 ? \false : \true;
 	}
 	/**
@@ -237,6 +239,7 @@ abstract class WP_Background_Process extends \Cyr_To_Lat\KAGG\WP_Background_Proc
 			$value_column = 'meta_value';
 		}
 		$key = $wpdb->esc_like( $this->identifier . '_batch_' ) . '%';
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery.NoCaching
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$query = $wpdb->get_row(
 			$wpdb->prepare(
@@ -245,6 +248,7 @@ abstract class WP_Background_Process extends \Cyr_To_Lat\KAGG\WP_Background_Proc
 				$key
 			)
 		);
+        // phpcs:enable WordPress.DB.DirectDatabaseQuery.NoCaching
 		$batch       = new \stdClass();
 		$batch->key  = $query->{$column};
 		$batch->data = maybe_unserialize( $query->{$value_column} );
@@ -389,11 +393,11 @@ abstract class WP_Background_Process extends \Cyr_To_Lat\KAGG\WP_Background_Proc
 			$interval = apply_filters( $this->identifier . '_cron_interval', $this->cron_interval );
 		}
 		// Adds every 5 minutes to the existing schedules.
-		$schedules[ $this->identifier . '_cron_interval' ] = array(
+		$schedules[ $this->identifier . '_cron_interval' ] = [
 			'interval' => MINUTE_IN_SECONDS * $interval,
 			/* translators: %d: cron interval */
 			'display'  => \sprintf( __( 'Every %d Minutes' ), $interval ),
-		);
+		];
 		return $schedules;
 	}
 	/**

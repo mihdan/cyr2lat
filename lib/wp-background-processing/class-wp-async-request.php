@@ -48,14 +48,14 @@ abstract class WP_Async_Request {
 	 * @var array
 	 * @access protected
 	 */
-	protected $data = array();
+	protected $data = [];
 	/**
 	 * Initiate new async request
 	 */
 	public function __construct() {
 		$this->identifier = $this->prefix . '_' . $this->action;
-		add_action( 'wp_ajax_' . $this->identifier, array( $this, 'maybe_handle' ) );
-		add_action( 'wp_ajax_nopriv_' . $this->identifier, array( $this, 'maybe_handle' ) );
+		add_action( 'wp_ajax_' . $this->identifier, [ $this, 'maybe_handle' ] );
+		add_action( 'wp_ajax_nopriv_' . $this->identifier, [ $this, 'maybe_handle' ] );
 	}
 	/**
 	 * Set data used during the request
@@ -87,10 +87,10 @@ abstract class WP_Async_Request {
 		if ( \property_exists( $this, 'query_args' ) ) {
 			return $this->query_args;
 		}
-		return array(
+		return [
 			'action' => $this->identifier,
 			'nonce'  => wp_create_nonce( $this->identifier ),
-		);
+		];
 	}
 	/**
 	 * Get query URL
@@ -112,13 +112,13 @@ abstract class WP_Async_Request {
 		if ( \property_exists( $this, 'post_args' ) ) {
 			return $this->post_args;
 		}
-		return array(
+		return [
 			'timeout'   => 5,
 			'blocking'  => \false,
 			'body'      => $this->data,
 			'cookies'   => $_COOKIE,
 			'sslverify' => apply_filters( 'https_local_ssl_verify', \false ),
-		);
+		];
 	}
 	/**
 	 * Maybe handle
