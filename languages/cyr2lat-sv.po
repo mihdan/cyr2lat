@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Plugins - Cyr-To-Lat - Development (trunk)\n"
-"POT-Creation-Date: 2019-12-01 15:26+0200\n"
-"PO-Revision-Date: 2019-12-01 15:27+0200\n"
+"POT-Creation-Date: 2019-12-15 10:05+0200\n"
+"PO-Revision-Date: 2019-12-15 10:07+0200\n"
 "Last-Translator: KAGG Design <info@kagg.eu>\n"
 "Language-Team: \n"
 "Language: sv_SE\n"
@@ -15,169 +15,172 @@ msgstr ""
 "X-Poedit-KeywordsList: __;esc_html__;esc_attr__\n"
 "X-Poedit-Flags-xgettext: --add-comments\n"
 "X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: vendor\n"
-"X-Poedit-SearchPathExcluded-1: dist\n"
-"X-Poedit-SearchPathExcluded-2: src\n"
+"X-Poedit-SearchPathExcluded-0: .git\n"
+"X-Poedit-SearchPathExcluded-1: .make\n"
+"X-Poedit-SearchPathExcluded-2: assets\n"
+"X-Poedit-SearchPathExcluded-3: css\n"
+"X-Poedit-SearchPathExcluded-4: dist\n"
+"X-Poedit-SearchPathExcluded-5: js\n"
+"X-Poedit-SearchPathExcluded-6: languages\n"
+"X-Poedit-SearchPathExcluded-7: node_modules\n"
+"X-Poedit-SearchPathExcluded-8: src\n"
+"X-Poedit-SearchPathExcluded-9: tests\n"
+"X-Poedit-SearchPathExcluded-10: vendor\n"
 
 #. phpcs:enable
-#: includes/background-processes/class-cyr-to-lat-post-conversion-process.php:67
+#: classes/background-processes/class-post-conversion-process.php:71
 msgid "Post slug converted:"
 msgstr "Konverterad inläggs-slug:"
 
-#: includes/background-processes/class-cyr-to-lat-post-conversion-process.php:79
+#: classes/background-processes/class-post-conversion-process.php:83
 msgid "Post slugs conversion completed."
 msgstr "Konvertering av inläggs-sluggar är klar."
 
 #. phpcs:enable
-#: includes/background-processes/class-cyr-to-lat-term-conversion-process.php:66
+#: classes/background-processes/class-term-conversion-process.php:70
 msgid "Term slug converted:"
 msgstr "Konverterad term-slug:"
 
-#: includes/background-processes/class-cyr-to-lat-term-conversion-process.php:78
+#: classes/background-processes/class-term-conversion-process.php:82
 msgid "Term slugs conversion completed."
 msgstr "Konvertering av term-sluggar är klar."
 
-#: includes/class-cyr-to-lat-converter.php:117
+#: classes/class-converter.php:119
 msgid "Cyr To Lat converts existing post slugs in the background process."
 msgstr ""
 "Cyr To Lat konverterar befintliga inläggssluggar i en process som körs i "
 "bakgrunden."
 
-#: includes/class-cyr-to-lat-converter.php:124
+#: classes/class-converter.php:126
 msgid "Cyr To Lat converts existing term slugs in the background process."
 msgstr ""
 "Cyr To Lat konverterar befintliga term-sluggar i en process som körs i "
 "bakgrunden."
 
-#: includes/class-cyr-to-lat-converter.php:131
+#: classes/class-converter.php:133
 msgid "Cyr To Lat completed conversion of existing post slugs."
 msgstr "Cyr To Lat har genomfört konverteringen av befintliga inläggs-sluggar."
 
-#: includes/class-cyr-to-lat-converter.php:138
+#: classes/class-converter.php:140
 msgid "Cyr To Lat completed conversion of existing term slugs."
 msgstr "Cyr To Lat har genomfört konverteringen av befintliga term-sluggar."
 
-#: includes/class-cyr-to-lat-converter.php:204
+#: classes/class-converter.php:206
 msgid "Post slugs conversion started."
 msgstr "Konverteringen av inläggs-sluggar har inletts."
 
-#: includes/class-cyr-to-lat-converter.php:206
+#: classes/class-converter.php:208
 msgid "Cyr To Lat started conversion of existing post slugs."
 msgstr "Cyr To Lat har inlett konverteringen av befintliga inläggs-sluggar."
 
-#: includes/class-cyr-to-lat-converter.php:213
+#: classes/class-converter.php:215
 msgid "Cyr To Lat has not found existing post slugs for conversion."
 msgstr ""
 "Cyr To Lat hittade inga befintliga inläggs-sluggar som behöver konverteras."
 
-#: includes/class-cyr-to-lat-converter.php:232
+#: classes/class-converter.php:234
 msgid "Term slugs conversion started."
 msgstr "Konverteringen av term-sluggar har inletts."
 
-#: includes/class-cyr-to-lat-converter.php:234
+#: classes/class-converter.php:236
 msgid "Cyr To Lat started conversion of existing term slugs."
 msgstr "Cyr To Lat har inlett konverteringen av befintliga term-sluggar."
 
-#: includes/class-cyr-to-lat-converter.php:241
+#: classes/class-converter.php:243
 msgid "Cyr To Lat has not found existing term slugs for conversion."
 msgstr ""
 "Cyr To Lat hittade inga befintliga term-sluggar som behöver konverteras."
 
 #. translators: 1: Current PHP version number, 2: Cyr To Lat version, 3: Minimum required PHP version number
-#: includes/class-cyr-to-lat-requirements.php:50
+#: classes/class-requirements.php:52
 #, php-format
 msgid ""
 "Your server is running PHP version %1$s but Cyr To Lat %2$s requires at "
 "least %3$s."
-msgstr ""
+msgstr "Din server kör PHP-version %1$s men Cyr To Lat %2$s kräver minst %3$s."
 
-#: includes/class-cyr-to-lat-settings.php:121
+#: classes/class-settings.php:122
 msgid "View Cyr To Lat settings"
 msgstr "Visa inställningar för Cyr To Lat"
 
-#: includes/class-cyr-to-lat-settings.php:122
+#: classes/class-settings.php:123
 msgid "Settings"
 msgstr "Inställningar"
 
-#: includes/class-cyr-to-lat-settings.php:134
-#: includes/class-cyr-to-lat-settings.php:360
+#: classes/class-settings.php:135 classes/class-settings.php:361
 msgid "ISO9 Table"
 msgstr "ISO9-tabell"
 
-#: includes/class-cyr-to-lat-settings.php:143
-#: includes/class-cyr-to-lat-settings.php:366
+#: classes/class-settings.php:144 classes/class-settings.php:367
 msgid "bel Table"
 msgstr "Tabell för bel"
 
-#: includes/class-cyr-to-lat-settings.php:152
-#: includes/class-cyr-to-lat-settings.php:372
+#: classes/class-settings.php:153 classes/class-settings.php:373
 msgid "uk Table"
 msgstr "Tabell för uk"
 
-#: includes/class-cyr-to-lat-settings.php:161
-#: includes/class-cyr-to-lat-settings.php:378
+#: classes/class-settings.php:162 classes/class-settings.php:379
 msgid "bg_BG Table"
 msgstr "Tabell för bg_BG"
 
-#: includes/class-cyr-to-lat-settings.php:170
-#: includes/class-cyr-to-lat-settings.php:384
+#: classes/class-settings.php:171 classes/class-settings.php:385
 msgid "mk_MK Table"
 msgstr "Tabell för mk_MK"
 
-#: includes/class-cyr-to-lat-settings.php:179
-#: includes/class-cyr-to-lat-settings.php:390
+#: classes/class-settings.php:180 classes/class-settings.php:391
 msgid "sr_RS Table"
 msgstr "Tabell för sr_RS"
 
-#: includes/class-cyr-to-lat-settings.php:188
-#: includes/class-cyr-to-lat-settings.php:396
+#: classes/class-settings.php:189 classes/class-settings.php:397
 msgid "ka_GE Table"
 msgstr "Tabell för ka_GE"
 
-#: includes/class-cyr-to-lat-settings.php:197
-#: includes/class-cyr-to-lat-settings.php:402
+#: classes/class-settings.php:198 classes/class-settings.php:403
 msgid "kk Table"
 msgstr "Tabell för kk"
 
-#: includes/class-cyr-to-lat-settings.php:206
-#: includes/class-cyr-to-lat-settings.php:408
+#: classes/class-settings.php:207 classes/class-settings.php:409
 msgid "he_IL Table"
 msgstr "Tabell för he_IL"
 
-#: includes/class-cyr-to-lat-settings.php:215
-#: includes/class-cyr-to-lat-settings.php:414
+#: classes/class-settings.php:216 classes/class-settings.php:415
 msgid "zh_CN Table"
 msgstr "Tabell för zh_CN"
 
-#: includes/class-cyr-to-lat-settings.php:279
-#: includes/class-cyr-to-lat-settings.php:280
+#: classes/class-settings.php:280 classes/class-settings.php:281
 msgid "Cyr To Lat"
 msgstr "Cyr To Lat"
 
 #. Admin panel title.
-#: includes/class-cyr-to-lat-settings.php:300
+#: classes/class-settings.php:301
 msgid "Cyr To Lat Plugin Options"
 msgstr "Alternativ för tillägget Cyr To Lat"
 
-#: includes/class-cyr-to-lat-settings.php:315
+#: classes/class-settings.php:316
 msgid "Convert Existing Slugs"
 msgstr "Konvertera befintliga sluggar"
 
-#: includes/class-cyr-to-lat-settings.php:321
+#: classes/class-settings.php:322
 msgid "Donate"
 msgstr "Donera"
 
-#: includes/class-cyr-to-lat-settings.php:324
+#: classes/class-settings.php:325
 msgid "Would you like to support the advancement of this plugin?"
 msgstr "Vill du stödja den vidare utvecklingen av detta tillägg?"
 
-#: includes/class-cyr-to-lat-settings.php:338
+#: classes/class-settings.php:339
 msgid "Your appreciation"
 msgstr "Din uppskattning"
 
-#: includes/class-cyr-to-lat-settings.php:343
+#: classes/class-settings.php:344
 msgid "Leave a ★★★★★ plugin review on WordPress.org"
 msgstr "Ge tillägget betyget ★★★★★ på WordPress.org"
+
+#. translators: %d: cron interval
+#: lib/wp-background-processing/class-wp-background-process.php:399
+#, php-format
+msgid "Every %d Minutes"
+msgstr "Var %d e minut"
 
 #~ msgid "https://profiles.wordpress.org/sergeybiryukov/"
 #~ msgstr "https://profiles.wordpress.org/sergeybiryukov/"

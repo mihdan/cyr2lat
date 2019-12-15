@@ -94,11 +94,12 @@ Yes you can!
 
 = 4.3 (14.12.2019) =
 * Added Chinese table
-* External library wp-background-procesing scoped into own namespace to prevent errors in some cases
-* Tested up of WordPress 5.3
+* Tested up to WordPress 5.3
+* Tested up to PHP 7.4
+* External library wp-background-processing scoped into own namespace to prevent errors in some cases
 
 = 4.2.3 (29.08.2019) =
-* Scoped Symfony polyfill to avoid problems with composer autoloader on some sites.
+* Scoped Symfony Mbstring polyfill to avoid problems with composer autoloader on some sites.
 
 = 4.2.2 (28.08.2019) =
 * Added ACF (Advanced Custom Fields) plugin support
