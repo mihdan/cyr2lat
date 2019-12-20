@@ -19,7 +19,7 @@ help:
 	$(info :: Deployment)
 	$(info  $(indent) Run `make scope` to scope external libraries)
 	$(info  $(indent) Run `make update-phpunit [PHP="x.x"]` to install the phpunit library according to php version. If PHP is omitted, update will be done for current PHP version)
-#	$(info  $(indent) Run `make prod` to prepare plugin for publishing)
+	$(info  $(indent) Run `make dist` to prepare plugin for distribution)
 
 
 # Install
@@ -70,3 +70,12 @@ scope:
 update-phpunit:
 	$(info Updating phpunit library)
 	@.make/update-phpunit.sh ${PHP}
+
+
+# Prepare for distribution
+.PHONY: dist
+
+dist: install-prod
+dist:
+	$(info Preparing plugin for distribution)
+	@wp dist-archive .
