@@ -4,7 +4,7 @@ Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh,
 Requires at least: 5.1
 Tested up to: 5.3
 Stable tag: 4.3
-Requires PHP: 5.6
+Requires PHP: 5.6.20
 
 Converts Cyrillic characters in post, page and term slugs to Latin characters.
 
@@ -37,7 +37,7 @@ Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
 
 Add this code to your theme's `functions.php` file:
 
-```
+`
 function my_cyr_to_lat_table( $ctl_table ) {
    $ctl_table['Ъ'] = 'U';
    $ctl_table['ъ'] = 'u';
@@ -45,13 +45,13 @@ function my_cyr_to_lat_table( $ctl_table ) {
    return $ctl_table;
 }
 add_filter( 'ctl_table', 'my_cyr_to_lat_table' );
-```
+`
 
 = How can I redefine non-standard locale ? =
 
 For instance, if your non-standard locale is uk_UA, you can redefine it to `uk` by adding the following code to your theme's `function.php` file:
 
-```
+`
 /**
  * Use conversion table for non-standard locale.
  *
@@ -67,17 +67,16 @@ function my_ctl_table( $table ) {
 
 	return $table;
 }
-
 add_filter( 'ctl_table', 'my_ctl_table' );
-```
+`
 
 = How can I convert a large number of posts/terms using wp-cli? =
 
 Use the following command in console:
 
-```
+`
 wp cyr2lat regenerate [--post_type=<post_type>] [--post_status=<post_status>]
-```
+`
 
 Where
   `-post_type` is list of post types,
