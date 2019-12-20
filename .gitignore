@@ -12,6 +12,5 @@ vendor/
 *.zip
 *.lock
 *.opt
-
+.idea/
 !composer.lock
-!composer-56.lock
