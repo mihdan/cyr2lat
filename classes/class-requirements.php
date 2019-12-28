@@ -171,7 +171,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 			$content_arr = explode( "\n", $content );
 
 			array_map(
-				function ( $line ) use ( & $value ) {
+				function ( $line ) use ( &$value ) {
 					if ( preg_match( '/(?<![; ])\s*?(max_input_vars).*?=\D*?(\d+)/i', $line, $matches ) ) {
 						$value = (int) $matches[2];
 					}
