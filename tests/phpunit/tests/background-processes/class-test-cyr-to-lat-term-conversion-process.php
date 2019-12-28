@@ -160,7 +160,7 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 		$main    = Mockery::mock( Main::class );
 		$subject = new Term_Conversion_Process( $main );
-		$this->mock_property( $subject, 'term', $term );
+		$this->set_protected_property( $subject, 'term', $term );
 		$this->assertSame( $expected, $subject->filter_term_locale() );
 	}
 

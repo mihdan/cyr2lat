@@ -9,8 +9,8 @@
  * Author URI: https://profiles.wordpress.org/sergeybiryukov/
  * Requires at least: 5.1
  * Tested up to: 5.3
- * Version: 4.3
- * Stable tag: 4.3
+ * Version: 4.3.1
+ * Stable tag: 4.3.1
  *
  * Text Domain: cyr2lat
  * Domain Path: /languages/
@@ -30,7 +30,7 @@ if ( ! defined( 'CYR_TO_LAT_VERSION' ) ) {
 	/**
 	 * Plugin version.
 	 */
-	define( 'CYR_TO_LAT_VERSION', '4.3' );
+	define( 'CYR_TO_LAT_VERSION', '4.3.1' );
 }
 
 if ( ! defined( 'CYR_TO_LAT_PATH' ) ) {
@@ -81,28 +81,34 @@ if ( ! defined( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION' ) ) {
 	 */
 	define( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', '5.6' );
 }
+
+if ( ! defined( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS' ) ) {
+	/**
+	 * Minimum required max_input_vars value.
+	 */
+	define( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS', 5000 );
+}
 // @codeCoverageIgnoreEnd
 
 /**
  * Init plugin class on plugin load.
  */
-
-static $requirements;
+static $cyr_to_lat_requirements;
 static $cyr_to_lat_plugin;
 
-if ( ! isset( $requirements ) ) {
-	require_once CYR_TO_LAT_PATH . '/classes/class-requirements.php';
-	$requirements = new Requirements();
+if ( ! isset( $cyr_to_lat_requirements ) ) {
+	require_once CYR_TO_LAT_PATH . '/vendor/autoload.php';
+
+	$cyr_to_lat_requirements = new Requirements();
 }
 
-if ( ! $requirements->are_requirements_met() ) {
+if ( ! $cyr_to_lat_requirements->are_requirements_met() ) {
 	$cyr_to_lat_plugin = false;
+
 	return;
 }
 
 if ( ! isset( $cyr_to_lat_plugin ) ) {
-	require_once CYR_TO_LAT_PATH . '/vendor/autoload.php';
-
 	$cyr_to_lat_plugin = new Main();
 }
 

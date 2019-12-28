@@ -71,6 +71,11 @@ define( 'CYR_TO_LAT_TERM_CONVERSION_ACTION', 'term_conversion_action' );
  */
 define( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', '5.6' );
 
+/**
+ * Minimum required max_input_vars value.
+ */
+define( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS', 5000 );
+
 FunctionMocker::init(
 	[
 		'blacklist'             => [
@@ -79,7 +84,7 @@ FunctionMocker::init(
 		'whitelist'             => [
 			realpath( CYR_TO_LAT_PATH . '/classes' ),
 		],
-		'redefinable-internals' => [ 'phpversion', 'function_exists', 'mb_strtolower' ],
+		'redefinable-internals' => [ 'function_exists', 'ini_get', 'mb_strtolower', 'phpversion', 'realpath', 'time' ],
 	]
 );
 

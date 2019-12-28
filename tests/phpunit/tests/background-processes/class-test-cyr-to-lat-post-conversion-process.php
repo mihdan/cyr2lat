@@ -159,7 +159,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 		$main    = Mockery::mock( Main::class );
 		$subject = new Post_Conversion_Process( $main );
-		$this->mock_property( $subject, 'post', $post );
+		$this->set_protected_property( $subject, 'post', $post );
 		$this->assertSame( $expected, $subject->filter_post_locale() );
 	}
 

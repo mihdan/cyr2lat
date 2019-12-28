@@ -66,9 +66,9 @@ class Converter {
 	 *
 	 * @param Main                    $main              Plugin main class.
 	 * @param Settings                $settings          Plugin settings.
-	 * @param Post_Conversion_Process $process_all_posts Plugin settings.
-	 * @param Term_Conversion_Process $process_all_terms Plugin settings.
-	 * @param Admin_Notices           $admin_notices     Plugin settings.
+	 * @param Post_Conversion_Process $process_all_posts Post conversion process.
+	 * @param Term_Conversion_Process $process_all_terms Term conversion process.
+	 * @param Admin_Notices           $admin_notices     Admin notices.
 	 */
 	public function __construct(
 		$main, $settings, $process_all_posts = null, $process_all_terms = null, $admin_notices = null

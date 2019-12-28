@@ -16,6 +16,7 @@
 		<whitelist>
 			<directory suffix=".php">../../</directory>
 			<exclude>
+				<directory>../../.make</directory>
 				<directory>../../assets</directory>
 				<directory>../../css</directory>
 				<directory>../../dist</directory>

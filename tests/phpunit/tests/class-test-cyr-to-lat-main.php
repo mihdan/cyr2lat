@@ -242,7 +242,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
-		$this->mock_property( $subject, 'settings', $settings );
+		$this->set_protected_property( $subject, 'settings', $settings );
 
 		$this->assertSame( $expected, $subject->split_chinese_string( $string, $table ) );
 	}

@@ -1,3 +1,14 @@
+## 4.3.1 (27.12.2019)
+* Added requirement to have max_input_vars >= 5000
+* Added automatic plugin deactivation if requirements are not met
+* Added attempt to auto-fix max_input_variable value
+
+## 4.3 (14.12.2019)
+* Added Chinese table
+* Tested up to WordPress 5.3
+* Tested up to PHP 7.4
+* External library wp-background-processing scoped into own namespace to prevent errors in some cases
+
 ## 4.2.3 (29.08.2019)
 * Scoped Symphony polyfill to avoid problems with composer autoloader on some sites.
 
