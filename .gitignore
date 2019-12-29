@@ -1,8 +1,7 @@
 .DS_Store
-.travis.yml
 Thumbs.db
 wp-cli.local.yml
-node_modules
+node_modules/
 dist/**
 build/**
 tests/**/*.cache
