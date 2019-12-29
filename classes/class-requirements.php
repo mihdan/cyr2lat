@@ -65,9 +65,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 				// @codeCoverageIgnoreEnd
 			}
 
-//			if ( ! WP_Filesystem() ) {
+			if ( ! WP_Filesystem() ) {
 				return;
-//			}
+			}
 
 			$this->wp_filesystem = $wp_filesystem;
 			if ( ! $this->wp_filesystem ) {
@@ -221,16 +221,14 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 *
 		 * @return string
 		 */
-		private
-		function get_user_ini_filename() {
+		private function get_user_ini_filename() {
 			return ABSPATH . 'wp-admin/' . ini_get( 'user_ini.filename' );
 		}
 
 		/**
 		 * Asl user to increase max_input_vars.
 		 */
-		private
-		function ask_to_increase_max_input_vars() {
+		private function ask_to_increase_max_input_vars() {
 			$message = __( 'Please increase max input vars limit up to 1500.', 'cyr2lat' );
 
 			$message .= '<br>';
