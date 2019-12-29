@@ -452,13 +452,13 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 					'times' => 1,
 				]
 			);
-			\WP_Mock::userFunction(
-				'add_settings_section',
-				[
-					'args'  => [ 'zh_CN_section', 'zh_CN Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
-					'times' => 1,
-				]
-			);
+//			\WP_Mock::userFunction(
+//				'add_settings_section',
+//				[
+//					'args'  => [ 'zh_CN_section', 'zh_CN Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+//					'times' => 1,
+//				]
+//			);
 		}
 
 		$subject->setup_sections();

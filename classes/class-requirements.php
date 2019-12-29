@@ -27,9 +27,16 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		/**
 		 * WP file system direct.
 		 *
-		 * @var WP_Filesystem_Direct;
+		 * @var WP_Filesystem_Direct
 		 */
 		protected $wp_filesystem;
+
+		/**
+		 * Restrict notice to Cyr To Lat settings page.
+		 *
+		 * @var array
+		 */
+		protected $cyr2lat_page;
 
 		/**
 		 * Requirements constructor.
@@ -45,6 +52,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 				$this->admin_notices = new Admin_Notices();
 			}
 
+			$this->cyr2lat_page = [ 'page' => Settings::SCREEN_ID ];
+
 			if ( ! function_exists( 'WP_Filesystem' ) ) {
 				// @codeCoverageIgnoreStart
 				/**
@@ -56,9 +65,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 				// @codeCoverageIgnoreEnd
 			}
 
-			if ( ! WP_Filesystem() ) {
-				throw new RuntimeException( __( 'Unable to get filesystem access.', 'cyr2lat' ) );
-			}
+//			if ( ! WP_Filesystem() ) {
+				return;
+//			}
 
 			$this->wp_filesystem = $wp_filesystem;
 			if ( ! $this->wp_filesystem ) {
@@ -126,33 +135,42 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 */
 		private function is_max_input_vars_required() {
 			if ( CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS > ini_get( 'max_input_vars' ) ) {
-				$this->try_to_fix_max_input_vars();
+				if ( $this->wp_filesystem ) {
+					$this->try_to_fix_max_input_vars();
+				} else {
+					$this->admin_notices->add_notice(
+						__( 'Unable to get filesystem access.', 'cyr2lat' ),
+						'notice notice-error',
+						$this->cyr2lat_page
+					);
+					$this->ask_to_increase_max_input_vars();
+
+					return true;
+				}
 			}
 
 			if ( CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS > ini_get( 'max_input_vars' ) ) {
-				/* translators: 1: max_input_vars value, 2: Cyr To Lat version, 3: Minimum required max_input_vars */
-				$message = sprintf( __( 'Your server is running PHP with max_input_vars=%1$d but Cyr To Lat %2$s requires at least %3$d.', 'cyr2lat' ), ini_get( 'max_input_vars' ), CYR_TO_LAT_VERSION, CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS );
-
-				$message .= '<br>';
-				/* translators: 1: .user.ini filename */
-				$message .= sprintf( __( 'We have updated settings in %s.', 'cyr2lat' ), realpath( $this->get_user_ini_filename() ) );
-
 				$mtime     = $this->wp_filesystem->mtime( $this->get_user_ini_filename() );
 				$ini_ttl   = intval( ini_get( 'user_ini.cache_ttl' ) );
 				$time_left = ( $mtime + $ini_ttl ) - time();
 
-				$message .= '<br>';
-
 				if ( 0 < $time_left ) {
+					/* translators: 1: max_input_vars value, 2: Cyr To Lat version, 3: Minimum required max_input_vars */
+					$message = sprintf( __( 'Your server is running PHP with max_input_vars=%1$d but Cyr To Lat %2$s requires at least %3$d.', 'cyr2lat' ), ini_get( 'max_input_vars' ), CYR_TO_LAT_VERSION, CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS );
+
+					$message .= '<br>';
+					/* translators: 1: .user.ini filename */
+					$message .= sprintf( __( 'We have updated settings in %s.', 'cyr2lat' ), realpath( $this->get_user_ini_filename() ) );
+					$message .= '<br>';
 					/* translators: 1: Wait time in seconds */
 					$message .= sprintf( __( 'Please try again in %d s.', 'cyr2lat' ), $time_left );
+
+					$this->admin_notices->add_notice( $message, 'notice notice-error', $this->cyr2lat_page );
 				} else {
-					$message .= sprintf( __( 'Please try again.', 'cyr2lat' ), $time_left );
+					$this->ask_to_increase_max_input_vars();
 				}
 
-				$this->admin_notices->add_notice( $message, 'notice notice-error' );
-
-				return false;
+				return true;
 			}
 
 			return true;
@@ -203,8 +221,26 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 *
 		 * @return string
 		 */
-		private function get_user_ini_filename() {
+		private
+		function get_user_ini_filename() {
 			return ABSPATH . 'wp-admin/' . ini_get( 'user_ini.filename' );
+		}
+
+		/**
+		 * Asl user to increase max_input_vars.
+		 */
+		private
+		function ask_to_increase_max_input_vars() {
+			$message = __( 'Please increase max input vars limit up to 1500.', 'cyr2lat' );
+
+			$message .= '<br>';
+			$message .= __( 'See: <a href="http://sevenspark.com/docs/ubermenu-3/faqs/menu-item-limit" target="_blank">Increasing max input vars limit.</a>', 'cyr2lat' );
+
+			$this->admin_notices->add_notice(
+				$message,
+				'notice notice-error',
+				[ 'page' => Settings::SCREEN_ID ]
+			);
 		}
 	}
 }

@@ -1,3 +1,6 @@
+## 4.3.2 (29.12.2019)
+* Fixed problems with setting of max_input_vars on some hostings
+
 ## 4.3.1 (27.12.2019)
 * Added requirement to have max_input_vars >= 5000
 * Added automatic plugin deactivation if requirements are not met

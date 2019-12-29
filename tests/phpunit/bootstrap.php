@@ -74,7 +74,7 @@ define( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', '5.6' );
 /**
  * Minimum required max_input_vars value.
  */
-define( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS', 5000 );
+define( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS', 1000 );
 
 FunctionMocker::init(
 	[
