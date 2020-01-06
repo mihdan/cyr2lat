@@ -110,9 +110,64 @@ class Main {
 	 * Init class hooks.
 	 */
 	public function init_hooks() {
-		add_filter( 'sanitize_title', [ $this, 'ctl_sanitize_title' ], 9, 3 );
+//		add_filter( 'sanitize_title', [ $this, 'ctl_sanitize_title' ], 9, 3 );
+
+		add_filter( 'wp_unique_post_slug', [ $this, 'wp_unique_post_slug_filter' ], 10, 6 );
+		add_filter( 'wp_unique_term_slug', [ $this, 'wp_unique_term_slug_filter' ], 10, 3 );
+		add_filter( 'pre_term_slug', [ $this, 'pre_term_slug_filter' ], 10, 2 );
+//		add_filter( 'edit_term_slug', [ $this, 'edit_term_slug_filter' ], 10, 3 );
+
+
 		add_filter( 'sanitize_file_name', [ $this, 'ctl_sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'ctl_sanitize_post_name' ], 10, 2 );
+	}
+
+	/**
+	 * Filter post slug.
+	 *
+	 * @param string $slug          The post slug.
+	 * @param int    $post_ID       Post ID.
+	 * @param string $post_status   The post status.
+	 * @param string $post_type     Post type.
+	 * @param int    $post_parent   Post parent ID
+	 * @param string $original_slug The original post slug.
+	 *
+	 * @return string
+	 */
+	public function wp_unique_post_slug_filter( $slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug ) {
+		return urlencode( $this->transliterate( urldecode( $slug ) ) );
+	}
+
+	/**
+	 * @param string $slug          Unique term slug.
+	 * @param object $term          Term object.
+	 * @param string $original_slug Slug originally passed to the function for testing.
+	 *
+	 * @return string
+	 */
+	public function wp_unique_term_slug_filter( $slug, $term, $original_slug ) {
+		return urlencode( $this->transliterate( urldecode( $slug ) ) );
+	}
+
+	/**
+	 * @param mixed  $value    Value of the term field.
+	 * @param string $taxonomy Taxonomy slug.
+	 *
+	 * @return string
+	 */
+	public function pre_term_slug_filter( $value, $taxonomy ) {
+		return urlencode( $this->transliterate( urldecode( $value ) ) );
+	}
+
+	/**
+	 * @param mixed $value     Value of the term field.
+	 * @param int   $term_id   Term ID.
+	 * @param string $taxonomy Taxonomy slug.
+	 *
+	 * @return string
+	 */
+	public function edit_term_slug_filter( $value, $term_id, $taxonomy ) {
+		return urlencode( $this->transliterate( urldecode( $value ) ) );
 	}
 
 	/**
@@ -131,8 +186,7 @@ class Main {
 			return $title;
 		}
 
-		// Fixed bug with `_wp_old_slug` redirect.
-		if ( 'query' === $context ) {
+		if ( 'query' === $context || 'old-save' === $context ) {
 			return $title;
 		}
 
@@ -144,9 +198,8 @@ class Main {
 		}
 
 		$is_term = false;
-		// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
 		$backtrace = debug_backtrace( ~DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS );
-		// phpcs:enable
 		foreach ( $backtrace as $backtrace_entry ) {
 			if ( 'wp_insert_term' === $backtrace_entry['function'] ) {
 				$is_term = true;
@@ -154,9 +207,8 @@ class Main {
 			}
 		}
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$term = $is_term ? $wpdb->get_var( $wpdb->prepare( "SELECT slug FROM $wpdb->terms WHERE name = %s", $title ) ) : '';
-		// phpcs:enable
 
 		if ( ! empty( $term ) ) {
 			$title = $term;
