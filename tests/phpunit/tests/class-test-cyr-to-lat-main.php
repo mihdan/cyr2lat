@@ -117,7 +117,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_init_hooks() {
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'ctl_sanitize_title' ], 9, 3 );
+//		\WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'ctl_sanitize_title' ], 9, 3 );
 		\WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'ctl_sanitize_filename' ], 10, 2 );
 		\WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'ctl_sanitize_post_name' ], 10, 2 );
 
@@ -648,7 +648,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	protected function transpose_chinese_table( $table ) {
 		$transposed_table = [];
 		foreach ( $table as $key => $item ) {
-			$hieroglyphs = Mbstring::mb_str_split( $item );
+			$hieroglyphs = mb_str_split( $item );
 			foreach ( $hieroglyphs as $hieroglyph ) {
 				$transposed_table[ $hieroglyph ] = $key;
 			}
