@@ -235,7 +235,7 @@ class Main {
 		}
 
 		if ( seems_utf8( $filename ) ) {
-			$filename = Mbstring::mb_strtolower( $filename );
+			$filename = mb_strtolower( $filename );
 		}
 
 		return $this->transliterate( $filename );
@@ -271,11 +271,11 @@ class Main {
 	 * @return string
 	 */
 	protected function split_chinese_string( $string, $table ) {
-		if ( ! $this->settings->is_chinese_locale() || Mbstring::mb_strlen( $string ) < 4 ) {
+		if ( ! $this->settings->is_chinese_locale() || mb_strlen( $string ) < 4 ) {
 			return $string;
 		}
 
-		$chars  = Mbstring::mb_str_split( $string );
+		$chars  = mb_str_split( $string );
 		$string = '';
 
 		foreach ( $chars as $char ) {

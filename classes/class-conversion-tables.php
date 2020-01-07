@@ -373,13 +373,13 @@ class Conversion_Tables {
 					'ת' => 'th',
 				];
 				for ( $code = 0x0590; $code <= 0x05CF; $code ++ ) {
-					$table[ Mbstring::mb_chr( $code ) ] = '';
+					$table[ mb_chr( $code ) ] = '';
 				}
 				for ( $code = 0x05F0; $code <= 0x05F5; $code ++ ) {
-					$table[ Mbstring::mb_chr( $code ) ] = '';
+					$table[ mb_chr( $code ) ] = '';
 				}
 				for ( $code = 0xFB1D; $code <= 0xFB4F; $code ++ ) {
-					$table[ Mbstring::mb_chr( $code ) ] = '';
+					$table[ mb_chr( $code ) ] = '';
 				}
 				break;
 			// phpcs:disable PSR2.ControlStructures.SwitchDeclaration.TerminatingComment

@@ -41,6 +41,10 @@
     },
     {
       "type": "vcs",
+      "url": "https://github.com/kagg-design/polyfill-mbstring.git"
+    },
+    {
+      "type": "vcs",
       "url": "https://github.com/kagg-design/wp-background-processing.git"
     },
     {
@@ -60,7 +64,8 @@
     }
   },
   "require": {
-    "composer/installers": "^1.7"
+    "composer/installers": "^1.7",
+    "symfony/polyfill-mbstring": "dev-master"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
