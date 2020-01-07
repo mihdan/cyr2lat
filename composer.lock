@@ -134,12 +134,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kagg-design/polyfill-mbstring.git",
-                "reference": "22f5b7b7addef7448617b97e06ef8f9104b244d5"
+                "reference": "82e30543a212e75f73903d7326ace02fe2e36b2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kagg-design/polyfill-mbstring/zipball/22f5b7b7addef7448617b97e06ef8f9104b244d5",
-                "reference": "22f5b7b7addef7448617b97e06ef8f9104b244d5",
+                "url": "https://api.github.com/repos/kagg-design/polyfill-mbstring/zipball/82e30543a212e75f73903d7326ace02fe2e36b2c",
+                "reference": "82e30543a212e75f73903d7326ace02fe2e36b2c",
                 "shasum": ""
             },
             "require": {
@@ -187,7 +187,7 @@
             "support": {
                 "source": "https://github.com/kagg-design/polyfill-mbstring/tree/master"
             },
-            "time": "2020-01-07T20:01:27+00:00"
+            "time": "2020-01-07T20:24:58+00:00"
         }
     ],
     "packages-dev": [

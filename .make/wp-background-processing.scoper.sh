@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# This script runs the php-scoper, and overwrites the embedded wp-background-processing library inside of Cyr_To_Lat.
+# This script runs the php-scoper, and overwrites the embedded library inside of Cyr_To_Lat.
 
 PHP_VERSION=$(php -v | tac | tail -n 1 | cut -d " " -f 2 | cut -c 1-3)
 
