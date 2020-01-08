@@ -418,43 +418,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test that ctl_sanitize_post_name() does nothing if current screen is not post edit screen
-	 */
-	public function test_ctl_sanitize_post_name_not_post_edit_screen() {
-		$data = [ 'something' ];
-
-		\WP_Mock::userFunction(
-			'has_filter',
-			[
-				'args'   => [ 'replace_editor', 'gutenberg_init' ],
-				'return' => false,
-			]
-		);
-
-		$GLOBALS['wp_version'] = '5.0';
-
-		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		FunctionMocker::replace( 'function_exists', true );
-
-		\WP_Mock::userFunction(
-			'is_plugin_active',
-			[
-				'args'   => [ 'classic-editor/classic-editor.php' ],
-				'return' => false,
-			]
-		);
-
-		$current_screen       = Mockery::mock( WP_Screen::class );
-		$current_screen->base = 'not post';
-
-		$GLOBALS['current_screen'] = null;
-		$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
-
-		$GLOBALS['current_screen'] = $current_screen;
-		$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
-	}
-
-	/**
 	 * Test ctl_sanitize_post_name()
 	 *
 	 * @param array $data     Post data to sanitize.

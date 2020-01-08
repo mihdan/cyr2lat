@@ -97,6 +97,7 @@ Yes you can!
 * Updated Georgian table
 * Fixed slug duplication in taxonomies
 * Fixed warnings with WooCommerce when mbstring is not loaded
+* Fixed transliteration of draft post slug
 
 = 4.3.2 (29.12.2019) =
 * Fixed problems with setting of max_input_vars on some hostings
