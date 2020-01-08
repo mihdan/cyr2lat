@@ -16,19 +16,21 @@ const POLYFILL_MBSTRING_BASE_DIR = __DIR__ . '/../vendor/symfony/polyfill-mbstri
 
 return [
 	'finders'  => [
-		Finder::create()->files()->in( POLYFILL_MBSTRING_BASE_DIR ),
+		Finder::create()
+		      ->files()
+		      ->notName('/LICENSE|.*\\.md|composer\\.json|Mbstring\\.php/')
+		      ->exclude( [ 'unidata' ] )
+		      ->in( POLYFILL_MBSTRING_BASE_DIR ),
 	],
 	'patchers' => [
 		/**
 		 * Patcher to remove prefix from global classes.
 		 */
 		static function ( string $file_path, string $prefix, string $contents ): string {
-			// "Use" statements.
-			$contents = preg_replace(
-				'/use\s+' . $prefix . '\\\(.+)/m',
-				'use $1',
-				$contents
-			);
+			if ( false !== strpos( $file_path, 'unidata' ) ) {
+				// Do not touch files in unidata folder.
+				return $contents;
+			}
 
 			// No blank line before file comment.
 			$contents = str_replace(

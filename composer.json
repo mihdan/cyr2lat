@@ -84,6 +84,9 @@
     "classmap": [
       "classes",
       "lib"
+    ],
+    "files": [
+      "lib/polyfill-mbstring/bootstrap.php"
     ]
   },
   "autoload-dev": {

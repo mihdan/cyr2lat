@@ -35,8 +35,9 @@ composer config platform.php 7.2
 
 composer require symfony/polyfill-mbstring:dev-master humbug/php-scoper:dev-master
 
+cp -r vendor/symfony/polyfill-mbstring/* $CYR2LAT_BUILD_PATH
 vendor/humbug/php-scoper/bin/php-scoper add-prefix -vv --no-interaction --prefix=$CYR2LAT_SCOPER_PREFIX --config=.make/polyfill-mbstring.scoper.inc.php
-vendor/squizlabs/php_codesniffer/bin/phpcbf --standard=phpcs.xml build
+sed -i 's/^namespace Symfony\\Polyfill\\Mbstring\;$/namespace Cyr_To_Lat\\Symfony\\Polyfill\\Mbstring\;/g' ${CYR2LAT_BUILD_PATH}/Mbstring.php
 
 composer remove symfony/polyfill-mbstring humbug/php-scoper
 
