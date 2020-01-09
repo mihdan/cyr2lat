@@ -59,15 +59,14 @@ class Term_Conversion_Process extends Conversion_Process {
 		$slug       = urldecode( $term->slug );
 
 		add_filter( 'locale', [ $this, 'filter_term_locale' ] );
-		$sanitized_slug = sanitize_title( $slug );
+		$transliterated_slug = $this->main->transliterate( $slug );
 		remove_filter( 'locale', [ $this, 'filter_term_locale' ] );
 
-		if ( urldecode( $sanitized_slug ) !== $slug ) {
-			// phpcs:disable WordPress.DB.DirectDatabaseQuery
-			$wpdb->update( $wpdb->terms, [ 'slug' => $sanitized_slug ], [ 'term_id' => $term->term_id ] );
-			// phpcs:enable
+		if ( $transliterated_slug !== $slug ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->update( $wpdb->terms, [ 'slug' => urlencode( $transliterated_slug ) ], [ 'term_id' => $term->term_id ] );
 
-			$this->log( __( 'Term slug converted:', 'cyr2lat' ) . ' ' . $slug . ' => ' . urldecode( $sanitized_slug ) );
+			$this->log( __( 'Term slug converted:', 'cyr2lat' ) . ' ' . $slug . ' => ' . $transliterated_slug );
 		}
 
 		return false;

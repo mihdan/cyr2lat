@@ -9,6 +9,7 @@ namespace Cyr_To_Lat;
 
 use Mockery;
 use ReflectionException;
+use wpdb;
 
 /**
  * Class Test_Term_Conversion_Process
@@ -27,12 +28,12 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test task()
 	 *
-	 * @param string $term_slug      Term slug.
-	 * @param string $sanitized_slug Sanitized term slug.
+	 * @param string $term_slug           Term slug.
+	 * @param string $transliterated_slug Sanitized term slug.
 	 *
 	 * @dataProvider dp_test_task
 	 */
-	public function test_task( $term_slug, $sanitized_slug ) {
+	public function test_task( $term_slug, $transliterated_slug ) {
 		global $wpdb;
 
 		$term = (object) [
@@ -43,20 +44,13 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 		];
 
 		$main = Mockery::mock( Main::class );
+		$main->shouldReceive( 'transliterate' )->with( $term_slug )->andReturn( $transliterated_slug );
 
-		\WP_Mock::userFunction(
-			'sanitize_title',
-			[
-				'args'   => [ $term_slug ],
-				'return' => $sanitized_slug,
-			]
-		);
-
-		if ( $sanitized_slug !== $term->slug ) {
+		if ( $transliterated_slug !== $term->slug ) {
 			$wpdb        = Mockery::mock( wpdb::class );
 			$wpdb->terms = 'wp_terms';
 			$wpdb->shouldReceive( 'update' )->once()->
-			with( $wpdb->terms, [ 'slug' => $sanitized_slug ], [ 'term_id' => $term->term_id ] );
+			with( $wpdb->terms, [ 'slug' => $transliterated_slug ], [ 'term_id' => $term->term_id ] );
 		}
 
 		\WP_Mock::userFunction(
@@ -80,9 +74,9 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		if ( $sanitized_slug !== $term->slug ) {
+		if ( $transliterated_slug !== $term->slug ) {
 			$subject->shouldReceive( 'log' )->
-			with( 'Term slug converted: ' . $term->slug . ' => ' . $sanitized_slug )->once();
+			with( 'Term slug converted: ' . $term->slug . ' => ' . $transliterated_slug )->once();
 		}
 
 		$this->assertFalse( $subject->task( $term ) );
@@ -94,7 +88,7 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 	public function dp_test_task() {
 		return [
 			[ 'slug', 'slug' ],
-			[ 'slug', 'sanitized_slug' ],
+			[ 'slug', 'transliterated_slug' ],
 		];
 	}
 

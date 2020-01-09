@@ -305,7 +305,7 @@ class Main {
 	 *
 	 * @return string
 	 */
-	private function transliterate( $string ) {
+	public function transliterate( $string ) {
 		$table = $this->get_filtered_table();
 
 		$string = $this->fix_mac_string( $string );

@@ -59,16 +59,15 @@ class Post_Conversion_Process extends Conversion_Process {
 		$post_name  = urldecode( $post->post_name );
 
 		add_filter( 'locale', [ $this, 'filter_post_locale' ] );
-		$sanitized_name = sanitize_title( $post_name );
+		$transliterated_name = $this->main->transliterate( $post_name );
 		remove_filter( 'locale', [ $this, 'filter_post_locale' ] );
 
-		if ( urldecode( $sanitized_name ) !== $post_name ) {
+		if ( $transliterated_name !== $post_name ) {
 			update_post_meta( $post->ID, '_wp_old_slug', $post_name );
-			// phpcs:disable WordPress.DB.DirectDatabaseQuery
-			$wpdb->update( $wpdb->posts, [ 'post_name' => $sanitized_name ], [ 'ID' => $post->ID ] );
-			// phpcs:enable
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$wpdb->update( $wpdb->posts, [ 'post_name' => urlencode( $transliterated_name ) ], [ 'ID' => $post->ID ] );
 
-			$this->log( __( 'Post slug converted:', 'cyr2lat' ) . ' ' . $post_name . ' => ' . urldecode( $sanitized_name ) );
+			$this->log( __( 'Post slug converted:', 'cyr2lat' ) . ' ' . $post_name . ' => ' . $transliterated_name );
 		}
 
 		return false;

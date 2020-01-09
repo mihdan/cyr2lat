@@ -30,12 +30,12 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test task()
 	 *
-	 * @param string $post_name      Post name.
-	 * @param string $sanitized_name Sanitized post name.
+	 * @param string $post_name           Post name.
+	 * @param string $transliterated_name Sanitized post name.
 	 *
 	 * @dataProvider dp_test_task
 	 */
-	public function test_task( $post_name, $sanitized_name ) {
+	public function test_task( $post_name, $transliterated_name ) {
 		global $wpdb;
 
 		$post = (object) [
@@ -44,16 +44,9 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		];
 
 		$main = Mockery::mock( Main::class );
+		$main->shouldReceive( 'transliterate' )->with( $post_name )->andReturn( $transliterated_name );
 
-		\WP_Mock::userFunction(
-			'sanitize_title',
-			[
-				'args'   => [ $post_name ],
-				'return' => $sanitized_name,
-			]
-		);
-
-		if ( $sanitized_name !== $post->post_name ) {
+		if ( $transliterated_name !== $post->post_name ) {
 			\WP_Mock::userFunction(
 				'update_post_meta',
 				[
@@ -64,7 +57,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 			$wpdb        = Mockery::mock( wpdb::class );
 			$wpdb->posts = 'wp_posts';
 			$wpdb->shouldReceive( 'update' )->once()->
-			with( $wpdb->posts, [ 'post_name' => $sanitized_name ], [ 'ID' => $post->ID ] );
+			with( $wpdb->posts, [ 'post_name' => $transliterated_name ], [ 'ID' => $post->ID ] );
 		}
 
 		\WP_Mock::userFunction(
@@ -88,10 +81,10 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		if ( $sanitized_name !== $post->post_name ) {
+		if ( $transliterated_name !== $post->post_name ) {
 			$subject
 				->shouldReceive( 'log' )
-				->with( 'Post slug converted: ' . $post->post_name . ' => ' . $sanitized_name )
+				->with( 'Post slug converted: ' . $post->post_name . ' => ' . $transliterated_name )
 				->once();
 		}
 
@@ -104,7 +97,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 	public function dp_test_task() {
 		return [
 			[ 'post_name', 'post_name' ],
-			[ 'post_name', 'sanitized_name' ],
+			[ 'post_name', 'transliterated_name' ],
 		];
 	}
 
