@@ -110,13 +110,9 @@ class Main {
 	 * Init class hooks.
 	 */
 	public function init_hooks() {
-//		add_filter( 'sanitize_title', [ $this, 'ctl_sanitize_title' ], 9, 3 );
-
 		add_filter( 'wp_unique_post_slug', [ $this, 'wp_unique_post_slug_filter' ], 10, 6 );
 		add_filter( 'wp_unique_term_slug', [ $this, 'wp_unique_term_slug_filter' ], 10, 3 );
 		add_filter( 'pre_term_slug', [ $this, 'pre_term_slug_filter' ], 10, 2 );
-//		add_filter( 'edit_term_slug', [ $this, 'edit_term_slug_filter' ], 10, 3 );
-
 
 		add_filter( 'sanitize_file_name', [ $this, 'ctl_sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'ctl_sanitize_post_name' ], 10, 2 );
@@ -157,66 +153,6 @@ class Main {
 	 */
 	public function pre_term_slug_filter( $value, $taxonomy ) {
 		return urlencode( $this->transliterate( urldecode( $value ) ) );
-	}
-
-	/**
-	 * @param mixed $value     Value of the term field.
-	 * @param int   $term_id   Term ID.
-	 * @param string $taxonomy Taxonomy slug.
-	 *
-	 * @return string
-	 */
-	public function edit_term_slug_filter( $value, $term_id, $taxonomy ) {
-		return urlencode( $this->transliterate( urldecode( $value ) ) );
-	}
-
-	/**
-	 * Sanitize title.
-	 *
-	 * @param string $title     Sanitized title.
-	 * @param string $raw_title The title prior to sanitization.
-	 * @param string $context   The context for which the title is being sanitized.
-	 *
-	 * @return string
-	 */
-	public function ctl_sanitize_title( $title, $raw_title = '', $context = '' ) {
-		global $wpdb;
-
-		if ( ! $title ) {
-			return $title;
-		}
-
-		if ( 'query' === $context || 'old-save' === $context ) {
-			return $title;
-		}
-
-		$title = urldecode( $title );
-		$pre   = apply_filters( 'ctl_pre_sanitize_title', false, $title );
-
-		if ( false !== $pre ) {
-			return $pre;
-		}
-
-		$is_term = false;
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
-		$backtrace = debug_backtrace( ~DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS );
-		foreach ( $backtrace as $backtrace_entry ) {
-			if ( 'wp_insert_term' === $backtrace_entry['function'] ) {
-				$is_term = true;
-				break;
-			}
-		}
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		$term = $is_term ? $wpdb->get_var( $wpdb->prepare( "SELECT slug FROM $wpdb->terms WHERE name = %s", $title ) ) : '';
-
-		if ( ! empty( $term ) ) {
-			$title = $term;
-		} else {
-			$title = $this->transliterate( $title );
-		}
-
-		return $title;
 	}
 
 	/**

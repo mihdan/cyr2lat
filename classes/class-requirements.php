@@ -43,8 +43,6 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 *
 		 * @param Admin_Notices        $admin_notices Admin notices.
 		 * @param WP_Filesystem_Direct $wp_filesystem File system.
-		 *
-		 * @throws RuntimeException RuntimeException.
 		 */
 		public function __construct( $admin_notices = null, $wp_filesystem = null ) {
 			$this->admin_notices = $admin_notices;
