@@ -73,4 +73,53 @@ class Test_Admin_Notices extends Cyr_To_Lat_TestCase {
 
 		$this->assertSame( $expected, $result );
 	}
+
+	/**
+	 * Test add_notice() and show_notices() when page is not allowed
+	 */
+	public function test_show_notices_when_page_is_not_allowed() {
+		$page_slug      = 'some_page';
+
+		\WP_Mock::userFunction( 'get_current_screen' )->andReturn( null );
+
+		$subject = new Admin_Notices();
+
+		$subject->add_notice( 'Message', 'notice', [ 'page' => $page_slug ] );
+
+		ob_start();
+		$subject->show_notices();
+		$result = ob_get_clean();
+
+		$this->assertEmpty( $result );
+	}
+
+	/**
+	 * Test add_notice() and show_notices() when page is allowed
+	 */
+	public function test_show_notices_when_page_is_allowed() {
+		$expected = '			<div class="notice">
+				<p>
+					<strong>
+						Message					</strong>
+				</p>
+			</div>
+			';
+
+		$page_slug      = 'some_page';
+		$current_screen = (object) [ 'id' => $page_slug ];
+
+		\WP_Mock::userFunction( 'get_current_screen' )->andReturn( $current_screen );
+
+		$subject = new Admin_Notices();
+
+		\WP_Mock::passthruFunction( 'wp_kses_post' );
+
+		$subject->add_notice( 'Message', 'notice', [ 'page' => $page_slug ] );
+
+		ob_start();
+		$subject->show_notices();
+		$result = ob_get_clean();
+
+		$this->assertSame( $expected, $result );
+	}
 }

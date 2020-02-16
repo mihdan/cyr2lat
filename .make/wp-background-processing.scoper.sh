@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# This script runs the php-scoper, and overwrites the embedded wp-background-processing library inside of Cyr_To_Lat.
+# This script runs the php-scoper, and overwrites the embedded library inside of Cyr_To_Lat.
 
 PHP_VERSION=$(php -v | tac | tail -n 1 | cut -d " " -f 2 | cut -c 1-3)
 
 if [[ $PHP_VERSION != "7.3" && $PHP_VERSION != "7.4" ]]; then
-	echo "This script must be used inder php 7.3 or 7.4 only"
+	echo "This script must be used with php 7.3 or 7.4 only"
 	exit
 fi
 

@@ -110,61 +110,53 @@ class Main {
 	 * Init class hooks.
 	 */
 	public function init_hooks() {
-		add_filter( 'sanitize_title', [ $this, 'ctl_sanitize_title' ], 9, 3 );
+		add_filter( 'wp_unique_post_slug', [ $this, 'wp_unique_post_slug_filter' ], 10, 6 );
+		add_filter( 'wp_unique_term_slug', [ $this, 'wp_unique_term_slug_filter' ], 10, 3 );
+		add_filter( 'pre_term_slug', [ $this, 'pre_term_slug_filter' ], 10, 2 );
+
 		add_filter( 'sanitize_file_name', [ $this, 'ctl_sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'ctl_sanitize_post_name' ], 10, 2 );
 	}
 
 	/**
-	 * Sanitize title.
+	 * Filter post slug.
 	 *
-	 * @param string $title     Sanitized title.
-	 * @param string $raw_title The title prior to sanitization.
-	 * @param string $context   The context for which the title is being sanitized.
+	 * @param string $slug          The post slug.
+	 * @param int    $post_ID       Post ID.
+	 * @param string $post_status   The post status.
+	 * @param string $post_type     Post type.
+	 * @param int    $post_parent   Post parent ID.
+	 * @param string $original_slug The original post slug.
 	 *
 	 * @return string
 	 */
-	public function ctl_sanitize_title( $title, $raw_title = '', $context = '' ) {
-		global $wpdb;
+	public function wp_unique_post_slug_filter( $slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug ) {
+		return $this->transliterate_encoded( $slug );
+	}
 
-		if ( ! $title ) {
-			return $title;
-		}
+	/**
+	 * Filter wp_unique_term_slug.
+	 *
+	 * @param string $slug          Unique term slug.
+	 * @param object $term          Term object.
+	 * @param string $original_slug Slug originally passed to the function for testing.
+	 *
+	 * @return string
+	 */
+	public function wp_unique_term_slug_filter( $slug, $term, $original_slug ) {
+		return $this->transliterate_encoded( $slug );
+	}
 
-		// Fixed bug with `_wp_old_slug` redirect.
-		if ( 'query' === $context ) {
-			return $title;
-		}
-
-		$title = urldecode( $title );
-		$pre   = apply_filters( 'ctl_pre_sanitize_title', false, $title );
-
-		if ( false !== $pre ) {
-			return $pre;
-		}
-
-		$is_term = false;
-		// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace
-		$backtrace = debug_backtrace( ~DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS );
-		// phpcs:enable
-		foreach ( $backtrace as $backtrace_entry ) {
-			if ( 'wp_insert_term' === $backtrace_entry['function'] ) {
-				$is_term = true;
-				break;
-			}
-		}
-
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery
-		$term = $is_term ? $wpdb->get_var( $wpdb->prepare( "SELECT slug FROM $wpdb->terms WHERE name = %s", $title ) ) : '';
-		// phpcs:enable
-
-		if ( ! empty( $term ) ) {
-			$title = $term;
-		} else {
-			$title = $this->transliterate( $title );
-		}
-
-		return $title;
+	/**
+	 * Filter pre_term_slug.
+	 *
+	 * @param mixed  $value    Value of the term field.
+	 * @param string $taxonomy Taxonomy slug.
+	 *
+	 * @return string
+	 */
+	public function pre_term_slug_filter( $value, $taxonomy ) {
+		return $this->transliterate_encoded( $value );
 	}
 
 	/**
@@ -183,7 +175,7 @@ class Main {
 		}
 
 		if ( seems_utf8( $filename ) ) {
-			$filename = Mbstring::mb_strtolower( $filename );
+			$filename = mb_strtolower( $filename );
 		}
 
 		return $this->transliterate( $filename );
@@ -219,7 +211,7 @@ class Main {
 	 * @return string
 	 */
 	protected function split_chinese_string( $string, $table ) {
-		if ( ! $this->settings->is_chinese_locale() || Mbstring::mb_strlen( $string ) < 4 ) {
+		if ( ! $this->settings->is_chinese_locale() || mb_strlen( $string ) < 4 ) {
 			return $string;
 		}
 
@@ -238,6 +230,17 @@ class Main {
 	}
 
 	/**
+	 * Transliterate encoded url.
+	 *
+	 * @param string $url Url.
+	 *
+	 * @return string
+	 */
+	private function transliterate_encoded( $url ) {
+		return rawurlencode( $this->transliterate( urldecode( $url ) ) );
+	}
+
+	/**
 	 * Get transliteration table.
 	 *
 	 * @return array
@@ -253,7 +256,7 @@ class Main {
 	 *
 	 * @return string
 	 */
-	private function transliterate( $string ) {
+	public function transliterate( $string ) {
 		$table = $this->get_filtered_table();
 
 		$string = $this->fix_mac_string( $string );
@@ -329,14 +332,7 @@ class Main {
 	 * @return mixed
 	 */
 	public function ctl_sanitize_post_name( $data, $postarr = [] ) {
-		global $current_screen;
-
 		if ( ! $this->ctl_is_gutenberg_editor_active() ) {
-			return $data;
-		}
-
-		// Run code only on post edit screen.
-		if ( ! ( $current_screen && 'post' === $current_screen->base ) ) {
 			return $data;
 		}
 

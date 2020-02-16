@@ -59,7 +59,7 @@ before_script:
   - if [[ "$JEST" == "1" || "$COVERAGE" == "1" ]]; then cd src; yarn install --ignore-engines; cd ..; fi
 
 script:
-  - if [[ "$SNIFF" == "1" ]]; then vendor/bin/phpcs -p -s --colors --standard=phpcs.xml .; fi
+  - if [[ "$SNIFF" == "1" ]]; then vendor/bin/phpcs --colors; fi
   - if [[ "$TESTS" == "1" ]]; then make update-phpunit; fi
   - if [[ "$TESTS" == "1" && "$COVERAGE" != "1" ]]; then vendor/phpunit/phpunit/phpunit --configuration tests/phpunit/phpunit.xml; fi
   - if [[ "$JEST" == "1" ]]; then cd src; yarn run test; cd ..; fi

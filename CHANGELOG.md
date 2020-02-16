@@ -1,3 +1,12 @@
+## 4.3.3 (14.01.2020)
+* Reworked main plugin filter
+* Improved performance by minimizing number of calls
+* Updated Georgian table
+* Fixed slug duplication in taxonomies
+* Fixed warnings with WooCommerce when mbstring is not loaded
+* Fixed transliteration of draft post slug
+* Tables sorted by local alphabets
+
 ## 4.3.2 (29.12.2019)
 * Fixed problems with setting of max_input_vars on some hostings
 

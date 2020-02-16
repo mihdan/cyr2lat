@@ -8,16 +8,21 @@
 .gitignore
 .travis.yml
 CHANGELOG.md
+README.md
 composer.json
 composer.lock
 Makefile
 phpcs.xml
+phpunit.xml
 Thumbs.db
-README.md
+*.sql
+*.tar.gz
+*.zip
 
 # Directories
 .git
 .idea
 .make
+assets
 src
 tests

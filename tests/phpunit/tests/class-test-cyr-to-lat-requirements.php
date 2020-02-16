@@ -57,7 +57,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test constructor
+	 * Test constructor when no WP_Filesystem is available
 	 *
 	 * @throws ReflectionException Reflection Exception.
 	 */
@@ -65,7 +65,6 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 		$classname = __NAMESPACE__ . '\Requirements';
 
 		Mockery::mock( Admin_Notices::class );
-		Mockery::mock( WP_Filesystem_Direct::class );
 
 		FunctionMocker::replace(
 			'function_exists',
@@ -181,7 +180,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test if are_requirements_met() returns false when php requirements not met.
+	 * Test are_requirements_met() when max_input_vars requirements not met.
 	 *
 	 * @param $within_timeout
 	 * @param $content
@@ -190,8 +189,6 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_vars_requirements_not_met
 	 */
 	public function test_vars_requirements_not_met( $within_timeout, $content, $expected ) {
-		$this->markTestSkipped( 'Temporary skipped for 4.3.2' );
-
 		$max_input_vars              = CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS - 1;
 		$user_ini_filename           = '.user.ini';
 		$user_ini_filename_with_path = ABSPATH . 'wp-admin/' . $user_ini_filename;
@@ -204,19 +201,25 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 		}
 		$time_left = ( $mtime + $ini_ttl ) - $time;
 
-		$message = 'Your server is running PHP with max_input_vars=' . $max_input_vars . ' but Cyr To Lat ' . CYR_TO_LAT_VERSION . ' requires at least ' . CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS . '.';
+		$admin_notices = Mockery::mock( 'Admin_Notices' );
 
-		$message .= '<br>';
-		$message .= 'We have updated settings in ' . $user_ini_filename_with_path . '.';
-		$message .= '<br>';
+		$cyr2lat_page = [ 'page' => Settings::SCREEN_ID ];
+
 		if ( 0 < $time_left ) {
+			$message = 'Your server is running PHP with max_input_vars=' . $max_input_vars . ' but Cyr To Lat ' . CYR_TO_LAT_VERSION . ' requires at least ' . CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS . '.';
+
+			$message .= '<br>';
+			$message .= 'We have updated settings in ' . $user_ini_filename_with_path . '.';
+			$message .= '<br>';
 			$message .= 'Please try again in ' . $time_left . ' s.';
 		} else {
-			$message .= 'Please try again.';
+			$message = 'Please increase max input vars limit up to 1500.';
+
+			$message .= '<br>';
+			$message .= 'See: <a href="http://sevenspark.com/docs/ubermenu-3/faqs/menu-item-limit" target="_blank">Increasing max input vars limit.</a>';
 		}
 
-		$admin_notices = Mockery::mock( 'Admin_Notices' );
-		$admin_notices->shouldReceive( 'add_notice' )->with( $message, 'notice notice-error' );
+		$admin_notices->shouldReceive( 'add_notice' )->with( $message, 'notice notice-error', $cyr2lat_page );
 
 		$wp_filesystem = Mockery::mock( 'WP_Filesystem_Direct' );
 		$wp_filesystem->shouldReceive( 'mtime' )->with( $user_ini_filename_with_path )->andReturn( $mtime );
@@ -265,14 +268,13 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 						return null;
 				}
 			}
-
 		);
 
 		$subject = new Requirements( $admin_notices, $wp_filesystem );
 
 		WP_Mock::expectActionNotAdded( 'admin_init', [ $subject, 'deactivate_plugin' ] );
 
-		$this->assertFalse( $subject->are_requirements_met() );
+		$this->assertTrue( $subject->are_requirements_met() );
 	}
 
 	/**
@@ -309,6 +311,69 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 		];
 	}
 
+	/**
+	 * Test are_requirements_met() when max_input_vars requirements not met and filesystem not available.
+	 */
+	public function test_vars_requirements_not_met_and_filesystem_not_available() {
+		$max_input_vars              = CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS - 1;
+		$user_ini_filename           = '.user.ini';
+		$user_ini_filename_with_path = ABSPATH . 'wp-admin/' . $user_ini_filename;
+		$ini_ttl                     = 300;
+
+		$admin_notices = Mockery::mock( 'Admin_Notices' );
+
+		FunctionMocker::replace(
+			'function_exists',
+			function ( $arg ) {
+				return 'WP_Filesystem' === $arg;
+			}
+		);
+
+		WP_Mock::userFunction( 'WP_Filesystem' )->andReturn( false );
+
+		FunctionMocker::replace(
+			'phpversion',
+			CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION
+		);
+
+		FunctionMocker::replace(
+			'ini_get',
+			function ( $arg ) use ( $max_input_vars, $user_ini_filename, $ini_ttl ) {
+				switch ( $arg ) {
+					case 'max_input_vars':
+						return $max_input_vars;
+					case 'user_ini.cache_ttl':
+						return $ini_ttl;
+					case 'user_ini.filename':
+						return $user_ini_filename;
+					default:
+						return null;
+				}
+			}
+		);
+
+		$message      = 'Unable to get filesystem access.';
+		$cyr2lat_page = [ 'page' => Settings::SCREEN_ID ];
+
+		$admin_notices->shouldReceive( 'add_notice' )->with( $message, 'notice notice-error', $cyr2lat_page );
+
+		$message = 'Please increase max input vars limit up to 1500.';
+
+		$message .= '<br>';
+		$message .= 'See: <a href="http://sevenspark.com/docs/ubermenu-3/faqs/menu-item-limit" target="_blank">Increasing max input vars limit.</a>';
+
+		$admin_notices->shouldReceive( 'add_notice' )->with( $message, 'notice notice-error', $cyr2lat_page );
+
+		$subject = new Requirements( $admin_notices, null );
+
+		WP_Mock::expectActionNotAdded( 'admin_init', [ $subject, 'deactivate_plugin' ] );
+
+		$this->assertTrue( $subject->are_requirements_met() );
+	}
+
+	/**
+	 * Test deactivate_plugin()
+	 */
 	public function test_deactivate_plugin() {
 		$admin_notices = Mockery::mock( 'Admin_Notices' );
 		$admin_notices->shouldReceive( 'add_notice' )
