@@ -64,7 +64,7 @@ class Term_Conversion_Process extends Conversion_Process {
 
 		if ( $transliterated_slug !== $slug ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$wpdb->update( $wpdb->terms, [ 'slug' => urlencode( $transliterated_slug ) ], [ 'term_id' => $term->term_id ] );
+			$wpdb->update( $wpdb->terms, [ 'slug' => rawurlencode( $transliterated_slug ) ], [ 'term_id' => $term->term_id ] );
 
 			$this->log( __( 'Term slug converted:', 'cyr2lat' ) . ' ' . $slug . ' => ' . $transliterated_slug );
 		}

@@ -790,7 +790,7 @@ class Settings {
 
 		$transposed_table = [];
 		foreach ( $table as $key => $item ) {
-			$hieroglyphs = mb_str_split( $item );
+			$hieroglyphs = Mbstring::mb_str_split( $item );
 			foreach ( $hieroglyphs as $hieroglyph ) {
 				$transposed_table[ $hieroglyph ] = $key;
 			}

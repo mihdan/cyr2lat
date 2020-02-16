@@ -125,16 +125,18 @@ class Main {
 	 * @param int    $post_ID       Post ID.
 	 * @param string $post_status   The post status.
 	 * @param string $post_type     Post type.
-	 * @param int    $post_parent   Post parent ID
+	 * @param int    $post_parent   Post parent ID.
 	 * @param string $original_slug The original post slug.
 	 *
 	 * @return string
 	 */
 	public function wp_unique_post_slug_filter( $slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug ) {
-		return urlencode( $this->transliterate( urldecode( $slug ) ) );
+		return $this->transliterate_encoded( $slug );
 	}
 
 	/**
+	 * Filter wp_unique_term_slug.
+	 *
 	 * @param string $slug          Unique term slug.
 	 * @param object $term          Term object.
 	 * @param string $original_slug Slug originally passed to the function for testing.
@@ -142,17 +144,19 @@ class Main {
 	 * @return string
 	 */
 	public function wp_unique_term_slug_filter( $slug, $term, $original_slug ) {
-		return urlencode( $this->transliterate( urldecode( $slug ) ) );
+		return $this->transliterate_encoded( $slug );
 	}
 
 	/**
+	 * Filter pre_term_slug.
+	 *
 	 * @param mixed  $value    Value of the term field.
 	 * @param string $taxonomy Taxonomy slug.
 	 *
 	 * @return string
 	 */
 	public function pre_term_slug_filter( $value, $taxonomy ) {
-		return urlencode( $this->transliterate( urldecode( $value ) ) );
+		return $this->transliterate_encoded( $value );
 	}
 
 	/**
@@ -211,7 +215,7 @@ class Main {
 			return $string;
 		}
 
-		$chars  = mb_str_split( $string );
+		$chars  = Mbstring::mb_str_split( $string );
 		$string = '';
 
 		foreach ( $chars as $char ) {
@@ -223,6 +227,17 @@ class Main {
 		}
 
 		return $string;
+	}
+
+	/**
+	 * Transliterate encoded url.
+	 *
+	 * @param string $url Url.
+	 *
+	 * @return string
+	 */
+	private function transliterate_encoded( $url ) {
+		return rawurlencode( $this->transliterate( urldecode( $url ) ) );
 	}
 
 	/**

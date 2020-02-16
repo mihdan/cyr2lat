@@ -65,7 +65,7 @@ class Post_Conversion_Process extends Conversion_Process {
 		if ( $transliterated_name !== $post_name ) {
 			update_post_meta( $post->ID, '_wp_old_slug', $post_name );
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$wpdb->update( $wpdb->posts, [ 'post_name' => urlencode( $transliterated_name ) ], [ 'ID' => $post->ID ] );
+			$wpdb->update( $wpdb->posts, [ 'post_name' => rawurlencode( $transliterated_name ) ], [ 'ID' => $post->ID ] );
 
 			$this->log( __( 'Post slug converted:', 'cyr2lat' ) . ' ' . $post_name . ' => ' . $transliterated_name );
 		}
