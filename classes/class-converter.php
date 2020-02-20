@@ -180,7 +180,7 @@ class Converter {
 		$regexp = Main::PROHIBITED_CHARS_REGEX . '+';
 
 		$defaults = [
-			'post_type'   => get_post_types(),
+			'post_type'   => apply_filters( 'ctl_post_types', get_post_types( [ 'public' => true ] ) ),
 			'post_status' => [ 'publish', 'future', 'private' ],
 		];
 
