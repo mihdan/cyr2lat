@@ -111,7 +111,6 @@ class Main {
 	 */
 	public function init_hooks() {
 		add_filter( 'sanitize_title', [ $this, 'ctl_sanitize_title' ], 9, 3 );
-
 		add_filter( 'sanitize_file_name', [ $this, 'ctl_sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'ctl_sanitize_post_name' ], 10, 2 );
 	}
