@@ -110,13 +110,7 @@ class Main {
 	 * Init class hooks.
 	 */
 	public function init_hooks() {
-		if ( did_action( 'wpml_after_startup' ) ) {
-			add_filter( 'sanitize_title', [ $this, 'ctl_sanitize_title' ], 9, 3 );
-		}
-
-		add_filter( 'wp_unique_post_slug', [ $this, 'wp_unique_post_slug_filter' ], 10, 6 );
-		add_filter( 'wp_unique_term_slug', [ $this, 'wp_unique_term_slug_filter' ], 10, 3 );
-		add_filter( 'pre_term_slug', [ $this, 'pre_term_slug_filter' ], 10, 2 );
+		add_filter( 'sanitize_title', [ $this, 'ctl_sanitize_title' ], 9, 3 );
 
 		add_filter( 'sanitize_file_name', [ $this, 'ctl_sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'ctl_sanitize_post_name' ], 10, 2 );
@@ -172,47 +166,6 @@ class Main {
 		}
 
 		return $title;
-	}
-
-	/**
-	 * Filter post slug.
-	 *
-	 * @param string $slug          The post slug.
-	 * @param int    $post_ID       Post ID.
-	 * @param string $post_status   The post status.
-	 * @param string $post_type     Post type.
-	 * @param int    $post_parent   Post parent ID.
-	 * @param string $original_slug The original post slug.
-	 *
-	 * @return string
-	 */
-	public function wp_unique_post_slug_filter( $slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug ) {
-		return $this->transliterate_encoded( $slug );
-	}
-
-	/**
-	 * Filter wp_unique_term_slug.
-	 *
-	 * @param string $slug          Unique term slug.
-	 * @param object $term          Term object.
-	 * @param string $original_slug Slug originally passed to the function for testing.
-	 *
-	 * @return string
-	 */
-	public function wp_unique_term_slug_filter( $slug, $term, $original_slug ) {
-		return $this->transliterate_encoded( $slug );
-	}
-
-	/**
-	 * Filter pre_term_slug.
-	 *
-	 * @param mixed  $value    Value of the term field.
-	 * @param string $taxonomy Taxonomy slug.
-	 *
-	 * @return string
-	 */
-	public function pre_term_slug_filter( $value, $taxonomy ) {
-		return $this->transliterate_encoded( $value );
 	}
 
 	/**
@@ -286,17 +239,6 @@ class Main {
 	}
 
 	/**
-	 * Transliterate encoded url.
-	 *
-	 * @param string $url Url.
-	 *
-	 * @return string
-	 */
-	private function transliterate_encoded( $url ) {
-		return rawurlencode( $this->transliterate( urldecode( $url ) ) );
-	}
-
-	/**
 	 * Get transliteration table.
 	 *
 	 * @return array
@@ -339,8 +281,6 @@ class Main {
 			// @codeCoverageIgnoreStart
 			/**
 			 * Do not inspect include path.
-			 *
-			 * @noinspection PhpIncludeInspection
 			 */
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 			// @codeCoverageIgnoreEnd

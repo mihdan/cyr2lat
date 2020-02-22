@@ -115,33 +115,9 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Test init_hooks()
 	 */
 	public function test_init_hooks() {
-		\WP_Mock::userFunction( 'did_action' )->with( 'wpml_after_startup' )->andReturn( false );
-
-		$subject = $this->get_subject();
-
-		\WP_Mock::expectFilterAdded( 'wp_unique_post_slug', [ $subject, 'wp_unique_post_slug_filter' ], 10, 6 );
-		\WP_Mock::expectFilterAdded( 'wp_unique_term_slug', [ $subject, 'wp_unique_term_slug_filter' ], 10, 3 );
-		\WP_Mock::expectFilterAdded( 'pre_term_slug', [ $subject, 'pre_term_slug_filter' ], 10, 2 );
-
-		\WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'ctl_sanitize_filename' ], 10, 2 );
-		\WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'ctl_sanitize_post_name' ], 10, 2 );
-
-		$subject->init_hooks();
-	}
-
-	/**
-	 * Test init_hooks with WPML()
-	 */
-	public function test_init_hooks_with_wpml() {
-		\WP_Mock::userFunction( 'did_action' )->with( 'wpml_after_startup' )->andReturn( true );
-
 		$subject = $this->get_subject();
 
 		\WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'ctl_sanitize_title' ], 9, 3 );
-
-		\WP_Mock::expectFilterAdded( 'wp_unique_post_slug', [ $subject, 'wp_unique_post_slug_filter' ], 10, 6 );
-		\WP_Mock::expectFilterAdded( 'wp_unique_term_slug', [ $subject, 'wp_unique_term_slug_filter' ], 10, 3 );
-		\WP_Mock::expectFilterAdded( 'pre_term_slug', [ $subject, 'pre_term_slug_filter' ], 10, 2 );
 
 		\WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'ctl_sanitize_filename' ], 10, 2 );
 		\WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'ctl_sanitize_post_name' ], 10, 2 );
@@ -290,50 +266,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			[ 'title', 'term', 'term' ],
 			[ 'title', '', 'title' ],
 		];
-	}
-
-	/**
-	 * Test wp_unique_post_slug_filter()
-	 */
-	public function test_wp_unique_post_slug_filter() {
-		$slug = 'post_slug';
-		$post_ID = 5;
-		$post_status = 'some_status';
-		$post_type = 'some_type';
-		$post_parent = 2;
-		$original_slug = 'some_slug';
-
-		$mock = \Mockery::mock( Main::class )->makePartial();
-		$mock->shouldReceive( 'transliterate' )->with( $slug )->once();
-
-		$mock->wp_unique_post_slug_filter( $slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug );
-	}
-
-	/**
-	 * Test wp_unique_term_slug_filter()
-	 */
-	public function test_wp_unique_term_slug_filter() {
-		$slug = 'term_slug';
-		$term = (object) [ 'term_id' => 5 ];
-		$original_slug = 'some_slug';
-
-		$mock = \Mockery::mock( Main::class )->makePartial();
-		$mock->shouldReceive( 'transliterate' )->with( $slug )->once();
-
-		$mock->wp_unique_term_slug_filter( $slug, $term, $original_slug );
-	}
-
-	/**
-	 * Test pre_term_slug_filter()
-	 */
-	public function test_pre_term_slug_filter() {
-		$value = 'term_slug';
-		$taxonomy = 'tax_slug';
-
-		$mock = \Mockery::mock( Main::class )->makePartial();
-		$mock->shouldReceive( 'transliterate' )->with( $value )->once();
-
-		$mock->pre_term_slug_filter( $value, $taxonomy );
 	}
 
 	/**
