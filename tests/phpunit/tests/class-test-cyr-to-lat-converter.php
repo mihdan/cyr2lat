@@ -283,20 +283,15 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$post_statuses_in = "'publish', 'future', 'private'";
 
 		$defaults = [
-			'post_type'   => $post_types,
+			'post_type'   => array_merge( $post_types, [ 'nav_menu_item' => 'nav_menu_item' ] ),
 			'post_status' => $post_statuses,
 		];
-		$args     = $defaults;
 
-		\WP_Mock::userFunction(
-			'get_post_types',
-			[ 'return' => $post_types ]
-		);
+		$args = $defaults;
 
-		\WP_Mock::userFunction(
-			'wp_parse_args',
-			[ 'return' => $args ]
-		);
+		\WP_Mock::userFunction( 'get_post_types' )->with( [ 'public' => true ] )->andReturn( $post_types );
+
+		\WP_Mock::userFunction( 'wp_parse_args' )->with( [], $defaults )->andReturn( $args );
 
 		$main->shouldReceive( 'ctl_prepare_in' )->with( $args['post_status'] )->once()->andReturn( $post_statuses_in );
 		$main->shouldReceive( 'ctl_prepare_in' )->with( $args['post_type'] )->once()->andReturn( $post_types_in );

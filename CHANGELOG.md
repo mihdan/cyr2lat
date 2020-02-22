@@ -1,4 +1,9 @@
-## 4.3.3 (14.01.2020)
+## 4.3.4 (22.02.2020)
+* Fixed non-conversion of slugs with WPML
+* Restricted conversion of post to public and nav_menu_item
+* Introduced ctl_post_types filter
+
+## 4.3.3 (20.02.2020)
 * Reworked main plugin filter
 * Improved performance by minimizing number of calls
 * Updated Georgian table

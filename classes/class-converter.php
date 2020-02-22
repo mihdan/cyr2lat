@@ -179,13 +179,13 @@ class Converter {
 
 		$regexp = Main::PROHIBITED_CHARS_REGEX . '+';
 
-		$public_post_types  = get_post_types( [ 'public' => true ] );
-		$public_post_types += [
+		$post_types  = get_post_types( [ 'public' => true ] );
+		$post_types += [
 			'nav_menu_item' => 'nav_menu_item',
 		];
 
 		$defaults = [
-			'post_type'   => apply_filters( 'ctl_post_types', $public_post_types ),
+			'post_type'   => apply_filters( 'ctl_post_types', $post_types ),
 			'post_status' => [ 'publish', 'future', 'private' ],
 		];
 

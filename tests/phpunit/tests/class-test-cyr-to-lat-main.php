@@ -117,6 +117,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_init_hooks() {
 		$subject = $this->get_subject();
 
+		\WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'ctl_sanitize_title' ], 9, 3 );
 		\WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'ctl_sanitize_filename' ], 10, 2 );
 		\WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'ctl_sanitize_post_name' ], 10, 2 );
 
@@ -124,47 +125,146 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test wp_unique_post_slug_filter()
+	 * Test that ctl_sanitize_title() does nothing when context is 'query'
 	 */
-	public function test_wp_unique_post_slug_filter() {
-		$slug = 'post_slug';
-		$post_ID = 5;
-		$post_status = 'some_status';
-		$post_type = 'some_type';
-		$post_parent = 2;
-		$original_slug = 'some_slug';
+	public function test_ctl_sanitize_title_query_context() {
+		$subject = $this->get_subject();
 
-		$mock = \Mockery::mock( Main::class )->makePartial();
-		$mock->shouldReceive( 'transliterate' )->with( $slug )->once();
+		$title     = 'some title';
+		$raw_title = '';
+		$context   = 'query';
 
-		$mock->wp_unique_post_slug_filter( $slug, $post_ID, $post_status, $post_type, $post_parent, $original_slug );
+		$this->assertSame( $title, $subject->ctl_sanitize_title( $title, $raw_title, $context ) );
 	}
 
 	/**
-	 * Test wp_unique_term_slug_filter()
+	 * Test that ctl_sanitize_title() returns ctl_pre_sanitize_title filter value if set
 	 */
-	public function test_wp_unique_term_slug_filter() {
-		$slug = 'term_slug';
-		$term = (object) [ 'term_id' => 5 ];
-		$original_slug = 'some_slug';
+	public function test_ctl_sanitize_title_filter_set() {
+		$subject = $this->get_subject();
 
-		$mock = \Mockery::mock( Main::class )->makePartial();
-		$mock->shouldReceive( 'transliterate' )->with( $slug )->once();
+		$title     = 'some title';
 
-		$mock->wp_unique_term_slug_filter( $slug, $term, $original_slug );
+		$filtered_title = 'filtered title';
+
+		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( $filtered_title );
+
+		$this->assertSame( $filtered_title, $subject->ctl_sanitize_title( $title ) );
 	}
 
 	/**
-	 * Test pre_term_slug_filter()
+	 * Test ctl_sanitize_title()
+	 *
+	 * @param string $title    Title to sanitize.
+	 * @param string $expected Expected result.
+	 *
+	 * @dataProvider dp_test_ctl_sanitize_title
 	 */
-	public function test_pre_term_slug_filter() {
-		$value = 'term_slug';
-		$taxonomy = 'tax_slug';
+	public function test_ctl_sanitize_title( $title, $expected ) {
+		$locale     = 'ru_RU';
+		$iso9_table = $this->get_conversion_table( $locale );
 
-		$mock = \Mockery::mock( Main::class )->makePartial();
-		$mock->shouldReceive( 'transliterate' )->with( $value )->once();
+		$settings = Mockery::mock( Settings::class );
+		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
+		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
 
-		$mock->pre_term_slug_filter( $value, $taxonomy );
+		$converter = $this->getMockBuilder( 'Converter' )->disableOriginalConstructor()->getMock();
+		$cli       = $this->getMockBuilder( 'WP_CLI' )->disableOriginalConstructor()->getMock();
+		$acf       = $this->getMockBuilder( 'ACF' )->disableOriginalConstructor()->getMock();
+
+		$subject = new Main( $settings, $converter, $cli, $acf );
+
+		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
+		$this->assertSame( $expected, $subject->ctl_sanitize_title( $title ) );
+	}
+
+	/**
+	 * Data provider for test_ctl_sanitize_title
+	 *
+	 * @return array
+	 */
+	public function dp_test_ctl_sanitize_title() {
+		return [
+			'empty string'               => [
+				'',
+				'',
+			],
+			'default table'              => [
+				'АБВГДЕЁЖЗИЙІКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯѢѲѴабвгдеёжзийіклмнопрстуфхцчшщъыьэюяѣѳѵ',
+				'ABVGDEYOZHZIJIKLMNOPRSTUFHCZCHSHSHHYEYUYAYEFHYHabvgdeyozhzijiklmnoprstufhczchshshhyeyuyayefhyh',
+			],
+			'iconv'                      => [
+				'Символ евро - €.',
+				'Simvol evro - €.',
+			],
+			'most used prohibited chars' => [
+				'z!"#$%&()*+,/:;<=>?@[\]^`{|}`Åz',
+				'z!"#$%&()* ,/:;<=>?@[\]^`{|}`Åz',
+			],
+			'allowed chars'              => [
+				"ABC-XYZ-abc-xyz-0123456789'_.",
+				"ABC-XYZ-abc-xyz-0123456789'_.",
+			],
+			'plus minus'                 => [
+				'ABC-XYZ-+abc-xyz',
+				'ABC-XYZ- abc-xyz',
+			],
+			'series of minus signs'      => [
+				'-ABC---XYZ-',
+				'-ABC---XYZ-',
+			],
+			'urldecode'                  => [
+				'%D0%81',
+				'YO',
+			],
+		];
+	}
+
+	/**
+	 * Test ctl_sanitize_title() for term
+	 * Name of this function must be wp_insert_term() to use debug_backtrace in the tested method
+	 *
+	 * @param string $title    Title to sanitize.
+	 * @param string $term     Term to sanitize.
+	 * @param string $expected Expected result.
+	 *
+	 * @test
+	 * @dataProvider dp_wp_insert_term
+	 */
+	public function wp_insert_term( $title, $term, $expected ) {
+		global $wpdb;
+
+		$locale     = 'ru_RU';
+		$iso9_table = $this->get_conversion_table( $locale );
+
+		$settings = Mockery::mock( Settings::class );
+		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
+		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
+
+		$converter = $this->getMockBuilder( 'Converter' )->disableOriginalConstructor()->getMock();
+		$cli       = $this->getMockBuilder( 'WP_CLI' )->disableOriginalConstructor()->getMock();
+		$acf       = $this->getMockBuilder( 'ACF' )->disableOriginalConstructor()->getMock();
+
+		$subject = new Main( $settings, $converter, $cli, $acf );
+
+		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
+
+		$wpdb        = Mockery::mock( wpdb::class );
+		$wpdb->terms = 'wp_terms';
+		$wpdb->shouldReceive( 'prepare' )->once()->andReturn( '' );
+		$wpdb->shouldReceive( 'get_var' )->once()->andReturn( $term );
+
+		$this->assertSame( $expected, $subject->ctl_sanitize_title( $title ) );
+	}
+
+	/**
+	 * Data provider for wp_insert_term()
+	 */
+	public function dp_wp_insert_term() {
+		return [
+			[ 'title', 'term', 'term' ],
+			[ 'title', '', 'title' ],
+		];
 	}
 
 	/**
