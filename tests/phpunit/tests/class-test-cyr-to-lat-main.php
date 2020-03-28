@@ -7,7 +7,6 @@
 
 namespace Cyr_To_Lat;
 
-use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
@@ -46,9 +45,27 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		Mockery::mock( 'overload:' . WP_CLI::class );
 		Mockery::mock( 'overload:' . ACF::class );
 
-		if ( ! defined( 'WP_CLI' ) ) {
-			define( 'WP_CLI', true );
-		}
+		FunctionMocker::replace(
+			'defined',
+			function ( $name ) {
+				if ( 'WP_CLI' === $name ) {
+					return true;
+				}
+
+				return null;
+			}
+		);
+
+		FunctionMocker::replace(
+			'constant',
+			function ( $name ) {
+				if ( 'WP_CLI' === $name ) {
+					return true;
+				}
+
+				return null;
+			}
+		);
 
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
@@ -82,9 +99,27 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$subject->shouldReceive( 'init_hooks' )->never();
 
-		if ( ! defined( 'WP_CLI' ) ) {
-			define( 'WP_CLI', true );
-		}
+		FunctionMocker::replace(
+			'defined',
+			function ( $name ) {
+				if ( 'WP_CLI' === $name ) {
+					return true;
+				}
+
+				return null;
+			}
+		);
+
+		FunctionMocker::replace(
+			'constant',
+			function ( $name ) {
+				if ( 'WP_CLI' === $name ) {
+					return true;
+				}
+
+				return null;
+			}
+		);
 
 		$wp_cli = \Mockery::mock( 'alias:WP_CLI' );
 
@@ -101,9 +136,27 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$subject->shouldReceive( 'init_hooks' )->once();
 
-		if ( ! defined( 'WP_CLI' ) ) {
-			define( 'WP_CLI', true );
-		}
+		FunctionMocker::replace(
+			'defined',
+			function ( $name ) {
+				if ( 'WP_CLI' === $name ) {
+					return true;
+				}
+
+				return null;
+			}
+		);
+
+		FunctionMocker::replace(
+			'constant',
+			function ( $name ) {
+				if ( 'WP_CLI' === $name ) {
+					return true;
+				}
+
+				return null;
+			}
+		);
 
 		$wp_cli = \Mockery::mock( 'alias:WP_CLI' );
 		$wp_cli->shouldReceive( 'add_command' )->andReturn( null );

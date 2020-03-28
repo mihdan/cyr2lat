@@ -1,3 +1,6 @@
+## 4.3.4 (28.03.2020)
+* Tested up to WordPress 5.4
+
 ## 4.3.4 (22.02.2020)
 * Fixed non-conversion of slugs with WPML
 * Restricted conversion of post to public and nav_menu_item

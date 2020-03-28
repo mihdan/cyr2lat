@@ -72,7 +72,7 @@ class Main {
 		}
 
 		$this->cli = $cli;
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+		if ( defined( 'WP_CLI' ) && constant( 'WP_CLI' ) ) {
 			if ( ! $this->cli ) {
 				$this->cli = new WP_CLI( $this->converter );
 			}
@@ -90,7 +90,7 @@ class Main {
 	 * Init class.
 	 */
 	public function init() {
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+		if ( defined( 'WP_CLI' ) && constant( 'WP_CLI' ) ) {
 			try {
 				/**
 				 * Method WP_CLI::add_command() accepts class as callable.

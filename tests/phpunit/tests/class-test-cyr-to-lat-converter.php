@@ -10,6 +10,7 @@ namespace Cyr_To_Lat;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
+use tad\FunctionMocker\FunctionMocker;
 
 /**
  * Class Test_Converter
@@ -361,32 +362,49 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	 *
 	 * @param boolean $debug Is WP_DEBUG_LOG on.
 	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 * @dataProvider        dp_test_log
 	 */
 	public function test_log( $debug ) {
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		$test_log = 'test.log';
 		$message  = 'Test message';
-		if ( $debug ) {
-			define( 'WP_DEBUG_LOG', true );
-		}
 
-		@unlink( $test_log );
-		$error_log = ini_get( 'error_log' );
-		ini_set( 'error_log', $test_log );
+		FunctionMocker::replace(
+			'defined',
+			function ( $name ) use ( $debug ) {
+				if ( 'WP_DEBUG_LOG' === $name ) {
+					return $debug;
+				}
+
+				return null;
+			}
+		);
+
+		FunctionMocker::replace(
+			'constant',
+			function ( $name ) use ( $debug ) {
+				if ( 'WP_DEBUG_LOG' === $name ) {
+					return $debug;
+				}
+
+				return null;
+			}
+		);
+
+		$log = [];
+		FunctionMocker::replace(
+			'error_log',
+			function ( $message ) use ( &$log ) {
+				$log[] = $message;
+			}
+		);
 
 		$subject->log( $message );
 		if ( $debug ) {
-			$this->assertNotFalse( strpos( $this->get_log( $test_log ), 'Cyr To Lat: ' . $message ) );
+			$this->assertSame( [ 'Cyr To Lat: ' . $message ], $log );
 		} else {
-			$this->assertFalse( $this->get_log( $test_log ) );
+			$this->assertSame( [], $log );
 		}
-
-		ini_set( 'error_log', $error_log );
-		@unlink( $test_log );
 	}
 
 	/**
@@ -424,14 +442,4 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		return $subject;
 	}
 
-	/**
-	 * Get test log content
-	 *
-	 * @param string $test_log Test log filename.
-	 *
-	 * @return false|string
-	 */
-	private function get_log( $test_log ) {
-		return @file_get_contents( $test_log );
-	}
 }

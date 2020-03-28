@@ -60,7 +60,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		\WP_Mock::passthruFunction( 'plugin_basename' );
 
 		\WP_Mock::expectFilterAdded(
-			'plugin_action_links_' . CYR_TO_LAT_FILE,
+			'plugin_action_links_' . $this->cyr_to_lat_file,
 			[ $subject, 'add_settings_link', ],
 			10,
 			4
@@ -1163,9 +1163,9 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				[
 					'args'  => [
 						'cyr-to-lat-settings',
-						CYR_TO_LAT_URL . '/dist/js/settings/app.js',
+						$this->cyr_to_lat_url . '/dist/js/settings/app.js',
 						[],
-						CYR_TO_LAT_VERSION,
+						$this->cyr_to_lat_version,
 						true,
 					],
 					'times' => 1,
@@ -1176,9 +1176,9 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				[
 					'args'  => [
 						'cyr-to-lat-admin',
-						CYR_TO_LAT_URL . '/css/cyr-to-lat-admin.css',
+						$this->cyr_to_lat_url . '/css/cyr-to-lat-admin.css',
 						[],
-						CYR_TO_LAT_VERSION,
+						$this->cyr_to_lat_version,
 					],
 					'times' => 1,
 				]
@@ -1212,7 +1212,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			[
 				'cyr2lat',
 				false,
-				dirname( CYR_TO_LAT_FILE ) . '/languages/',
+				dirname( $this->cyr_to_lat_file ) . '/languages/',
 			]
 		);
 
