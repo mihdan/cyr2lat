@@ -77,8 +77,7 @@
     "phpcompatibility/php-compatibility": "^9.0",
     "phpcompatibility/phpcompatibility-wp": "^2.1.0",
     "wp-coding-standards/wpcs": "^2.0",
-    "php-coveralls/php-coveralls": "^2.2",
-    "wp-cli/wp-cli": "^2.4"
+    "php-coveralls/php-coveralls": "^2.2"
   },
   "autoload": {
     "classmap": [
@@ -93,7 +92,7 @@
     "classmap": [
       "classes",
       "tests/phpunit/classes",
-      "vendor/wp-cli"
+      "tests/phpunit/stubs"
     ]
   }
 }

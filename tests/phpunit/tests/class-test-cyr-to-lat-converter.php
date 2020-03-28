@@ -33,17 +33,15 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	 * Test constructor
 	 *
 	 * @throws ReflectionException Reflection Exception.
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 */
 	public function test_constructor() {
 		$classname = __NAMESPACE__ . '\Converter';
 
 		$main          = Mockery::mock( Main::class );
 		$settings      = Mockery::mock( Settings::class );
-		$post_cp       = Mockery::mock( 'overload:' . Post_Conversion_Process::class );
-		$term_cp       = Mockery::mock( 'overload:' . Term_Conversion_Process::class );
-		$admin_notices = Mockery::mock( 'overload:' . Admin_Notices::class );
+		$post_cp       = Mockery::mock( Post_Conversion_Process::class );
+		$term_cp       = Mockery::mock( Term_Conversion_Process::class );
+		$admin_notices = Mockery::mock( Admin_Notices::class );
 
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
@@ -54,7 +52,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );
 		$constructor     = $reflected_class->getConstructor();
-		$constructor->invoke( $mock, $main, $settings );
+		$constructor->invoke( $mock, $main, $settings, $post_cp, $term_cp, $admin_notices );
 	}
 
 	/**

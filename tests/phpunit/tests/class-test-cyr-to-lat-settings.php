@@ -10,6 +10,7 @@ namespace Cyr_To_Lat;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
+use tad\FunctionMocker\FunctionMocker;
 
 /**
  * Class Test_Settings
@@ -101,24 +102,37 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test init_form_fields()
-	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 */
 	public function test_init_form_fields() {
 		$subject = new Settings();
 
-		$tables = Mockery::mock( 'overload:' . Conversion_Tables::class );
-		$tables->shouldReceive( 'get' )->with()->andReturn( [ 'iso9' ] );
-		$tables->shouldReceive( 'get' )->with( 'bel' )->andReturn( [ 'bel' ] );
-		$tables->shouldReceive( 'get' )->with( 'uk' )->andReturn( [ 'uk' ] );
-		$tables->shouldReceive( 'get' )->with( 'bg_BG' )->andReturn( [ 'bg_BG' ] );
-		$tables->shouldReceive( 'get' )->with( 'mk_MK' )->andReturn( [ 'mk_MK' ] );
-		$tables->shouldReceive( 'get' )->with( 'sr_RS' )->andReturn( [ 'sr_RS' ] );
-		$tables->shouldReceive( 'get' )->with( 'ka_GE' )->andReturn( [ 'ka_GE' ] );
-		$tables->shouldReceive( 'get' )->with( 'kk' )->andReturn( [ 'kk' ] );
-		$tables->shouldReceive( 'get' )->with( 'he_IL' )->andReturn( [ 'he_IL' ] );
-		$tables->shouldReceive( 'get' )->with( 'zh_CN' )->andReturn( [ 'zh_CN' ] );
+		FunctionMocker::replace(
+			'\Cyr_To_Lat\Conversion_Tables::get',
+			function( $locale = '' ) {
+				switch( $locale ) {
+					case 'bel':
+						return [ 'bel' ];
+					case 'uk':
+						return [ 'uk' ];
+					case 'bg_BG':
+						return [ 'bg_BG' ];
+					case 'mk_MK':
+						return [ 'mk_MK' ];
+					case 'sr_RS':
+						return [ 'sr_RS' ];
+					case 'ka_GE':
+						return [ 'ka_GE' ];
+					case 'kk':
+						return [ 'kk' ];
+					case 'he_IL':
+						return [ 'he_IL' ];
+					case 'zh_CN':
+						return [ 'zh_CN' ];
+					default:
+						return [ 'iso9' ];
+				}
+			}
+		);
 
 		$expected = $this->get_test_form_fields();
 

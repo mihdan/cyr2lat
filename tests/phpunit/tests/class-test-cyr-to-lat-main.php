@@ -7,6 +7,7 @@
 
 namespace Cyr_To_Lat;
 
+use Exception;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
@@ -34,16 +35,14 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Test constructor
 	 *
 	 * @throws ReflectionException Reflection Exception.
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 */
 	public function test_constructor() {
 		$classname = __NAMESPACE__ . '\Main';
 
-		Mockery::mock( 'overload:' . Settings::class );
-		Mockery::mock( 'overload:' . Converter::class );
-		Mockery::mock( 'overload:' . WP_CLI::class );
-		Mockery::mock( 'overload:' . ACF::class );
+		$settings  = Mockery::mock( Settings::class );
+		$converter = Mockery::mock( Converter::class );
+		$cli       = Mockery::mock( WP_CLI::class );
+		$acf       = Mockery::mock( ACF::class );
 
 		FunctionMocker::replace(
 			'defined',
@@ -76,7 +75,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );
 		$constructor     = $reflected_class->getConstructor();
-		$constructor->invoke( $mock );
+		$constructor->invoke( $mock, $settings, $converter, $cli, $acf );
 	}
 
 	/**
@@ -91,9 +90,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test init() with CLI when CLI throws an Exception
-	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 */
 	public function test_init_with_cli_error() {
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -121,16 +117,20 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		$wp_cli = \Mockery::mock( 'alias:WP_CLI' );
+		$add_command = FunctionMocker::replace(
+			'\WP_CLI::add_command',
+			function () {
+				throw new Exception();
+			}
+		);
 
 		$subject->init();
+
+		$add_command->wasCalledWithOnce( [ 'cyr2lat', null ] );
 	}
 
 	/**
 	 * Test init() with CLI
-	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 */
 	public function test_init_with_cli() {
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -158,10 +158,14 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		$wp_cli = \Mockery::mock( 'alias:WP_CLI' );
-		$wp_cli->shouldReceive( 'add_command' )->andReturn( null );
+		$add_command = FunctionMocker::replace(
+			'\WP_CLI::add_command',
+			null
+		);
 
 		$subject->init();
+
+		$add_command->wasCalledWithOnce( [ 'cyr2lat', null ] );
 	}
 
 	/**
@@ -196,7 +200,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_ctl_sanitize_title_filter_set() {
 		$subject = $this->get_subject();
 
-		$title     = 'some title';
+		$title = 'some title';
 
 		$filtered_title = 'filtered title';
 
@@ -352,11 +356,11 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_transliterate() {
 		return [
-			'empty string'               => [
+			'empty string'  => [
 				'',
 				'',
 			],
-			'default table'              => [
+			'default table' => [
 				'АБВГДЕЁЖЗИЙІКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯѢѲѴабвгдеёжзийіклмнопрстуфхцчшщъыьэюяѣѳѵ',
 				'ABVGDEYOZHZIJIKLMNOPRSTUFHCZCHSHSHHYEYUYAYEFHYHabvgdeyozhzijiklmnoprstufhczchshshhyeyuyayefhyh',
 			],

@@ -84,6 +84,7 @@ FunctionMocker::init(
 		'whitelist'             => [
 			realpath( PLUGIN_PATH . '/cyr-to-lat.php' ),
 			realpath( PLUGIN_PATH . '/classes' ),
+			realpath( PLUGIN_PATH . '/tests/phpunit/stubs' ),
 		],
 		'redefinable-internals' => [
 			'define',
@@ -95,7 +96,7 @@ FunctionMocker::init(
 			'phpversion',
 			'realpath',
 			'time',
-			'error_log'
+			'error_log',
 		],
 	]
 );
