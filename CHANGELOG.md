@@ -1,5 +1,6 @@
 ## 4.3.4 (28.03.2020)
 * Tested up to WordPress 5.4
+* Fixed bug with disappearing of WooCommerce attributes
 
 ## 4.3.4 (22.02.2020)
 * Fixed non-conversion of slugs with WPML
