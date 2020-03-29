@@ -26,9 +26,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * End test
 	 */
 	public function tearDown() {
-		unset( $GLOBALS['wp_version'] );
-		unset( $GLOBALS['wpdb'] );
-		unset( $GLOBALS['current_screen'] );
+		unset( $GLOBALS['wp_version'], $GLOBALS['wpdb'], $GLOBALS['current_screen'] );
 	}
 
 	/**
@@ -311,13 +309,82 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
+	 * Test ctl_sanitize_title() for term
+	 *
+	 * @param string $title                Title.
+	 * @param bool   $is_wc                Is WooCommerce active.
+	 * @param array  $attribute_taxonomies Attribute Taxonomies.
+	 * @param bool   $expected             Expected result.
+	 *
+	 * @dataProvider dp_test_ctl_sanitize_title_for_wc_attribute_taxonomy
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_ctl_sanitize_title_for_wc_attribute_taxonomy(
+		$title, $is_wc, $attribute_taxonomies, $expected
+	) {
+		FunctionMocker::replace(
+			'function_exists',
+			function ( $function_name ) use ( $is_wc ) {
+				if ( 'wc_get_attribute_taxonomies' === $function_name ) {
+					return $is_wc;
+				}
+
+				return null;
+
+			}
+		);
+
+		\WP_Mock::userFunction( 'wc_get_attribute_taxonomies' )->with()->andReturn( $attribute_taxonomies );
+
+		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
+
+		$subject = $this->get_subject();
+		$subject->shouldReceive( 'transliterate' )->times( $expected );
+
+		$subject->ctl_sanitize_title( $title );
+	}
+
+	/**
+	 * Data provider for test_ctl_sanitize_title_for_wc_attribute_taxonomy
+	 *
+	 * @return array
+	 */
+	public function dp_test_ctl_sanitize_title_for_wc_attribute_taxonomy() {
+		$attribute_taxonomies = [
+			'id:3' => (object) [
+				'attribute_id'      => '3',
+				'attribute_name'    => 'weight',
+				'attribute_label'   => 'Weight',
+				'attribute_type'    => 'select',
+				'attribute_orderby' => 'menu_order',
+				'attribute_public'  => '1',
+			],
+			'id:9' => (object) [
+				'attribute_id'      => '9',
+				'attribute_name'    => 'цвет',
+				'attribute_label'   => 'Цвет',
+				'attribute_type'    => 'select',
+				'attribute_orderby' => 'menu_order',
+				'attribute_public'  => '1',
+			],
+		];
+
+		return [
+			'no wc'             => [ 'color', false, null, 1 ],
+			'no attr taxes'     => [ 'color', true, [], 1 ],
+			'not in attr taxes' => [ 'color', true, $attribute_taxonomies, 1 ],
+			'in attr taxes'     => [ 'цвет', true, $attribute_taxonomies, 0 ],
+		];
+	}
+
+	/**
 	 * Test transliterate()
 	 *
 	 * @param string $string   String to transliterate.
 	 * @param string $expected Expected result.
 	 *
 	 * @dataProvider dp_test_transliterate
-	 * @throws ReflectionException
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_transliterate( $string, $expected ) {
 		$subject = $this->get_subject();

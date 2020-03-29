@@ -173,10 +173,33 @@ class Main {
 		if ( ! empty( $term ) ) {
 			$title = $term;
 		} else {
-			$title = $this->transliterate( $title );
+			$title = $this->is_wc_attribute_taxonomy( $title ) ? $title : $this->transliterate( $title );
 		}
 
 		return $title;
+	}
+
+	/**
+	 * Check if title is an attribute taxonomy.
+	 *
+	 * @param string $title Title.
+	 *
+	 * @return bool
+	 */
+	protected function is_wc_attribute_taxonomy( $title ) {
+		if ( ! function_exists( 'wc_get_attribute_taxonomies' ) ) {
+			return false;
+		}
+
+		$attribute_taxonomies = wc_get_attribute_taxonomies();
+
+		foreach ( $attribute_taxonomies as $attribute_taxonomy ) {
+			if ( $title === $attribute_taxonomy->attribute_name ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
