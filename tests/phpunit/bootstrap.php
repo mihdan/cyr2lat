@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin version.
  */
-define( 'CYR_TO_LAT_TEST_VERSION', 'test-version' );
+define( 'CYR_TO_LAT_TEST_VERSION', '4.3.5' );
 
 /**
  * Path to the plugin dir.
