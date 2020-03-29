@@ -35,14 +35,20 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Test constructor
 	 *
 	 * @throws ReflectionException Reflection Exception.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
 	public function test_constructor() {
 		$classname = __NAMESPACE__ . '\Main';
 
-		$settings  = Mockery::mock( Settings::class );
-		$converter = Mockery::mock( Converter::class );
-		$cli       = Mockery::mock( WP_CLI::class );
-		$acf       = Mockery::mock( ACF::class );
+		Mockery::mock( 'overload:' . Settings::class );
+		Mockery::mock( 'overload:' . Post_Conversion_Process::class );
+		Mockery::mock( 'overload:' . Term_Conversion_Process::class );
+		Mockery::mock( 'overload:' . Admin_Notices::class );
+		Mockery::mock( 'overload:' . Converter::class );
+		Mockery::mock( 'overload:' . WP_CLI::class );
+		Mockery::mock( 'overload:' . ACF::class );
 
 		FunctionMocker::replace(
 			'defined',
@@ -75,7 +81,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );
 		$constructor     = $reflected_class->getConstructor();
-		$constructor->invoke( $mock, $settings, $converter, $cli, $acf );
+		$constructor->invoke( $mock );
 	}
 
 	/**
@@ -172,7 +178,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Test init_hooks()
 	 */
 	public function test_init_hooks() {
-		$subject = $this->get_subject();
+		$subject = \Mockery::mock( Main::class )->makePartial();
 
 		\WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'ctl_sanitize_title' ], 9, 3 );
 		\WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'ctl_sanitize_filename' ], 10, 2 );
@@ -185,7 +191,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Test that ctl_sanitize_title() does nothing when context is 'query'
 	 */
 	public function test_ctl_sanitize_title_query_context() {
-		$subject = $this->get_subject();
+		$subject = \Mockery::mock( Main::class )->makePartial();
 
 		$title     = 'some title';
 		$raw_title = '';
@@ -198,7 +204,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Test that ctl_sanitize_title() returns ctl_pre_sanitize_title filter value if set
 	 */
 	public function test_ctl_sanitize_title_filter_set() {
-		$subject = $this->get_subject();
+		$subject = \Mockery::mock( Main::class )->makePartial();
 
 		$title = 'some title';
 
@@ -216,20 +222,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @param string $expected Expected result.
 	 *
 	 * @dataProvider dp_test_ctl_sanitize_title
+	 * @throws ReflectionException
 	 */
 	public function test_ctl_sanitize_title( $title, $expected ) {
-		$locale     = 'ru_RU';
-		$iso9_table = $this->get_conversion_table( $locale );
-
-		$settings = Mockery::mock( Settings::class );
-		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
-		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
-
-		$converter = $this->getMockBuilder( 'Converter' )->disableOriginalConstructor()->getMock();
-		$cli       = $this->getMockBuilder( 'WP_CLI' )->disableOriginalConstructor()->getMock();
-		$acf       = $this->getMockBuilder( 'ACF' )->disableOriginalConstructor()->getMock();
-
-		$subject = new Main( $settings, $converter, $cli, $acf );
+		$subject = $this->get_subject();
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 		$this->assertSame( $expected, $subject->ctl_sanitize_title( $title ) );
@@ -287,22 +283,12 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 *
 	 * @test
 	 * @dataProvider dp_wp_insert_term
+	 * @throws ReflectionException
 	 */
 	public function wp_insert_term( $title, $term, $expected ) {
 		global $wpdb;
 
-		$locale     = 'ru_RU';
-		$iso9_table = $this->get_conversion_table( $locale );
-
-		$settings = Mockery::mock( Settings::class );
-		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
-		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
-
-		$converter = $this->getMockBuilder( 'Converter' )->disableOriginalConstructor()->getMock();
-		$cli       = $this->getMockBuilder( 'WP_CLI' )->disableOriginalConstructor()->getMock();
-		$acf       = $this->getMockBuilder( 'ACF' )->disableOriginalConstructor()->getMock();
-
-		$subject = new Main( $settings, $converter, $cli, $acf );
+		$subject = $this->get_subject();
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
@@ -331,20 +317,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @param string $expected Expected result.
 	 *
 	 * @dataProvider dp_test_transliterate
+	 * @throws ReflectionException
 	 */
 	public function test_transliterate( $string, $expected ) {
-		$locale     = 'ru_RU';
-		$iso9_table = $this->get_conversion_table( $locale );
-
-		$settings = Mockery::mock( Settings::class );
-		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
-		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
-
-		$converter = $this->getMockBuilder( 'Converter' )->disableOriginalConstructor()->getMock();
-		$cli       = $this->getMockBuilder( 'WP_CLI' )->disableOriginalConstructor()->getMock();
-		$acf       = $this->getMockBuilder( 'ACF' )->disableOriginalConstructor()->getMock();
-
-		$subject = new Main( $settings, $converter, $cli, $acf );
+		$subject = $this->get_subject();
 
 		$this->assertSame( $expected, $subject->transliterate( $string ) );
 	}
@@ -418,7 +394,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Test that ctl_sanitize_filename() returns ctl_pre_sanitize_filename filter value if set
 	 */
 	public function test_ctl_pre_sanitize_filename_filter_set() {
-		$subject = $this->get_subject();
+		$subject = \Mockery::mock( Main::class )->makePartial();
 
 		$filename     = 'filename.jpg';
 		$filename_raw = '';
@@ -437,11 +413,9 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @param string $expected Expected result.
 	 *
 	 * @dataProvider dp_test_ctl_sanitize_filename
+	 * @throws ReflectionException
 	 */
 	public function test_ctl_sanitize_filename( $filename, $expected ) {
-		$locale     = 'ru_RU';
-		$iso9_table = $this->get_conversion_table( $locale );
-
 		\WP_Mock::userFunction(
 			'seems_utf8',
 			[
@@ -450,15 +424,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		$settings = Mockery::mock( Settings::class );
-		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
-		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
-
-		$converter = $this->getMockBuilder( 'Converter' )->disableOriginalConstructor()->getMock();
-		$cli       = $this->getMockBuilder( 'WP_CLI' )->disableOriginalConstructor()->getMock();
-		$acf       = $this->getMockBuilder( 'ACF' )->disableOriginalConstructor()->getMock();
-
-		$subject = new Main( $settings, $converter, $cli, $acf );
+		$subject = $this->get_subject();
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_filename' )->with( false, $filename )->reply( false );
 
@@ -657,7 +623,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			$wpdb->shouldReceive( 'prepare' )->zeroOrMoreTimes()->andReturn( $result );
 		}
 
-		$subject = $this->get_subject();
+		$subject = \Mockery::mock( Main::class )->makePartial();
 		if ( $format ) {
 			$this->assertSame( $expected, $subject->ctl_prepare_in( $items, $format ) );
 		} else {
@@ -684,15 +650,34 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * Get test subject
 	 *
-	 * @return Main
+	 * @return Mockery\Mock
+	 * @throws ReflectionException
 	 */
 	private function get_subject() {
-		$settings  = Mockery::mock( Settings::class );
+		$locale     = 'ru_RU';
+		$iso9_table = $this->get_conversion_table( $locale );
+
+		$settings = \Mockery::mock( Settings::class );
+		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
+		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
+
+		$process_all_posts = \Mockery::mock( Post_Conversion_Process::class );
+		$process_all_terms = \Mockery::mock( Term_Conversion_Process::class );
+		$admin_notices     = \Mockery::mock( Admin_notices::class );
+
 		$converter = Mockery::mock( Converter::class );
 		$cli       = Mockery::mock( WP_CLI::class );
 		$acf       = Mockery::mock( ACF::class );
 
-		$subject = new Main( $settings, $converter, $cli, $acf );
+		$subject = \Mockery::mock( Main::class )->makePartial();
+
+		$this->set_protected_property( $subject, 'settings', $settings );
+		$this->set_protected_property( $subject, 'process_all_posts', $process_all_posts );
+		$this->set_protected_property( $subject, 'process_all_terms', $process_all_terms );
+		$this->set_protected_property( $subject, 'admin_notices', $admin_notices );
+		$this->set_protected_property( $subject, 'converter', $converter );
+		$this->set_protected_property( $subject, 'cli', $cli );
+		$this->set_protected_property( $subject, 'acf', $acf );
 
 		return $subject;
 	}

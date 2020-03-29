@@ -61,7 +61,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	 *
 	 * @throws ReflectionException Reflection Exception.
 	 */
-	public function test_constructor_with_exception() {
+	public function test_constructor_when_NO_wp_filesystem_is_available() {
 		$classname = __NAMESPACE__ . '\Requirements';
 
 		Mockery::mock( Admin_Notices::class );

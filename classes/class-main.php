@@ -32,6 +32,27 @@ class Main {
 	protected $settings;
 
 	/**
+	 * Process posts instance.
+	 *
+	 * @var Post_Conversion_Process
+	 */
+	protected $process_all_posts;
+
+	/**
+	 * Process terms instance.
+	 *
+	 * @var Term_Conversion_Process
+	 */
+	protected $process_all_terms;
+
+	/**
+	 * Admin Notices instance.
+	 *
+	 * @var Admin_Notices
+	 */
+	protected $admin_notices;
+
+	/**
 	 * Converter instance.
 	 *
 	 * @var Converter
@@ -54,34 +75,25 @@ class Main {
 
 	/**
 	 * Main constructor.
-	 *
-	 * @param Settings  $settings  Plugin settings.
-	 * @param Converter $converter Converter instance.
-	 * @param WP_CLI    $cli       CLI instance.
-	 * @param ACF       $acf       ACF instance.
 	 */
-	public function __construct( $settings = null, $converter = null, $cli = null, $acf = null ) {
-		$this->settings = $settings;
-		if ( ! $this->settings ) {
-			$this->settings = new Settings();
-		}
+	public function __construct() {
+		$this->settings          = new Settings();
+		$this->process_all_posts = new Post_Conversion_Process( $this );
+		$this->process_all_terms = new Term_Conversion_Process( $this );
+		$this->admin_notices     = new Admin_Notices();
+		$this->converter         = new Converter(
+			$this,
+			$this->settings,
+			$this->process_all_posts,
+			$this->process_all_terms,
+			$this->admin_notices
+		);
 
-		$this->converter = $converter;
-		if ( ! $this->converter ) {
-			$this->converter = new Converter( $this, $this->settings );
-		}
-
-		$this->cli = $cli;
 		if ( defined( 'WP_CLI' ) && constant( 'WP_CLI' ) ) {
-			if ( ! $this->cli ) {
-				$this->cli = new WP_CLI( $this->converter );
-			}
+			$this->cli = new WP_CLI( $this->converter );
 		}
 
-		$this->acf = $acf;
-		if ( ! $this->acf ) {
-			$this->acf = new ACF( $this->settings );
-		}
+		$this->acf = new ACF( $this->settings );
 
 		$this->init();
 	}
