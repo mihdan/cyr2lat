@@ -45,9 +45,9 @@ class ACF {
 
 		wp_enqueue_script(
 			'cyr-to-lat-acf-field-group',
-			CYR_TO_LAT_URL . '/js/acf-field-group.js',
+			constant( 'CYR_TO_LAT_URL' ) . '/js/acf-field-group.js',
 			[],
-			CYR_TO_LAT_VERSION,
+			constant( 'CYR_TO_LAT_VERSION' ),
 			true
 		);
 

@@ -9,6 +9,7 @@ namespace Cyr_To_Lat;
 
 use Mockery;
 use stdClass;
+use tad\FunctionMocker\FunctionMocker;
 
 /**
  * Class Test_Conversion_Process
@@ -65,7 +66,7 @@ class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 		\WP_Mock::userFunction(
 			'get_site_transient',
 			[
-				'args'   => [ CYR_TO_LAT_PREFIX . '_background_process_process_completed' ],
+				'args'   => [ $this->cyr_to_lat_prefix . '_background_process_process_completed' ],
 				'return' => $transient,
 				'times'  => 1,
 			]
@@ -75,7 +76,7 @@ class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'delete_site_transient',
 				[
-					'args'  => [ CYR_TO_LAT_PREFIX . '_background_process_process_completed' ],
+					'args'  => [ $this->cyr_to_lat_prefix . '_background_process_process_completed' ],
 					'times' => 1,
 				]
 			);
@@ -109,7 +110,7 @@ class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 		\WP_Mock::userFunction(
 			'get_site_transient',
 			[
-				'args'   => [ CYR_TO_LAT_PREFIX . '_background_process_process_lock' ],
+				'args'   => [ $this->cyr_to_lat_prefix . '_background_process_process_lock' ],
 				'return' => $transient,
 				'times'  => 1,
 			]
@@ -133,32 +134,49 @@ class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 	 *
 	 * @param boolean $debug Is WP_DEBUG_LOG on.
 	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 * @dataProvider        dp_test_log
 	 */
 	public function test_log( $debug ) {
 		$subject = Mockery::mock( Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		$test_log = 'test.log';
-		$message  = 'Test message';
-		if ( $debug ) {
-			define( 'WP_DEBUG_LOG', true );
-		}
+		$message = 'Test message';
 
-		@unlink( $test_log );
-		$error_log = ini_get( 'error_log' );
-		ini_set( 'error_log', $test_log );
+		FunctionMocker::replace(
+			'defined',
+			function ( $name ) use ( $debug ) {
+				if ( 'WP_DEBUG_LOG' === $name ) {
+					return $debug;
+				}
+
+				return null;
+			}
+		);
+
+		FunctionMocker::replace(
+			'constant',
+			function ( $name ) use ( $debug ) {
+				if ( 'WP_DEBUG_LOG' === $name ) {
+					return $debug;
+				}
+
+				return null;
+			}
+		);
+
+		$log = [];
+		FunctionMocker::replace(
+			'error_log',
+			function ( $message ) use ( &$log ) {
+				$log[] = $message;
+			}
+		);
 
 		$subject->log( $message );
 		if ( $debug ) {
-			$this->assertNotFalse( strpos( $this->get_log( $test_log ), 'Cyr To Lat: ' . $message ) );
+			$this->assertSame( [ 'Cyr To Lat: ' . $message ], $log );
 		} else {
-			$this->assertFalse( $this->get_log( $test_log ) );
+			$this->assertSame( [], $log );
 		}
-
-		ini_set( 'error_log', $error_log );
-		@unlink( $test_log );
 	}
 
 	/**
@@ -171,16 +189,5 @@ class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 			[ false ],
 			[ true ],
 		];
-	}
-
-	/**
-	 * Get test log content
-	 *
-	 * @param string $test_log Test log filename.
-	 *
-	 * @return false|string
-	 */
-	private function get_log( $test_log ) {
-		return @file_get_contents( $test_log );
 	}
 }

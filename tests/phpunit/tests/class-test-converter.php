@@ -10,6 +10,7 @@ namespace Cyr_To_Lat;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
+use tad\FunctionMocker\FunctionMocker;
 
 /**
  * Class Test_Converter
@@ -32,17 +33,15 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	 * Test constructor
 	 *
 	 * @throws ReflectionException Reflection Exception.
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 */
 	public function test_constructor() {
 		$classname = __NAMESPACE__ . '\Converter';
 
 		$main          = Mockery::mock( Main::class );
 		$settings      = Mockery::mock( Settings::class );
-		$post_cp       = Mockery::mock( 'overload:' . Post_Conversion_Process::class );
-		$term_cp       = Mockery::mock( 'overload:' . Term_Conversion_Process::class );
-		$admin_notices = Mockery::mock( 'overload:' . Admin_Notices::class );
+		$post_cp       = Mockery::mock( Post_Conversion_Process::class );
+		$term_cp       = Mockery::mock( Term_Conversion_Process::class );
+		$admin_notices = Mockery::mock( Admin_Notices::class );
 
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
@@ -53,7 +52,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );
 		$constructor     = $reflected_class->getConstructor();
-		$constructor->invoke( $mock, $main, $settings );
+		$constructor->invoke( $mock, $main, $settings, $post_cp, $term_cp, $admin_notices );
 	}
 
 	/**
@@ -361,32 +360,49 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	 *
 	 * @param boolean $debug Is WP_DEBUG_LOG on.
 	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 * @dataProvider        dp_test_log
 	 */
 	public function test_log( $debug ) {
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		$test_log = 'test.log';
-		$message  = 'Test message';
-		if ( $debug ) {
-			define( 'WP_DEBUG_LOG', true );
-		}
+		$message = 'Test message';
 
-		@unlink( $test_log );
-		$error_log = ini_get( 'error_log' );
-		ini_set( 'error_log', $test_log );
+		FunctionMocker::replace(
+			'defined',
+			function ( $name ) use ( $debug ) {
+				if ( 'WP_DEBUG_LOG' === $name ) {
+					return $debug;
+				}
+
+				return null;
+			}
+		);
+
+		FunctionMocker::replace(
+			'constant',
+			function ( $name ) use ( $debug ) {
+				if ( 'WP_DEBUG_LOG' === $name ) {
+					return $debug;
+				}
+
+				return null;
+			}
+		);
+
+		$log = [];
+		FunctionMocker::replace(
+			'error_log',
+			function ( $message ) use ( &$log ) {
+				$log[] = $message;
+			}
+		);
 
 		$subject->log( $message );
 		if ( $debug ) {
-			$this->assertNotFalse( strpos( $this->get_log( $test_log ), 'Cyr To Lat: ' . $message ) );
+			$this->assertSame( [ 'Cyr To Lat: ' . $message ], $log );
 		} else {
-			$this->assertFalse( $this->get_log( $test_log ) );
+			$this->assertSame( [], $log );
 		}
-
-		ini_set( 'error_log', $error_log );
-		@unlink( $test_log );
 	}
 
 	/**
@@ -424,14 +440,4 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		return $subject;
 	}
 
-	/**
-	 * Get test log content
-	 *
-	 * @param string $test_log Test log filename.
-	 *
-	 * @return false|string
-	 */
-	private function get_log( $test_log ) {
-		return @file_get_contents( $test_log );
-	}
 }

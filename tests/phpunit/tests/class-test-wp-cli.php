@@ -9,6 +9,7 @@ namespace Cyr_To_Lat;
 
 use cli\progress\Bar;
 use Mockery;
+use tad\FunctionMocker\FunctionMocker;
 
 /**
  * Class Test_WP_CLI
@@ -25,13 +26,11 @@ class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 	 * @param array $convert_params Params for conversion of existing slugs.
 	 *
 	 * @dataProvider        dp_test_regenerate
-	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 */
 	public function test_regenerate( $args, $assoc_args, $convert_params ) {
 		$converter = Mockery::mock( Converter::class );
-		$subject   = Mockery::mock( WP_CLI::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
+
+		$subject = Mockery::mock( WP_CLI::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$notify = Mockery::mock( Bar::class );
 		$notify->shouldReceive( 'tick' );
@@ -41,10 +40,11 @@ class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 
 		$converter->shouldReceive( 'convert_existing_slugs' )->with( $convert_params );
 
-		$cli = \Mockery::mock( 'overload:WP_CLI' );
-		$cli->shouldReceive( 'success' )->with( 'Regenerate Completed.' );
+		$success = FunctionMocker::replace( '\WP_CLI::success', null );
 
 		$subject->regenerate( $args, $assoc_args );
+
+		$success->wasCalledWithOnce( [ 'Regenerate Completed.' ] );
 	}
 
 	/**
@@ -83,24 +83,16 @@ class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_make_progress_bar() {
 		$converter = Mockery::mock( Converter::class );
-		$subject   = Mockery::mock( WP_CLI::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		$notify = Mockery::mock( 'overload:' . Bar::class );
+		$subject = Mockery::mock( WP_CLI::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		\WP_Mock::userFunction(
-			'\WP_CLI\Utils\make_progress_bar',
-			[
-				'args'   => [ 'Regenerate existing slugs', 1 ],
-				'return' => $notify,
-			]
-		);
+		$notify = new Bar();
 
-		/**
-		 * This doesn't work for unknown reason. \WP_Mock::userFunction above always returns null.
-		 * $this->assertSame( $notify, $subject->make_progress_bar() );
-		 */
+		\WP_Mock::userFunction( 'WP_CLI\Utils\make_progress_bar' )->
+		with( 'Regenerate existing slugs', 1 )->
+		once()->
+		andReturn( $notify );
 
-		// Here is the simplified variant.
-		$subject->make_progress_bar();
+		$this->assertSame( $notify, $subject->make_progress_bar() );
 	}
 }

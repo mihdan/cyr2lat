@@ -87,7 +87,7 @@ class Settings {
 	 */
 	public function init_hooks() {
 		add_filter(
-			'plugin_action_links_' . plugin_basename( CYR_TO_LAT_FILE ),
+			'plugin_action_links_' . plugin_basename( constant( 'CYR_TO_LAT_FILE' ) ),
 			[ $this, 'add_settings_link' ],
 			10,
 			4
@@ -722,17 +722,17 @@ class Settings {
 
 		wp_enqueue_script(
 			'cyr-to-lat-settings',
-			CYR_TO_LAT_URL . '/dist/js/settings/app.js',
+			constant( 'CYR_TO_LAT_URL' ) . '/dist/js/settings/app.js',
 			[],
-			CYR_TO_LAT_VERSION,
+			constant( 'CYR_TO_LAT_VERSION' ),
 			true
 		);
 
 		wp_enqueue_style(
 			'cyr-to-lat-admin',
-			CYR_TO_LAT_URL . '/css/cyr-to-lat-admin.css',
+			constant( 'CYR_TO_LAT_URL' ) . '/css/cyr-to-lat-admin.css',
 			[],
-			CYR_TO_LAT_VERSION
+			constant( 'CYR_TO_LAT_VERSION' )
 		);
 	}
 
@@ -743,7 +743,7 @@ class Settings {
 		load_plugin_textdomain(
 			'cyr2lat',
 			false,
-			dirname( plugin_basename( CYR_TO_LAT_FILE ) ) . '/languages/'
+			dirname( plugin_basename( constant( 'CYR_TO_LAT_FILE' ) ) ) . '/languages/'
 		);
 	}
 

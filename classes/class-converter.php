@@ -70,27 +70,13 @@ class Converter {
 	 * @param Term_Conversion_Process $process_all_terms Term conversion process.
 	 * @param Admin_Notices           $admin_notices     Admin notices.
 	 */
-	public function __construct(
-		$main, $settings, $process_all_posts = null, $process_all_terms = null, $admin_notices = null
-	) {
-		$this->main         = $main;
-		$this->settings     = $settings;
-		$this->option_group = Settings::OPTION_GROUP;
-
+	public function __construct( $main, $settings, $process_all_posts, $process_all_terms, $admin_notices ) {
+		$this->main              = $main;
+		$this->settings          = $settings;
+		$this->option_group      = Settings::OPTION_GROUP;
 		$this->process_all_posts = $process_all_posts;
-		if ( ! $this->process_all_posts ) {
-			$this->process_all_posts = new Post_Conversion_Process( $main );
-		}
-
 		$this->process_all_terms = $process_all_terms;
-		if ( ! $this->process_all_terms ) {
-			$this->process_all_terms = new Term_Conversion_Process( $main );
-		}
-
-		$this->admin_notices = $admin_notices;
-		if ( ! $this->admin_notices ) {
-			$this->admin_notices = new Admin_Notices();
-		}
+		$this->admin_notices     = $admin_notices;
 
 		$this->init_hooks();
 	}
@@ -257,7 +243,7 @@ class Converter {
 	 * @param string $message Message to log.
 	 */
 	protected function log( $message ) {
-		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+		if ( defined( 'WP_DEBUG_LOG' ) && constant( 'WP_DEBUG_LOG' ) ) {
 			// @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( 'Cyr To Lat: ' . $message );
 			// @phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log

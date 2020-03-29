@@ -21,6 +21,9 @@ use WP_Mock;
  */
 class Test_Requirements extends Cyr_To_Lat_TestCase {
 
+	/**
+	 * Tear down.
+	 */
 	public function tearDown() {
 		unset ( $_GET['activate'] );
 
@@ -61,7 +64,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	 *
 	 * @throws ReflectionException Reflection Exception.
 	 */
-	public function test_constructor_with_exception() {
+	public function test_constructor_when_NO_wp_filesystem_is_available() {
 		$classname = __NAMESPACE__ . '\Requirements';
 
 		Mockery::mock( Admin_Notices::class );
@@ -102,7 +105,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'phpversion',
-			CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION
+			$this->cyr_to_lat_minimum_php_required_version
 		);
 
 		FunctionMocker::replace(
@@ -110,7 +113,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 			function ( $arg ) {
 				switch ( $arg ) {
 					case 'max_input_vars':
-						return CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS;
+						return $this->cyr_to_lat_required_max_input_vars;
 					case 'user_ini.cache_ttl':
 						return 300;
 					default:
@@ -142,7 +145,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		WP_Mock::userFunction( 'WP_Filesystem' )->andReturn( true );
 
-		$required_version = explode( '.', CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION );
+		$required_version = explode( '.', $this->cyr_to_lat_minimum_php_required_version );
 		$wrong_version    = array_slice( $required_version, 0, 2 );
 		$wrong_version    = (float) implode( '.', $wrong_version );
 		$wrong_version    = $wrong_version - 0.1;
@@ -158,7 +161,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 			function ( $arg ) {
 				switch ( $arg ) {
 					case 'max_input_vars':
-						return CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS;
+						return $this->cyr_to_lat_required_max_input_vars;
 					case 'user_ini.cache_ttl':
 						return 300;
 					default:
@@ -167,10 +170,12 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		$admin_notices->shouldReceive( 'add_notice' )
-		              ->with( 'Cyr To Lat plugin has been deactivated.', 'notice notice-info is-dismissible' );
-		$admin_notices->shouldReceive( 'add_notice' )
-		              ->with( 'Your server is running PHP version ' . $wrong_version . ' but Cyr To Lat ' . CYR_TO_LAT_VERSION . ' requires at least ' . CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION . '.', 'notice notice-error' );
+		$admin_notices
+			->shouldReceive( 'add_notice' )
+			->with( 'Cyr To Lat plugin has been deactivated.', 'notice notice-info is-dismissible' );
+		$admin_notices
+			->shouldReceive( 'add_notice' )
+			->with( 'Your server is running PHP version ' . $wrong_version . ' but Cyr To Lat ' . $this->cyr_to_lat_version . ' requires at least ' . $this->cyr_to_lat_minimum_php_required_version . '.', 'notice notice-error' );
 
 		$subject = new Requirements( $admin_notices, $wp_filesystem );
 
@@ -182,14 +187,14 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test are_requirements_met() when max_input_vars requirements not met.
 	 *
-	 * @param $within_timeout
-	 * @param $content
-	 * @param $expected
+	 * @param bool   $within_timeout Within timeout.
+	 * @param string $content        Content of init file.
+	 * @param string $expected       Expected result.
 	 *
 	 * @dataProvider dp_test_vars_requirements_not_met
 	 */
 	public function test_vars_requirements_not_met( $within_timeout, $content, $expected ) {
-		$max_input_vars              = CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS - 1;
+		$max_input_vars              = $this->cyr_to_lat_required_max_input_vars - 1;
 		$user_ini_filename           = '.user.ini';
 		$user_ini_filename_with_path = ABSPATH . 'wp-admin/' . $user_ini_filename;
 		$ini_ttl                     = 300;
@@ -206,7 +211,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 		$cyr2lat_page = [ 'page' => Settings::SCREEN_ID ];
 
 		if ( 0 < $time_left ) {
-			$message = 'Your server is running PHP with max_input_vars=' . $max_input_vars . ' but Cyr To Lat ' . CYR_TO_LAT_VERSION . ' requires at least ' . CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS . '.';
+			$message = 'Your server is running PHP with max_input_vars=' . $max_input_vars . ' but Cyr To Lat ' . $this->cyr_to_lat_version . ' requires at least ' . $this->cyr_to_lat_required_max_input_vars . '.';
 
 			$message .= '<br>';
 			$message .= 'We have updated settings in ' . $user_ini_filename_with_path . '.';
@@ -251,7 +256,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'phpversion',
-			CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION
+			$this->cyr_to_lat_minimum_php_required_version
 		);
 
 		FunctionMocker::replace(
@@ -283,7 +288,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	 * @return array
 	 */
 	public function dp_test_vars_requirements_not_met() {
-		$expected_line = 'max_input_vars = ' . CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS;
+		$expected_line = 'max_input_vars = ' . 1000;
 
 		return [
 			'within timeout' => [
@@ -315,7 +320,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	 * Test are_requirements_met() when max_input_vars requirements not met and filesystem not available.
 	 */
 	public function test_vars_requirements_not_met_and_filesystem_not_available() {
-		$max_input_vars              = CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS - 1;
+		$max_input_vars              = $this->cyr_to_lat_required_max_input_vars - 1;
 		$user_ini_filename           = '.user.ini';
 		$user_ini_filename_with_path = ABSPATH . 'wp-admin/' . $user_ini_filename;
 		$ini_ttl                     = 300;
@@ -333,7 +338,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'phpversion',
-			CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION
+			$this->cyr_to_lat_minimum_php_required_version
 		);
 
 		FunctionMocker::replace(
@@ -376,8 +381,9 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_deactivate_plugin() {
 		$admin_notices = Mockery::mock( 'Admin_Notices' );
-		$admin_notices->shouldReceive( 'add_notice' )
-		              ->with( 'Cyr To Lat plugin has been deactivated.', 'notice notice-info is-dismissible' );
+		$admin_notices
+			->shouldReceive( 'add_notice' )
+			->with( 'Cyr To Lat plugin has been deactivated.', 'notice notice-info is-dismissible' );
 
 		$wp_filesystem = Mockery::mock( 'WP_Filesystem_Direct' );
 
@@ -391,8 +397,8 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 		WP_Mock::userFunction( 'WP_Filesystem' )->andReturn( true );
 
 		WP_Mock::passthruFunction( 'plugin_basename' );
-		WP_Mock::userFunction( 'is_plugin_active' )->with( CYR_TO_LAT_FILE )->andReturn( true );
-		WP_Mock::userFunction( 'deactivate_plugins' )->with( CYR_TO_LAT_FILE );
+		WP_Mock::userFunction( 'is_plugin_active' )->with( $this->cyr_to_lat_file )->andReturn( true );
+		WP_Mock::userFunction( 'deactivate_plugins' )->with( $this->cyr_to_lat_file );
 
 		$_GET['activate'] = 'some value';
 
@@ -402,6 +408,9 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 		self::assertArrayNotHasKey( 'activate', $_GET );
 	}
 
+	/**
+	 * Test deactivate_plugin() when it is not active.
+	 */
 	public function test_deactivate_plugin_when_it_is_not_active() {
 		$admin_notices = Mockery::mock( 'Admin_Notices' );
 		$wp_filesystem = Mockery::mock( 'WP_Filesystem_Direct' );
@@ -416,7 +425,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 		WP_Mock::userFunction( 'WP_Filesystem' )->andReturn( true );
 
 		WP_Mock::passthruFunction( 'plugin_basename' );
-		WP_Mock::userFunction( 'is_plugin_active' )->with( CYR_TO_LAT_FILE )->andReturn( false );
+		WP_Mock::userFunction( 'is_plugin_active' )->with( $this->cyr_to_lat_file )->andReturn( false );
 
 		$subject = new Requirements( $admin_notices, $wp_filesystem );
 		$subject->deactivate_plugin();

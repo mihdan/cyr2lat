@@ -33,7 +33,7 @@ class Term_Conversion_Process extends Conversion_Process {
 	 *
 	 * @var string
 	 */
-	protected $action = CYR_TO_LAT_TERM_CONVERSION_ACTION;
+	protected $action;
 
 	/**
 	 * Term_Conversion_Process constructor.
@@ -42,6 +42,8 @@ class Term_Conversion_Process extends Conversion_Process {
 	 */
 	public function __construct( $main ) {
 		parent::__construct( $main );
+
+		$this->action = constant( 'CYR_TO_LAT_TERM_CONVERSION_ACTION' );
 		$this->locale = get_locale();
 	}
 

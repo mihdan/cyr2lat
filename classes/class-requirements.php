@@ -7,7 +7,6 @@
 
 namespace Cyr_To_Lat;
 
-use RuntimeException;
 use WP_Filesystem_Direct;
 
 if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
@@ -54,11 +53,6 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 
 			if ( ! function_exists( 'WP_Filesystem' ) ) {
 				// @codeCoverageIgnoreStart
-				/**
-				 * Do not inspect require path.
-				 *
-				 * @noinspection PhpIncludeInspection
-				 */
 				require_once ABSPATH . 'wp-admin/includes/file.php';
 				// @codeCoverageIgnoreEnd
 			}
@@ -93,8 +87,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 * Deactivate plugin.
 		 */
 		public function deactivate_plugin() {
-			if ( is_plugin_active( plugin_basename( CYR_TO_LAT_FILE ) ) ) {
-				deactivate_plugins( plugin_basename( CYR_TO_LAT_FILE ) );
+			if ( is_plugin_active( plugin_basename( constant( 'CYR_TO_LAT_FILE' ) ) ) ) {
+				deactivate_plugins( plugin_basename( constant( 'CYR_TO_LAT_FILE' ) ) );
 				// phpcs:disable WordPress.Security.NonceVerification.Recommended
 				if ( isset( $_GET['activate'] ) ) {
 					unset( $_GET['activate'] );
@@ -114,9 +108,9 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 * @return bool
 		 */
 		private function is_php_version_required() {
-			if ( version_compare( CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION, phpversion(), '>' ) ) {
+			if ( version_compare( constant( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION' ), phpversion(), '>' ) ) {
 				/* translators: 1: Current PHP version number, 2: Cyr To Lat version, 3: Minimum required PHP version number */
-				$message = sprintf( __( 'Your server is running PHP version %1$s but Cyr To Lat %2$s requires at least %3$s.', 'cyr2lat' ), phpversion(), CYR_TO_LAT_VERSION, CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION );
+				$message = sprintf( __( 'Your server is running PHP version %1$s but Cyr To Lat %2$s requires at least %3$s.', 'cyr2lat' ), phpversion(), constant( 'CYR_TO_LAT_VERSION' ), constant( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION' ) );
 
 				$this->admin_notices->add_notice( $message, 'notice notice-error' );
 
@@ -132,7 +126,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 * @return bool
 		 */
 		private function is_max_input_vars_required() {
-			if ( CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS > ini_get( 'max_input_vars' ) ) {
+			if ( constant( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS' ) > ini_get( 'max_input_vars' ) ) {
 				if ( $this->wp_filesystem ) {
 					$this->try_to_fix_max_input_vars();
 				} else {
@@ -147,14 +141,14 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 				}
 			}
 
-			if ( CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS > ini_get( 'max_input_vars' ) ) {
+			if ( constant( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS' ) > ini_get( 'max_input_vars' ) ) {
 				$mtime     = $this->wp_filesystem->mtime( $this->get_user_ini_filename() );
 				$ini_ttl   = intval( ini_get( 'user_ini.cache_ttl' ) );
 				$time_left = ( $mtime + $ini_ttl ) - time();
 
 				if ( 0 < $time_left ) {
 					/* translators: 1: max_input_vars value, 2: Cyr To Lat version, 3: Minimum required max_input_vars */
-					$message = sprintf( __( 'Your server is running PHP with max_input_vars=%1$d but Cyr To Lat %2$s requires at least %3$d.', 'cyr2lat' ), ini_get( 'max_input_vars' ), CYR_TO_LAT_VERSION, CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS );
+					$message = sprintf( __( 'Your server is running PHP with max_input_vars=%1$d but Cyr To Lat %2$s requires at least %3$d.', 'cyr2lat' ), ini_get( 'max_input_vars' ), constant( 'CYR_TO_LAT_VERSION' ), constant( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS' ) );
 
 					$message .= '<br>';
 					/* translators: 1: .user.ini filename */
@@ -195,7 +189,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 				$content_arr
 			);
 
-			if ( $value >= CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS ) {
+			if ( $value >= constant( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS' ) ) {
 				return;
 			}
 
@@ -208,7 +202,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 			if ( [ '' ] === $content_arr ) {
 				$content_arr = [];
 			}
-			$content_arr[] = 'max_input_vars = ' . CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS;
+			$content_arr[] = 'max_input_vars = ' . constant( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS' );
 			$content       = implode( PHP_EOL, $content_arr );
 
 			$this->wp_filesystem->put_contents( $user_ini_filename, $content );

@@ -19,7 +19,7 @@ class Conversion_Process extends WP_Background_Process {
 	 *
 	 * @var string
 	 */
-	protected $prefix = CYR_TO_LAT_PREFIX;
+	protected $prefix;
 
 	/**
 	 * Plugin main class
@@ -34,7 +34,8 @@ class Conversion_Process extends WP_Background_Process {
 	 * @param Main $main Plugin main class.
 	 */
 	public function __construct( $main ) {
-		$this->main = $main;
+		$this->main   = $main;
+		$this->prefix = constant( 'CYR_TO_LAT_PREFIX' );
 
 		parent::__construct();
 	}
@@ -93,7 +94,7 @@ class Conversion_Process extends WP_Background_Process {
 	 * @param string $message Message to log.
 	 */
 	protected function log( $message ) {
-		if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+		if ( defined( 'WP_DEBUG_LOG' ) && constant( 'WP_DEBUG_LOG' ) ) {
 			// @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( 'Cyr To Lat: ' . $message );
 			// @phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log

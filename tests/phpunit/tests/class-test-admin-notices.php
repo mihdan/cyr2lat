@@ -78,7 +78,7 @@ class Test_Admin_Notices extends Cyr_To_Lat_TestCase {
 	 * Test add_notice() and show_notices() when page is not allowed
 	 */
 	public function test_show_notices_when_page_is_not_allowed() {
-		$page_slug      = 'some_page';
+		$page_slug = 'some_page';
 
 		\WP_Mock::userFunction( 'get_current_screen' )->andReturn( null );
 

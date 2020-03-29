@@ -10,6 +10,7 @@ namespace Cyr_To_Lat;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
+use tad\FunctionMocker\FunctionMocker;
 
 /**
  * Class Test_Settings
@@ -60,8 +61,8 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		\WP_Mock::passthruFunction( 'plugin_basename' );
 
 		\WP_Mock::expectFilterAdded(
-			'plugin_action_links_' . CYR_TO_LAT_FILE,
-			[ $subject, 'add_settings_link', ],
+			'plugin_action_links_' . $this->cyr_to_lat_file,
+			[ $subject, 'add_settings_link' ],
 			10,
 			4
 		);
@@ -72,7 +73,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 
 		\WP_Mock::expectFilterAdded(
 			'pre_update_option_' . $subject::OPTION_NAME,
-			[ $subject, 'pre_update_option_filter', ],
+			[ $subject, 'pre_update_option_filter' ],
 			10,
 			3
 		);
@@ -101,24 +102,37 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test init_form_fields()
-	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
 	 */
 	public function test_init_form_fields() {
 		$subject = new Settings();
 
-		$tables = Mockery::mock( 'overload:' . Conversion_Tables::class );
-		$tables->shouldReceive( 'get' )->with()->andReturn( [ 'iso9' ] );
-		$tables->shouldReceive( 'get' )->with( 'bel' )->andReturn( [ 'bel' ] );
-		$tables->shouldReceive( 'get' )->with( 'uk' )->andReturn( [ 'uk' ] );
-		$tables->shouldReceive( 'get' )->with( 'bg_BG' )->andReturn( [ 'bg_BG' ] );
-		$tables->shouldReceive( 'get' )->with( 'mk_MK' )->andReturn( [ 'mk_MK' ] );
-		$tables->shouldReceive( 'get' )->with( 'sr_RS' )->andReturn( [ 'sr_RS' ] );
-		$tables->shouldReceive( 'get' )->with( 'ka_GE' )->andReturn( [ 'ka_GE' ] );
-		$tables->shouldReceive( 'get' )->with( 'kk' )->andReturn( [ 'kk' ] );
-		$tables->shouldReceive( 'get' )->with( 'he_IL' )->andReturn( [ 'he_IL' ] );
-		$tables->shouldReceive( 'get' )->with( 'zh_CN' )->andReturn( [ 'zh_CN' ] );
+		FunctionMocker::replace(
+			'\Cyr_To_Lat\Conversion_Tables::get',
+			function( $locale = '' ) {
+				switch ( $locale ) {
+					case 'bel':
+						return [ 'bel' ];
+					case 'uk':
+						return [ 'uk' ];
+					case 'bg_BG':
+						return [ 'bg_BG' ];
+					case 'mk_MK':
+						return [ 'mk_MK' ];
+					case 'sr_RS':
+						return [ 'sr_RS' ];
+					case 'ka_GE':
+						return [ 'ka_GE' ];
+					case 'kk':
+						return [ 'kk' ];
+					case 'he_IL':
+						return [ 'he_IL' ];
+					case 'zh_CN':
+						return [ 'zh_CN' ];
+					default:
+						return [ 'iso9' ];
+				}
+			}
+		);
 
 		$expected = $this->get_test_form_fields();
 
@@ -452,13 +466,6 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 					'times' => 1,
 				]
 			);
-//			\WP_Mock::userFunction(
-//				'add_settings_section',
-//				[
-//					'args'  => [ 'zh_CN_section', 'zh_CN Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
-//					'times' => 1,
-//				]
-//			);
 		}
 
 		$subject->setup_sections();
@@ -1163,9 +1170,9 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				[
 					'args'  => [
 						'cyr-to-lat-settings',
-						CYR_TO_LAT_URL . '/dist/js/settings/app.js',
+						$this->cyr_to_lat_url . '/dist/js/settings/app.js',
 						[],
-						CYR_TO_LAT_VERSION,
+						$this->cyr_to_lat_version,
 						true,
 					],
 					'times' => 1,
@@ -1176,9 +1183,9 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				[
 					'args'  => [
 						'cyr-to-lat-admin',
-						CYR_TO_LAT_URL . '/css/cyr-to-lat-admin.css',
+						$this->cyr_to_lat_url . '/css/cyr-to-lat-admin.css',
 						[],
-						CYR_TO_LAT_VERSION,
+						$this->cyr_to_lat_version,
 					],
 					'times' => 1,
 				]
@@ -1212,7 +1219,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			[
 				'cyr2lat',
 				false,
-				dirname( CYR_TO_LAT_FILE ) . '/languages/',
+				dirname( $this->cyr_to_lat_file ) . '/languages/',
 			]
 		);
 
