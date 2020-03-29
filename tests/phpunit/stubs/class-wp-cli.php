@@ -11,12 +11,16 @@
 class WP_CLI {
 
 	/**
-	 * @param string $message
+	 * Success function.
+	 *
+	 * @param string $message Message.
 	 */
 	public static function success( $message ) {
 	}
 
 	/**
+	 * Add command.
+	 *
 	 * @param string   $name     Name for the command (e.g. "post list" or "site empty").
 	 * @param callable $callable Command implementation as a class, function or closure.
 	 */

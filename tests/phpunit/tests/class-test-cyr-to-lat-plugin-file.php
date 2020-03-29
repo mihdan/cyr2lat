@@ -17,11 +17,17 @@ use tad\FunctionMocker\FunctionMocker;
  */
 class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 
+	/**
+	 * Tear down.
+	 */
 	public function tearDown() {
-		unset( $GLOBALS[ 'cyr_to_lat_requirements' ], $GLOBALS[ 'cyr_to_lat_plugin' ] );
+		unset( $GLOBALS['cyr_to_lat_requirements'], $GLOBALS['cyr_to_lat_plugin'] );
 		parent::tearDown();
 	}
 
+	/**
+	 * Test main file when Cyr-To-Lat version defined.
+	 */
 	public function test_when_cyr_to_lat_version_defined() {
 		FunctionMocker::replace(
 			'defined',
@@ -64,9 +70,9 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 
 		Mockery::mock( 'overload:' . Main::class );
 
-		$define = FunctionMocker::replace( 'define', null );
-		$this->cyr_to_lat_version = '4.3.5';
-		$this->cyr_to_lat_url = PLUGIN_MAIN_FILE;
+		$define                   = FunctionMocker::replace( 'define', null );
+		$this->cyr_to_lat_version = CYR_TO_LAT_TEST_VERSION;
+		$this->cyr_to_lat_url     = PLUGIN_MAIN_FILE;
 
 		\WP_Mock::passthruFunction( 'plugin_dir_url' );
 		\WP_Mock::passthruFunction( 'untrailingslashit' );
@@ -104,9 +110,9 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 		$requirements = Mockery::mock( 'overload:' . Requirements::class );
 		$requirements->shouldReceive( 'are_requirements_met' )->with()->once()->andReturn( false );
 
-		$define = FunctionMocker::replace( 'define', null );
-		$this->cyr_to_lat_version = '4.3.5';
-		$this->cyr_to_lat_url = PLUGIN_MAIN_FILE;
+		$define                   = FunctionMocker::replace( 'define', null );
+		$this->cyr_to_lat_version = CYR_TO_LAT_TEST_VERSION;
+		$this->cyr_to_lat_url     = PLUGIN_MAIN_FILE;
 
 		\WP_Mock::passthruFunction( 'plugin_dir_url' );
 		\WP_Mock::passthruFunction( 'untrailingslashit' );

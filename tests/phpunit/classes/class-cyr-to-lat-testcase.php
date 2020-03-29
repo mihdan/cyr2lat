@@ -18,31 +18,67 @@ use tad\FunctionMocker\FunctionMocker;
  */
 abstract class Cyr_To_Lat_TestCase extends TestCase {
 
-	/** @var string */
+	/**
+	 * Cyr-To-Lat version.
+	 *
+	 * @var string
+	 */
 	protected $cyr_to_lat_version;
 
-	/** @var string */
+	/**
+	 * Cyr-To-Lat path.
+	 *
+	 * @var string
+	 */
 	protected $cyr_to_lat_path;
 
-	/** @var string */
+	/**
+	 * Cyr-To-Lat url.
+	 *
+	 * @var string
+	 */
 	protected $cyr_to_lat_url;
 
-	/** @var string */
+	/**
+	 * Cyr-To-Lat main file.
+	 *
+	 * @var string
+	 */
 	protected $cyr_to_lat_file;
 
-	/** @var string */
+	/**
+	 * Cyr-To-Lat prefix.
+	 *
+	 * @var string
+	 */
 	protected $cyr_to_lat_prefix;
 
-	/** @var string */
+	/**
+	 * Cyr-To-Lat post conversion action.
+	 *
+	 * @var string
+	 */
 	protected $cyr_to_lat_post_conversion_action;
 
-	/** @var string */
+	/**
+	 * Cyr-To-Lat term conversion action.
+	 *
+	 * @var string
+	 */
 	protected $cyr_to_lat_term_conversion_action;
 
-	/** @var string */
+	/**
+	 * Cyr-To-Lat required version.
+	 *
+	 * @var string
+	 */
 	protected $cyr_to_lat_minimum_php_required_version;
 
-	/** @var int */
+	/**
+	 * Cyr-To-Lat required max input vars.
+	 *
+	 * @var int
+	 */
 	protected $cyr_to_lat_required_max_input_vars;
 
 	/**
@@ -54,13 +90,21 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 		\WP_Mock::setUp();
 
 		$this->cyr_to_lat_version = CYR_TO_LAT_TEST_VERSION;
+
 		$this->cyr_to_lat_path = CYR_TO_LAT_TEST_PATH;
+
 		$this->cyr_to_lat_url = CYR_TO_LAT_TEST_URL;
+
 		$this->cyr_to_lat_file = CYR_TO_LAT_TEST_FILE;
+
 		$this->cyr_to_lat_prefix = CYR_TO_LAT_TEST_PREFIX;
+
 		$this->cyr_to_lat_post_conversion_action = CYR_TO_LAT_TEST_POST_CONVERSION_ACTION;
+
 		$this->cyr_to_lat_term_conversion_action = CYR_TO_LAT_TEST_TERM_CONVERSION_ACTION;
+
 		$this->cyr_to_lat_minimum_php_required_version = CYR_TO_LAT_TEST_MINIMUM_PHP_REQUIRED_VERSION;
+
 		$this->cyr_to_lat_required_max_input_vars = CYR_TO_LAT_TEST_REQUIRED_MAX_INPUT_VARS;
 
 		FunctionMocker::replace(

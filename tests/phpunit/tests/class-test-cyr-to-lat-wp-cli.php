@@ -29,8 +29,8 @@ class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_regenerate( $args, $assoc_args, $convert_params ) {
 		$converter = Mockery::mock( Converter::class );
-		$subject   = Mockery::mock( WP_CLI::class, [ $converter ] )->makePartial()
-		                    ->shouldAllowMockingProtectedMethods();
+
+		$subject = Mockery::mock( WP_CLI::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$notify = Mockery::mock( Bar::class );
 		$notify->shouldReceive( 'tick' );
@@ -83,13 +83,15 @@ class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_make_progress_bar() {
 		$converter = Mockery::mock( Converter::class );
-		$subject   = Mockery::mock( WP_CLI::class, [ $converter ] )->makePartial()
-		                    ->shouldAllowMockingProtectedMethods();
+
+		$subject = Mockery::mock( WP_CLI::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$notify = new Bar();
 
-		\WP_Mock::userFunction( 'WP_CLI\Utils\make_progress_bar' )
-		        ->with( 'Regenerate existing slugs', 1 )->once()->andReturn( $notify );
+		\WP_Mock::userFunction( 'WP_CLI\Utils\make_progress_bar' )->
+		with( 'Regenerate existing slugs', 1 )->
+		once()->
+		andReturn( $notify );
 
 		$this->assertSame( $notify, $subject->make_progress_bar() );
 	}

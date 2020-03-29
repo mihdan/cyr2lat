@@ -220,7 +220,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @param string $expected Expected result.
 	 *
 	 * @dataProvider dp_test_ctl_sanitize_title
-	 * @throws ReflectionException
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_ctl_sanitize_title( $title, $expected ) {
 		$subject = $this->get_subject();
@@ -281,7 +281,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 *
 	 * @test
 	 * @dataProvider dp_wp_insert_term
-	 * @throws ReflectionException
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function wp_insert_term( $title, $term, $expected ) {
 		global $wpdb;
@@ -480,7 +480,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @param string $expected Expected result.
 	 *
 	 * @dataProvider dp_test_ctl_sanitize_filename
-	 * @throws ReflectionException
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_ctl_sanitize_filename( $filename, $expected ) {
 		\WP_Mock::userFunction(
@@ -718,7 +718,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Get test subject
 	 *
 	 * @return Mockery\Mock
-	 * @throws ReflectionException
+	 * @throws ReflectionException ReflectionException.
 	 */
 	private function get_subject() {
 		$locale     = 'ru_RU';

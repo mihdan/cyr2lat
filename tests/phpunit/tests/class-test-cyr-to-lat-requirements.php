@@ -21,6 +21,9 @@ use WP_Mock;
  */
 class Test_Requirements extends Cyr_To_Lat_TestCase {
 
+	/**
+	 * Tear down.
+	 */
 	public function tearDown() {
 		unset ( $_GET['activate'] );
 
@@ -167,10 +170,12 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		$admin_notices->shouldReceive( 'add_notice' )
-		              ->with( 'Cyr To Lat plugin has been deactivated.', 'notice notice-info is-dismissible' );
-		$admin_notices->shouldReceive( 'add_notice' )
-		              ->with( 'Your server is running PHP version ' . $wrong_version . ' but Cyr To Lat ' . $this->cyr_to_lat_version . ' requires at least ' . $this->cyr_to_lat_minimum_php_required_version . '.', 'notice notice-error' );
+		$admin_notices
+			->shouldReceive( 'add_notice' )
+			->with( 'Cyr To Lat plugin has been deactivated.', 'notice notice-info is-dismissible' );
+		$admin_notices
+			->shouldReceive( 'add_notice' )
+			->with( 'Your server is running PHP version ' . $wrong_version . ' but Cyr To Lat ' . $this->cyr_to_lat_version . ' requires at least ' . $this->cyr_to_lat_minimum_php_required_version . '.', 'notice notice-error' );
 
 		$subject = new Requirements( $admin_notices, $wp_filesystem );
 
@@ -182,9 +187,9 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test are_requirements_met() when max_input_vars requirements not met.
 	 *
-	 * @param $within_timeout
-	 * @param $content
-	 * @param $expected
+	 * @param bool   $within_timeout Within timeout.
+	 * @param string $content        Content of init file.
+	 * @param string $expected       Expected result.
 	 *
 	 * @dataProvider dp_test_vars_requirements_not_met
 	 */
@@ -376,8 +381,9 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_deactivate_plugin() {
 		$admin_notices = Mockery::mock( 'Admin_Notices' );
-		$admin_notices->shouldReceive( 'add_notice' )
-		              ->with( 'Cyr To Lat plugin has been deactivated.', 'notice notice-info is-dismissible' );
+		$admin_notices
+			->shouldReceive( 'add_notice' )
+			->with( 'Cyr To Lat plugin has been deactivated.', 'notice notice-info is-dismissible' );
 
 		$wp_filesystem = Mockery::mock( 'WP_Filesystem_Direct' );
 
@@ -402,6 +408,9 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 		self::assertArrayNotHasKey( 'activate', $_GET );
 	}
 
+	/**
+	 * Test deactivate_plugin() when it is not active.
+	 */
 	public function test_deactivate_plugin_when_it_is_not_active() {
 		$admin_notices = Mockery::mock( 'Admin_Notices' );
 		$wp_filesystem = Mockery::mock( 'WP_Filesystem_Direct' );

@@ -12,6 +12,9 @@
  */
 abstract class WP_CLI_Command {
 
+	/**
+	 * WP_CLI_Command constructor.
+	 */
 	public function __construct() {
 	}
 

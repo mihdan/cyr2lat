@@ -62,7 +62,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 
 		\WP_Mock::expectFilterAdded(
 			'plugin_action_links_' . $this->cyr_to_lat_file,
-			[ $subject, 'add_settings_link', ],
+			[ $subject, 'add_settings_link' ],
 			10,
 			4
 		);
@@ -73,7 +73,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 
 		\WP_Mock::expectFilterAdded(
 			'pre_update_option_' . $subject::OPTION_NAME,
-			[ $subject, 'pre_update_option_filter', ],
+			[ $subject, 'pre_update_option_filter' ],
 			10,
 			3
 		);
@@ -109,7 +109,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		FunctionMocker::replace(
 			'\Cyr_To_Lat\Conversion_Tables::get',
 			function( $locale = '' ) {
-				switch( $locale ) {
+				switch ( $locale ) {
 					case 'bel':
 						return [ 'bel' ];
 					case 'uk':
@@ -466,13 +466,6 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 					'times' => 1,
 				]
 			);
-//			\WP_Mock::userFunction(
-//				'add_settings_section',
-//				[
-//					'args'  => [ 'zh_CN_section', 'zh_CN Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
-//					'times' => 1,
-//				]
-//			);
 		}
 
 		$subject->setup_sections();

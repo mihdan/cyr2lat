@@ -365,7 +365,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	public function test_log( $debug ) {
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		$message  = 'Test message';
+		$message = 'Test message';
 
 		FunctionMocker::replace(
 			'defined',

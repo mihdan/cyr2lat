@@ -313,9 +313,6 @@ class Main {
 	private function ctl_is_classic_editor_plugin_active() {
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			// @codeCoverageIgnoreStart
-			/**
-			 * Do not inspect include path.
-			 */
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 			// @codeCoverageIgnoreEnd
 		}
