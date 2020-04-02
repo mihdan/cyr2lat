@@ -696,6 +696,9 @@ class Settings {
 			return $value;
 		}
 
+		// We save only one table, so merge with all existing tables.
+		$value = array_merge( $old_value, $value );
+
 		$form_fields = $this->get_form_fields();
 		foreach ( $form_fields as $key => $form_field ) {
 			switch ( $form_field['type'] ) {

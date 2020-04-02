@@ -50,6 +50,7 @@ class Settings {
 			( header ) => {
 				header.onclick = function( event ) {
 					event.preventDefault();
+
 					const index = event.target.dataset.index;
 
 					const headers = [...document.querySelectorAll( '#ctl-options ul h2' )];
@@ -64,7 +65,7 @@ class Settings {
 					tables.map(
 						( table ) => {
 							table.classList.remove( 'active' );
-						}
+						},
 					);
 					tables[index].classList.add( 'active' );
 
@@ -72,6 +73,37 @@ class Settings {
 				};
 			}
 		);
+
+		document.querySelector( '#ctl-options #submit' ).onclick = function( event ) {
+			event.preventDefault();
+
+			const allTables    = document.querySelector( '#ctl-options' );
+			const hiddenInputs = [...allTables.querySelectorAll( 'input[type="hidden"]' )];
+
+			const activeTable  = allTables.querySelector( '.form-table.ctl-table.active' );
+			const activeInputs = [...activeTable.querySelectorAll( 'input' )];
+
+			const activeForm  = document.createElement( 'form' );
+			activeForm.action = allTables.getAttribute( 'action' );
+			activeForm.method = allTables.method;
+			activeForm.appendChild( activeTable.cloneNode( true ) );
+			activeInputs.map(
+				( input ) => {
+					activeForm.querySelector( '#' + input.id ).value = input.value;
+				},
+			);
+			hiddenInputs.map(
+				( input ) => {
+					activeForm.appendChild( input.cloneNode( true ) );
+				},
+			);
+			document.body.appendChild( activeForm );
+
+			activeForm.submit();
+			activeForm.remove();
+
+			return false;
+		};
 	}
 }
 
