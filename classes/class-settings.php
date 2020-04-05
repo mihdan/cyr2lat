@@ -697,7 +697,9 @@ class Settings {
 		}
 
 		// We save only one table, so merge with all existing tables.
-		$value = array_merge( $old_value, $value );
+		if ( is_array( $old_value ) && ( is_array( $value ) ) ) {
+			$value = array_merge( $old_value, $value );
+		}
 
 		$form_fields = $this->get_form_fields();
 		foreach ( $form_fields as $key => $form_field ) {

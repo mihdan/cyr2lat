@@ -1099,6 +1099,22 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	 * @return array
 	 */
 	public function dp_test_pre_update_option_filter() {
+		$old_value = [
+			'iso9' => [ 'Б' => 'B' ],
+			'bel'  => [ 'Б' => 'B' ],
+		];
+
+		$value = [
+			'bel' => [
+				'Б' => 'B1',
+			],
+		];
+
+		$expected = [
+			'iso9' => [ 'Б' => 'B' ],
+			'bel'  => [ 'Б' => 'B1' ],
+		];
+
 		return [
 			[ [], 'value', 'value', 'value' ],
 			[ [], 'value', 'old_value', 'value' ],
@@ -1150,6 +1166,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				[ 'some_checkbox' => '0' ],
 				[ 'some_checkbox' => 'yes' ],
 			],
+			[ [], $value, $old_value, $expected ],
 		];
 	}
 
