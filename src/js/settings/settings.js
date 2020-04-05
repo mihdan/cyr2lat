@@ -3,9 +3,231 @@
  */
 
 class Settings {
+
+	/**
+	 * Class contructor.
+	 */
 	constructor() {
+		this.OPTIONS_FORM_SELECTOR = '#ctl-options';
+		this.HEADER_SELECTOR       = this.OPTIONS_FORM_SELECTOR + ' h2';
+		this.TABLE_SELECTOR        = this.OPTIONS_FORM_SELECTOR + ' table';
+		this.SUBMIT_SELECTOR       = this.OPTIONS_FORM_SELECTOR + ' #submit';
+		this.ACTIVE_NAV_TAB_CLASS  = 'nav-tab-active';
+		this.ACTIVE_TABLE_CLASS    = 'active';
+
+		this.optionsForm  = document.querySelector( this.OPTIONS_FORM_SELECTOR );
+		this.tablesData   = this.getTablesData();
+		this.submitButton = document.querySelector( this.SUBMIT_SELECTOR );
+
+		this.addWrapper();
+		this.addMessageLines();
 		this.hideTables();
 		this.bindEvents();
+		this.setSubmitStatus();
+	}
+
+	/**
+	 * Get headers.
+	 *
+	 * @returns {*[]}
+	 */
+	getHeaders() {
+		return [...document.querySelectorAll( this.HEADER_SELECTOR )];
+	}
+
+	/**
+	 * Get active header.
+	 *
+	 * @returns {Element}
+	 */
+	getActiveHeader() {
+		return document.querySelector( this.HEADER_SELECTOR + '.' + this.ACTIVE_NAV_TAB_CLASS );
+	}
+
+	/**
+	 * Get active index.
+	 *
+	 * @returns {*}
+	 */
+	getActiveIndex() {
+		return this.getActiveHeader().dataset.index;
+	}
+
+	/**
+	 * Get tables.
+	 *
+	 * @returns {*[]}
+	 */
+	getTables() {
+		return [...document.querySelectorAll( this.TABLE_SELECTOR )];
+	}
+
+	/**
+	 * Get active table.
+	 *
+	 * @returns {Element}
+	 */
+	getActiveTable() {
+		return document.querySelector( this.TABLE_SELECTOR + '.' + this.ACTIVE_TABLE_CLASS );
+	}
+
+	/**
+	 * Get inputs of active table.
+	 *
+	 * @returns {*[]}
+	 */
+	getInputs() {
+		return [...document.querySelectorAll(
+			this.OPTIONS_FORM_SELECTOR + ' input'
+		)];
+	}
+
+	/**
+	 * Check of active table was changed.
+	 *
+	 * @returns {boolean}
+	 */
+	isActiveTableChanged() {
+		const activeIndex = this.getActiveIndex();
+
+		return JSON.stringify( this.getActiveTableData() ) !== JSON.stringify( this.tablesData[activeIndex] );
+	}
+
+	/**
+	 * Set status of submit button.
+	 */
+	setSubmitStatus() {
+		this.submitButton.disabled = ! this.isActiveTableChanged();
+	}
+
+	/**
+	 * Save active table.
+	 */
+	saveActiveTable() {
+		if ( ! this.isActiveTableChanged() ) {
+			return;
+		}
+
+		const hiddenInputs = [...this.optionsForm.querySelectorAll( 'input[type="hidden"]' )];
+
+		const activeTable  = this.getActiveTable();
+		const activeInputs = [...activeTable.querySelectorAll( 'input' )];
+
+		const activeForm  = document.createElement( 'form' );
+		activeForm.action = this.optionsForm.getAttribute( 'action' );
+		activeForm.method = this.optionsForm.method;
+		activeForm.appendChild( activeTable.cloneNode( true ) );
+		activeInputs.map(
+			( input ) => {
+				activeForm.querySelector( '#' + input.id ).value = input.value;
+			}
+		);
+		hiddenInputs.map(
+			( input ) => {
+				activeForm.appendChild( input.cloneNode( true ) );
+			}
+		);
+		document.body.appendChild( activeForm );
+
+		return fetch(
+			this.optionsForm.getAttribute( 'action' ),
+			{
+				method: activeForm.method,
+				body: new URLSearchParams([...new FormData( activeForm ) ])
+			}
+		)
+			.then(
+				response => {
+					if ( response.ok ) {
+						this.showMessage( this.successMessage, 'Options saved.' );
+					} else {
+						this.showMessage( this.errorMessage, 'Error saving options.' );
+					}
+
+					return response.json();
+				}
+			)
+			.catch(
+				() => {
+					activeForm.remove();
+					this.tablesData = this.getTablesData();
+					this.setSubmitStatus();
+				}
+		);
+	}
+
+	/**
+	 * Get table data.
+	 *
+	 * @param table Table.
+	 * @returns {{}[]}
+	 */
+	getTableData( table ) {
+		const inputs = [...table.querySelectorAll( 'input' )];
+
+		let data = {};
+		inputs.forEach(
+			( input ) => {
+				const label = document.querySelector( this.OPTIONS_FORM_SELECTOR + ' label[for="' + input.id + '"]' );
+
+				data[label.innerText] = input.value;
+			}
+		);
+
+		return data;
+	}
+
+	/**
+	 * Get data from all tables.
+	 *
+	 * @returns {{}[][]}
+	 */
+	getTablesData() {
+		return this.getTables().map(
+			( table ) => {
+				return this.getTableData( table );
+			}
+		);
+	}
+
+	/**
+	 * Get active table data.
+	 *
+	 * @returns {{}[]}
+	 */
+	getActiveTableData() {
+		return this.getTableData( this.getActiveTable() );
+	}
+
+	/**
+	 * Add wrapper.
+	 */
+	addWrapper() {
+		this.wrapper = document.createElement( 'ul' );
+		this.wrapper.classList.add( 'nav-tab-wrapper' );
+		this.optionsForm.prepend( this.wrapper );
+	}
+
+	/**
+	 * Add message line.
+	 *
+	 * @param id
+	 * @returns {HTMLDivElement}
+	 */
+	addMessageLine( id ) {
+		const message = document.createElement( 'div' );
+		message.id = id;
+		this.optionsForm.prepend( message );
+
+		return message;
+	}
+
+	/**
+	 * Add success and error message lines.
+	 */
+	addMessageLines() {
+		this.successMessage = this.addMessageLine( 'ctl-success' );
+		this.errorMessage   = this.addMessageLine( 'ctl-error' );
 	}
 
 	/**
@@ -13,28 +235,23 @@ class Settings {
 	 * Create navigation tabs.
 	 */
 	hideTables() {
-		const tables = [...document.querySelectorAll( '#ctl-options table' )];
-		tables.map(
+		this.getTables().map(
 			( table, index ) => {
 				table.classList.add( 'ctl-table' );
 				if ( 0 === index ) {
-					table.classList.add( 'active' );
-					const tabs = document.createElement( 'ul' );
-					tabs.classList.add( 'nav-tab-wrapper' );
-					table.parentNode.insertBefore( tabs, table );
+					table.classList.add( this.ACTIVE_TABLE_CLASS );
 				}
 			}
 		);
-		const headers = [...document.querySelectorAll( '#ctl-options h2' )];
-		headers.map(
+
+		this.getHeaders().map(
 			( header, index ) => {
 				header.classList.add( 'nav-tab' );
 				header.dataset.index = index;
 
-				const tabs = document.querySelector( '#ctl-options ul' );
-				tabs.appendChild( header );
+				this.wrapper.appendChild( header );
 				if ( 0 === index ) {
-					header.classList.add( 'nav-tab-active' );
+					header.classList.add( this.ACTIVE_NAV_TAB_CLASS );
 				}
 			}
 		);
@@ -44,66 +261,94 @@ class Settings {
 	 * Bind events to methods.
 	 */
 	bindEvents() {
-		const headers = [...document.querySelectorAll( '#ctl-options ul h2' )];
-
-		headers.map(
-			( header ) => {
-				header.onclick = function( event ) {
+		this.getHeaders().map(
+			( header, i, headers ) => {
+				header.onclick = ( event ) => {
 					event.preventDefault();
 
 					const index = event.target.dataset.index;
+					const activeIndex = this.getActiveIndex();
 
-					const headers = [...document.querySelectorAll( '#ctl-options ul h2' )];
+					if ( index === activeIndex ) {
+						return false;
+					}
+
+					this.saveActiveTable();
+
 					headers.map(
 						( header ) => {
-							header.classList.remove( 'nav-tab-active' );
+							header.classList.remove( this.ACTIVE_NAV_TAB_CLASS );
 						}
 					);
-					headers[index].classList.add( 'nav-tab-active' );
+					headers[index].classList.add( this.ACTIVE_NAV_TAB_CLASS );
 
-					const tables = [...document.querySelectorAll( '.ctl-table' )];
+					const tables = this.getTables();
 					tables.map(
 						( table ) => {
-							table.classList.remove( 'active' );
-						},
+							table.classList.remove( this.ACTIVE_TABLE_CLASS );
+						}
 					);
-					tables[index].classList.add( 'active' );
+					tables[index].classList.add( this.ACTIVE_TABLE_CLASS );
+
+					this.setSubmitStatus();
 
 					return false;
 				};
 			}
 		);
 
-		document.querySelector( '#ctl-options #submit' ).onclick = function( event ) {
+		this.getInputs().map(
+			( input ) => {
+				input.oninput = () => {
+					this.setSubmitStatus();
+				};
+			}
+		);
+
+		document.querySelector( this.SUBMIT_SELECTOR ).onclick = ( event ) => {
 			event.preventDefault();
 
-			const allTables    = document.querySelector( '#ctl-options' );
-			const hiddenInputs = [...allTables.querySelectorAll( 'input[type="hidden"]' )];
-
-			const activeTable  = allTables.querySelector( '.form-table.ctl-table.active' );
-			const activeInputs = [...activeTable.querySelectorAll( 'input' )];
-
-			const activeForm  = document.createElement( 'form' );
-			activeForm.action = allTables.getAttribute( 'action' );
-			activeForm.method = allTables.method;
-			activeForm.appendChild( activeTable.cloneNode( true ) );
-			activeInputs.map(
-				( input ) => {
-					activeForm.querySelector( '#' + input.id ).value = input.value;
-				},
-			);
-			hiddenInputs.map(
-				( input ) => {
-					activeForm.appendChild( input.cloneNode( true ) );
-				},
-			);
-			document.body.appendChild( activeForm );
-
-			activeForm.submit();
-			activeForm.remove();
+			this.saveActiveTable();
 
 			return false;
 		};
+	}
+
+	/**
+	 * Clear message.
+	 *
+	 * @param message
+	 */
+	clearMessage( message ) {
+		message.innerHTML = '';
+		message.classList.remove( 'active' );
+	}
+
+	/**
+	 * Clear messages.
+	 */
+	clearMessages() {
+		this.clearMessage( this.successMessage );
+		this.clearMessage( this.errorMessage );
+		clearTimeout( this.msgTimer );
+	}
+
+	/**
+	 * Show messages.
+	 *
+	 * @param el Element.
+	 * @param message Message.
+	 */
+	showMessage( el, message ) {
+		el.innerHTML  = message;
+		el.classList.add( 'active' );
+
+		this.msgTimer = setTimeout(
+			() => {
+				this.clearMessages();
+			},
+			5000
+		);
 	}
 }
 

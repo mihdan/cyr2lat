@@ -6,6 +6,29 @@
 	display: none;
 }
 
+#ctl-success, #ctl-error {
+	max-height: 0;
+	color: #fff;
+	font-size: 14px;
+	padding: 0;
+	transition: 0.5s all;
+}
+
+#ctl-success {
+	background: #8BC34A;
+}
+
+#ctl-error {
+	background: #FF9800;
+}
+
+#ctl-success.active, #ctl-error.active {
+	padding: 10px 25px;
+	max-height: 34px;
+	height: 14px;
+	line-height: 14px;
+}
+
 #ctl-options .nav-tab-wrapper {
 	width: 125px;
 	float: left;
