@@ -356,66 +356,18 @@ class Settings {
 			return;
 		}
 
-		add_settings_section(
-			'iso9_section',
-			__( 'ISO9 Table', 'cyr2lat' ),
-			[ $this, 'cyr_to_lat_section' ],
-			self::PAGE
-		);
-		add_settings_section(
-			'bel_section',
-			__( 'bel Table', 'cyr2lat' ),
-			[ $this, 'cyr_to_lat_section' ],
-			self::PAGE
-		);
-		add_settings_section(
-			'uk_section',
-			__( 'uk Table', 'cyr2lat' ),
-			[ $this, 'cyr_to_lat_section' ],
-			self::PAGE
-		);
-		add_settings_section(
-			'bg_BG_section',
-			__( 'bg_BG Table', 'cyr2lat' ),
-			[ $this, 'cyr_to_lat_section' ],
-			self::PAGE
-		);
-		add_settings_section(
-			'mk_MK_section',
-			__( 'mk_MK Table', 'cyr2lat' ),
-			[ $this, 'cyr_to_lat_section' ],
-			self::PAGE
-		);
-		add_settings_section(
-			'sr_RS_section',
-			__( 'sr_RS Table', 'cyr2lat' ),
-			[ $this, 'cyr_to_lat_section' ],
-			self::PAGE
-		);
-		add_settings_section(
-			'ka_GE_section',
-			__( 'ka_GE Table', 'cyr2lat' ),
-			[ $this, 'cyr_to_lat_section' ],
-			self::PAGE
-		);
-		add_settings_section(
-			'kk_section',
-			__( 'kk Table', 'cyr2lat' ),
-			[ $this, 'cyr_to_lat_section' ],
-			self::PAGE
-		);
-		add_settings_section(
-			'he_IL_section',
-			__( 'he_IL Table', 'cyr2lat' ),
-			[ $this, 'cyr_to_lat_section' ],
-			self::PAGE
-		);
-		add_settings_section(
-			'zh_CN_section',
-			__( 'zh_CN Table', 'cyr2lat' ),
-			[ $this, 'cyr_to_lat_section' ],
-			self::PAGE
-		);
+		$locale = get_locale();
+		$locale = in_array( $locale, array_keys( $this->form_fields ), true ) ? $locale : 'iso9';
+
+		foreach ( $this->form_fields as $key => $form_field ) {
+			$current = ( $key === $locale ) ? '<br>' . __( '(current)', 'cyr2lat' ) : '';
+			add_settings_section(
+				$form_field['section'],
+				$form_field['label'] . $current,
+				[ $this, 'cyr_to_lat_section' ],
+				self::PAGE
+			);
+		}
 	}
 
 	/**

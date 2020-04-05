@@ -395,81 +395,105 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	 * Test setup_sections()
 	 *
 	 * @param boolean $is_ctl_options_screen Is plugin options screen.
+	 * @param boolean $locale                Current locale.
 	 *
 	 * @dataProvider dp_test_setup_sections
 	 */
-	public function test_setup_sections( $is_ctl_options_screen ) {
+	public function test_setup_sections( $is_ctl_options_screen, $locale ) {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_ctl_options_screen' )->andReturn( $is_ctl_options_screen );
 
+		$subject->form_fields = $this->get_test_form_fields();
+
+		\WP_Mock::userFunction( 'get_locale' )->with()->andReturn( $locale );
+
 		if ( $is_ctl_options_screen ) {
+			$current = ( 'en_US' === $locale || 'ru_RU' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'iso9_section', 'ISO9 Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'iso9_section', 'ISO9 Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'bel' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'bel_section', 'bel Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'bel_section', 'bel Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'uk' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'uk_section', 'uk Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'uk_section', 'uk Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'bg_BG' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'bg_BG_section', 'bg_BG Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'bg_BG_section', 'bg_BG Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'mk_MK' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'mk_MK_section', 'mk_MK Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'mk_MK_section', 'mk_MK Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'sr_RS' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'sr_RS_section', 'sr_RS Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'sr_RS_section', 'sr_RS Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'ka_GE' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'ka_GE_section', 'ka_GE Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'ka_GE_section', 'ka_GE Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'kk' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'kk_section', 'kk Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'kk_section', 'kk Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'he_IL' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'he_IL_section', 'he_IL Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'he_IL_section', 'he_IL Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'zh_CN' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'zh_CN_section', 'zh_CN Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'zh_CN_section', 'zh_CN Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -485,8 +509,18 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_setup_sections() {
 		return [
-			[ false ],
-			[ true ],
+			[ false, null ],
+			[ true, 'en_US' ],
+			[ true, 'ru_RU' ],
+			[ true, 'bel' ],
+			[ true, 'uk' ],
+			[ true, 'bg_BG' ],
+			[ true, 'mk_MK' ],
+			[ true, 'sr_RS' ],
+			[ true, 'ka_GE' ],
+			[ true, 'kk' ],
+			[ true, 'he_IL' ],
+			[ true, 'zh_CN' ],
 		];
 	}
 
