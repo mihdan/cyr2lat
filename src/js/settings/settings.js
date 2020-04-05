@@ -108,20 +108,21 @@ class Settings {
 			return;
 		}
 
-		const hiddenInputs = [...this.optionsForm.querySelectorAll( 'input[type="hidden"]' )];
-
 		const activeTable  = this.getActiveTable();
-		const activeInputs = [...activeTable.querySelectorAll( 'input' )];
 
 		const activeForm  = document.createElement( 'form' );
 		activeForm.action = this.optionsForm.getAttribute( 'action' );
 		activeForm.method = this.optionsForm.method;
 		activeForm.appendChild( activeTable.cloneNode( true ) );
+
+		const activeInputs = [...activeTable.querySelectorAll( 'input' )];
 		activeInputs.map(
 			( input ) => {
 				activeForm.querySelector( '#' + input.id ).value = input.value;
 			}
 		);
+
+		const hiddenInputs = [...this.optionsForm.querySelectorAll( 'input[type="hidden"]' )];
 		hiddenInputs.map(
 			( input ) => {
 				activeForm.appendChild( input.cloneNode( true ) );
@@ -140,6 +141,7 @@ class Settings {
 				response => {
 					if ( response.ok ) {
 						this.showMessage( this.successMessage, 'Options saved.' );
+						this.tablesData = this.getTablesData();
 					} else {
 						this.showMessage( this.errorMessage, 'Error saving options.' );
 					}
@@ -147,10 +149,9 @@ class Settings {
 					return response.json();
 				}
 			)
-			.catch(
+			.finally(
 				() => {
 					activeForm.remove();
-					this.tablesData = this.getTablesData();
 					this.setSubmitStatus();
 				}
 		);
