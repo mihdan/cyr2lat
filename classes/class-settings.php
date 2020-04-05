@@ -410,6 +410,12 @@ class Settings {
 			[ $this, 'cyr_to_lat_section' ],
 			self::PAGE
 		);
+		add_settings_section(
+			'zh_CN_section',
+			__( 'zh_CN Table', 'cyr2lat' ),
+			[ $this, 'cyr_to_lat_section' ],
+			self::PAGE
+		);
 	}
 
 	/**
