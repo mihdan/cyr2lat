@@ -12,6 +12,8 @@ class Settings {
 		this.HEADER_SELECTOR       = this.OPTIONS_FORM_SELECTOR + ' h2';
 		this.TABLE_SELECTOR        = this.OPTIONS_FORM_SELECTOR + ' table';
 		this.SUBMIT_SELECTOR       = this.OPTIONS_FORM_SELECTOR + ' #submit';
+		this.CURRENT_STUB_ID       = 'ctl-current';
+		this.CURRENT_NAV_TAB_CLASS = 'nav-tab-current';
 		this.ACTIVE_NAV_TAB_CLASS  = 'nav-tab-active';
 		this.ACTIVE_TABLE_CLASS    = 'active';
 
@@ -236,10 +238,13 @@ class Settings {
 	 * Create navigation tabs.
 	 */
 	hideTables() {
+		let currentIndex = 0;
+
 		this.getTables().map(
 			( table, index ) => {
 				table.classList.add( 'ctl-table' );
-				if ( 0 === index ) {
+				if ( this.CURRENT_STUB_ID === table.previousSibling.id ) {
+					currentIndex = index;
 					table.classList.add( this.ACTIVE_TABLE_CLASS );
 				}
 			}
@@ -251,8 +256,8 @@ class Settings {
 				header.dataset.index = index;
 
 				this.wrapper.appendChild( header );
-				if ( 0 === index ) {
-					header.classList.add( this.ACTIVE_NAV_TAB_CLASS );
+				if ( index === currentIndex ) {
+					header.classList.add( this.CURRENT_NAV_TAB_CLASS, this.ACTIVE_NAV_TAB_CLASS );
 				}
 			}
 		);

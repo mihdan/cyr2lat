@@ -64,8 +64,12 @@ body.js #ctl-options .ctl-table {
 }
 
 #ctl-options .nav-tab-active {
-	background: #f1f1f1;
+	background: #fff;
 	border-bottom: 1px solid #ccc;
+}
+
+.nav-tab-current {
+	box-shadow: 0 0 5px 5px #fff;
 }
 
 .ctl-table.active {

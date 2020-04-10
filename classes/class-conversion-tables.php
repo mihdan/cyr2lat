@@ -974,6 +974,7 @@ class Conversion_Tables {
 					'Zuo'    => '昨左佐做作坐座阼唑嘬怍胙祚酢',
 				];
 				break;
+			case 'iso9':
 			default:
 				$table = [
 					'А' => 'A',
