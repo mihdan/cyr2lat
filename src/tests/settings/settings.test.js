@@ -18,6 +18,7 @@ function getTables() {
         </tbody>
     </table>
     <h2>bel Table</h2>
+    <div id="ctl-current"></div>
     <table class="form-table">
         <tbody>
         <tr>
@@ -53,7 +54,7 @@ function getTables() {
         <input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">
     </p>
 </form>
-`.trim();
+`.replace( /\n/g, '' ).replace( />\s+</g, '><' ).trim();
 }
 
 function getActiveForm() {
@@ -77,7 +78,7 @@ function getActiveForm() {
     <input type="hidden" id="_wpnonce" name="_wpnonce" value="831b4c5b80">
     <input type="hidden" name="_wp_http_referer" value="/wp-admin/options-general.php?page=cyr-to-lat">
 </form>
-`.trim();
+`.replace( /\n/g, '' ).replace( />\s+</g, '><' ).trim();
 }
 
 beforeEach(
@@ -120,7 +121,7 @@ describe( 'Settings', () => {
 				tables.map(
 					( table, index ) => {
 						expect( table.classList.contains( 'ctl-table' ) ).toBe( true );
-						if ( 0 === index ) {
+						if ( 1 === index ) {
 							expect( table.classList.contains( 'active' ) ).toBe( true );
 						}
 					}
@@ -133,7 +134,7 @@ describe( 'Settings', () => {
 					( header, index ) => {
 						expect( header.classList.contains( 'nav-tab' ) ).toBe( true );
 						expect( parseInt( header.dataset.index ) ).toBe( index );
-						if ( 0 === index ) {
+						if ( 1 === index ) {
 							expect( header.classList.contains( 'nav-tab-active' ) ).toBe( true );
 						}
 					}
@@ -173,10 +174,10 @@ describe( 'Settings', () => {
 
 				const spySaveActiveTable = jest.spyOn( settings, 'saveActiveTable' );
 
-				checkActive( 0 );
+				checkActive( 1 );
 
-				headers[2].click();
-				checkActive( 2 );
+				headers[0].click();
+				checkActive( 0 );
 
 				headers[2].click();
 				checkActive( 2 );
@@ -184,7 +185,7 @@ describe( 'Settings', () => {
 				headers[1].click();
 				checkActive( 1 );
 
-				expect( spySaveActiveTable ).toHaveBeenCalledTimes( 2 );
+				expect( spySaveActiveTable ).toHaveBeenCalledTimes( 3 );
 			}
 		);
 
