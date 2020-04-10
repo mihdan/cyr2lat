@@ -101,6 +101,58 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
+	 * Test init_locales()
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_init_locales() {
+		$subject = new Settings();
+
+		$method = $this->set_method_accessibility( $subject, 'init_locales' );
+		$method->invoke( $subject );
+
+		$expected = [
+			'iso9'  => [
+				'label' => __( 'ISO9 Table', 'cyr2lat' ),
+			],
+			'bel'   => [
+				'label' => __( 'bel Table', 'cyr2lat' ),
+			],
+			'uk'    => [
+				'label' => __( 'uk Table', 'cyr2lat' ),
+			],
+			'bg_BG' => [
+				'label' => __( 'bg_BG Table', 'cyr2lat' ),
+			],
+			'mk_MK' => [
+				'label' => __( 'mk_MK Table', 'cyr2lat' ),
+			],
+			'sr_RS' => [
+				'label' => __( 'sr_RS Table', 'cyr2lat' ),
+			],
+			'ka_GE' => [
+				'label' => __( 'ka_GE Table', 'cyr2lat' ),
+			],
+			'kk'    => [
+				'label' => __( 'kk Table', 'cyr2lat' ),
+			],
+			'he_IL' => [
+				'label' => __( 'he_IL Table', 'cyr2lat' ),
+			],
+			'zh_CN' => [
+				'label' => __( 'zh_CN Table', 'cyr2lat' ),
+			],
+		];
+
+		$this->assertSame( $expected, $this->get_protected_property( $subject, 'locales' ) );
+
+		$expected = [ 'something' ];
+		$this->set_protected_property( $subject, 'locales', $expected );
+		$method->invoke( $subject );
+		$this->assertSame( $expected, $this->get_protected_property( $subject, 'locales' ) );
+	}
+
+	/**
 	 * Test init_form_fields()
 	 */
 	public function test_init_form_fields() {
@@ -108,7 +160,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'\Cyr_To_Lat\Conversion_Tables::get',
-			function( $locale = '' ) {
+			function ( $locale = '' ) {
 				switch ( $locale ) {
 					case 'bel':
 						return [ 'bel' ];
@@ -133,6 +185,8 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				}
 			}
 		);
+
+		\WP_Mock::userFunction( 'get_locale' )->with()->andReturn( 'iso9' );
 
 		$expected = $this->get_test_form_fields();
 
@@ -403,7 +457,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_ctl_options_screen' )->andReturn( $is_ctl_options_screen );
 
-		$subject->form_fields = $this->get_test_form_fields();
+		$subject->form_fields = $this->get_test_form_fields( $locale );
 
 		\WP_Mock::userFunction( 'get_locale' )->with()->andReturn( $locale );
 
@@ -412,7 +466,12 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'iso9_section', 'ISO9 Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [
+						'iso9_section',
+						'ISO9 Table' . $current,
+						[ $subject, 'cyr_to_lat_section' ],
+						$subject::PAGE,
+					],
 					'times' => 1,
 				]
 			);
@@ -528,8 +587,23 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	 * Test cyr_to_lat_section()
 	 */
 	public function test_cyr_to_lat_section() {
+		$locale = 'iso9';
+
+		\WP_Mock::userFunction( 'get_locale' )->andReturn( $locale );
+
 		$subject = new Settings();
-		$subject->cyr_to_lat_section( [] );
+
+		ob_start();
+		$subject->cyr_to_lat_section(
+			[ 'id' => $locale . '_section' ]
+		);
+		$this->assertSame( '<div id="ctl-current"></div>', ob_get_clean() );
+
+		ob_start();
+		$subject->cyr_to_lat_section(
+			[ 'id' => 'other_section' ]
+		);
+		$this->assertSame( '', ob_get_clean() );
 	}
 
 	/**
@@ -1421,10 +1495,12 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	/**
 	 * Get test form fields.
 	 *
+	 * @param string $locale Current locale.
+	 *
 	 * @return array
 	 */
-	private function get_test_form_fields() {
-		return [
+	private function get_test_form_fields( $locale = 'iso9' ) {
+		$form_fields = [
 			'iso9'  => [
 				'label'        => 'ISO9 Table',
 				'section'      => 'iso9_section',
@@ -1516,6 +1592,11 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				'default'      => [ 'zh_CN' ],
 			],
 		];
+
+		$locale                          = isset( $form_fields[ $locale ] ) ? $locale : 'iso9';
+		$form_fields[ $locale ]['label'] = $form_fields[ $locale ]['label'] . '<br>(current)';
+
+		return $form_fields;
 	}
 
 	/**

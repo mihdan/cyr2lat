@@ -70,7 +70,7 @@ class Settings {
 	 *
 	 * @var array
 	 */
-	private $locales = [];
+	protected $locales = [];
 
 	/**
 	 * Settings constructor.
@@ -136,7 +136,7 @@ class Settings {
 	/**
 	 * Init locales.
 	 */
-	private function init_locales() {
+	protected function init_locales() {
 		if ( ! empty( $this->locales ) ) {
 			return;
 		}
