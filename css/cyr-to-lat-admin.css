@@ -78,6 +78,8 @@ body.js #ctl-options .ctl-table {
 
 .ctl-table-cell {
 	float: left;
+	position: relative;
+	margin-bottom: 1em;
 }
 
 .ctl-table-cell label {
@@ -89,7 +91,45 @@ body.js #ctl-options .ctl-table {
 
 .ctl-table-cell input {
 	width: 3em !important;
-	display: inline-block !important;
+	display: inline-block;
+}
+
+.ctl-table-cell #ctl-edit-label {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 2.4em !important;
+	padding: 0;
+	border: 1px solid #007cba;
+	box-shadow: 0 0 0 1px #007cba;
+	outline: 2px solid #0000;
+	border-radius: 4px;
+	line-height: 2;
+}
+
+.ctl-edit-label-error {
+	background: #FF9800;
+}
+
+.ctl-plus {
+	position: relative;
+	float: left;
+	display: inline-block;
+}
+
+.ctl-plus button {
+	border: none;
+	cursor: pointer;
+	height: 24px;
+	width: 24px;
+	padding: 0;
+	position: absolute;
+	top: 0.35em;
+	left: 1.8em;
+}
+
+.ctl-plus button:focus {
+	outline: none;
 }
 
 #donate {
