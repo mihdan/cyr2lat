@@ -490,6 +490,7 @@ class Settings {
 			const editedCell = document.getElementById( this.EDIT_LABEL_ID ).parentElement;
 			this.hideEditLabelInput();
 			editedCell.remove();
+			this.setSubmitStatus();
 
 			return;
 		}
