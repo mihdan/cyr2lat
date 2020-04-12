@@ -317,6 +317,8 @@ class Settings {
 		input.setAttribute( 'value', '' );
 		this.replaceName( input, '' );
 
+		this.bindEvents();
+
 		this.editLabel( label );
 	}
 
@@ -522,7 +524,7 @@ class Settings {
 	 * @param newValue New label value
 	 */
 	replaceName( input, newValue ) {
-		input.name = input.name.replace( /(.+\[.+])\[.+]/g, '$1[' + newValue + ']' );
+		input.name = input.name.replace( /(.+\[.+])\[.*]/g, '$1[' + newValue + ']' );
 	}
 
 	/**
