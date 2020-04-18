@@ -13,6 +13,10 @@ function getTables() {
                     <label for="iso9-0">А</label>
                     <input name="cyr_to_lat_settings[iso9][А]" id="iso9-0" type="text" placeholder="" value="A" class="regular-text">
                 </div>
+                <div class="ctl-table-cell">
+                    <label for="iso9-1">Б</label>
+                    <input name="cyr_to_lat_settings[iso9][Б]" id="iso9-1" type="text" placeholder="" value="B" class="regular-text">
+                </div>
             </td>
         </tr>
         </tbody>
@@ -25,8 +29,12 @@ function getTables() {
             <th scope="row">bel Table</th>
             <td>
                 <div class="ctl-table-cell">
-                    <label for="iso9-0">А</label>
-                    <input name="cyr_to_lat_settings[iso9][А]" id="iso9-0" type="text" placeholder="" value="A" class="regular-text">
+                    <label for="bel-0">А</label>
+                    <input name="cyr_to_lat_settings[bel][А]" id="bel-0" type="text" placeholder="" value="A" class="regular-text">
+                </div>
+                <div class="ctl-table-cell">
+                    <label for="bel-1">Б</label>
+                    <input name="cyr_to_lat_settings[bel][Б]" id="bel-1" type="text" placeholder="" value="B" class="regular-text">
                 </div>
             </td>
         </tr>
@@ -39,8 +47,12 @@ function getTables() {
             <th scope="row">uk Table</th>
             <td>
                 <div class="ctl-table-cell">
-                    <label for="iso9-0">А</label>
-                    <input name="cyr_to_lat_settings[iso9][А]" id="iso9-0" type="text" placeholder="" value="A" class="regular-text">
+                    <label for="uk-0">А</label>
+                    <input name="cyr_to_lat_settings[uk][А]" id="uk-0" type="text" placeholder="" value="A" class="regular-text">
+                </div>
+                <div class="ctl-table-cell">
+                    <label for="uk-1">Б</label>
+                    <input name="cyr_to_lat_settings[uk][Б]" id="uk-1" type="text" placeholder="" value="B" class="regular-text">
                 </div>
             </td>
         </tr>
@@ -63,11 +75,15 @@ function getActiveForm() {
     <table class="form-table ctl-table active">
         <tbody>
         <tr>
-            <th scope="row">ISO9 Table</th>
+            <th scope="row">bel Table</th>
             <td>
                 <div class="ctl-table-cell">
-                    <label for="iso9-0">А</label>
-                    <input name="cyr_to_lat_settings[iso9][А]" id="iso9-0" type="text" placeholder="" value="A1" class="regular-text">
+                    <label for="bel-0">А</label>
+                    <input name="cyr_to_lat_settings[bel][А]" id="bel-0" type="text" placeholder="" value="A1" class="regular-text">
+                </div>
+                <div class="ctl-table-cell">
+                    <label for="bel-1">Б</label>
+                    <input name="cyr_to_lat_settings[bel][Б]" id="bel-1" type="text" placeholder="" value="B" class="regular-text">
                 </div>
             </td>
         </tr>
@@ -182,6 +198,10 @@ describe( 'Settings', () => {
 				headers[2].click();
 				checkActive( 2 );
 
+				headers[1].click();
+				checkActive( 1 );
+
+				// Click on active header to assure that nothing happens.
 				headers[1].click();
 				checkActive( 1 );
 
@@ -370,6 +390,229 @@ describe( 'Settings', () => {
 
 				expect( fetch ).toHaveBeenCalledTimes( 1 );
 				expect( fetch ).toHaveBeenCalledWith( action, init );
+			}
+		);
+
+		test( 'Edit label', () => {
+				document.body.innerHTML = getTables();
+
+				new Settings();
+
+				const labels = [...document.querySelectorAll( '#ctl-options #ctl-current+table label' )];
+				const label = labels[0];
+				label.click();
+
+				const editLabelInput = label.parentNode.querySelector( '#ctl-edit-label' );
+
+				expect( typeof editLabelInput ).not.toBe( undefined );
+				expect( editLabelInput.value ).toBe( label.innerHTML );
+				expect( editLabelInput.classList.contains( 'ctl-edit-label-error' ) ).toBe( false );
+				expect( editLabelInput.style.display ).toBe( 'block' );
+				expect( document.activeElement === editLabelInput ).toBe( true );
+			}
+		);
+
+		test( 'Add label', () => {
+				document.body.innerHTML = getTables();
+
+				const settings = new Settings();
+
+				const spyeditLabel = jest.spyOn( settings, 'editLabel' );
+				const spybindEvents = jest.spyOn( settings, 'bindEvents' );
+
+				const labels = [...document.querySelectorAll( '#ctl-options #ctl-current+table label' )];
+				const plus = document.querySelector( '#ctl-options #ctl-current+table .ctl-plus' );
+				plus.click();
+
+				const lastCell = document.querySelector( '#ctl-options .active .ctl-plus' ).previousElementSibling;
+
+				expect( typeof lastCell ).not.toBe( undefined );
+				expect( lastCell.querySelector( 'label' ).htmlFor ).toBe( 'bel-' + parseInt( labels.length ) );
+				expect( lastCell.querySelector( 'label' ).innerHTML ).toBe( '' );
+				expect( lastCell.querySelector( 'input' ).id ).toBe( 'bel-' + parseInt( labels.length ) );
+				expect( lastCell.querySelector( 'input' ).value ).toBe( '' );
+
+				expect( spybindEvents ).toHaveBeenCalledTimes( 1 );
+				expect( spybindEvents ).toHaveBeenCalledWith();
+
+				expect( spyeditLabel ).toHaveBeenCalledTimes( 1 );
+				expect( spyeditLabel ).toHaveBeenCalledWith( lastCell.querySelector( 'label' ) );
+			}
+		);
+
+		test( 'Hide edit label input', () => {
+				document.body.innerHTML = getTables();
+
+				const settings = new Settings();
+
+				const labels = [...document.querySelectorAll( '#ctl-options #ctl-current+table label' )];
+				const label = labels[0];
+				label.click();
+
+				settings.hideEditLabelInput();
+
+				const editLabelInput = document.querySelector( 'body > #ctl-edit-label' );
+
+				expect( typeof editLabelInput ).not.toBe( undefined );
+				expect( editLabelInput.classList.contains( 'ctl-edit-label-error' ) ).toBe( false );
+				expect( editLabelInput.style.display ).toBe( 'none' );
+			}
+		);
+
+		test( 'Do NOT save label when editLabelInput is hidden', () => {
+				document.body.innerHTML = getTables();
+
+				const settings = new Settings();
+
+				settings.saveLabel();
+			}
+		);
+
+		test( 'Do NOT save label when editLabelInput is empty', () => {
+				document.body.innerHTML = getTables();
+
+				const settings              = new Settings();
+				const spyHideEditLabelInput = jest.spyOn( settings, 'hideEditLabelInput' );
+				const spySetSubmitStatus    = jest.spyOn( settings, 'setSubmitStatus' );
+
+				let labels = [...document.querySelectorAll( '#ctl-options #ctl-current+table label' )];
+				const label  = labels[0];
+				label.click();
+
+				const editLabelInput = document.getElementById( 'ctl-edit-label' );
+				const editedCell = editLabelInput.parentElement;
+
+				editLabelInput.value = '';
+
+				settings.saveLabel();
+
+				labels = [...document.querySelectorAll( '#ctl-options #ctl-current+table label' )];
+
+				expect( labels.length ).toBe( 1 );
+				expect( spyHideEditLabelInput ).toHaveBeenCalledTimes( 1 );
+				expect( spyHideEditLabelInput ).toHaveBeenCalledWith();
+				expect( spySetSubmitStatus ).toHaveBeenCalledTimes( 1 );
+				expect( spySetSubmitStatus ).toHaveBeenCalledWith();
+			}
+		);
+
+		test( 'Do NOT save label when cancelled', () => {
+				document.body.innerHTML = getTables();
+
+				const settings              = new Settings();
+				const spyHideEditLabelInput = jest.spyOn( settings, 'hideEditLabelInput' );
+
+				let labels = [...document.querySelectorAll( '#ctl-options #ctl-current+table label' )];
+				const label  = labels[0];
+				label.click();
+
+				settings.saveLabel( true );
+
+				labels = [...document.querySelectorAll( '#ctl-options #ctl-current+table label' )];
+
+				expect( labels.length ).toBe( 2 );
+				expect( spyHideEditLabelInput ).toHaveBeenCalledTimes( 1 );
+				expect( spyHideEditLabelInput ).toHaveBeenCalledWith();
+			}
+		);
+
+		test( 'Do NOT save label when label not changed', () => {
+				document.body.innerHTML = getTables();
+
+				const settings              = new Settings();
+				const spyHideEditLabelInput = jest.spyOn( settings, 'hideEditLabelInput' );
+
+				let labels = [...document.querySelectorAll( '#ctl-options #ctl-current+table label' )];
+				const label  = labels[0];
+				label.click();
+
+				settings.saveLabel();
+
+				labels = [...document.querySelectorAll( '#ctl-options #ctl-current+table label' )];
+
+				expect( labels.length ).toBe( 2 );
+				expect( spyHideEditLabelInput ).toHaveBeenCalledTimes( 1 );
+				expect( spyHideEditLabelInput ).toHaveBeenCalledWith();
+			}
+		);
+
+		test( 'Do NOT save label when label is not unique', () => {
+				document.body.innerHTML = getTables();
+
+				const settings              = new Settings();
+
+				let labels = [...document.querySelectorAll( '#ctl-options #ctl-current+table label' )];
+				const label  = labels[0];
+				label.click();
+
+				const editLabelInput = document.getElementById( 'ctl-edit-label' );
+
+				editLabelInput.value = 'Б';
+
+				settings.saveLabel();
+
+				labels = [...document.querySelectorAll( '#ctl-options #ctl-current+table label' )];
+
+				expect( labels.length ).toBe( 2 );
+				expect( editLabelInput.classList.contains( 'ctl-edit-label-error' ) ).toBe( true );
+			}
+		);
+
+		test( 'Save label', () => {
+				document.body.innerHTML = getTables();
+
+				const settings           = new Settings();
+				const spySetSubmitStatus = jest.spyOn( settings, 'setSubmitStatus' );
+
+				let labels = [...document.querySelectorAll( '#ctl-options #ctl-current+table label' )];
+				let label  = labels[0];
+				label.click();
+
+				const editLabelInput = document.getElementById( 'ctl-edit-label' );
+				const newValue       = 'Й';
+
+				editLabelInput.value = ' ' + newValue + '  ';
+
+				settings.saveLabel();
+
+				labels = [...document.querySelectorAll( '#ctl-options #ctl-current+table label' )];
+				label  = labels[0];
+
+				const inputs = [...document.querySelectorAll( '#ctl-options #ctl-current+table input' )];
+				const input  = inputs[0];
+
+				expect( labels.length ).toBe( 2 );
+				expect( label.innerHTML ).toBe( newValue );
+				expect( input.name ).toBe( 'cyr_to_lat_settings[bel][' + newValue + ']' );
+				expect( spySetSubmitStatus ).toHaveBeenCalledTimes( 1 );
+			}
+		);
+
+		test( 'Save label on blur, escape and enter', () => {
+				document.body.innerHTML = getTables();
+
+				const settings           = new Settings();
+				const spySaveLabel = jest.spyOn( settings, 'saveLabel' );
+
+				let labels = [...document.querySelectorAll( '#ctl-options #ctl-current+table label' )];
+				let label  = labels[0];
+
+				label.click();
+
+				const editLabelInput = document.getElementById( 'ctl-edit-label' );
+
+				let event = new Event( 'blur' );
+				editLabelInput.dispatchEvent( event );
+
+				event = new Event( 'keyup' );
+				event.key = 'Escape';
+				editLabelInput.dispatchEvent( event );
+
+				event = new Event( 'keyup' );
+				event.key = 'Enter';
+				editLabelInput.dispatchEvent( event );
+
+				expect( spySaveLabel ).toHaveBeenCalledTimes( 3 );
 			}
 		);
 

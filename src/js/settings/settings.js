@@ -205,7 +205,7 @@ class Settings {
 			( input ) => {
 				const label = document.querySelector( this.OPTIONS_FORM_SELECTOR + ' label[for="' + input.id + '"]' );
 
-				data[label.innerText] = input.value;
+				data[label.innerHTML] = input.value;
 			}
 		);
 
@@ -310,7 +310,7 @@ class Settings {
 		const newId = idArr[0] + '-' + ( parseInt( idArr[1] ) + 1 );
 
 		label.htmlFor   = newId;
-		label.innerText = '';
+		label.innerHTML = '';
 
 		input.id    = newId;
 		input.value = '';
@@ -408,9 +408,9 @@ class Settings {
 
 		this.getLabels().map(
 			( label ) => {
-				label.onclick = ( e ) => {
+				label.onclick = ( event ) => {
 					event.preventDefault();
-					this.editLabel( e.target );
+					this.editLabel( event.target );
 					return false;
 				};
 			}
@@ -432,9 +432,9 @@ class Settings {
 
 		this.getPlusButtons().map(
 			( plus ) => {
-				plus.onclick = ( e ) => {
+				plus.onclick = ( event ) => {
 					event.preventDefault();
-					this.addCell( e.target );
+					this.addCell( event.target );
 					return false;
 				};
 			}
@@ -454,7 +454,7 @@ class Settings {
 	 */
 	editLabel( label ) {
 		label.parentNode.appendChild( this.editLabelInput );
-		this.editLabelInput.value = label.innerText;
+		this.editLabelInput.value = label.innerHTML;
 
 		this.editLabelInput.classList.remove( this.EDIT_LABEL_ERROR_CLASS );
 		this.editLabelInput.style.display = 'block';
@@ -470,7 +470,7 @@ class Settings {
 	isUniqueLabel( newValue ) {
 		return [...this.getActiveTable().querySelectorAll( 'label' )].reduce(
 			( acc, label ) => {
-				return acc && ( label.innerText !== newValue );
+				return acc && ( label.innerHTML !== newValue );
 			},
 			true
 		);
@@ -497,7 +497,7 @@ class Settings {
 			return;
 		}
 
-		if ( cancel || newValue === label.innerText ) {
+		if ( cancel || newValue === label.innerHTML ) {
 			this.hideEditLabelInput();
 
 			return;
@@ -511,7 +511,7 @@ class Settings {
 
 		this.hideEditLabelInput();
 
-		label.innerText = newValue;
+		label.innerHTML = newValue;
 		this.replaceName( input, newValue );
 
 		this.setSubmitStatus();
