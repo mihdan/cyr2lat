@@ -6,6 +6,29 @@
 	display: none;
 }
 
+#ctl-success, #ctl-error {
+	max-height: 0;
+	color: #fff;
+	font-size: 14px;
+	padding: 0;
+	transition: 0.5s all;
+}
+
+#ctl-success {
+	background: #8BC34A;
+}
+
+#ctl-error {
+	background: #FF9800;
+}
+
+#ctl-success.active, #ctl-error.active {
+	padding: 10px 25px;
+	max-height: 34px;
+	height: 14px;
+	line-height: 14px;
+}
+
 #ctl-options .nav-tab-wrapper {
 	width: 125px;
 	float: left;
@@ -41,8 +64,12 @@ body.js #ctl-options .ctl-table {
 }
 
 #ctl-options .nav-tab-active {
-	background: #f1f1f1;
+	background: #fff;
 	border-bottom: 1px solid #ccc;
+}
+
+.nav-tab-current {
+	box-shadow: 0 0 5px 5px #fff;
 }
 
 .ctl-table.active {
@@ -51,6 +78,8 @@ body.js #ctl-options .ctl-table {
 
 .ctl-table-cell {
 	float: left;
+	position: relative;
+	margin-bottom: 1em;
 }
 
 .ctl-table-cell label {
@@ -62,7 +91,45 @@ body.js #ctl-options .ctl-table {
 
 .ctl-table-cell input {
 	width: 3em !important;
-	display: inline-block !important;
+	display: inline-block;
+}
+
+.ctl-table-cell #ctl-edit-label {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 2.4em !important;
+	padding: 0;
+	border: 1px solid #007cba;
+	box-shadow: 0 0 0 1px #007cba;
+	outline: 2px solid #0000;
+	border-radius: 4px;
+	line-height: 2;
+}
+
+.ctl-edit-label-error {
+	background: #FF9800;
+}
+
+.ctl-plus {
+	position: relative;
+	float: left;
+	display: inline-block;
+}
+
+.ctl-plus button {
+	border: none;
+	cursor: pointer;
+	height: 24px;
+	width: 24px;
+	padding: 0;
+	position: absolute;
+	top: 0.35em;
+	left: 1.8em;
+}
+
+.ctl-plus button:focus {
+	outline: none;
 }
 
 #donate {

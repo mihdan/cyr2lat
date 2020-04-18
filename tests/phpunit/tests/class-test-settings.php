@@ -101,6 +101,58 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
+	 * Test init_locales()
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_init_locales() {
+		$subject = new Settings();
+
+		$method = $this->set_method_accessibility( $subject, 'init_locales' );
+		$method->invoke( $subject );
+
+		$expected = [
+			'iso9'  => [
+				'label' => __( 'ISO9 Table', 'cyr2lat' ),
+			],
+			'bel'   => [
+				'label' => __( 'bel Table', 'cyr2lat' ),
+			],
+			'uk'    => [
+				'label' => __( 'uk Table', 'cyr2lat' ),
+			],
+			'bg_BG' => [
+				'label' => __( 'bg_BG Table', 'cyr2lat' ),
+			],
+			'mk_MK' => [
+				'label' => __( 'mk_MK Table', 'cyr2lat' ),
+			],
+			'sr_RS' => [
+				'label' => __( 'sr_RS Table', 'cyr2lat' ),
+			],
+			'ka_GE' => [
+				'label' => __( 'ka_GE Table', 'cyr2lat' ),
+			],
+			'kk'    => [
+				'label' => __( 'kk Table', 'cyr2lat' ),
+			],
+			'he_IL' => [
+				'label' => __( 'he_IL Table', 'cyr2lat' ),
+			],
+			'zh_CN' => [
+				'label' => __( 'zh_CN Table', 'cyr2lat' ),
+			],
+		];
+
+		$this->assertSame( $expected, $this->get_protected_property( $subject, 'locales' ) );
+
+		$expected = [ 'something' ];
+		$this->set_protected_property( $subject, 'locales', $expected );
+		$method->invoke( $subject );
+		$this->assertSame( $expected, $this->get_protected_property( $subject, 'locales' ) );
+	}
+
+	/**
 	 * Test init_form_fields()
 	 */
 	public function test_init_form_fields() {
@@ -108,7 +160,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'\Cyr_To_Lat\Conversion_Tables::get',
-			function( $locale = '' ) {
+			function ( $locale = '' ) {
 				switch ( $locale ) {
 					case 'bel':
 						return [ 'bel' ];
@@ -133,6 +185,8 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				}
 			}
 		);
+
+		\WP_Mock::userFunction( 'get_locale' )->with()->andReturn( 'iso9' );
 
 		$expected = $this->get_test_form_fields();
 
@@ -395,74 +449,110 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	 * Test setup_sections()
 	 *
 	 * @param boolean $is_ctl_options_screen Is plugin options screen.
+	 * @param boolean $locale                Current locale.
 	 *
 	 * @dataProvider dp_test_setup_sections
 	 */
-	public function test_setup_sections( $is_ctl_options_screen ) {
+	public function test_setup_sections( $is_ctl_options_screen, $locale ) {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_ctl_options_screen' )->andReturn( $is_ctl_options_screen );
 
+		$subject->form_fields = $this->get_test_form_fields( $locale );
+
+		\WP_Mock::userFunction( 'get_locale' )->with()->andReturn( $locale );
+
 		if ( $is_ctl_options_screen ) {
+			$current = ( 'en_US' === $locale || 'ru_RU' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'iso9_section', 'ISO9 Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [
+						'iso9_section',
+						'ISO9 Table' . $current,
+						[ $subject, 'cyr_to_lat_section' ],
+						$subject::PAGE,
+					],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'bel' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'bel_section', 'bel Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'bel_section', 'bel Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'uk' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'uk_section', 'uk Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'uk_section', 'uk Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'bg_BG' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'bg_BG_section', 'bg_BG Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'bg_BG_section', 'bg_BG Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'mk_MK' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'mk_MK_section', 'mk_MK Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'mk_MK_section', 'mk_MK Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'sr_RS' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'sr_RS_section', 'sr_RS Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'sr_RS_section', 'sr_RS Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'ka_GE' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'ka_GE_section', 'ka_GE Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'ka_GE_section', 'ka_GE Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'kk' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'kk_section', 'kk Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'kk_section', 'kk Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
+
+			$current = ( 'he_IL' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'he_IL_section', 'he_IL Table', [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'he_IL_section', 'he_IL Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'times' => 1,
+				]
+			);
+
+			$current = ( 'zh_CN' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
+			\WP_Mock::userFunction(
+				'add_settings_section',
+				[
+					'args'  => [ 'zh_CN_section', 'zh_CN Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -478,8 +568,18 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_setup_sections() {
 		return [
-			[ false ],
-			[ true ],
+			[ false, null ],
+			[ true, 'en_US' ],
+			[ true, 'ru_RU' ],
+			[ true, 'bel' ],
+			[ true, 'uk' ],
+			[ true, 'bg_BG' ],
+			[ true, 'mk_MK' ],
+			[ true, 'sr_RS' ],
+			[ true, 'ka_GE' ],
+			[ true, 'kk' ],
+			[ true, 'he_IL' ],
+			[ true, 'zh_CN' ],
 		];
 	}
 
@@ -487,8 +587,23 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	 * Test cyr_to_lat_section()
 	 */
 	public function test_cyr_to_lat_section() {
+		$locale = 'iso9';
+
+		\WP_Mock::userFunction( 'get_locale' )->andReturn( $locale );
+
 		$subject = new Settings();
-		$subject->cyr_to_lat_section( [] );
+
+		ob_start();
+		$subject->cyr_to_lat_section(
+			[ 'id' => $locale . '_section' ]
+		);
+		$this->assertSame( '<div id="ctl-current"></div>', ob_get_clean() );
+
+		ob_start();
+		$subject->cyr_to_lat_section(
+			[ 'id' => 'other_section' ]
+		);
+		$this->assertSame( '', ob_get_clean() );
 	}
 
 	/**
@@ -1099,6 +1214,22 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	 * @return array
 	 */
 	public function dp_test_pre_update_option_filter() {
+		$old_value = [
+			'iso9' => [ 'Б' => 'B' ],
+			'bel'  => [ 'Б' => 'B' ],
+		];
+
+		$value = [
+			'bel' => [
+				'Б' => 'B1',
+			],
+		];
+
+		$expected = [
+			'iso9' => [ 'Б' => 'B' ],
+			'bel'  => [ 'Б' => 'B1' ],
+		];
+
 		return [
 			[ [], 'value', 'value', 'value' ],
 			[ [], 'value', 'old_value', 'value' ],
@@ -1150,6 +1281,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				[ 'some_checkbox' => '0' ],
 				[ 'some_checkbox' => 'yes' ],
 			],
+			[ [], $value, $old_value, $expected ],
 		];
 	}
 
@@ -1363,10 +1495,12 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	/**
 	 * Get test form fields.
 	 *
+	 * @param string $locale Current locale.
+	 *
 	 * @return array
 	 */
-	private function get_test_form_fields() {
-		return [
+	private function get_test_form_fields( $locale = 'iso9' ) {
+		$form_fields = [
 			'iso9'  => [
 				'label'        => 'ISO9 Table',
 				'section'      => 'iso9_section',
@@ -1458,6 +1592,11 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				'default'      => [ 'zh_CN' ],
 			],
 		];
+
+		$locale                          = isset( $form_fields[ $locale ] ) ? $locale : 'iso9';
+		$form_fields[ $locale ]['label'] = $form_fields[ $locale ]['label'] . '<br>(current)';
+
+		return $form_fields;
 	}
 
 	/**

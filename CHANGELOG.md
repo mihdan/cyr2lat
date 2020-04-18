@@ -1,3 +1,14 @@
+## 4.4.0 (18.04.2020)
+* Full flexibility to edit transliteration table: now it is possible to add/remove transliteration pairs on the settings page
+* Ability to edit not only values in the transliteration table, but also keys
+* Saving active table via ajax
+* Watching changes in active table
+* Auto-saving of changed table
+* Info about the current locale on settings page
+* Making table with current locale active at setting page load
+* Chinese language added
+* Fixed: slug not updated at woocommerce product duplication
+
 ## 4.3.4 (28.03.2020)
 * Tested up to WordPress 5.4
 * Fixed bug with disappearing of WooCommerce attributes

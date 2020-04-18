@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Cyr To Lat\n"
-"POT-Creation-Date: 2019-12-28 01:01+0200\n"
-"PO-Revision-Date: 2019-12-28 01:01+0200\n"
+"POT-Creation-Date: 2020-04-05 21:15+0300\n"
+"PO-Revision-Date: 2020-04-05 21:17+0300\n"
 "Last-Translator: KAGG Design <info@kagg.eu>\n"
 "Language-Team: KAGG Design\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Poedit 2.3\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
@@ -28,75 +28,69 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-9: tests\n"
 "X-Poedit-SearchPathExcluded-10: vendor\n"
 
-#. phpcs:enable
-#: classes/background-processes/class-post-conversion-process.php:71
+#: classes/background-processes/class-post-conversion-process.php:72
 msgid "Post slug converted:"
 msgstr "Ярлык поста сконвертирован:"
 
-#: classes/background-processes/class-post-conversion-process.php:83
+#: classes/background-processes/class-post-conversion-process.php:84
 msgid "Post slugs conversion completed."
 msgstr "Конвертация ярлыков постов завершена."
 
-#. phpcs:enable
-#: classes/background-processes/class-term-conversion-process.php:70
+#: classes/background-processes/class-term-conversion-process.php:71
 msgid "Term slug converted:"
 msgstr "Ярлык термина сконвертирован:"
 
-#: classes/background-processes/class-term-conversion-process.php:82
+#: classes/background-processes/class-term-conversion-process.php:83
 msgid "Term slugs conversion completed."
 msgstr "Конвертация ярлыков терминов завершена."
 
-#: classes/class-converter.php:119
+#: classes/class-converter.php:105
 msgid "Cyr To Lat converts existing post slugs in the background process."
 msgstr "Cyr To Lat конвертирует существующие ярлыки постов в фоновом процессе."
 
-#: classes/class-converter.php:126
+#: classes/class-converter.php:112
 msgid "Cyr To Lat converts existing term slugs in the background process."
 msgstr ""
 "Cyr To Lat конвертирует существующие ярлыки терминов в фоновом процессе."
 
-#: classes/class-converter.php:133
+#: classes/class-converter.php:119
 msgid "Cyr To Lat completed conversion of existing post slugs."
 msgstr "Cyr To Lat завершил конвертацию существующих ярлыков постов."
 
-#: classes/class-converter.php:140
+#: classes/class-converter.php:126
 msgid "Cyr To Lat completed conversion of existing term slugs."
 msgstr "Cyr To Lat завершил конвертацию существующих ярлыков терминов."
 
-#: classes/class-converter.php:206
+#: classes/class-converter.php:197
 msgid "Post slugs conversion started."
 msgstr "Начата конвертация ярлыков постов."
 
-#: classes/class-converter.php:208
+#: classes/class-converter.php:199
 msgid "Cyr To Lat started conversion of existing post slugs."
 msgstr "Cyr To Lat начал конвертацию существующих ярлыков постов."
 
-#: classes/class-converter.php:215
+#: classes/class-converter.php:206
 msgid "Cyr To Lat has not found existing post slugs for conversion."
 msgstr "Cyr To Lat не нашёл существующих ярлыков постов для конвертации."
 
-#: classes/class-converter.php:234
+#: classes/class-converter.php:225
 msgid "Term slugs conversion started."
 msgstr "Начата конвертация ярлыков терминов."
 
-#: classes/class-converter.php:236
+#: classes/class-converter.php:227
 msgid "Cyr To Lat started conversion of existing term slugs."
 msgstr "Cyr To Lat начал конвертацию существующих ярлыков терминов."
 
-#: classes/class-converter.php:243
+#: classes/class-converter.php:234
 msgid "Cyr To Lat has not found existing term slugs for conversion."
 msgstr "Cyr To Lat не нашёл существующих ярлыков терминов для конвертации."
 
-#: classes/class-requirements.php:53
-msgid "Unable to get filesystem access."
-msgstr "Невозможно получить доступ к файловой системе."
-
-#: classes/class-requirements.php:91
+#: classes/class-requirements.php:99
 msgid "Cyr To Lat plugin has been deactivated."
 msgstr "Плагин Cyr To Lat был деактивирован."
 
 #. translators: 1: Current PHP version number, 2: Cyr To Lat version, 3: Minimum required PHP version number
-#: classes/class-requirements.php:105
+#: classes/class-requirements.php:113
 #, php-format
 msgid ""
 "Your server is running PHP version %1$s but Cyr To Lat %2$s requires at "
@@ -105,8 +99,12 @@ msgstr ""
 "На сервере установлен PHP версии %1$s, однако для Cyr To Lat %2$s требуется "
 "хотя бы %3$s."
 
+#: classes/class-requirements.php:134
+msgid "Unable to get filesystem access."
+msgstr "Невозможно получить доступ к файловой системе."
+
 #. translators: 1: max_input_vars value, 2: Cyr To Lat version, 3: Minimum required max_input_vars
-#: classes/class-requirements.php:127
+#: classes/class-requirements.php:151
 #, php-format
 msgid ""
 "Your server is running PHP with max_input_vars=%1$d but Cyr To Lat %2$s "
@@ -116,20 +114,28 @@ msgstr ""
 "требуется хотя бы %3$d."
 
 #. translators: 1: .user.ini filename
-#: classes/class-requirements.php:131
+#: classes/class-requirements.php:155
 #, php-format
 msgid "We have updated settings in %s."
 msgstr "Мы обновили настройки в %s."
 
 #. translators: 1: Wait time in seconds
-#: classes/class-requirements.php:141
+#: classes/class-requirements.php:158
 #, php-format
 msgid "Please try again in %d s."
 msgstr "Пожалуйста, попробуйте снова через %d сек."
 
-#: classes/class-requirements.php:143
-msgid "Please try again."
-msgstr "Пожалуйста, попробуйте снова."
+#: classes/class-requirements.php:224
+msgid "Please increase max input vars limit up to 1500."
+msgstr "Пожалуйста, увеличьте лимит max input vars до 1500."
+
+#: classes/class-requirements.php:227
+msgid ""
+"See: <a href=\"http://sevenspark.com/docs/ubermenu-3/faqs/menu-item-limit\" "
+"target=\"_blank\">Increasing max input vars limit.</a>"
+msgstr ""
+"См.: <a href=\"http://sevenspark.com/docs/ubermenu-3/faqs/menu-item-limit\" "
+"target=\"_blank\">Увеличение лимита max input vars.</a>"
 
 #: classes/class-settings.php:122
 msgid "View Cyr To Lat settings"
@@ -139,43 +145,43 @@ msgstr "Посмотреть настройки Cyr To Lat"
 msgid "Settings"
 msgstr "Настройки"
 
-#: classes/class-settings.php:135 classes/class-settings.php:361
+#: classes/class-settings.php:135
 msgid "ISO9 Table"
 msgstr "Таблица ISO9"
 
-#: classes/class-settings.php:144 classes/class-settings.php:367
+#: classes/class-settings.php:144
 msgid "bel Table"
 msgstr "Таблица bel"
 
-#: classes/class-settings.php:153 classes/class-settings.php:373
+#: classes/class-settings.php:153
 msgid "uk Table"
 msgstr "Таблица uk"
 
-#: classes/class-settings.php:162 classes/class-settings.php:379
+#: classes/class-settings.php:162
 msgid "bg_BG Table"
 msgstr "Таблица bg_BG"
 
-#: classes/class-settings.php:171 classes/class-settings.php:385
+#: classes/class-settings.php:171
 msgid "mk_MK Table"
 msgstr "Таблица mk_MK"
 
-#: classes/class-settings.php:180 classes/class-settings.php:391
+#: classes/class-settings.php:180
 msgid "sr_RS Table"
 msgstr "Таблица sr_RS"
 
-#: classes/class-settings.php:189 classes/class-settings.php:397
+#: classes/class-settings.php:189
 msgid "ka_GE Table"
 msgstr "Таблица ka_GE"
 
-#: classes/class-settings.php:198 classes/class-settings.php:403
+#: classes/class-settings.php:198
 msgid "kk Table"
 msgstr "Таблица kk"
 
-#: classes/class-settings.php:207 classes/class-settings.php:409
+#: classes/class-settings.php:207
 msgid "he_IL Table"
 msgstr "Таблица he_IL"
 
-#: classes/class-settings.php:216 classes/class-settings.php:415
+#: classes/class-settings.php:216
 msgid "zh_CN Table"
 msgstr "Таблица zh_CN"
 
@@ -208,11 +214,18 @@ msgstr "Ваша оценка"
 msgid "Leave a ★★★★★ plugin review on WordPress.org"
 msgstr "Оставьте ★★★★★ обзор плагина на WordPress.org"
 
+#: classes/class-settings.php:363
+msgid "(current)"
+msgstr "(текущая)"
+
 #. translators: %d: cron interval
 #: lib/wp-background-processing/class-wp-background-process.php:399
 #, php-format
 msgid "Every %d Minutes"
 msgstr "Каждые %d минут"
+
+#~ msgid "Please try again."
+#~ msgstr "Пожалуйста, попробуйте снова."
 
 #~ msgid "Unable to get filesystem access"
 #~ msgstr "Невозможно получить доступ к файловой системе"
