@@ -547,7 +547,7 @@ class Settings {
 	}
 
 	/**
-	 * Show messages.
+	 * Show message.
 	 *
 	 * @param el Element.
 	 * @param message Message.
