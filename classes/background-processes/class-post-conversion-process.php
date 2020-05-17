@@ -41,10 +41,10 @@ class Post_Conversion_Process extends Conversion_Process {
 	 * @param Main $main Plugin main class.
 	 */
 	public function __construct( $main ) {
-		parent::__construct( $main );
-
 		$this->action = constant( 'CYR_TO_LAT_POST_CONVERSION_ACTION' );
 		$this->locale = get_locale();
+
+		parent::__construct( $main );
 	}
 
 	/**

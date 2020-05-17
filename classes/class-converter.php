@@ -20,6 +20,16 @@ class Converter {
 	const QUERY_ARG = 'cyr-to-lat-convert';
 
 	/**
+	 * Regex of prohibited chars in slugs
+	 * [^A-Za-z0-9[.apostrophe.][.underscore.][.period.][.hyphen.]]+
+	 * So, allowed chars are A-Za-z0-9[.apostrophe.][.underscore.][.period.][.hyphen.]
+	 * % is not allowed in the slug, but could present if slug is url_encoded
+	 *
+	 * @link https://dev.mysql.com/doc/refman/5.6/en/regexp.html
+	 */
+	const PROHIBITED_CHARS_REGEX = "[^A-Za-z0-9'_\.\-]+";
+
+	/**
 	 * Plugin main class.
 	 *
 	 * @var Main
@@ -163,7 +173,7 @@ class Converter {
 	public function convert_existing_slugs( $args = [] ) {
 		global $wpdb;
 
-		$regexp = Main::PROHIBITED_CHARS_REGEX . '+';
+		$regexp = self::PROHIBITED_CHARS_REGEX;
 
 		$post_types  = get_post_types( [ 'public' => true ] );
 		$post_types += [

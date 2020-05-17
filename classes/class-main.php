@@ -17,14 +17,6 @@ use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
 class Main {
 
 	/**
-	 * Regex of prohibited chars in slugs
-	 * [^A-Za-z0-9[.apostrophe.][.underscore.][.period.][.hyphen.]]+
-	 *
-	 * @link https://dev.mysql.com/doc/refman/5.6/en/regexp.html
-	 */
-	const PROHIBITED_CHARS_REGEX = "[^A-Za-z0-9'_\.\-]";
-
-	/**
 	 * Plugin settings.
 	 *
 	 * @var Settings

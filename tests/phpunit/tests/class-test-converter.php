@@ -300,7 +300,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$wpdb->terms         = 'wp_terms';
 		$wpdb->term_taxonomy = 'wp_term_taxonomy';
 
-		$regexp     = Main::PROHIBITED_CHARS_REGEX . '+';
+		$regexp     = $subject::PROHIBITED_CHARS_REGEX;
 		$post_query = "SELECT ID, post_name FROM $wpdb->posts WHERE post_name REGEXP(%s) AND post_status IN ($post_statuses_in) AND post_type IN ($post_types_in)";
 		$term_query = "SELECT t.term_id, slug, tt.taxonomy, tt.term_taxonomy_id FROM $wpdb->terms t, $wpdb->term_taxonomy tt
 					WHERE t.slug REGEXP(%s) AND tt.term_id = t.term_id";
