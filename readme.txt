@@ -38,13 +38,20 @@ Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
 Add this code to your theme's `functions.php` file:
 
 `
-function my_cyr_to_lat_table( $ctl_table ) {
-   $ctl_table['Ъ'] = 'U';
-   $ctl_table['ъ'] = 'u';
+/**
+ * Modify conversion table.
+ *
+ * @param array $table Conversion table.
+ *
+ * @return array
+ */
+function my_ctl_table( $table ) {
+   $table['Ъ'] = 'U';
+   $table['ъ'] = 'u';
 
-   return $ctl_table;
+   return $table;
 }
-add_filter( 'ctl_table', 'my_cyr_to_lat_table' );
+add_filter( 'ctl_table', 'my_ctl_table' );
 `
 
 = How can I redefine non-standard locale ? =

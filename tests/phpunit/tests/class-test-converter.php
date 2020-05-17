@@ -292,8 +292,8 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 
 		\WP_Mock::userFunction( 'wp_parse_args' )->with( [], $defaults )->andReturn( $args );
 
-		$main->shouldReceive( 'ctl_prepare_in' )->with( $args['post_status'] )->once()->andReturn( $post_statuses_in );
-		$main->shouldReceive( 'ctl_prepare_in' )->with( $args['post_type'] )->once()->andReturn( $post_types_in );
+		$main->shouldReceive( 'prepare_in' )->with( $args['post_status'] )->once()->andReturn( $post_statuses_in );
+		$main->shouldReceive( 'prepare_in' )->with( $args['post_type'] )->once()->andReturn( $post_types_in );
 
 		$wpdb                = Mockery::mock( wpdb::class );
 		$wpdb->posts         = 'wp_posts';

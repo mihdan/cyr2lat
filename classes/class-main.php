@@ -114,9 +114,9 @@ class Main {
 	 * Init class hooks.
 	 */
 	public function init_hooks() {
-		add_filter( 'sanitize_title', [ $this, 'ctl_sanitize_title' ], 9, 3 );
-		add_filter( 'sanitize_file_name', [ $this, 'ctl_sanitize_filename' ], 10, 2 );
-		add_filter( 'wp_insert_post_data', [ $this, 'ctl_sanitize_post_name' ], 10, 2 );
+		add_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9, 3 );
+		add_filter( 'sanitize_file_name', [ $this, 'sanitize_filename' ], 10, 2 );
+		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 2 );
 	}
 
 	/**
@@ -128,7 +128,7 @@ class Main {
 	 *
 	 * @return string
 	 */
-	public function ctl_sanitize_title( $title, $raw_title = '', $context = '' ) {
+	public function sanitize_title( $title, $raw_title = '', $context = '' ) {
 		global $wpdb;
 
 		if ( ! $title ) {
@@ -202,7 +202,7 @@ class Main {
 	 *
 	 * @return string
 	 */
-	public function ctl_sanitize_filename( $filename, $filename_raw ) {
+	public function sanitize_filename( $filename, $filename_raw ) {
 		$pre = apply_filters( 'ctl_pre_sanitize_filename', false, $filename );
 
 		if ( false !== $pre ) {
@@ -302,7 +302,7 @@ class Main {
 	 *
 	 * @return bool
 	 */
-	private function ctl_is_classic_editor_plugin_active() {
+	private function is_classic_editor_plugin_active() {
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			// @codeCoverageIgnoreStart
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -320,7 +320,7 @@ class Main {
 	 *
 	 * @return bool
 	 */
-	private function ctl_is_gutenberg_editor_active() {
+	private function is_gutenberg_editor_active() {
 
 		// Gutenberg plugin is installed and activated.
 		$gutenberg = ! ( false === has_filter( 'replace_editor', 'gutenberg_init' ) );
@@ -332,7 +332,7 @@ class Main {
 			return false;
 		}
 
-		if ( $this->ctl_is_classic_editor_plugin_active() ) {
+		if ( $this->is_classic_editor_plugin_active() ) {
 			$editor_option       = get_option( 'classic-editor-replace' );
 			$block_editor_active = [ 'no-replace', 'block' ];
 
@@ -350,10 +350,10 @@ class Main {
 	 *
 	 * @return mixed
 	 */
-	public function ctl_sanitize_post_name( $data, $postarr = [] ) {
+	public function sanitize_post_name( $data, $postarr = [] ) {
 		global $current_screen;
 
-		if ( ! $this->ctl_is_gutenberg_editor_active() ) {
+		if ( ! $this->is_gutenberg_editor_active() ) {
 			return $data;
 		}
 
@@ -383,7 +383,7 @@ class Main {
 	 *
 	 * @return string Items separated by comma and sql-escaped
 	 */
-	public function ctl_prepare_in( $items, $format = '%s' ) {
+	public function prepare_in( $items, $format = '%s' ) {
 		global $wpdb;
 
 		$items    = (array) $items;

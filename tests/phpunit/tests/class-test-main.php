@@ -178,30 +178,30 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_init_hooks() {
 		$subject = \Mockery::mock( Main::class )->makePartial();
 
-		\WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'ctl_sanitize_title' ], 9, 3 );
-		\WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'ctl_sanitize_filename' ], 10, 2 );
-		\WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'ctl_sanitize_post_name' ], 10, 2 );
+		\WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
+		\WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ], 10, 2 );
+		\WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ], 10, 2 );
 
 		$subject->init_hooks();
 	}
 
 	/**
-	 * Test that ctl_sanitize_title() does nothing when context is 'query'
+	 * Test that sanitize_title() does nothing when context is 'query'
 	 */
-	public function test_ctl_sanitize_title_query_context() {
+	public function test_sanitize_title_query_context() {
 		$subject = \Mockery::mock( Main::class )->makePartial();
 
 		$title     = 'some title';
 		$raw_title = '';
 		$context   = 'query';
 
-		$this->assertSame( $title, $subject->ctl_sanitize_title( $title, $raw_title, $context ) );
+		$this->assertSame( $title, $subject->sanitize_title( $title, $raw_title, $context ) );
 	}
 
 	/**
-	 * Test that ctl_sanitize_title() returns ctl_pre_sanitize_title filter value if set
+	 * Test that sanitize_title() returns ctl_pre_sanitize_title filter value if set
 	 */
-	public function test_ctl_sanitize_title_filter_set() {
+	public function test_sanitize_title_filter_set() {
 		$subject = \Mockery::mock( Main::class )->makePartial();
 
 		$title = 'some title';
@@ -210,31 +210,31 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( $filtered_title );
 
-		$this->assertSame( $filtered_title, $subject->ctl_sanitize_title( $title ) );
+		$this->assertSame( $filtered_title, $subject->sanitize_title( $title ) );
 	}
 
 	/**
-	 * Test ctl_sanitize_title()
+	 * Test sanitize_title()
 	 *
 	 * @param string $title    Title to sanitize.
 	 * @param string $expected Expected result.
 	 *
-	 * @dataProvider dp_test_ctl_sanitize_title
+	 * @dataProvider dp_test_sanitize_title
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_ctl_sanitize_title( $title, $expected ) {
+	public function test_sanitize_title( $title, $expected ) {
 		$subject = $this->get_subject();
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
-		$this->assertSame( $expected, $subject->ctl_sanitize_title( $title ) );
+		$this->assertSame( $expected, $subject->sanitize_title( $title ) );
 	}
 
 	/**
-	 * Data provider for test_ctl_sanitize_title
+	 * Data provider for test_sanitize_title
 	 *
 	 * @return array
 	 */
-	public function dp_test_ctl_sanitize_title() {
+	public function dp_test_sanitize_title() {
 		return [
 			'empty string'               => [
 				'',
@@ -272,7 +272,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test ctl_sanitize_title() for term
+	 * Test sanitize_title() for term
 	 * Name of this function must be wp_insert_term() to use debug_backtrace in the tested method
 	 *
 	 * @param string $title    Title to sanitize.
@@ -295,7 +295,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$wpdb->shouldReceive( 'prepare' )->once()->andReturn( '' );
 		$wpdb->shouldReceive( 'get_var' )->once()->andReturn( $term );
 
-		$this->assertSame( $expected, $subject->ctl_sanitize_title( $title ) );
+		$this->assertSame( $expected, $subject->sanitize_title( $title ) );
 	}
 
 	/**
@@ -309,17 +309,17 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test ctl_sanitize_title() for term
+	 * Test sanitize_title() for term WC attribute taxonomy
 	 *
 	 * @param string $title                Title.
 	 * @param bool   $is_wc                Is WooCommerce active.
 	 * @param array  $attribute_taxonomies Attribute Taxonomies.
 	 * @param bool   $expected             Expected result.
 	 *
-	 * @dataProvider dp_test_ctl_sanitize_title_for_wc_attribute_taxonomy
+	 * @dataProvider dp_test_sanitize_title_for_wc_attribute_taxonomy
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_ctl_sanitize_title_for_wc_attribute_taxonomy(
+	public function test_sanitize_title_for_wc_attribute_taxonomy(
 		$title, $is_wc, $attribute_taxonomies, $expected
 	) {
 		FunctionMocker::replace(
@@ -341,15 +341,15 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$subject = $this->get_subject();
 		$subject->shouldReceive( 'transliterate' )->times( $expected );
 
-		$subject->ctl_sanitize_title( $title );
+		$subject->sanitize_title( $title );
 	}
 
 	/**
-	 * Data provider for test_ctl_sanitize_title_for_wc_attribute_taxonomy
+	 * Data provider for test_sanitize_title_for_wc_attribute_taxonomy
 	 *
 	 * @return array
 	 */
-	public function dp_test_ctl_sanitize_title_for_wc_attribute_taxonomy() {
+	public function dp_test_sanitize_title_for_wc_attribute_taxonomy() {
 		$attribute_taxonomies = [
 			'id:3' => (object) [
 				'attribute_id'      => '3',
@@ -393,7 +393,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Data provider for test_ctl_sanitize_title
+	 * Data provider for test_transliterate
 	 *
 	 * @return array
 	 */
@@ -458,9 +458,9 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test that ctl_sanitize_filename() returns ctl_pre_sanitize_filename filter value if set
+	 * Test that sanitize_filename() returns ctl_pre_sanitize_filename filter value if set
 	 */
-	public function test_ctl_pre_sanitize_filename_filter_set() {
+	public function test_pre_sanitize_filename_filter_set() {
 		$subject = \Mockery::mock( Main::class )->makePartial();
 
 		$filename     = 'filename.jpg';
@@ -470,19 +470,19 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		\WP_Mock::onFilter( 'ctl_pre_sanitize_filename' )->with( false, $filename )->reply( $filtered_filename );
 
-		$this->assertSame( $filtered_filename, $subject->ctl_sanitize_filename( $filename, $filename_raw ) );
+		$this->assertSame( $filtered_filename, $subject->sanitize_filename( $filename, $filename_raw ) );
 	}
 
 	/**
-	 * Test ctl_sanitize_filename()
+	 * Test sanitize_filename()
 	 *
 	 * @param string $filename Filename to sanitize.
 	 * @param string $expected Expected result.
 	 *
-	 * @dataProvider dp_test_ctl_sanitize_filename
+	 * @dataProvider dp_test_sanitize_filename
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_ctl_sanitize_filename( $filename, $expected ) {
+	public function test_sanitize_filename( $filename, $expected ) {
 		\WP_Mock::userFunction(
 			'seems_utf8',
 			[
@@ -502,7 +502,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		$this->assertSame( $expected, $subject->ctl_sanitize_filename( $filename, '' ) );
+		$this->assertSame( $expected, $subject->sanitize_filename( $filename, '' ) );
 
 		FunctionMocker::replace(
 			'function_exists',
@@ -511,15 +511,15 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		$this->assertSame( $expected, $subject->ctl_sanitize_filename( $filename, '' ) );
+		$this->assertSame( $expected, $subject->sanitize_filename( $filename, '' ) );
 	}
 
 	/**
-	 * Data provider for test_ctl_sanitize_title
+	 * Data provider for test_sanitize_title
 	 *
 	 * @return array
 	 */
-	public function dp_test_ctl_sanitize_filename() {
+	public function dp_test_sanitize_filename() {
 		return [
 			'empty string'               => [
 				'',
@@ -553,9 +553,9 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test that ctl_sanitize_post_name() does nothing if no Block/Gutenberg editor is active
+	 * Test that sanitize_post_name() does nothing if no Block/Gutenberg editor is active
 	 */
-	public function test_ctl_sanitize_post_name_without_gutenberg() {
+	public function test_sanitize_post_name_without_gutenberg() {
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$data = [ 'something' ];
@@ -569,7 +569,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		);
 
 		$GLOBALS['wp_version'] = '4.9';
-		$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
+		$this->assertSame( $data, $subject->sanitize_post_name( $data ) );
 
 		FunctionMocker::replace( 'function_exists', true );
 
@@ -592,13 +592,13 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		);
 
 		$GLOBALS['wp_version'] = '5.0';
-		$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
+		$this->assertSame( $data, $subject->sanitize_post_name( $data ) );
 	}
 
 	/**
-	 * Test that ctl_sanitize_post_name() does nothing if current screen is not post edit screen
+	 * Test that sanitize_post_name() does nothing if current screen is not post edit screen
 	 */
-	public function test_ctl_sanitize_post_name_not_post_edit_screen() {
+	public function test_sanitize_post_name_not_post_edit_screen() {
 		$data = [ 'something' ];
 
 		\WP_Mock::userFunction(
@@ -626,21 +626,21 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$current_screen->base = 'not post';
 
 		$GLOBALS['current_screen'] = null;
-		$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
+		$this->assertSame( $data, $subject->sanitize_post_name( $data ) );
 
 		$GLOBALS['current_screen'] = $current_screen;
-		$this->assertSame( $data, $subject->ctl_sanitize_post_name( $data ) );
+		$this->assertSame( $data, $subject->sanitize_post_name( $data ) );
 	}
 
 	/**
-	 * Test ctl_sanitize_post_name()
+	 * Test sanitize_post_name()
 	 *
 	 * @param array $data     Post data to sanitize.
 	 * @param array $expected Post data expected after sanitization.
 	 *
-	 * @dataProvider dp_test_ctl_sanitize_post_name
+	 * @dataProvider dp_test_sanitize_post_name
 	 */
-	public function test_ctl_sanitize_post_name( $data, $expected ) {
+	public function test_sanitize_post_name( $data, $expected ) {
 		$GLOBALS['wp_version'] = '5.0';
 
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
@@ -666,13 +666,13 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 				'return' => 'sanitized(' . $data['post_title'] . ')',
 			]
 		);
-		$this->assertSame( $expected, $subject->ctl_sanitize_post_name( $data ) );
+		$this->assertSame( $expected, $subject->sanitize_post_name( $data ) );
 	}
 
 	/**
-	 * Data provider for test_ctl_sanitize_post_name()
+	 * Data provider for test_sanitize_post_name()
 	 */
-	public function dp_test_ctl_sanitize_post_name() {
+	public function dp_test_sanitize_post_name() {
 		return [
 			[
 				'post name set' => [
@@ -702,15 +702,15 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test ctl_prepare_in()
+	 * Test prepare_in()
 	 *
 	 * @param mixed  $items    Items to prepare.
 	 * @param string $format   Format.
 	 * @param string $expected Expected result.
 	 *
-	 * @dataProvider dp_test_ctl_prepare_in
+	 * @dataProvider dp_test_prepare_in
 	 */
-	public function test_ctl_prepare_in( $items, $format, $expected ) {
+	public function test_prepare_in( $items, $format, $expected ) {
 		global $wpdb;
 
 		$items    = (array) $items;
@@ -729,16 +729,16 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		$subject = \Mockery::mock( Main::class )->makePartial();
 		if ( $format ) {
-			$this->assertSame( $expected, $subject->ctl_prepare_in( $items, $format ) );
+			$this->assertSame( $expected, $subject->prepare_in( $items, $format ) );
 		} else {
-			$this->assertSame( $expected, $subject->ctl_prepare_in( $items ) );
+			$this->assertSame( $expected, $subject->prepare_in( $items ) );
 		}
 	}
 
 	/**
-	 * Data provider for test_ctl_prepare_in()
+	 * Data provider for test_prepare_in()
 	 */
-	public function dp_test_ctl_prepare_in() {
+	public function dp_test_prepare_in() {
 		return [
 			[ null, null, '' ],
 			[ '', null, '' ],

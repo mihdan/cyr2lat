@@ -76,6 +76,22 @@ class Post_Conversion_Process extends Conversion_Process {
 	}
 
 	/**
+	 * Rename attachment.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	protected function rename_attachment( $post_id ) {
+		$file = get_attached_file( $post_id );
+		$path = pathinfo( $file );
+
+		$filename = $this->main->transliterate( $path['filename'] );
+		$new_file = $path['dirname'] . '/' . $filename . '.' . $path['extension'];
+
+		rename( $file, $new_file );
+		update_attached_file( $post_id, $new_file );
+	}
+
+	/**
 	 * Complete
 	 */
 	protected function complete() {
