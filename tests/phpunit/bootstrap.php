@@ -97,6 +97,7 @@ FunctionMocker::init(
 			'realpath',
 			'time',
 			'error_log',
+			'rename',
 		],
 	]
 );

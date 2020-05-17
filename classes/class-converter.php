@@ -196,16 +196,19 @@ class Converter {
 
 		$args = wp_parse_args( $args, $defaults );
 
+		$regexp = $wpdb->prepare( '%s', self::PROHIBITED_CHARS_REGEX );
+
+		$post_sql      =
+			'post_status IN (' . $this->main->prepare_in( $args['post_status'] ) . ')' .
+			' AND post_type IN (' . $this->main->prepare_in( $args['post_type'] ) . ')';
+		$media_sql     = "post_status = 'inherit' AND post_type = 'attachment'";
+		$all_posts_sql = '(' . $post_sql . ') OR (' . $media_sql . ')';
+
+		$sql = "SELECT ID, post_name, post_type FROM $wpdb->posts WHERE post_name REGEXP($regexp) AND ($all_posts_sql)";
+
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		$posts = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT ID, post_name FROM $wpdb->posts WHERE post_name REGEXP(%s) AND post_status IN (" .
-				$this->main->prepare_in( $args['post_status'] ) . ') AND post_type IN (' .
-				$this->main->prepare_in( $args['post_type'] ) . ')',
-				self::PROHIBITED_CHARS_REGEX
-			)
-		);
+		$posts = $wpdb->get_results( $sql );
 		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
 		if ( ! $posts ) {
