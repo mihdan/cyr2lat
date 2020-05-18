@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
 Tested up to: 5.4
-Stable tag: 4.4.0
+Stable tag: 4.5.0
 Requires PHP: 5.6.20
 
 Converts Cyrillic characters in post, page and term slugs to Latin characters.
@@ -17,7 +17,8 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 * Converts any number of existing post, page and term slugs in background processes
 * Saves existing post and page permalinks integrity
 * Performs transliteration of attachment file names
-* Includes Russian, Belorussian, Ukrainian, Bulgarian, Macedonian, Serbian, Georgian, Kazakh, Hebrew, and Chinese characters
+* Includes Russian, Belorussian, Ukrainian, Bulgarian, Macedonian, Serbian, Greek, Armenian, Georgian, Kazakh, Hebrew, and Chinese characters
+* [Has many advantages over similar plugins](https://kagg.eu/en/the-benefits-of-cyr-to-lat/)
 * [Officially compatible with WPML](https://wpml.org/plugin/cyr-to-lat/)
 
 ![WPML Certificate](https://ps.w.org/cyr2lat/assets/Cyr-To-Lat---WPML-Compatibility-Certificate-240x250.png)
@@ -97,6 +98,10 @@ Yes you can!
 * Join in on our [Telegram Channel](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 4.5.0 (18.05.2020) =
+* Added Greek and Armenian languages
+* Fixed background conversion of existing slugs
 
 = 4.4.0 (18.04.2020) =
 * Full flexibility to edit transliteration table: now it is possible to add/remove transliteration pairs on the settings page

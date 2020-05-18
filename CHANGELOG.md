@@ -1,3 +1,7 @@
+## 4.5.0 (18.05.2020)
+* Added Greek and Armenian languages
+* Fixed background conversion of existing slugs
+
 ## 4.4.0 (18.04.2020)
 * Full flexibility to edit transliteration table: now it is possible to add/remove transliteration pairs on the settings page
 * Ability to edit not only values in the transliteration table, but also keys
