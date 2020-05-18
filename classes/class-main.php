@@ -303,11 +303,11 @@ class Main {
 	 * @return bool
 	 */
 	private function is_classic_editor_plugin_active() {
+		// @codeCoverageIgnoreStart
 		if ( ! function_exists( 'is_plugin_active' ) ) {
-			// @codeCoverageIgnoreStart
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
-			// @codeCoverageIgnoreEnd
 		}
+		// @codeCoverageIgnoreEnd
 
 		return is_plugin_active( 'classic-editor/classic-editor.php' );
 	}

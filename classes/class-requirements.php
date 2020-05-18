@@ -51,11 +51,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 
 			$this->cyr2lat_page = [ 'page' => Settings::SCREEN_ID ];
 
+			// @codeCoverageIgnoreStart
 			if ( ! function_exists( 'WP_Filesystem' ) ) {
-				// @codeCoverageIgnoreStart
 				require_once ABSPATH . 'wp-admin/includes/file.php';
-				// @codeCoverageIgnoreEnd
 			}
+			// @codeCoverageIgnoreEnd
 
 			if ( ! WP_Filesystem() ) {
 				return;
