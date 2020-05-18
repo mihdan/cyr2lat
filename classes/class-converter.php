@@ -20,6 +20,16 @@ class Converter {
 	const QUERY_ARG = 'cyr-to-lat-convert';
 
 	/**
+	 * Regex of prohibited chars in slugs
+	 * [^A-Za-z0-9[.apostrophe.][.underscore.][.period.][.hyphen.]]+
+	 * So, allowed chars are A-Za-z0-9[.apostrophe.][.underscore.][.period.][.hyphen.]
+	 * % is not allowed in the slug, but could present if slug is url_encoded
+	 *
+	 * @link https://dev.mysql.com/doc/refman/5.6/en/regexp.html
+	 */
+	const PROHIBITED_CHARS_REGEX = "[^A-Za-z0-9'_\.\-]+";
+
+	/**
 	 * Plugin main class.
 	 *
 	 * @var Main
@@ -161,14 +171,21 @@ class Converter {
 	 * @param array $args Arguments for query.
 	 */
 	public function convert_existing_slugs( $args = [] ) {
+		$this->convert_existing_post_slugs( $args );
+		$this->convert_existing_term_slugs();
+	}
+
+	/**
+	 * Convert existing post slugs.
+	 *
+	 * @param array $args Arguments for query.
+	 */
+	protected function convert_existing_post_slugs( $args = [] ) {
 		global $wpdb;
 
-		$regexp = Main::PROHIBITED_CHARS_REGEX . '+';
+		$post_types = get_post_types( [ 'public' => true ] );
 
-		$post_types  = get_post_types( [ 'public' => true ] );
-		$post_types += [
-			'nav_menu_item' => 'nav_menu_item',
-		];
+		$post_types += [ 'nav_menu_item' => 'nav_menu_item' ];
 
 		$defaults = [
 			'post_type'   => apply_filters( 'ctl_post_types', $post_types ),
@@ -177,17 +194,29 @@ class Converter {
 
 		$args = wp_parse_args( $args, $defaults );
 
+		$regexp = $wpdb->prepare( '%s', self::PROHIBITED_CHARS_REGEX );
+
+		$post_sql      =
+			'post_status IN (' . $this->main->prepare_in( $args['post_status'] ) . ')' .
+			' AND post_type IN (' . $this->main->prepare_in( $args['post_type'] ) . ')';
+		$media_sql     = "post_status = 'inherit' AND post_type = 'attachment'";
+		$all_posts_sql = '(' . $post_sql . ') OR (' . $media_sql . ')';
+
+		$sql = "SELECT ID, post_name, post_type FROM $wpdb->posts WHERE post_name REGEXP($regexp) AND ($all_posts_sql)";
+
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		$posts = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT ID, post_name FROM $wpdb->posts WHERE post_name REGEXP(%s) AND post_status IN (" .
-				$this->main->ctl_prepare_in( $args['post_status'] ) . ') AND post_type IN (' .
-				$this->main->ctl_prepare_in( $args['post_type'] ) . ')',
-				$regexp
-			)
-		);
+		$posts = $wpdb->get_results( $sql );
 		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
+
+		if ( ! $posts ) {
+			$this->admin_notices->add_notice(
+				__( 'Cyr To Lat has not found existing post slugs for conversion.', 'cyr2lat' ),
+				'notice notice-info is-dismissible'
+			);
+
+			return;
+		}
 
 		if ( $posts ) {
 			foreach ( (array) $posts as $post ) {
@@ -201,21 +230,32 @@ class Converter {
 			);
 
 			$this->process_all_posts->save()->dispatch();
-		} else {
-			$this->admin_notices->add_notice(
-				__( 'Cyr To Lat has not found existing post slugs for conversion.', 'cyr2lat' ),
-				'notice notice-info is-dismissible'
-			);
 		}
+	}
+
+	/**
+	 * Convert existing term slugs.
+	 */
+	protected function convert_existing_term_slugs() {
+		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$terms = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT t.term_id, slug, tt.taxonomy, tt.term_taxonomy_id FROM $wpdb->terms t, $wpdb->term_taxonomy tt
 					WHERE t.slug REGEXP(%s) AND tt.term_id = t.term_id",
-				$regexp
+				self::PROHIBITED_CHARS_REGEX
 			)
 		);
+
+		if ( ! $terms ) {
+			$this->admin_notices->add_notice(
+				__( 'Cyr To Lat has not found existing term slugs for conversion.', 'cyr2lat' ),
+				'notice notice-info is-dismissible'
+			);
+
+			return;
+		}
 
 		if ( $terms ) {
 			foreach ( (array) $terms as $term ) {
@@ -229,16 +269,11 @@ class Converter {
 			);
 
 			$this->process_all_terms->save()->dispatch();
-		} else {
-			$this->admin_notices->add_notice(
-				__( 'Cyr To Lat has not found existing term slugs for conversion.', 'cyr2lat' ),
-				'notice notice-info is-dismissible'
-			);
 		}
 	}
 
 	/**
-	 * Log
+	 * Log.
 	 *
 	 * @param string $message Message to log.
 	 */

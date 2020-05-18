@@ -34,7 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin version.
  */
-define( 'CYR_TO_LAT_TEST_VERSION', '4.4.0' );
+define( 'CYR_TO_LAT_TEST_VERSION', '4.5.0' );
 
 /**
  * Path to the plugin dir.
@@ -97,6 +97,7 @@ FunctionMocker::init(
 			'realpath',
 			'time',
 			'error_log',
+			'rename',
 		],
 	]
 );

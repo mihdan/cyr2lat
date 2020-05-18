@@ -160,6 +160,12 @@ class Settings {
 			'sr_RS' => [
 				'label' => __( 'sr_RS Table', 'cyr2lat' ),
 			],
+			'el'    => [
+				'label' => __( 'el Table', 'cyr2lat' ),
+			],
+			'hy'    => [
+				'label' => __( 'hy Table', 'cyr2lat' ),
+			],
 			'ka_GE' => [
 				'label' => __( 'ka_GE Table', 'cyr2lat' ),
 			],
@@ -268,15 +274,15 @@ class Settings {
 		$menu_title  = __( 'Cyr To Lat', 'cyr2lat' );
 		$capability  = 'manage_options';
 		$slug        = self::PAGE;
-		$callback    = [ $this, 'ctl_settings_page' ];
+		$callback    = [ $this, 'settings_page' ];
 		add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $slug, $callback );
 	}
 
 	/**
 	 * Settings page.
 	 */
-	public function ctl_settings_page() {
-		if ( ! $this->is_ctl_options_screen() ) {
+	public function settings_page() {
+		if ( ! $this->is_options_screen() ) {
 			return;
 		}
 
@@ -339,7 +345,7 @@ class Settings {
 	 * Setup settings sections.
 	 */
 	public function setup_sections() {
-		if ( ! $this->is_ctl_options_screen() ) {
+		if ( ! $this->is_options_screen() ) {
 			return;
 		}
 
@@ -347,7 +353,7 @@ class Settings {
 			add_settings_section(
 				$form_field['section'],
 				$form_field['label'],
-				[ $this, 'cyr_to_lat_section' ],
+				[ $this, 'section_callback' ],
 				self::PAGE
 			);
 		}
@@ -358,7 +364,7 @@ class Settings {
 	 *
 	 * @param array $arguments Section arguments.
 	 */
-	public function cyr_to_lat_section( $arguments ) {
+	public function section_callback( $arguments ) {
 		$locale = str_replace( '_section', '', $arguments['id'] );
 		if ( $this->get_current_locale() === $locale ) {
 			echo '<div id="ctl-current"></div>';
@@ -369,7 +375,7 @@ class Settings {
 	 * Setup settings fields.
 	 */
 	public function setup_fields() {
-		if ( ! $this->is_ctl_options_screen() ) {
+		if ( ! $this->is_options_screen() ) {
 			return;
 		}
 
@@ -666,7 +672,7 @@ class Settings {
 	 * Enqueue class scripts.
 	 */
 	public function admin_enqueue_scripts() {
-		if ( ! $this->is_ctl_options_screen() ) {
+		if ( ! $this->is_options_screen() ) {
 			return;
 		}
 
@@ -754,7 +760,7 @@ class Settings {
 	 *
 	 * @return bool
 	 */
-	protected function is_ctl_options_screen() {
+	protected function is_options_screen() {
 		$current_screen = get_current_screen();
 
 		return $current_screen && ( 'options' === $current_screen->id || self::SCREEN_ID === $current_screen->id );

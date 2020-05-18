@@ -41,10 +41,10 @@ class Post_Conversion_Process extends Conversion_Process {
 	 * @param Main $main Plugin main class.
 	 */
 	public function __construct( $main ) {
-		parent::__construct( $main );
-
 		$this->action = constant( 'CYR_TO_LAT_POST_CONVERSION_ACTION' );
 		$this->locale = get_locale();
+
+		parent::__construct( $main );
 	}
 
 	/**
@@ -70,9 +70,122 @@ class Post_Conversion_Process extends Conversion_Process {
 			$wpdb->update( $wpdb->posts, [ 'post_name' => rawurlencode( $transliterated_name ) ], [ 'ID' => $post->ID ] );
 
 			$this->log( __( 'Post slug converted:', 'cyr2lat' ) . ' ' . $post_name . ' => ' . $transliterated_name );
+
+			if ( 'attachment' === $post->post_type ) {
+				$this->rename_attachment( $post->ID );
+				$this->rename_thumbnails( $post->ID );
+				$this->update_attachment_metadata( $post->ID );
+			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Rename attachment.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	protected function rename_attachment( $post_id ) {
+		$file = get_attached_file( $post_id );
+
+		if ( $file ) {
+			$updated             = false;
+			$transliterated_file = $this->get_transliterated_file( $file );
+			$rename              = $this->rename_file( $file, $transliterated_file );
+			if ( $rename ) {
+				$updated = update_attached_file( $post_id, $transliterated_file );
+			}
+
+			if ( $updated ) {
+				$this->log( __( 'Attachment file converted:', 'cyr2lat' ) . ' ' . $file . ' => ' . $transliterated_file );
+
+				return;
+			}
+		}
+
+		$this->log( __( 'Cannot convert attachment file for attachment id:', 'cyr2lat' ) . ' ' . $post_id );
+	}
+
+	/**
+	 * Rename thumbnails.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	protected function rename_thumbnails( $post_id ) {
+		$sizes = get_intermediate_image_sizes();
+
+		foreach ( $sizes as $size ) {
+			$url                 = wp_get_attachment_image_src( $post_id, $size )[0];
+			$file                = untrailingslashit( constant( 'ABSPATH' ) ) . wp_make_link_relative( $url );
+			$transliterated_file = $this->get_transliterated_file( $file );
+
+			$rename = $this->rename_file( $file, $transliterated_file );
+			if ( $rename ) {
+				$this->log( __( 'Thumbnail file renamed:', 'cyr2lat' ) . ' ' . $file . ' => ' . $transliterated_file );
+			}
+			if ( false === $rename ) {
+				$this->log( __( 'Cannot rename thumbnail file:', 'cyr2lat' ) . ' ' . $file );
+			}
+		}
+	}
+
+	/**
+	 * Update attachment metadata.
+	 *
+	 * @param int $attachment_id Attachment ID.
+	 */
+	protected function update_attachment_metadata( $attachment_id ) {
+		$meta = wp_get_attachment_metadata( $attachment_id );
+
+		if ( isset( $meta['file'] ) ) {
+			$meta['file'] = $this->main->transliterate( $meta['file'] );
+		}
+
+		if ( isset( $meta['sizes'] ) ) {
+			foreach ( $meta['sizes'] as $key => $size ) {
+				$meta['sizes'][ $key ]['file'] = $this->main->transliterate( $meta['sizes'][ $key ]['file'] );
+			}
+		}
+
+		wp_update_attachment_metadata( $attachment_id, $meta );
+	}
+
+	/**
+	 * Get transliterated filename with path.
+	 *
+	 * @param string $file Filename.
+	 *
+	 * @return string
+	 */
+	protected function get_transliterated_file( $file ) {
+		$path                    = pathinfo( $file );
+		$transliterated_filename = $this->main->transliterate( $path['filename'] );
+
+		return $path['dirname'] . '/' . $transliterated_filename . '.' . $path['extension'];
+	}
+
+	/**
+	 * Rename file.
+	 * Return false if rename failed.
+	 *
+	 * @param string $file     Full filename.
+	 * @param string $new_file New full filename.
+	 *
+	 * @return bool|null
+	 */
+	protected function rename_file( $file, $new_file ) {
+		$path     = pathinfo( $file );
+		$new_path = pathinfo( $new_file );
+
+		$filename     = $path['filename'];
+		$new_filename = $new_path['filename'];
+
+		if ( $new_filename !== $filename ) {
+			return rename( $file, $new_file );
+		}
+
+		return null;
 	}
 
 	/**

@@ -130,6 +130,12 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			'sr_RS' => [
 				'label' => __( 'sr_RS Table', 'cyr2lat' ),
 			],
+			'el'    => [
+				'label' => __( 'el Table', 'cyr2lat' ),
+			],
+			'hy'    => [
+				'label' => __( 'hy Table', 'cyr2lat' ),
+			],
 			'ka_GE' => [
 				'label' => __( 'ka_GE Table', 'cyr2lat' ),
 			],
@@ -172,6 +178,10 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 						return [ 'mk_MK' ];
 					case 'sr_RS':
 						return [ 'sr_RS' ];
+					case 'el':
+						return [ 'el' ];
+					case 'hy':
+						return [ 'hy' ];
 					case 'ka_GE':
 						return [ 'ka_GE' ];
 					case 'kk':
@@ -328,7 +338,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		$menu_title  = 'Cyr To Lat';
 		$capability  = 'manage_options';
 		$slug        = $subject::PAGE;
-		$callback    = [ $subject, 'ctl_settings_page' ];
+		$callback    = [ $subject, 'settings_page' ];
 
 		\WP_Mock::userFunction(
 			'add_submenu_page',
@@ -341,17 +351,17 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test ctl_settings_page()
+	 * Test settings_page()
 	 *
-	 * @param boolean $is_ctl_options_screen Is plugin options screen.
+	 * @param boolean $is_options_screen Is plugin options screen.
 	 *
-	 * @dataProvider dp_test_ctl_settings_page
+	 * @dataProvider dp_test_settings_page
 	 */
-	public function test_ctl_settings_page( $is_ctl_options_screen ) {
+	public function test_settings_page( $is_options_screen ) {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'is_ctl_options_screen' )->andReturn( $is_ctl_options_screen );
+		$subject->shouldReceive( 'is_options_screen' )->andReturn( $is_options_screen );
 
-		if ( $is_ctl_options_screen ) {
+		if ( $is_options_screen ) {
 			\WP_Mock::userFunction(
 				'do_settings_sections',
 				[
@@ -424,21 +434,21 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		</div>
 		';
 			ob_start();
-			$subject->ctl_settings_page();
+			$subject->settings_page();
 			$this->assertSame( $expected, ob_get_clean() );
 		} else {
 			ob_start();
-			$subject->ctl_settings_page();
+			$subject->settings_page();
 			$this->assertEmpty( ob_get_clean() );
 		}
 	}
 
 	/**
-	 * Data provider for test_ctl_settings_page()
+	 * Data provider for test_settings_page()
 	 *
 	 * @return array
 	 */
-	public function dp_test_ctl_settings_page() {
+	public function dp_test_settings_page() {
 		return [
 			[ false ],
 			[ true ],
@@ -448,20 +458,20 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test setup_sections()
 	 *
-	 * @param boolean $is_ctl_options_screen Is plugin options screen.
+	 * @param boolean $is_options_screen Is plugin options screen.
 	 * @param boolean $locale                Current locale.
 	 *
 	 * @dataProvider dp_test_setup_sections
 	 */
-	public function test_setup_sections( $is_ctl_options_screen, $locale ) {
+	public function test_setup_sections( $is_options_screen, $locale ) {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'is_ctl_options_screen' )->andReturn( $is_ctl_options_screen );
+		$subject->shouldReceive( 'is_options_screen' )->andReturn( $is_options_screen );
 
 		$subject->form_fields = $this->get_test_form_fields( $locale );
 
 		\WP_Mock::userFunction( 'get_locale' )->with()->andReturn( $locale );
 
-		if ( $is_ctl_options_screen ) {
+		if ( $is_options_screen ) {
 			$current = ( 'en_US' === $locale || 'ru_RU' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
 			\WP_Mock::userFunction(
 				'add_settings_section',
@@ -469,7 +479,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 					'args'  => [
 						'iso9_section',
 						'ISO9 Table' . $current,
-						[ $subject, 'cyr_to_lat_section' ],
+						[ $subject, 'section_callback' ],
 						$subject::PAGE,
 					],
 					'times' => 1,
@@ -480,7 +490,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'bel_section', 'bel Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'bel_section', 'bel Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -489,7 +499,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'uk_section', 'uk Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'uk_section', 'uk Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -498,7 +508,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'bg_BG_section', 'bg_BG Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'bg_BG_section', 'bg_BG Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -507,7 +517,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'mk_MK_section', 'mk_MK Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'mk_MK_section', 'mk_MK Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -516,7 +526,25 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'sr_RS_section', 'sr_RS Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'sr_RS_section', 'sr_RS Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
+					'times' => 1,
+				]
+			);
+
+			$current = ( 'el' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
+			\WP_Mock::userFunction(
+				'add_settings_section',
+				[
+					'args'  => [ 'el_section', 'el Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
+					'times' => 1,
+				]
+			);
+
+			$current = ( 'hy' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
+			\WP_Mock::userFunction(
+				'add_settings_section',
+				[
+					'args'  => [ 'hy_section', 'hy Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -525,7 +553,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'ka_GE_section', 'ka_GE Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'ka_GE_section', 'ka_GE Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -534,7 +562,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'kk_section', 'kk Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'kk_section', 'kk Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -543,7 +571,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'he_IL_section', 'he_IL Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'he_IL_section', 'he_IL Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -552,7 +580,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'zh_CN_section', 'zh_CN Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'zh_CN_section', 'zh_CN Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -576,6 +604,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			[ true, 'bg_BG' ],
 			[ true, 'mk_MK' ],
 			[ true, 'sr_RS' ],
+			[ true, 'hy' ],
 			[ true, 'ka_GE' ],
 			[ true, 'kk' ],
 			[ true, 'he_IL' ],
@@ -584,9 +613,9 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test cyr_to_lat_section()
+	 * Test section_callback()
 	 */
-	public function test_cyr_to_lat_section() {
+	public function test_section_callback() {
 		$locale = 'iso9';
 
 		\WP_Mock::userFunction( 'get_locale' )->andReturn( $locale );
@@ -594,13 +623,13 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		$subject = new Settings();
 
 		ob_start();
-		$subject->cyr_to_lat_section(
+		$subject->section_callback(
 			[ 'id' => $locale . '_section' ]
 		);
 		$this->assertSame( '<div id="ctl-current"></div>', ob_get_clean() );
 
 		ob_start();
-		$subject->cyr_to_lat_section(
+		$subject->section_callback(
 			[ 'id' => 'other_section' ]
 		);
 		$this->assertSame( '', ob_get_clean() );
@@ -609,15 +638,15 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test setup_fields()
 	 *
-	 * @param boolean $is_ctl_options_screen Is plugin options screen.
+	 * @param boolean $is_options_screen Is plugin options screen.
 	 *
 	 * @dataProvider dp_test_setup_fields
 	 */
-	public function test_setup_fields( $is_ctl_options_screen ) {
+	public function test_setup_fields( $is_options_screen ) {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'is_ctl_options_screen' )->andReturn( $is_ctl_options_screen );
+		$subject->shouldReceive( 'is_options_screen' )->andReturn( $is_options_screen );
 
-		if ( $is_ctl_options_screen ) {
+		if ( $is_options_screen ) {
 			\WP_Mock::userFunction(
 				'register_setting',
 				[
@@ -1288,15 +1317,15 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test admin_enqueue_scripts()
 	 *
-	 * @param boolean $is_ctl_options_screen Is plugin options screen.
+	 * @param boolean $is_options_screen Is plugin options screen.
 	 *
 	 * @dataProvider dp_test_admin_enqueue_scripts
 	 */
-	public function test_admin_enqueue_scripts( $is_ctl_options_screen ) {
+	public function test_admin_enqueue_scripts( $is_options_screen ) {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'is_ctl_options_screen' )->andReturn( $is_ctl_options_screen );
+		$subject->shouldReceive( 'is_options_screen' )->andReturn( $is_options_screen );
 
-		if ( $is_ctl_options_screen ) {
+		if ( $is_options_screen ) {
 			\WP_Mock::userFunction(
 				'wp_enqueue_script',
 				[
@@ -1458,14 +1487,14 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test is_ctl_options_screen()
+	 * Test is_options_screen()
 	 *
 	 * @param mixed   $current_screen Current admin screen.
 	 * @param boolean $expected       Expected result.
 	 *
-	 * @dataProvider dp_test_is_ctl_options_screen
+	 * @dataProvider dp_test_is_options_screen
 	 */
-	public function test_is_ctl_options_screen( $current_screen, $expected ) {
+	public function test_is_options_screen( $current_screen, $expected ) {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		\WP_Mock::userFunction(
@@ -1475,15 +1504,15 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		$this->assertSame( $expected, $subject->is_ctl_options_screen() );
+		$this->assertSame( $expected, $subject->is_options_screen() );
 	}
 
 	/**
-	 * Data provider for dp_test_is_ctl_options_screen()
+	 * Data provider for dp_test_is_options_screen()
 	 *
 	 * @return array
 	 */
-	public function dp_test_is_ctl_options_screen() {
+	public function dp_test_is_options_screen() {
 		return [
 			[ null, false ],
 			[ (object) [ 'id' => 'something' ], false ],
@@ -1554,6 +1583,24 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => [ 'sr_RS' ],
+			],
+			'el'    => [
+				'label'        => 'el Table',
+				'section'      => 'el_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'el' ],
+			],
+			'hy'    => [
+				'label'        => 'hy Table',
+				'section'      => 'hy_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'hy' ],
 			],
 			'ka_GE' => [
 				'label'        => 'ka_GE Table',
