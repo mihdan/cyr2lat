@@ -433,6 +433,58 @@ class Test_Conversion_Tables extends Cyr_To_Lat_TestCase {
 			'ш' => 's',
 		];
 
+		$el = [
+			'Α' => 'A',
+			'Β' => 'B',
+			'Γ' => 'G',
+			'Δ' => 'D',
+			'Ε' => 'E',
+			'Ζ' => 'Z',
+			'Η' => 'E',
+			'Θ' => 'TH',
+			'Ι' => 'I',
+			'Κ' => 'K',
+			'Λ' => 'L',
+			'Μ' => 'M',
+			'Ν' => 'N',
+			'Ξ' => 'X',
+			'Ο' => 'O',
+			'Π' => 'P',
+			'Ρ' => 'R',
+			'Σ' => 'S',
+			'Τ' => 'T',
+			'Υ' => 'U',
+			'Φ' => 'PH',
+			'Χ' => 'KH',
+			'Ψ' => 'PS',
+			'Ω' => 'O',
+			'α' => 'a',
+			'β' => 'b',
+			'γ' => 'g',
+			'δ' => 'd',
+			'ε' => 'e',
+			'ζ' => 'z',
+			'η' => 'e',
+			'θ' => 'th',
+			'ι' => 'i',
+			'κ' => 'k',
+			'λ' => 'l',
+			'μ' => 'm',
+			'ν' => 'n',
+			'ξ' => 'x',
+			'ο' => 'o',
+			'π' => 'p',
+			'ρ' => 'r',
+			'σ' => 's',
+			'ς' => 's',
+			'τ' => 't',
+			'υ' => 'u',
+			'φ' => 'ph',
+			'χ' => 'kh',
+			'ψ' => 'ps',
+			'ω' => 'o',
+		];
+
 		$hy = [
 			'Ա'  => 'A',
 			'Բ'  => 'B',
@@ -1218,6 +1270,7 @@ class Test_Conversion_Tables extends Cyr_To_Lat_TestCase {
 		$this->assertSame( $bg_BG, Conversion_Tables::get( 'bg_BG' ) );
 		$this->assertSame( $mk_MK, Conversion_Tables::get( 'mk_MK' ) );
 		$this->assertSame( $sr_RS, Conversion_Tables::get( 'sr_RS' ) );
+		$this->assertSame( $el, Conversion_Tables::get( 'el' ) );
 		$this->assertSame( $hy, Conversion_Tables::get( 'hy' ) );
 		$this->assertSame( $ka_GE, Conversion_Tables::get( 'ka_GE' ) );
 		$this->assertSame( $kk, Conversion_Tables::get( 'kk' ) );

@@ -130,6 +130,9 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			'sr_RS' => [
 				'label' => __( 'sr_RS Table', 'cyr2lat' ),
 			],
+			'el'    => [
+				'label' => __( 'el Table', 'cyr2lat' ),
+			],
 			'hy'    => [
 				'label' => __( 'hy Table', 'cyr2lat' ),
 			],
@@ -175,6 +178,8 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 						return [ 'mk_MK' ];
 					case 'sr_RS':
 						return [ 'sr_RS' ];
+					case 'el':
+						return [ 'el' ];
 					case 'hy':
 						return [ 'hy' ];
 					case 'ka_GE':
@@ -522,6 +527,15 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				'add_settings_section',
 				[
 					'args'  => [ 'sr_RS_section', 'sr_RS Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
+					'times' => 1,
+				]
+			);
+
+			$current = ( 'el' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
+			\WP_Mock::userFunction(
+				'add_settings_section',
+				[
+					'args'  => [ 'el_section', 'el Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -1569,6 +1583,15 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => [ 'sr_RS' ],
+			],
+			'el'    => [
+				'label'        => 'el Table',
+				'section'      => 'el_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'el' ],
 			],
 			'hy'    => [
 				'label'        => 'hy Table',

@@ -160,6 +160,9 @@ class Settings {
 			'sr_RS' => [
 				'label' => __( 'sr_RS Table', 'cyr2lat' ),
 			],
+			'el'    => [
+				'label' => __( 'el Table', 'cyr2lat' ),
+			],
 			'hy'    => [
 				'label' => __( 'hy Table', 'cyr2lat' ),
 			],
