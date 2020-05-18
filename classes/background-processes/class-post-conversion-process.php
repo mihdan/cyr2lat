@@ -142,7 +142,6 @@ class Post_Conversion_Process extends Conversion_Process {
 			$meta['file'] = $this->main->transliterate( $meta['file'] );
 		}
 
-
 		if ( isset( $meta['sizes'] ) ) {
 			foreach ( $meta['sizes'] as $key => $size ) {
 				$meta['sizes'][ $key ]['file'] = $this->main->transliterate( $meta['sizes'][ $key ]['file'] );
