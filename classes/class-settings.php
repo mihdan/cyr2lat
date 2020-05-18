@@ -160,6 +160,9 @@ class Settings {
 			'sr_RS' => [
 				'label' => __( 'sr_RS Table', 'cyr2lat' ),
 			],
+			'hy'    => [
+				'label' => __( 'hy Table', 'cyr2lat' ),
+			],
 			'ka_GE' => [
 				'label' => __( 'ka_GE Table', 'cyr2lat' ),
 			],
@@ -347,7 +350,7 @@ class Settings {
 			add_settings_section(
 				$form_field['section'],
 				$form_field['label'],
-				[ $this, 'cyr_to_lat_section' ],
+				[ $this, 'section_callback' ],
 				self::PAGE
 			);
 		}
@@ -358,7 +361,7 @@ class Settings {
 	 *
 	 * @param array $arguments Section arguments.
 	 */
-	public function cyr_to_lat_section( $arguments ) {
+	public function section_callback( $arguments ) {
 		$locale = str_replace( '_section', '', $arguments['id'] );
 		if ( $this->get_current_locale() === $locale ) {
 			echo '<div id="ctl-current"></div>';

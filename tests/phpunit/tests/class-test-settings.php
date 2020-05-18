@@ -130,6 +130,9 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			'sr_RS' => [
 				'label' => __( 'sr_RS Table', 'cyr2lat' ),
 			],
+			'hy'    => [
+				'label' => __( 'hy Table', 'cyr2lat' ),
+			],
 			'ka_GE' => [
 				'label' => __( 'ka_GE Table', 'cyr2lat' ),
 			],
@@ -172,6 +175,8 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 						return [ 'mk_MK' ];
 					case 'sr_RS':
 						return [ 'sr_RS' ];
+					case 'hy':
+						return [ 'hy' ];
 					case 'ka_GE':
 						return [ 'ka_GE' ];
 					case 'kk':
@@ -469,7 +474,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 					'args'  => [
 						'iso9_section',
 						'ISO9 Table' . $current,
-						[ $subject, 'cyr_to_lat_section' ],
+						[ $subject, 'section_callback' ],
 						$subject::PAGE,
 					],
 					'times' => 1,
@@ -480,7 +485,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'bel_section', 'bel Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'bel_section', 'bel Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -489,7 +494,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'uk_section', 'uk Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'uk_section', 'uk Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -498,7 +503,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'bg_BG_section', 'bg_BG Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'bg_BG_section', 'bg_BG Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -507,7 +512,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'mk_MK_section', 'mk_MK Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'mk_MK_section', 'mk_MK Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -516,7 +521,16 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'sr_RS_section', 'sr_RS Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'sr_RS_section', 'sr_RS Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
+					'times' => 1,
+				]
+			);
+
+			$current = ( 'hy' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
+			\WP_Mock::userFunction(
+				'add_settings_section',
+				[
+					'args'  => [ 'hy_section', 'hy Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -525,7 +539,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'ka_GE_section', 'ka_GE Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'ka_GE_section', 'ka_GE Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -534,7 +548,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'kk_section', 'kk Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'kk_section', 'kk Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -543,7 +557,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'he_IL_section', 'he_IL Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'he_IL_section', 'he_IL Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -552,7 +566,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			\WP_Mock::userFunction(
 				'add_settings_section',
 				[
-					'args'  => [ 'zh_CN_section', 'zh_CN Table' . $current, [ $subject, 'cyr_to_lat_section' ], $subject::PAGE ],
+					'args'  => [ 'zh_CN_section', 'zh_CN Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
 					'times' => 1,
 				]
 			);
@@ -576,6 +590,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			[ true, 'bg_BG' ],
 			[ true, 'mk_MK' ],
 			[ true, 'sr_RS' ],
+			[ true, 'hy' ],
 			[ true, 'ka_GE' ],
 			[ true, 'kk' ],
 			[ true, 'he_IL' ],
@@ -584,9 +599,9 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test cyr_to_lat_section()
+	 * Test section_callback()
 	 */
-	public function test_cyr_to_lat_section() {
+	public function test_section_callback() {
 		$locale = 'iso9';
 
 		\WP_Mock::userFunction( 'get_locale' )->andReturn( $locale );
@@ -594,13 +609,13 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		$subject = new Settings();
 
 		ob_start();
-		$subject->cyr_to_lat_section(
+		$subject->section_callback(
 			[ 'id' => $locale . '_section' ]
 		);
 		$this->assertSame( '<div id="ctl-current"></div>', ob_get_clean() );
 
 		ob_start();
-		$subject->cyr_to_lat_section(
+		$subject->section_callback(
 			[ 'id' => 'other_section' ]
 		);
 		$this->assertSame( '', ob_get_clean() );
@@ -1554,6 +1569,15 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				'helper'       => '',
 				'supplemental' => '',
 				'default'      => [ 'sr_RS' ],
+			],
+			'hy'    => [
+				'label'        => 'hy Table',
+				'section'      => 'hy_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'hy' ],
 			],
 			'ka_GE' => [
 				'label'        => 'ka_GE Table',
