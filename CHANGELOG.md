@@ -1,5 +1,6 @@
 ## 4.5.0 (18.05.2020)
 * Added Greek and Armenian languages
+* Added background conversion of attachments and thumbnails
 * Fixed background conversion of existing slugs
 
 ## 4.4.0 (18.04.2020)
