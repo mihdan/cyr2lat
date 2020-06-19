@@ -3,9 +3,6 @@
     "jest": true,
     "node": true
   },
-  "globals": {
-    "WPAPISettings": true
-  },
   "extends": [
     "eslint:recommended",
     "wordpress"
