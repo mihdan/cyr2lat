@@ -38,7 +38,9 @@
 	<config name="minimum_supported_wp_version" value="5.1"/>
 	<rule ref="WordPress"/>
 
+	<!-- Allow only short array syntax -->
 	<rule ref="Generic.Arrays.DisallowShortArraySyntax.Found">
 		<severity>0</severity>
 	</rule>
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax.Found"/>
 </ruleset>
