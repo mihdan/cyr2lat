@@ -13,3 +13,4 @@ vendor/
 *.opt
 .idea/
 !composer.lock
+.phpcs.cache
