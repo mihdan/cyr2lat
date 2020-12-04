@@ -5,7 +5,7 @@
 class Settings {
 
 	/**
-	 * Class contructor.
+	 * Class constructor.
 	 */
 	constructor() {
 		this.OPTIONS_FORM_SELECTOR  = '#ctl-options';
