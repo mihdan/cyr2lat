@@ -23,7 +23,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 	/**
 	 * End test
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $GLOBALS['wpdb'] );
 		parent::tearDown();
 	}

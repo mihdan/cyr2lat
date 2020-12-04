@@ -22,7 +22,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	/**
 	 * End test
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $_GET[ Converter::QUERY_ARG ] );
 		unset( $_GET['_wpnonce'] );
 		unset( $_POST['cyr2lat-convert'] );

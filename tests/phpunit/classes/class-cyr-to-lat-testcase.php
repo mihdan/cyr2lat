@@ -84,7 +84,7 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 	/**
 	 * Setup test
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		FunctionMocker::setUp();
 		parent::setUp();
 		\WP_Mock::setUp();
@@ -127,7 +127,7 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 	/**
 	 * End test
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		\WP_Mock::tearDown();
 		Mockery::close();
 		parent::tearDown();
