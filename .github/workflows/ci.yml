@@ -1,0 +1,60 @@
+name: Cyr2Lat CI
+
+on: [ push, pull_request ]
+
+jobs:
+  run:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        php-version: [ '5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0' ]
+    name: PHP ${{ matrix.php-version }} on ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies and update PHPUnit
+        run: |
+          composer install
+          make update-phpunit
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run code sniffer
+        run: vendor/bin/phpcs --colors
+
+      - name: Run PHPUnit tests
+        if: ${{ matrix.php-version != '7.4' }}
+        run: vendor/bin/phpunit --configuration tests/phpunit/phpunit.xml
+
+      - name: Run PHPUnit tests with coverage
+        if: ${{ matrix.php-version == '7.4' }}
+        run: vendor/bin/phpunit --configuration tests/phpunit/phpunit.xml --coverage-clover coverage.xml
+
+      - name: Run Coveralls for PHPUnit tests
+        if: ${{ matrix.php-version == '7.4' }}
+        env:
+          COVERALLS_RUN_LOCALLY: true
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: vendor/bin/php-coveralls -v
+
+      - name: Run JEST with coverage and Coveralls
+        if: ${{ matrix.php-version == '7.4' }}
+        env:
+          COVERALLS_RUN_LOCALLY: true
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          cd src
+          yarn
+          yarn run build:dev
+          yarn run coveralls
+          cd ..
