@@ -1,3 +1,7 @@
+## 4.5.1 (07.12.2020)
+* Tested up to WordPress 5.6
+* Tested on PHP 5.6 - 8.0
+
 ## 4.5.0 (18.05.2020)
 * Added Greek and Armenian languages
 * Added background conversion of attachments and thumbnails

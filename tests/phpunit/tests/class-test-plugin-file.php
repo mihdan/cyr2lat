@@ -20,7 +20,7 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 	/**
 	 * Tear down.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $GLOBALS['cyr_to_lat_requirements'], $GLOBALS['cyr_to_lat_plugin'] );
 		parent::tearDown();
 	}

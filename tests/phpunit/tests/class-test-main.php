@@ -25,7 +25,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * End test
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		unset( $GLOBALS['wp_version'], $GLOBALS['wpdb'], $GLOBALS['current_screen'] );
 	}
 

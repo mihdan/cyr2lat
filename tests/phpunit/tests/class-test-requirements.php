@@ -24,7 +24,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	/**
 	 * Tear down.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		unset ( $_GET['activate'] );
 
 		parent::tearDown();

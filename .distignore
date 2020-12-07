@@ -21,6 +21,7 @@ Thumbs.db
 
 # Directories
 .git
+.github
 .idea
 .make
 assets
