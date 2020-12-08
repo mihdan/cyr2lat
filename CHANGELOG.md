@@ -1,3 +1,6 @@
+## 4.5.2 (08.12.2020)
+* Fix bug on deploy to wp.org
+
 ## 4.5.1 (07.12.2020)
 * Tested up to WordPress 5.6
 * Tested on PHP 5.6 - 8.0
