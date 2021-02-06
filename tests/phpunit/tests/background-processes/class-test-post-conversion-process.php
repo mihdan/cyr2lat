@@ -39,14 +39,15 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 	public function test_task( $post_name, $transliterated_name ) {
 		global $wpdb;
 
-		$post = (object) [
+		$post              = (object) [
 			'ID'        => 5,
 			'post_name' => $post_name,
 			'post_type' => 'post',
 		];
+		$decoded_post_name = urldecode( $post->post_name );
 
 		$main = Mockery::mock( Main::class );
-		$main->shouldReceive( 'transliterate' )->with( $post_name )->andReturn( $transliterated_name );
+		$main->shouldReceive( 'transliterate' )->with( $decoded_post_name )->andReturn( $transliterated_name );
 
 		if ( $transliterated_name !== $post->post_name ) {
 			\WP_Mock::userFunction(
@@ -87,7 +88,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		if ( $transliterated_name !== $post->post_name ) {
 			$subject
 				->shouldReceive( 'log' )
-				->with( 'Post slug converted: ' . $post->post_name . ' => ' . $transliterated_name )
+				->with( 'Post slug converted: ' . $decoded_post_name . ' => ' . $transliterated_name )
 				->once();
 		}
 
@@ -101,6 +102,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		return [
 			[ 'post_name', 'post_name' ],
 			[ 'post_name', 'transliterated_name' ],
+			[ '%d0%bd%d0%be%d0%b2%d1%8b%d0%b9', 'novyj' ],
 		];
 	}
 

@@ -57,19 +57,19 @@ class Post_Conversion_Process extends Conversion_Process {
 	protected function task( $post ) {
 		global $wpdb;
 
-		$this->post = $post;
-		$post_name  = urldecode( $post->post_name );
+		$this->post        = $post;
+		$decoded_post_name = urldecode( $post->post_name );
 
 		add_filter( 'locale', [ $this, 'filter_post_locale' ] );
-		$transliterated_name = $this->main->transliterate( $post_name );
+		$transliterated_name = $this->main->transliterate( $decoded_post_name );
 		remove_filter( 'locale', [ $this, 'filter_post_locale' ] );
 
-		if ( $transliterated_name !== $post_name ) {
-			update_post_meta( $post->ID, '_wp_old_slug', $post_name );
+		if ( $transliterated_name !== $decoded_post_name ) {
+			update_post_meta( $post->ID, '_wp_old_slug', $post->post_name );
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 			$wpdb->update( $wpdb->posts, [ 'post_name' => rawurlencode( $transliterated_name ) ], [ 'ID' => $post->ID ] );
 
-			$this->log( __( 'Post slug converted:', 'cyr2lat' ) . ' ' . $post_name . ' => ' . $transliterated_name );
+			$this->log( __( 'Post slug converted:', 'cyr2lat' ) . ' ' . $decoded_post_name . ' => ' . $transliterated_name );
 
 			if ( 'attachment' === $post->post_type ) {
 				$this->rename_attachment( $post->ID );
