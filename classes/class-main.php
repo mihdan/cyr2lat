@@ -75,7 +75,6 @@ class Main {
 		$this->admin_notices     = new Admin_Notices();
 		$this->converter         = new Converter(
 			$this,
-			$this->settings,
 			$this->process_all_posts,
 			$this->process_all_terms,
 			$this->admin_notices
@@ -92,6 +91,8 @@ class Main {
 
 	/**
 	 * Init class.
+	 *
+	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function init() {
 		if ( defined( 'WP_CLI' ) && constant( 'WP_CLI' ) ) {
@@ -127,6 +128,7 @@ class Main {
 	 * @param string $context   The context for which the title is being sanitized.
 	 *
 	 * @return string
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function sanitize_title( $title, $raw_title = '', $context = '' ) {
 		global $wpdb;
@@ -201,6 +203,7 @@ class Main {
 	 * @param string $filename_raw The filename prior to sanitization.
 	 *
 	 * @return string
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function sanitize_filename( $filename, $filename_raw ) {
 		$pre = apply_filters( 'ctl_pre_sanitize_filename', false, $filename );
@@ -289,7 +292,7 @@ class Main {
 
 		if ( function_exists( 'iconv' ) ) {
 			$new_string = iconv( 'UTF-8', 'UTF-8//TRANSLIT//IGNORE', $string );
-			$string     = $new_string ? $new_string : $string;
+			return $new_string ?: $string;
 		}
 
 		return $string;
@@ -301,6 +304,7 @@ class Main {
 	 * @link https://kagg.eu/how-to-catch-gutenberg/
 	 *
 	 * @return bool
+	 * @noinspection PhpIncludeInspection
 	 */
 	private function is_classic_editor_plugin_active() {
 		// @codeCoverageIgnoreStart
@@ -349,6 +353,7 @@ class Main {
 	 * @param array $postarr An array of sanitized, but otherwise unmodified post data.
 	 *
 	 * @return mixed
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function sanitize_post_name( $data, $postarr = [] ) {
 		global $current_screen;

@@ -92,12 +92,13 @@ class Conversion_Process extends WP_Background_Process {
 	 * Log
 	 *
 	 * @param string $message Message to log.
+	 *
+	 * @noinspection ForgottenDebugOutputInspection
 	 */
 	protected function log( $message ) {
 		if ( defined( 'WP_DEBUG_LOG' ) && constant( 'WP_DEBUG_LOG' ) ) {
-			// @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			// @phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( 'Cyr To Lat: ' . $message );
-			// @phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		}
 	}
 }

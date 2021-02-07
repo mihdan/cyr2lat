@@ -38,7 +38,6 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$classname = __NAMESPACE__ . '\Converter';
 
 		$main          = Mockery::mock( Main::class );
-		$settings      = Mockery::mock( Settings::class );
 		$post_cp       = Mockery::mock( Post_Conversion_Process::class );
 		$term_cp       = Mockery::mock( Term_Conversion_Process::class );
 		$admin_notices = Mockery::mock( Admin_Notices::class );
@@ -52,7 +51,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );
 		$constructor     = $reflected_class->getConstructor();
-		$constructor->invoke( $mock, $main, $settings, $post_cp, $term_cp, $admin_notices );
+		$constructor->invoke( $mock, $main, $post_cp, $term_cp, $admin_notices );
 	}
 
 	/**
@@ -81,14 +80,12 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$posts_process_running, $terms_process_running, $posts_process_completed, $terms_process_completed
 	) {
 		$main              = Mockery::mock( Main::class );
-		$settings          = Mockery::mock( Settings::class );
 		$process_all_posts = Mockery::mock( Post_Conversion_Process::class )->shouldAllowMockingProtectedMethods();
 		$process_all_terms = Mockery::mock( Term_Conversion_Process::class )->shouldAllowMockingProtectedMethods();
 		$admin_notices     = Mockery::mock( Admin_Notices::class );
 
 		$subject = new Converter(
 			$main,
-			$settings,
 			$process_all_posts,
 			$process_all_terms,
 			$admin_notices
@@ -258,14 +255,12 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		global $wpdb;
 
 		$main              = Mockery::mock( Main::class );
-		$settings          = Mockery::mock( Settings::class );
 		$process_all_posts = Mockery::mock( Post_Conversion_Process::class );
 		$process_all_terms = Mockery::mock( Term_Conversion_Process::class );
 		$admin_notices     = Mockery::mock( Admin_Notices::class );
 
 		$subject = new Converter(
 			$main,
-			$settings,
 			$process_all_posts,
 			$process_all_terms,
 			$admin_notices
@@ -432,14 +427,12 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	 */
 	private function get_subject() {
 		$main              = Mockery::mock( Main::class );
-		$settings          = Mockery::mock( Settings::class );
 		$process_all_posts = Mockery::mock( Post_Conversion_Process::class );
 		$process_all_terms = Mockery::mock( Term_Conversion_Process::class );
 		$admin_notices     = Mockery::mock( Admin_Notices::class );
 
 		$subject = new Converter(
 			$main,
-			$settings,
 			$process_all_posts,
 			$process_all_terms,
 			$admin_notices

@@ -1,5 +1,8 @@
+= 4.5.3 (06.02.2020) =
+* Fix bug with redirection from the old slug to a new one after background slug conversion
+
 ## 4.5.2 (08.12.2020)
-* Fix bug on deploy to wp.org
+* Fix bug with the deployment to wp.org
 
 ## 4.5.1 (07.12.2020)
 * Tested up to WordPress 5.6

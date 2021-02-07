@@ -653,13 +653,6 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 					'args' => [ $subject::OPTION_GROUP, $subject::OPTION_NAME ],
 				]
 			);
-			\WP_Mock::userFunction(
-				'get_option',
-				[
-					'args'  => [ $subject::OPTION_NAME ],
-					'times' => 1,
-				]
-			);
 			$subject->form_fields = $this->get_test_form_fields();
 
 			foreach ( $subject->form_fields as $key => $field ) {

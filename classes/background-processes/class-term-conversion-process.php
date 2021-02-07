@@ -53,6 +53,7 @@ class Term_Conversion_Process extends Conversion_Process {
 	 * @param stdClass $term Queue item to iterate over.
 	 *
 	 * @return mixed
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function task( $term ) {
 		global $wpdb;

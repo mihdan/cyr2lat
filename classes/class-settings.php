@@ -59,13 +59,6 @@ class Settings {
 	public $settings;
 
 	/**
-	 * Plugin options.
-	 *
-	 * @var array
-	 */
-	private $options;
-
-	/**
 	 * Served locales.
 	 *
 	 * @var array
@@ -121,6 +114,7 @@ class Settings {
 	 *                            'recently_activated', 'upgrade', 'mustuse', 'dropins', and 'search'.
 	 *
 	 * @return array|mixed Plugin links
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function add_settings_link( $actions, $plugin_file, $plugin_data, $context ) {
 		$ctl_actions = [
@@ -189,7 +183,7 @@ class Settings {
 	private function get_current_locale() {
 		$current_locale = get_locale();
 
-		return in_array( $current_locale, array_keys( $this->locales ), true ) ? $current_locale : 'iso9';
+		return array_key_exists( $current_locale, $this->locales ) ? $current_locale : 'iso9';
 	}
 
 	/**
@@ -381,9 +375,6 @@ class Settings {
 
 		register_setting( self::OPTION_GROUP, self::OPTION_NAME );
 
-		// Get current settings.
-		$this->options = get_option( self::OPTION_NAME );
-
 		foreach ( $this->form_fields as $key => $field ) {
 			$field['field_id'] = $key;
 
@@ -508,10 +499,8 @@ class Settings {
 					$options_markup = '';
 					foreach ( $arguments['options'] as $key => $label ) {
 						$selected = '';
-						if ( is_array( $value ) ) {
-							if ( in_array( $key, $value, true ) ) {
-								$selected = selected( $key, $key, false );
-							}
+						if ( is_array( $value ) && in_array( $key, $value, true ) ) {
+							$selected = selected( $key, $key, false );
 						}
 						$options_markup .= sprintf(
 							'<option value="%s" %s>%s</option>',
@@ -600,7 +589,7 @@ class Settings {
 			$this->settings[ $key ] = isset( $form_fields[ $key ] ) ? $this->get_field_default( $form_fields[ $key ] ) : '';
 		}
 
-		if ( ! is_null( $empty_value ) && '' === $this->settings[ $key ] ) {
+		if ( '' === $this->settings[ $key ] && ! is_null( $empty_value ) ) {
 			$this->settings[ $key ] = $empty_value;
 		}
 
@@ -641,6 +630,7 @@ class Settings {
 	 * @param string $option    Option name.
 	 *
 	 * @return mixed
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function pre_update_option_filter( $value, $old_value, $option ) {
 		if ( $value === $old_value ) {
@@ -654,14 +644,10 @@ class Settings {
 
 		$form_fields = $this->get_form_fields();
 		foreach ( $form_fields as $key => $form_field ) {
-			switch ( $form_field['type'] ) {
-				case 'checkbox':
-					$form_field_value = isset( $value[ $key ] ) ? $value[ $key ] : 'no';
-					$form_field_value = '1' === $form_field_value || 'yes' === $form_field_value ? 'yes' : 'no';
-					$value[ $key ]    = $form_field_value;
-					break;
-				default:
-					break;
+			if ( 'checkbox' === $form_field['type'] ) {
+				$form_field_value = isset( $value[ $key ] ) ? $value[ $key ] : 'no';
+				$form_field_value = '1' === $form_field_value || 'yes' === $form_field_value ? 'yes' : 'no';
+				$value[ $key ]    = $form_field_value;
 			}
 		}
 

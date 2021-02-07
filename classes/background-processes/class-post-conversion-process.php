@@ -53,6 +53,7 @@ class Post_Conversion_Process extends Conversion_Process {
 	 * @param stdClass $post Queue item to iterate over.
 	 *
 	 * @return mixed
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function task( $post ) {
 		global $wpdb;
