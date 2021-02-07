@@ -8,7 +8,7 @@ const webPackModule = ( production = true ) => {
 				loader: 'babel-loader',
 				test: /\.js$/,
 				exclude: /node_modules/,
-				query: {
+				options: {
 					presets: [ 'env' ],
 				},
 			},
