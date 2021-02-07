@@ -5,6 +5,9 @@
  * @package cyr-to-lat
  */
 
+// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+/** @noinspection RealpathInStreamContextInspection */
+
 use tad\FunctionMocker\FunctionMocker;
 
 /**
@@ -15,15 +18,13 @@ define( 'PLUGIN_TESTS_DIR', __DIR__ );
 /**
  * Plugin main file.
  */
-define( 'PLUGIN_MAIN_FILE', realpath( dirname( __DIR__, 2 ) . '/cyr-to-lat.php' ) );
+define( 'PLUGIN_MAIN_FILE', realpath( __DIR__ . '/../../cyr-to-lat.php' ) );
 
 /**
  * Plugin path.
  */
 define( 'PLUGIN_PATH', realpath( dirname( PLUGIN_MAIN_FILE ) ) );
 
-// phpcs:ignore Generic.Commenting.DocComment.MissingShort
-/** @noinspection PhpIncludeInspection */
 require_once PLUGIN_PATH . '/vendor/autoload.php';
 
 if ( ! defined( 'ABSPATH' ) ) {
