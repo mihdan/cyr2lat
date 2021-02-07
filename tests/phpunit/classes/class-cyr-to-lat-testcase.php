@@ -5,13 +5,18 @@
  * @package cyr-to-lat
  */
 
+// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpIllegalPsrClassPathInspection */
+
 namespace Cyr_To_Lat;
 
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use tad\FunctionMocker\FunctionMocker;
+use WP_Mock;
 
 /**
  * Class Cyr_To_Lat_TestCase
@@ -87,7 +92,7 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 	public function setUp(): void {
 		FunctionMocker::setUp();
 		parent::setUp();
-		\WP_Mock::setUp();
+		WP_Mock::setUp();
 
 		$this->cyr_to_lat_version = CYR_TO_LAT_TEST_VERSION;
 
@@ -128,7 +133,7 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 	 * End test
 	 */
 	public function tearDown(): void {
-		\WP_Mock::tearDown();
+		WP_Mock::tearDown();
 		Mockery::close();
 		parent::tearDown();
 		FunctionMocker::tearDown();
@@ -145,7 +150,7 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 	 * @throws ReflectionException Reflection exception.
 	 */
 	protected function get_protected_property( $object, $property_name ) {
-		$reflection_class = new \ReflectionClass( $object );
+		$reflection_class = new ReflectionClass( $object );
 
 		$property = $reflection_class->getProperty( $property_name );
 		$property->setAccessible( true );
@@ -165,7 +170,7 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 	 * @throws ReflectionException Reflection exception.
 	 */
 	protected function set_protected_property( $object, $property_name, $value ) {
-		$reflection_class = new \ReflectionClass( $object );
+		$reflection_class = new ReflectionClass( $object );
 
 		$property = $reflection_class->getProperty( $property_name );
 		$property->setAccessible( true );
@@ -185,7 +190,7 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 	 * @throws ReflectionException Reflection exception.
 	 */
 	protected function set_method_accessibility( $object, $method_name, $accessible = true ) {
-		$reflection_class = new \ReflectionClass( $object );
+		$reflection_class = new ReflectionClass( $object );
 
 		$method = $reflection_class->getMethod( $method_name );
 		$method->setAccessible( $accessible );
@@ -282,58 +287,56 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 		switch ( $locale ) {
 			// Belorussian.
 			case 'bel':
-				unset( $table['И'] );
-				unset( $table['и'] );
+				unset( $table['И'], $table['и'] );
 				$table['Ў'] = 'U';
 				$table['ў'] = 'u';
-				unset( $table['Щ'] );
-				unset( $table['щ'] );
-				unset( $table['Ъ'] );
-				unset( $table['ъ'] );
-				unset( $table['Ѣ'] );
-				unset( $table['ѣ'] );
-				unset( $table['Ѳ'] );
-				unset( $table['ѳ'] );
-				unset( $table['Ѵ'] );
-				unset( $table['ѵ'] );
+				unset(
+					$table['Щ'],
+					$table['щ'],
+					$table['Ъ'],
+					$table['ъ'],
+					$table['Ѣ'],
+					$table['ѣ'],
+					$table['Ѳ'],
+					$table['ѳ'],
+					$table['Ѵ'],
+					$table['ѵ']
+				);
 				break;
 			// Ukrainian.
 			case 'uk':
 				$table['Ґ'] = 'G';
 				$table['ґ'] = 'g';
-				unset( $table['Ё'] );
-				unset( $table['ё'] );
+				unset( $table['Ё'], $table['ё'] );
 				$table['Є'] = 'YE';
 				$table['є'] = 'ye';
 				$table['И'] = 'Y';
 				$table['и'] = 'y';
 				$table['Ї'] = 'YI';
 				$table['ї'] = 'yi';
-				unset( $table['Ъ'] );
-				unset( $table['ъ'] );
-				unset( $table['Ы'] );
-				unset( $table['ы'] );
-				unset( $table['Э'] );
-				unset( $table['э'] );
-				unset( $table['Ѣ'] );
-				unset( $table['ѣ'] );
-				unset( $table['Ѳ'] );
-				unset( $table['ѳ'] );
-				unset( $table['Ѵ'] );
-				unset( $table['ѵ'] );
+				unset(
+					$table['Ъ'],
+					$table['ъ'],
+					$table['Ы'],
+					$table['ы'],
+					$table['Э'],
+					$table['э'],
+					$table['Ѣ'],
+					$table['ѣ'],
+					$table['Ѳ'],
+					$table['ѳ'],
+					$table['Ѵ'],
+					$table['ѵ']
+				);
 				break;
 			// Bulgarian.
 			case 'bg_BG':
-				unset( $table['Ё'] );
-				unset( $table['ё'] );
+				unset( $table['Ё'], $table['ё'] );
 				$table['Щ'] = 'STH';
 				$table['щ'] = 'sth';
 				$table['Ъ'] = 'A';
 				$table['ъ'] = 'a';
-				unset( $table['Ы'] );
-				unset( $table['ы'] );
-				unset( $table['Э'] );
-				unset( $table['э'] );
+				unset( $table['Ы'], $table['ы'], $table['Э'], $table['э'] );
 				$table['Ѫ'] = 'О';
 				$table['ѫ'] = 'о';
 				break;
@@ -341,16 +344,13 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 			case 'mk_MK':
 				$table['Ѓ'] = 'G';
 				$table['ѓ'] = 'g';
-				unset( $table['Ё'] );
-				unset( $table['ё'] );
+				unset( $table['Ё'], $table['ё'] );
 				$table['Ѕ'] = 'Z';
 				$table['ѕ'] = 'z';
-				unset( $table['Й'] );
-				unset( $table['й'] );
+				unset( $table['Й'], $table['й'] );
 				$table['Ј'] = 'J';
 				$table['ј'] = 'j';
-				unset( $table['I'] );
-				unset( $table['i'] );
+				unset( $table['I'], $table['i'] );
 				$table['Ќ'] = 'K';
 				$table['ќ'] = 'k';
 				$table['Љ'] = 'L';
@@ -359,39 +359,37 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 				$table['њ'] = 'n';
 				$table['Џ'] = 'DH';
 				$table['џ'] = 'dh';
-				unset( $table['Щ'] );
-				unset( $table['щ'] );
-				unset( $table['Ъ'] );
-				unset( $table['ъ'] );
-				unset( $table['Ы'] );
-				unset( $table['ы'] );
-				unset( $table['Ь'] );
-				unset( $table['ь'] );
-				unset( $table['Э'] );
-				unset( $table['э'] );
-				unset( $table['Ю'] );
-				unset( $table['ю'] );
-				unset( $table['Я'] );
-				unset( $table['я'] );
-				unset( $table['Ѣ'] );
-				unset( $table['ѣ'] );
-				unset( $table['Ѳ'] );
-				unset( $table['ѳ'] );
-				unset( $table['Ѵ'] );
-				unset( $table['ѵ'] );
+				unset(
+					$table['Щ'],
+					$table['щ'],
+					$table['Ъ'],
+					$table['ъ'],
+					$table['Ы'],
+					$table['ы'],
+					$table['Ь'],
+					$table['ь'],
+					$table['Э'],
+					$table['э'],
+					$table['Ю'],
+					$table['ю'],
+					$table['Я'],
+					$table['я'],
+					$table['Ѣ'],
+					$table['ѣ'],
+					$table['Ѳ'],
+					$table['ѳ'],
+					$table['Ѵ'],
+					$table['ѵ']
+				);
 				break;
 			// Serbian.
 			case 'sr_RS':
 				$table['Ђ'] = 'Dj';
 				$table['ђ'] = 'dj';
-				unset( $table['Ё'] );
-				unset( $table['ё'] );
+				unset( $table['Ё'], $table['ё'] );
 				$table['Ж'] = 'Z';
 				$table['ж'] = 'z';
-				unset( $table['Й'] );
-				unset( $table['й'] );
-				unset( $table['І'] );
-				unset( $table['і'] );
+				unset( $table['Й'], $table['й'], $table['І'], $table['і'] );
 				$table['J'] = 'J';
 				$table['j'] = 'j';
 				$table['Љ'] = 'Lj';
@@ -408,26 +406,28 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 				$table['џ'] = 'dz';
 				$table['Ш'] = 'S';
 				$table['ш'] = 's';
-				unset( $table['Щ'] );
-				unset( $table['щ'] );
-				unset( $table['Ъ'] );
-				unset( $table['ъ'] );
-				unset( $table['Ы'] );
-				unset( $table['ы'] );
-				unset( $table['Ь'] );
-				unset( $table['ь'] );
-				unset( $table['Э'] );
-				unset( $table['э'] );
-				unset( $table['Ю'] );
-				unset( $table['ю'] );
-				unset( $table['Я'] );
-				unset( $table['я'] );
-				unset( $table['Ѣ'] );
-				unset( $table['ѣ'] );
-				unset( $table['Ѳ'] );
-				unset( $table['ѳ'] );
-				unset( $table['Ѵ'] );
-				unset( $table['ѵ'] );
+				unset(
+					$table['Щ'],
+					$table['щ'],
+					$table['Ъ'],
+					$table['ъ'],
+					$table['Ы'],
+					$table['ы'],
+					$table['Ь'],
+					$table['ь'],
+					$table['Э'],
+					$table['э'],
+					$table['Ю'],
+					$table['ю'],
+					$table['Я'],
+					$table['я'],
+					$table['Ѣ'],
+					$table['ѣ'],
+					$table['Ѳ'],
+					$table['ѳ'],
+					$table['Ѵ'],
+					$table['ѵ']
+				);
 				break;
 			// Georgian.
 			case 'ka_GE':
@@ -471,8 +471,7 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 				$table['ә'] = 'ae';
 				$table['Ғ'] = 'Gh';
 				$table['ғ'] = 'gh';
-				unset( $table['Ё'] );
-				unset( $table['ё'] );
+				unset( $table['Ё'], $table['ё'] );
 				$table['Қ'] = 'Q';
 				$table['қ'] = 'q';
 				$table['Ң'] = 'Ng';
@@ -489,18 +488,20 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 				$table['һ'] = 'h';
 				$table['Ц'] = 'C';
 				$table['ц'] = 'c';
-				unset( $table['Щ'] );
-				unset( $table['щ'] );
-				unset( $table['Ъ'] );
-				unset( $table['ъ'] );
-				unset( $table['Ь'] );
-				unset( $table['ь'] );
-				unset( $table['Э'] );
-				unset( $table['э'] );
-				unset( $table['Ю'] );
-				unset( $table['ю'] );
-				unset( $table['Я'] );
-				unset( $table['я'] );
+				unset(
+					$table['Щ'],
+					$table['щ'],
+					$table['Ъ'],
+					$table['ъ'],
+					$table['Ь'],
+					$table['ь'],
+					$table['Э'],
+					$table['э'],
+					$table['Ю'],
+					$table['ю'],
+					$table['Я'],
+					$table['я']
+				);
 
 				// Kazakh 2018 latin.
 				$table['Á'] = 'A';

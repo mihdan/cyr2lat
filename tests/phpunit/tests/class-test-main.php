@@ -5,6 +5,11 @@
  * @package cyr-to-lat
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpIllegalPsrClassPathInspection */
+/** @noinspection PhpUndefinedMethodInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 namespace Cyr_To_Lat;
 
 use Exception;
@@ -12,6 +17,7 @@ use Mockery;
 use ReflectionClass;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
+use WP_Mock;
 use WP_Screen;
 use wpdb;
 
@@ -36,9 +42,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
+	 * @noinspection        NullPointerExceptionInspection
 	 */
 	public function test_constructor() {
-		$classname = __NAMESPACE__ . '\Main';
+		$classname = Main::class;
 
 		Mockery::mock( 'overload:' . Settings::class );
 		Mockery::mock( 'overload:' . Post_Conversion_Process::class );
@@ -74,7 +81,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
 
 		// Set expectations for constructor calls.
-		$mock->expects( $this->once() )->method( 'init' );
+		$mock->expects( self::once() )->method( 'init' );
 
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );
@@ -176,11 +183,11 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Test init_hooks()
 	 */
 	public function test_init_hooks() {
-		$subject = \Mockery::mock( Main::class )->makePartial();
+		$subject = Mockery::mock( Main::class )->makePartial();
 
-		\WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
-		\WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ], 10, 2 );
-		\WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ], 10, 2 );
+		WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
+		WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ], 10, 2 );
+		WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ], 10, 2 );
 
 		$subject->init_hooks();
 	}
@@ -189,28 +196,28 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Test that sanitize_title() does nothing when context is 'query'
 	 */
 	public function test_sanitize_title_query_context() {
-		$subject = \Mockery::mock( Main::class )->makePartial();
+		$subject = Mockery::mock( Main::class )->makePartial();
 
 		$title     = 'some title';
 		$raw_title = '';
 		$context   = 'query';
 
-		$this->assertSame( $title, $subject->sanitize_title( $title, $raw_title, $context ) );
+		self::assertSame( $title, $subject->sanitize_title( $title, $raw_title, $context ) );
 	}
 
 	/**
 	 * Test that sanitize_title() returns ctl_pre_sanitize_title filter value if set
 	 */
 	public function test_sanitize_title_filter_set() {
-		$subject = \Mockery::mock( Main::class )->makePartial();
+		$subject = Mockery::mock( Main::class )->makePartial();
 
 		$title = 'some title';
 
 		$filtered_title = 'filtered title';
 
-		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( $filtered_title );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( $filtered_title );
 
-		$this->assertSame( $filtered_title, $subject->sanitize_title( $title ) );
+		self::assertSame( $filtered_title, $subject->sanitize_title( $title ) );
 	}
 
 	/**
@@ -225,8 +232,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_sanitize_title( $title, $expected ) {
 		$subject = $this->get_subject();
 
-		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
-		$this->assertSame( $expected, $subject->sanitize_title( $title ) );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
+		self::assertSame( $expected, $subject->sanitize_title( $title ) );
 	}
 
 	/**
@@ -288,14 +295,15 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		$subject = $this->get_subject();
 
-		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$wpdb        = Mockery::mock( wpdb::class );
 		$wpdb->terms = 'wp_terms';
 		$wpdb->shouldReceive( 'prepare' )->once()->andReturn( '' );
 		$wpdb->shouldReceive( 'get_var' )->once()->andReturn( $term );
 
-		$this->assertSame( $expected, $subject->sanitize_title( $title ) );
+		self::assertSame( $expected, $subject->sanitize_title( $title ) );
 	}
 
 	/**
@@ -334,9 +342,9 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		\WP_Mock::userFunction( 'wc_get_attribute_taxonomies' )->with()->andReturn( $attribute_taxonomies );
+		WP_Mock::userFunction( 'wc_get_attribute_taxonomies' )->with()->andReturn( $attribute_taxonomies );
 
-		\WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
 		$subject = $this->get_subject();
 		$subject->shouldReceive( 'transliterate' )->times( $expected );
@@ -389,7 +397,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_transliterate( $string, $expected ) {
 		$subject = $this->get_subject();
 
-		$this->assertSame( $expected, $subject->transliterate( $string ) );
+		self::assertSame( $expected, $subject->transliterate( $string ) );
 	}
 
 	/**
@@ -432,7 +440,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'settings', $settings );
 
-		$this->assertSame( $expected, $subject->split_chinese_string( $string, $table ) );
+		self::assertSame( $expected, $subject->split_chinese_string( $string, $table ) );
 	}
 
 	/**
@@ -461,16 +469,16 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Test that sanitize_filename() returns ctl_pre_sanitize_filename filter value if set
 	 */
 	public function test_pre_sanitize_filename_filter_set() {
-		$subject = \Mockery::mock( Main::class )->makePartial();
+		$subject = Mockery::mock( Main::class )->makePartial();
 
 		$filename     = 'filename.jpg';
 		$filename_raw = '';
 
 		$filtered_filename = 'filtered-filename.jpg';
 
-		\WP_Mock::onFilter( 'ctl_pre_sanitize_filename' )->with( false, $filename )->reply( $filtered_filename );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_filename' )->with( false, $filename )->reply( $filtered_filename );
 
-		$this->assertSame( $filtered_filename, $subject->sanitize_filename( $filename, $filename_raw ) );
+		self::assertSame( $filtered_filename, $subject->sanitize_filename( $filename, $filename_raw ) );
 	}
 
 	/**
@@ -483,7 +491,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_sanitize_filename( $filename, $expected ) {
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'seems_utf8',
 			[
 				'args'   => [ $filename ],
@@ -493,7 +501,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		$subject = $this->get_subject();
 
-		\WP_Mock::onFilter( 'ctl_pre_sanitize_filename' )->with( false, $filename )->reply( false );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_filename' )->with( false, $filename )->reply( false );
 
 		FunctionMocker::replace(
 			'function_exists',
@@ -502,7 +510,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		$this->assertSame( $expected, $subject->sanitize_filename( $filename, '' ) );
+		self::assertSame( $expected, $subject->sanitize_filename( $filename, '' ) );
 
 		FunctionMocker::replace(
 			'function_exists',
@@ -511,7 +519,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		$this->assertSame( $expected, $subject->sanitize_filename( $filename, '' ) );
+		self::assertSame( $expected, $subject->sanitize_filename( $filename, '' ) );
 	}
 
 	/**
@@ -560,7 +568,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		$data = [ 'something' ];
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'has_filter',
 			[
 				'args'   => [ 'replace_editor', 'gutenberg_init' ],
@@ -568,12 +576,13 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			]
 		);
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$GLOBALS['wp_version'] = '4.9';
-		$this->assertSame( $data, $subject->sanitize_post_name( $data ) );
+		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
 
 		FunctionMocker::replace( 'function_exists', true );
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'is_plugin_active',
 			[
 				'times'  => 1,
@@ -582,7 +591,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'get_option',
 			[
 				'times'  => 1,
@@ -591,8 +600,9 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			]
 		);
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$GLOBALS['wp_version'] = '5.0';
-		$this->assertSame( $data, $subject->sanitize_post_name( $data ) );
+		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
 	}
 
 	/**
@@ -601,7 +611,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_sanitize_post_name_not_post_edit_screen() {
 		$data = [ 'something' ];
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'has_filter',
 			[
 				'args'   => [ 'replace_editor', 'gutenberg_init' ],
@@ -609,12 +619,13 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			]
 		);
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$GLOBALS['wp_version'] = '5.0';
 
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		FunctionMocker::replace( 'function_exists', true );
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'is_plugin_active',
 			[
 				'args'   => [ 'classic-editor/classic-editor.php' ],
@@ -625,11 +636,13 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$current_screen       = Mockery::mock( WP_Screen::class );
 		$current_screen->base = 'not post';
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$GLOBALS['current_screen'] = null;
-		$this->assertSame( $data, $subject->sanitize_post_name( $data ) );
+		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$GLOBALS['current_screen'] = $current_screen;
-		$this->assertSame( $data, $subject->sanitize_post_name( $data ) );
+		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
 	}
 
 	/**
@@ -641,12 +654,14 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_sanitize_post_name
 	 */
 	public function test_sanitize_post_name( $data, $expected ) {
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$GLOBALS['wp_version'] = '5.0';
 
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		FunctionMocker::replace( 'function_exists', true );
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'is_plugin_active',
 			[
 				'args'   => [ 'classic-editor/classic-editor.php' ],
@@ -654,11 +669,13 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		$current_screen            = Mockery::mock( WP_Screen::class );
-		$current_screen->base      = 'post';
+		$current_screen       = Mockery::mock( WP_Screen::class );
+		$current_screen->base = 'post';
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$GLOBALS['current_screen'] = $current_screen;
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'sanitize_title',
 			[
 				'times'  => '0+',
@@ -666,7 +683,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 				'return' => 'sanitized(' . $data['post_title'] . ')',
 			]
 		);
-		$this->assertSame( $expected, $subject->sanitize_post_name( $data ) );
+		self::assertSame( $expected, $subject->sanitize_post_name( $data ) );
 	}
 
 	/**
@@ -720,18 +737,19 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			$placeholders    = array_fill( 0, $how_many, $format );
 			$prepared_format = implode( ',', $placeholders );
 			$args            = array_merge( [ $prepared_format ], $items );
-			$result          = call_user_func_array( 'sprintf', $args );
+			$result          = sprintf( ...$args );
 			$result          = str_replace( "''", '', $result );
 
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$wpdb = Mockery::mock( wpdb::class );
 			$wpdb->shouldReceive( 'prepare' )->zeroOrMoreTimes()->andReturn( $result );
 		}
 
-		$subject = \Mockery::mock( Main::class )->makePartial();
+		$subject = Mockery::mock( Main::class )->makePartial();
 		if ( $format ) {
-			$this->assertSame( $expected, $subject->prepare_in( $items, $format ) );
+			self::assertSame( $expected, $subject->prepare_in( $items, $format ) );
 		} else {
-			$this->assertSame( $expected, $subject->prepare_in( $items ) );
+			self::assertSame( $expected, $subject->prepare_in( $items ) );
 		}
 	}
 
@@ -761,19 +779,19 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$locale     = 'ru_RU';
 		$iso9_table = $this->get_conversion_table( $locale );
 
-		$settings = \Mockery::mock( Settings::class );
+		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
 		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
 
-		$process_all_posts = \Mockery::mock( Post_Conversion_Process::class );
-		$process_all_terms = \Mockery::mock( Term_Conversion_Process::class );
-		$admin_notices     = \Mockery::mock( Admin_notices::class );
+		$process_all_posts = Mockery::mock( Post_Conversion_Process::class );
+		$process_all_terms = Mockery::mock( Term_Conversion_Process::class );
+		$admin_notices     = Mockery::mock( Admin_notices::class );
 
 		$converter = Mockery::mock( Converter::class );
 		$cli       = Mockery::mock( WP_CLI::class );
 		$acf       = Mockery::mock( ACF::class );
 
-		$subject = \Mockery::mock( Main::class )->makePartial();
+		$subject = Mockery::mock( Main::class )->makePartial();
 
 		$this->set_protected_property( $subject, 'settings', $settings );
 		$this->set_protected_property( $subject, 'process_all_posts', $process_all_posts );

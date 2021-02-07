@@ -5,11 +5,15 @@
  * @package cyr-to-lat
  */
 
+// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpIllegalPsrClassPathInspection */
+
 namespace Cyr_To_Lat;
 
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
+use WP_Mock;
 
 /**
  * Class Test_ACF
@@ -22,9 +26,10 @@ class Test_ACF extends Cyr_To_Lat_TestCase {
 	 * Test constructor
 	 *
 	 * @throws ReflectionException Reflection Exception.
+	 * @noinspection NullPointerExceptionInspection
 	 */
 	public function test_constructor() {
-		$classname = __NAMESPACE__ . '\ACF';
+		$classname = ACF::class;
 
 		$settings = Mockery::mock( Settings::class );
 
@@ -32,7 +37,7 @@ class Test_ACF extends Cyr_To_Lat_TestCase {
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
 
 		// Set expectations for constructor calls.
-		$mock->expects( $this->once() )->method( 'init_hooks' );
+		$mock->expects( self::once() )->method( 'init_hooks' );
 
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );
@@ -47,7 +52,7 @@ class Test_ACF extends Cyr_To_Lat_TestCase {
 		$settings = Mockery::mock( Settings::class );
 		$subject  = new ACF( $settings );
 
-		\WP_Mock::expectActionAdded(
+		WP_Mock::expectActionAdded(
 			'acf/field_group/admin_enqueue_scripts',
 			[ $subject, 'enqueue_script' ]
 		);
@@ -65,7 +70,7 @@ class Test_ACF extends Cyr_To_Lat_TestCase {
 		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'get_table' )->andReturn( $table );
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_enqueue_script',
 			[
 				'args'  => [
@@ -78,7 +83,7 @@ class Test_ACF extends Cyr_To_Lat_TestCase {
 				'times' => 1,
 			]
 		);
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_localize_script',
 			[
 				'args'  => [

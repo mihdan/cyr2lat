@@ -5,6 +5,11 @@
  * @package cyr-to-lat
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpIllegalPsrClassPathInspection */
+/** @noinspection PhpUndefinedClassInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 /**
  * Class WP_CLI
  */
@@ -26,5 +31,4 @@ class WP_CLI {
 	 */
 	public static function add_command( $name, $callable ) {
 	}
-
 }

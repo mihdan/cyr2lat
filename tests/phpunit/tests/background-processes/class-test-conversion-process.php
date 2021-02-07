@@ -5,11 +5,17 @@
  * @package cyr-to-lat
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpIllegalPsrClassPathInspection */
+/** @noinspection PhpUndefinedMethodInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 namespace Cyr_To_Lat;
 
 use Mockery;
 use stdClass;
 use tad\FunctionMocker\FunctionMocker;
+use WP_Mock;
 
 /**
  * Class Test_Conversion_Process
@@ -24,7 +30,7 @@ class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 	public function test_task() {
 		$subject = Mockery::mock( Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		$this->assertFalse( $subject->task( new stdClass() ) );
+		self::assertFalse( $subject->task( new stdClass() ) );
 	}
 
 	/**
@@ -33,7 +39,7 @@ class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 	public function test_complete() {
 		$subject = Mockery::mock( Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_next_scheduled',
 			[
 				'return' => null,
@@ -41,7 +47,7 @@ class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'set_site_transient',
 			[
 				'times' => 1,
@@ -63,7 +69,7 @@ class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$main    = Mockery::mock( Main::class );
 		$subject = new Conversion_Process( $main );
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'get_site_transient',
 			[
 				'args'   => [ $this->cyr_to_lat_prefix . '_background_process_process_completed' ],
@@ -73,7 +79,7 @@ class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 		);
 
 		if ( $transient ) {
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'delete_site_transient',
 				[
 					'args'  => [ $this->cyr_to_lat_prefix . '_background_process_process_completed' ],
@@ -82,7 +88,7 @@ class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 			);
 		}
 
-		$this->assertSame( $expected, $subject->is_process_completed() );
+		self::assertSame( $expected, $subject->is_process_completed() );
 	}
 
 	/**
@@ -107,7 +113,7 @@ class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$main    = Mockery::mock( Main::class );
 		$subject = new Conversion_Process( $main );
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'get_site_transient',
 			[
 				'args'   => [ $this->cyr_to_lat_prefix . '_background_process_process_lock' ],
@@ -116,7 +122,7 @@ class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		$this->assertSame( $expected, $subject->is_process_running() );
+		self::assertSame( $expected, $subject->is_process_running() );
 	}
 
 	/**
@@ -173,9 +179,9 @@ class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 		$subject->log( $message );
 		if ( $debug ) {
-			$this->assertSame( [ 'Cyr To Lat: ' . $message ], $log );
+			self::assertSame( [ 'Cyr To Lat: ' . $message ], $log );
 		} else {
-			$this->assertSame( [], $log );
+			self::assertSame( [], $log );
 		}
 	}
 
