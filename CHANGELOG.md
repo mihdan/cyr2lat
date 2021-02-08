@@ -1,4 +1,5 @@
-= 4.5.3 (06.02.2020) =
+## 4.6.0 (08.02.2020) =
+* Add confirmation popup before mass conversion of slugs
 * Fix bug with redirection from the old slug to a new one after background slug conversion
 
 ## 4.5.2 (08.12.2020)

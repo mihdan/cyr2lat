@@ -87,6 +87,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		);
 
 		WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $subject, 'admin_enqueue_scripts' ] );
+		WP_Mock::expectActionAdded( 'in_admin_header', [ $subject, 'in_admin_header' ] );
 
 		$subject->init_hooks();
 	}
@@ -407,7 +408,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			WP_Mock::userFunction(
 				'submit_button',
 				[
-					'args'  => [ 'Convert Existing Slugs', 'secondary', 'cyr2lat-convert' ],
+					'args'  => [ 'Convert Existing Slugs', 'secondary', 'ctl-convert-button' ],
 					'times' => 1,
 				]
 			);
@@ -420,6 +421,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 							</form>
 
 			<form id="ctl-convert-existing-slugs" action="" method="post">
+				<input type="hidden" name="ctl-convert" />
 							</form>
 
 			<div id="donate">
@@ -1345,31 +1347,29 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		$subject->shouldReceive( 'is_options_screen' )->andReturn( $is_options_screen );
 
 		if ( $is_options_screen ) {
-			WP_Mock::userFunction(
-				'wp_enqueue_script',
+			WP_Mock::userFunction( 'wp_enqueue_script' )->with(
+				$subject::HANDLE,
+				$this->cyr_to_lat_url . '/dist/js/settings/app.js',
+				[],
+				$this->cyr_to_lat_version,
+				true,
+			)->once();
+
+			WP_Mock::userFunction( 'wp_localize_script' )->with(
+				$subject::HANDLE,
+				$subject::OBJECT,
 				[
-					'args'  => [
-						'cyr-to-lat-settings',
-						$this->cyr_to_lat_url . '/dist/js/settings/app.js',
-						[],
-						$this->cyr_to_lat_version,
-						true,
-					],
-					'times' => 1,
+					'optionsSaveSuccessMessage' => 'Options saved.',
+					'optionsSaveErrorMessage'   => 'Error saving options.',
 				]
-			);
-			WP_Mock::userFunction(
-				'wp_enqueue_style',
-				[
-					'args'  => [
-						'cyr-to-lat-admin',
-						$this->cyr_to_lat_url . '/css/cyr-to-lat-admin.css',
-						[],
-						$this->cyr_to_lat_version,
-					],
-					'times' => 1,
-				]
-			);
+			)->once();
+
+			WP_Mock::userFunction( 'wp_enqueue_style' )->with(
+				$subject::HANDLE,
+				$this->cyr_to_lat_url . '/css/cyr-to-lat-admin.css',
+				[],
+				$this->cyr_to_lat_version,
+			)->once();
 		}
 
 		$subject->admin_enqueue_scripts();
@@ -1381,6 +1381,56 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	 * @return array
 	 */
 	public function dp_test_admin_enqueue_scripts() {
+		return [
+			[ false ],
+			[ true ],
+		];
+	}
+
+	/**
+	 * Test in_admin_header()
+	 *
+	 * @param boolean $is_options_screen Is plugin options screen.
+	 *
+	 * @dataProvider dp_test_in_admin_header
+	 */
+	public function test_in_admin_header( $is_options_screen ) {
+		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'is_options_screen' )->andReturn( $is_options_screen );
+
+		$expected = '';
+
+		if ( $is_options_screen ) {
+			$expected = '		<div id="ctl-confirm-popup">
+			<div id="ctl-confirm-content">
+				<p>
+					<strong>Important:</strong>
+					This operation is irreversible. Please make sure that you have made backup copy of your database.				</p>
+				<p>Are you sure to continue?</p>
+				<div id="ctl-confirm-buttons">
+					<input
+						type="button" id="ctl-confirm-ok" class="button button-primary"
+						value="OK">
+					<button
+						type="button" id="ctl-confirm-cancel" class="button button-secondary">
+						Cancel					</button>
+				</div>
+			</div>
+		</div>
+		';
+		}
+
+		ob_start();
+		$subject->in_admin_header();
+		self::assertSame( $expected, ob_get_clean() );
+	}
+
+	/**
+	 * Data provider for in_admin_header().
+	 *
+	 * @return array
+	 */
+	public function dp_test_in_admin_header() {
 		return [
 			[ false ],
 			[ true ],

@@ -33,6 +33,12 @@
           ]
         }
       ]
+    },
+    "globals": {
+      "Cyr2LatSettingsObject": {
+        "optionsSaveSuccessMessage": "Options saved.",
+        "optionsSaveErrorMessage": "Error saving options."
+      }
     }
   },
   "dependencies": {

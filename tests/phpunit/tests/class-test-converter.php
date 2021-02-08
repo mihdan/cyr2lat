@@ -182,7 +182,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		WP_Mock::passthruFunction( 'check_admin_referer' );
 
 		if ( $convert ) {
-			$_POST['cyr2lat-convert'] = 'something';
+			$_POST['ctl-convert'] = 'something';
 			$subject->shouldReceive( 'convert_existing_slugs' )->once();
 		} else {
 			$subject->shouldReceive( 'convert_existing_slugs' )->never();
@@ -218,6 +218,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		if ( $query_arg ) {
 			$_GET[ Converter::QUERY_ARG ] = '1';
 		}
+
 		if ( $nonce ) {
 			$_GET['_wpnonce'] = $nonce;
 		}

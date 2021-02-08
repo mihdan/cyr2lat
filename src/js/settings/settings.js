@@ -2,6 +2,8 @@
  * @file class Settings.
  */
 
+/* global Cyr2LatSettingsObject */
+
 class Settings {
 	/**
 	 * Class constructor.
@@ -11,6 +13,11 @@ class Settings {
 		this.HEADER_SELECTOR = this.OPTIONS_FORM_SELECTOR + ' h2';
 		this.TABLE_SELECTOR = this.OPTIONS_FORM_SELECTOR + ' table';
 		this.SUBMIT_SELECTOR = this.OPTIONS_FORM_SELECTOR + ' #submit';
+		this.CONVERT_FORM_SELECTOR = '#ctl-convert-existing-slugs';
+		this.CONVERT_BUTTON_SELECTOR = '#ctl-convert-button';
+		this.CONFIRM_POPUP_SELECTOR = '#ctl-confirm-popup';
+		this.CONFIRM_OK_SELECTOR = '#ctl-confirm-ok';
+		this.CONFIRM_CANCEL_SELECTOR = '#ctl-confirm-cancel';
 		this.CURRENT_STUB_ID = 'ctl-current';
 		this.CURRENT_NAV_TAB_CLASS = 'nav-tab-current';
 		this.ACTIVE_NAV_TAB_CLASS = 'nav-tab-active';
@@ -26,9 +33,20 @@ class Settings {
 			'</button>';
 		this.PLUS_CLASS = 'ctl-plus';
 
-		this.optionsForm = document.querySelector( this.OPTIONS_FORM_SELECTOR );
+		this.optionsForm = document.querySelector(
+			this.OPTIONS_FORM_SELECTOR
+		);
 		this.tablesData = this.getTablesData();
 		this.submitButton = document.querySelector( this.SUBMIT_SELECTOR );
+		this.confirmPopup = document.querySelector(
+			this.CONFIRM_POPUP_SELECTOR
+		);
+
+		// Copy to class properties, otherwise eslint marks some properties of global object as unresolved.
+		this.optionsSaveSuccessMessage =
+			Cyr2LatSettingsObject.optionsSaveSuccessMessage;
+		this.optionsSaveErrorMessage =
+			Cyr2LatSettingsObject.optionsSaveErrorMessage;
 
 		this.addWrapper();
 		this.addMessageLines();
@@ -182,12 +200,15 @@ class Settings {
 		} )
 			.then( ( response ) => {
 				if ( response.ok ) {
-					this.showMessage( this.successMessage, 'Options saved.' );
+					this.showMessage(
+						this.successMessage,
+						this.optionsSaveSuccessMessage
+					);
 					this.tablesData = this.getTablesData();
 				} else {
 					this.showMessage(
 						this.errorMessage,
-						'Error saving options.'
+						this.optionsSaveErrorMessage
 					);
 				}
 
@@ -454,11 +475,45 @@ class Settings {
 			return null;
 		} );
 
-		document.querySelector( this.SUBMIT_SELECTOR ).onclick = ( event ) => {
+		this.submitButton.onclick = ( event ) => {
 			event.preventDefault();
 			this.saveActiveTable();
 			return false;
 		};
+
+		document.querySelector( this.CONVERT_BUTTON_SELECTOR ).onclick = (
+			event
+		) => {
+			event.preventDefault();
+			this.confirmPopup.style.display = 'block';
+			return false;
+		};
+
+		this.confirmPopup.onclick = () => {
+			this.hideConfirmPopup();
+		};
+
+		document.querySelector( this.CONFIRM_OK_SELECTOR ).onclick = (
+			event
+		) => {
+			event.stopPropagation();
+			this.hideConfirmPopup();
+			document.querySelector( this.CONVERT_FORM_SELECTOR ).submit();
+		};
+
+		document.querySelector( this.CONFIRM_CANCEL_SELECTOR ).onclick = (
+			event
+		) => {
+			event.stopPropagation();
+			this.hideConfirmPopup();
+		};
+	}
+
+	/**
+	 * Hide confirmation popup.
+	 */
+	hideConfirmPopup() {
+		this.confirmPopup.style.display = 'none';
 	}
 
 	/**

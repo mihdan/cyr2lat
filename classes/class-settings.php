@@ -18,31 +18,33 @@ class Settings {
 
 	/**
 	 * Admin screen id.
-	 *
-	 * @var string
 	 */
 	const SCREEN_ID = 'settings_page_cyr-to-lat';
 
 	/**
 	 * Option group.
-	 *
-	 * @var string
 	 */
 	const OPTION_GROUP = 'cyr_to_lat_group';
 
 	/**
 	 * Option page.
-	 *
-	 * @var string
 	 */
 	const PAGE = 'cyr-to-lat';
 
 	/**
 	 * Plugin options name.
-	 *
-	 * @var string
 	 */
 	const OPTION_NAME = 'cyr_to_lat_settings';
+
+	/**
+	 * Script handle.
+	 */
+	const HANDLE = 'cyr-to-lat-settings';
+
+	/**
+	 * Script localization object.
+	 */
+	const OBJECT = 'Cyr2LatSettingsObject';
 
 	/**
 	 * Form fields.
@@ -100,6 +102,7 @@ class Settings {
 		add_filter( 'pre_update_option_' . self::OPTION_NAME, [ $this, 'pre_update_option_filter' ], 10, 3 );
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
+		add_action( 'in_admin_header', [ $this, 'in_admin_header' ] );
 	}
 
 	/**
@@ -298,9 +301,10 @@ class Settings {
 			</form>
 
 			<form id="ctl-convert-existing-slugs" action="" method="post">
+				<input type="hidden" name="ctl-convert" />
 				<?php
 				wp_nonce_field( self::OPTION_GROUP . '-options' );
-				submit_button( __( 'Convert Existing Slugs', 'cyr2lat' ), 'secondary', 'cyr2lat-convert' );
+				submit_button( __( 'Convert Existing Slugs', 'cyr2lat' ), 'secondary', 'ctl-convert-button' );
 				?>
 			</form>
 
@@ -663,19 +667,63 @@ class Settings {
 		}
 
 		wp_enqueue_script(
-			'cyr-to-lat-settings',
+			self::HANDLE,
 			constant( 'CYR_TO_LAT_URL' ) . '/dist/js/settings/app.js',
 			[],
 			constant( 'CYR_TO_LAT_VERSION' ),
 			true
 		);
 
+		wp_localize_script(
+			self::HANDLE,
+			self::OBJECT,
+			[
+				'optionsSaveSuccessMessage' => __( 'Options saved.', 'cyr2lat' ),
+				'optionsSaveErrorMessage'   => __( 'Error saving options.', 'cyr2lat' ),
+			]
+		);
+
 		wp_enqueue_style(
-			'cyr-to-lat-admin',
+			self::HANDLE,
 			constant( 'CYR_TO_LAT_URL' ) . '/css/cyr-to-lat-admin.css',
 			[],
 			constant( 'CYR_TO_LAT_VERSION' )
 		);
+	}
+
+	/**
+	 * Output convert confirmation popup.
+	 */
+	public function in_admin_header() {
+		if ( ! $this->is_options_screen() ) {
+			return;
+		}
+
+		?>
+		<div id="ctl-confirm-popup">
+			<div id="ctl-confirm-content">
+				<p>
+					<strong><?php esc_html_e( 'Important:', 'cyr2lat' ); ?></strong>
+					<?php
+					esc_html_e(
+						'This operation is irreversible. Please make sure that you have made backup copy of your database.',
+						'cyr2lat'
+					);
+					?>
+				</p>
+				<p><?php esc_html_e( 'Are you sure to continue?', 'cyr2lat' ); ?></p>
+				<div id="ctl-confirm-buttons">
+					<input
+						type="button" id="ctl-confirm-ok" class="button button-primary"
+						value="<?php esc_html_e( 'OK', 'cyr2lat' ); ?>">
+					<button
+						type="button" id="ctl-confirm-cancel" class="button button-secondary">
+						<?php esc_html_e( 'Cancel', 'cyr2lat' ); ?>
+					</button>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**

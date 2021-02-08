@@ -134,7 +134,7 @@ class Converter {
 	 * Check if we have to start conversion and start it.
 	 */
 	public function start_conversion() {
-		if ( ! isset( $_POST['cyr2lat-convert'] ) ) {
+		if ( ! isset( $_POST['ctl-convert'] ) ) {
 			return;
 		}
 		check_admin_referer( $this->option_group . '-options' );
