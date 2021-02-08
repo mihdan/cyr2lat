@@ -1353,7 +1353,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				$subject::HANDLE,
 				$this->cyr_to_lat_url . '/css/cyr-to-lat-admin.css',
 				[],
-				$this->cyr_to_lat_version,
+				$this->cyr_to_lat_version
 			)->once();
 		}
 
