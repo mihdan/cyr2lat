@@ -424,23 +424,8 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				<input type="hidden" name="ctl-convert" />
 							</form>
 
-			<div id="donate">
+			<div id="appreciation">
 				<h2>
-					Donate				</h2>
-				<p>
-					Would you like to support the advancement of this plugin?				</p>
-				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-					<input type="hidden" name="cmd" value="_s-xclick">
-					<input type="hidden" name="hosted_button_id" value="BENCPARA8S224">
-					<input
-						type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"
-						name="submit" alt="PayPal - The safer, easier way to pay online!">
-					<img
-						alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
-						height="1">
-				</form>
-
-				<h2 id="appreciation">
 					Your appreciation				</h2>
 				<a
 					target="_blank"
