@@ -7,6 +7,7 @@
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
 /** @noinspection PhpIllegalPsrClassPathInspection */
+/** @noinspection PhpUndefinedClassInspection */
 /** @noinspection PhpUndefinedMethodInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
@@ -18,6 +19,7 @@ use ReflectionClass;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
+use WP_REST_Server;
 use WP_Screen;
 use wpdb;
 
@@ -32,7 +34,11 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * End test
 	 */
 	public function tearDown(): void {
-		unset( $GLOBALS['wp_version'], $GLOBALS['wpdb'], $GLOBALS['current_screen'] );
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		unset( $GLOBALS['wp_version'], $GLOBALS['wpdb'], $GLOBALS['current_screen'], $_POST, $_GET );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 
 	/**
@@ -181,15 +187,47 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test init_hooks()
+	 *
+	 * @param string $polylang Polylang is active.
+	 *
+	 * @dataProvider dp_test_init_hooks
 	 */
-	public function test_init_hooks() {
+	public function test_init_hooks( $polylang ) {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
 		WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ], 10, 2 );
 		WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ], 10, 2 );
 
+		FunctionMocker::replace(
+			'class_exists',
+			function ( $class ) use ( $polylang ) {
+				if ( 'Polylang' === $class ) {
+					return $polylang;
+				}
+
+				return null;
+			}
+		);
+		if ( $polylang ) {
+			WP_Mock::expectFilterAdded( 'locale', [ $subject, 'pll_locale_filter' ] );
+		} else {
+			WP_Mock::expectFilterNotAdded( 'locale', [ $subject, 'pll_locale_filter' ] );
+		}
+
 		$subject->init_hooks();
+	}
+
+	/**
+	 * Data provider for dp_test_init_hooks().
+	 *
+	 * @return array
+	 */
+	public function dp_test_init_hooks() {
+		return [
+			[ true ],
+			[ false ],
+		];
 	}
 
 	/**
@@ -716,6 +754,226 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 				],
 			],
 		];
+	}
+
+	/**
+	 * Test pll_locale_filter() with REST.
+	 */
+	public function test_pll_locale_filter_with_rest() {
+		$locale     = 'en_US';
+		$pll_locale = 'ru';
+		$data       = '';
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		FunctionMocker::replace(
+			'defined',
+			function ( $constant_name ) {
+				return 'REST_REQUEST' === $constant_name;
+			}
+		);
+
+		FunctionMocker::replace(
+			'constant',
+			function ( $name ) {
+				return 'REST_REQUEST' === $name;
+			}
+		);
+
+		$rest_server = new WP_REST_Server();
+		WP_Mock::userFunction( 'rest_get_server' )->andReturn( $rest_server );
+
+		FunctionMocker::replace(
+			'WP_REST_Server::get_raw_data',
+			function () use ( &$data ) {
+				return $data;
+			}
+		);
+
+		self::assertSame( $locale, $subject->pll_locale_filter( $locale ) );
+
+		$data = '{"lang":"' . $pll_locale . '"}';
+		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
+
+		// Test that result is cached.
+		FunctionMocker::replace( 'defined' );
+		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
+	}
+
+	/**
+	 * Test pll_locale_filter() on frontend.
+	 */
+	public function test_pll_locale_filter_on_frontend() {
+		$locale = 'en_US';
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		FunctionMocker::replace( 'defined' );
+
+		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( false );
+
+		self::assertSame( $locale, $subject->pll_locale_filter( $locale ) );
+	}
+
+	/**
+	 * Test pll_locale_filter() with classic editor and post_id.
+	 */
+	public function test_pll_locale_filter_with_classic_editor_and_post_id() {
+		$locale     = 'en_US';
+		$pll_locale = 'ru';
+		$post_id    = 23;
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		FunctionMocker::replace( 'defined' );
+
+		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
+
+		WP_Mock::userFunction( 'pll_get_post_language' )->with( $post_id )->andReturn( $pll_locale );
+
+		FunctionMocker::replace(
+			'filter_input',
+			function ( $type, $var_name, $filter ) use ( $post_id ) {
+				if ( INPUT_POST === $type && 'post_ID' === $var_name && FILTER_SANITIZE_STRING === $filter ) {
+					return $post_id;
+				}
+
+				return null;
+			}
+		);
+
+		self::assertSame( $locale, $subject->pll_locale_filter( $locale ) );
+
+		$_POST['post_ID'] = $post_id;
+
+		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
+
+		// Test that result is cached.
+		FunctionMocker::replace( 'filter_input' );
+		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
+	}
+
+	/**
+	 * Test pll_locale_filter() with classic editor and pll_post_id.
+	 */
+	public function test_pll_locale_filter_with_classic_editor_and_pll_post_id() {
+		$locale     = 'en_US';
+		$pll_locale = 'ru';
+		$post_id    = 23;
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		FunctionMocker::replace( 'defined' );
+
+		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
+
+		WP_Mock::userFunction( 'pll_get_post_language' )->with( $post_id )->andReturn( $pll_locale );
+
+		FunctionMocker::replace(
+			'filter_input',
+			function ( $type, $var_name, $filter ) use ( $post_id ) {
+				if ( INPUT_POST === $type && 'pll_post_id' === $var_name && FILTER_SANITIZE_STRING === $filter ) {
+					return $post_id;
+				}
+
+				return null;
+			}
+		);
+
+		self::assertSame( $locale, $subject->pll_locale_filter( $locale ) );
+
+		$_POST['pll_post_id'] = $post_id;
+
+		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
+
+		// Test that result is cached.
+		FunctionMocker::replace( 'filter_input' );
+		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
+	}
+
+	/**
+	 * Test pll_locale_filter() with classic editor and post.
+	 */
+	public function test_pll_locale_filter_with_classic_editor_and_post() {
+		$locale     = 'en_US';
+		$pll_locale = 'ru';
+		$post_id    = 23;
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		FunctionMocker::replace( 'defined' );
+
+		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
+
+		WP_Mock::userFunction( 'pll_get_post_language' )->with( $post_id )->andReturn( $pll_locale );
+
+		FunctionMocker::replace(
+			'filter_input',
+			function ( $type, $var_name, $filter ) use ( $post_id ) {
+				if ( INPUT_GET === $type && 'post' === $var_name && FILTER_SANITIZE_STRING === $filter ) {
+					return $post_id;
+				}
+
+				return null;
+			}
+		);
+
+		self::assertSame( $locale, $subject->pll_locale_filter( $locale ) );
+
+		$_GET['post'] = $post_id;
+
+		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
+
+		// Test that result is cached.
+		FunctionMocker::replace( 'filter_input' );
+		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
+	}
+
+	/**
+	 * Test pll_locale_filter() with term.
+	 */
+	public function test_pll_locale_filter_with_term() {
+		$locale           = 'en_US';
+		$pll_locale       = 'ru';
+		$term_lang_choice = 92;
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		FunctionMocker::replace( 'defined' );
+
+		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
+
+		$pll_get_language       = Mockery::mock( PLL_Language::class );
+		$pll_get_language->slug = $pll_locale;
+
+		$model = Mockery::mock( PLL_Model::class );
+		$model->shouldReceive( 'get_language' )->with( $term_lang_choice )->andReturn( $pll_get_language );
+
+		$polylang        = Mockery::mock( Polylang::class );
+		$polylang->model = $model;
+
+		WP_Mock::userFunction( 'PLL' )->with()->andReturn( $polylang );
+
+		FunctionMocker::replace(
+			'filter_input',
+			function ( $type, $var_name, $filter ) use ( $term_lang_choice ) {
+				if ( INPUT_POST === $type && 'term_lang_choice' === $var_name && FILTER_SANITIZE_STRING === $filter ) {
+					return $term_lang_choice;
+				}
+
+				return null;
+			}
+		);
+
+		self::assertSame( $locale, $subject->pll_locale_filter( $locale ) );
+
+		$_POST['term_lang_choice'] = $term_lang_choice;
+
+		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
+
+		// Test that result is cached.
+		FunctionMocker::replace( 'filter_input' );
+		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 	}
 
 	/**

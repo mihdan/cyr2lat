@@ -29,7 +29,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	 */
 	public function tearDown(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		unset( $_GET['activate'] );
+		unset( $_GET );
 
 		parent::tearDown();
 	}

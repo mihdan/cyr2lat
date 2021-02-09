@@ -66,6 +66,13 @@ class Main {
 	protected $acf;
 
 	/**
+	 * Polylang locale.
+	 *
+	 * @var string
+	 */
+	private $pll_locale = false;
+
+	/**
 	 * Main constructor.
 	 */
 	public function __construct() {
@@ -118,6 +125,10 @@ class Main {
 		add_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9, 3 );
 		add_filter( 'sanitize_file_name', [ $this, 'sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 2 );
+
+		if ( class_exists( 'Polylang' ) ) {
+			add_filter( 'locale', [ $this, 'pll_locale_filter' ] );
+		}
 	}
 
 	/**
@@ -375,6 +386,84 @@ class Main {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Locale filter for Polylang.
+	 *
+	 * @param string $locale Locale.
+	 *
+	 * @return string
+	 */
+	public function pll_locale_filter( $locale ) {
+		if ( $this->pll_locale ) {
+			return $this->pll_locale;
+		}
+
+		if ( defined( 'REST_REQUEST' ) && constant( 'REST_REQUEST' ) ) {
+			$data = json_decode( rest_get_server()::get_raw_data(), false );
+			if ( isset( $data->lang ) ) {
+				$this->pll_locale = $data->lang;
+
+				return $this->pll_locale;
+			}
+
+			return $locale;
+		}
+
+		if ( ! is_admin() ) {
+			return $locale;
+		}
+
+		$pll_get_post_language = false;
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_POST['post_ID'] ) ) {
+			$pll_get_post_language = pll_get_post_language(
+				(int) filter_input( INPUT_POST, 'post_ID', FILTER_SANITIZE_STRING )
+			);
+		}
+		if ( isset( $_POST['pll_post_id'] ) ) {
+			$pll_get_post_language = pll_get_post_language(
+				(int) filter_input( INPUT_POST, 'pll_post_id', FILTER_SANITIZE_STRING )
+			);
+		}
+		if ( isset( $_GET['post'] ) ) {
+			$pll_get_post_language = pll_get_post_language(
+				(int) filter_input( INPUT_GET, 'post', FILTER_SANITIZE_STRING )
+			);
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+		if ( false !== $pll_get_post_language ) {
+			$this->pll_locale = $pll_get_post_language;
+
+			return $this->pll_locale;
+		}
+
+		$pll_get_term_language = false;
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		if ( isset( $_POST['term_lang_choice'] ) ) {
+			$pll_get_language = PLL()->model->get_language(
+				filter_input( INPUT_POST, 'term_lang_choice', FILTER_SANITIZE_STRING )
+			);
+
+			if ( $pll_get_language ) {
+				$pll_get_term_language = $pll_get_language->slug;
+			}
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+		if ( false !== $pll_get_term_language ) {
+			$this->pll_locale = $pll_get_term_language;
+
+			return $this->pll_locale;
+		}
+
+		return $locale;
 	}
 
 	/**

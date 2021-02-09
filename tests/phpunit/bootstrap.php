@@ -90,9 +90,11 @@ FunctionMocker::init(
 			realpath( PLUGIN_PATH . '/tests/phpunit/stubs' ),
 		],
 		'redefinable-internals' => [
+			'class_exists',
 			'define',
 			'defined',
 			'constant',
+			'filter_input',
 			'function_exists',
 			'ini_get',
 			'mb_strtolower',
