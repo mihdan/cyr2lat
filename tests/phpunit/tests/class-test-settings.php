@@ -1337,7 +1337,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				$this->cyr_to_lat_url . '/dist/js/settings/app.js',
 				[],
 				$this->cyr_to_lat_version,
-				true,
+				true
 			)->once();
 
 			WP_Mock::userFunction( 'wp_localize_script' )->with(
