@@ -401,7 +401,8 @@ class Main {
 		}
 
 		if ( defined( 'REST_REQUEST' ) && constant( 'REST_REQUEST' ) ) {
-			$data = json_decode( rest_get_server()::get_raw_data(), false );
+			$rest_server = rest_get_server();
+			$data        = json_decode( $rest_server::get_raw_data(), false );
 			if ( isset( $data->lang ) ) {
 				$this->pll_locale = $data->lang;
 
