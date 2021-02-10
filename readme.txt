@@ -99,7 +99,7 @@ Yes you can!
 
 == Changelog ==
 
-= 4.6.0 (10.02.2020) =
+= 4.6.0 (10.02.2021) =
 * Add compatibility with Polylang
 * Add confirmation popup before mass conversion of slugs
 * Improve selection of posts and tags for conversion to avoid selection of excessive items for mass conversion
