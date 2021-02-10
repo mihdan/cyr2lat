@@ -33,9 +33,7 @@ class Settings {
 			'</button>';
 		this.PLUS_CLASS = 'ctl-plus';
 
-		this.optionsForm = document.querySelector(
-			this.OPTIONS_FORM_SELECTOR
-		);
+		this.optionsForm = document.querySelector( this.OPTIONS_FORM_SELECTOR );
 		this.tablesData = this.getTablesData();
 		this.submitButton = document.querySelector( this.SUBMIT_SELECTOR );
 		this.confirmPopup = document.querySelector(
@@ -215,7 +213,7 @@ class Settings {
 				return response.json();
 			} )
 			.finally( () => {
-				activeForm.remove();
+				activeForm.parentNode.removeChild( activeForm );
 				this.setSubmitStatus();
 			} );
 	}
@@ -267,7 +265,10 @@ class Settings {
 	addWrapper() {
 		this.wrapper = document.createElement( 'ul' );
 		this.wrapper.classList.add( 'nav-tab-wrapper' );
-		this.optionsForm.prepend( this.wrapper );
+		this.optionsForm.insertBefore(
+			this.wrapper,
+			this.optionsForm.firstChild
+		);
 	}
 
 	/**
@@ -279,7 +280,7 @@ class Settings {
 	addMessageLine( id ) {
 		const message = document.createElement( 'div' );
 		message.id = id;
-		this.optionsForm.prepend( message );
+		this.optionsForm.insertBefore( message, this.optionsForm.firstChild );
 
 		return message;
 	}
@@ -385,10 +386,8 @@ class Settings {
 
 			this.wrapper.appendChild( header );
 			if ( index === currentIndex ) {
-				header.classList.add(
-					this.CURRENT_NAV_TAB_CLASS,
-					this.ACTIVE_NAV_TAB_CLASS
-				);
+				header.classList.add( this.CURRENT_NAV_TAB_CLASS );
+				header.classList.add( this.ACTIVE_NAV_TAB_CLASS );
 			}
 
 			return null;
@@ -561,7 +560,7 @@ class Settings {
 			const editedCell = document.getElementById( this.EDIT_LABEL_ID )
 				.parentElement;
 			this.hideEditLabelInput();
-			editedCell.remove();
+			editedCell.parentNode.removeChild( editedCell );
 			this.setSubmitStatus();
 
 			return;

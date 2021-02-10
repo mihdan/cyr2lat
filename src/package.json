@@ -3,7 +3,7 @@
   "license": "GPL-2.0-or-later",
   "scripts": {
     "build:dev": "webpack --mode development",
-    "build:prod": "webpack -p --env production --mode production",
+    "build:prod": "webpack --env production --mode production",
     "test": "jest",
     "coveralls": "jest --coverage && cat coverage/lcov.info | coveralls"
   },
@@ -42,14 +42,14 @@
     }
   },
   "dependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
     "cross-fetch": "^3.0.6"
   },
   "devDependencies": {
     "@wordpress/eslint-plugin": "^8.0.2",
     "autoprefixer": "^10.2.4",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-preset-env": "^1.7.0",
     "coveralls": "^3.1.0",
     "eslint": "^7.19.0",
     "eslint-config-standard": "^16.0.2",

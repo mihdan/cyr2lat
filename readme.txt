@@ -102,6 +102,7 @@ Yes you can!
 = 4.6.0 (08.02.2020) =
 * Add confirmation popup before mass conversion of slugs
 * Fix bug with redirection from the old slug to a new one after background slug conversion
+* Fix js to run in old browsers like IE
 
 = 4.5.2 (08.12.2020) =
 * Fix bug with the deployment to wp.org
