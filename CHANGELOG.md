@@ -1,3 +1,6 @@
+## 4.6.1 (10.02.2021) =
+* Fix bug with Polylang
+
 ## 4.6.0 (10.02.2021) =
 * Add compatibility with Polylang
 * Add confirmation popup before mass conversion of slugs

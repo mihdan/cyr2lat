@@ -420,17 +420,17 @@ class Main {
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_POST['post_ID'] ) ) {
+		if ( isset( $_POST['post_ID'] ) && function_exists( 'pll_get_post_language' ) ) {
 			$pll_get_post_language = pll_get_post_language(
 				(int) filter_input( INPUT_POST, 'post_ID', FILTER_SANITIZE_STRING )
 			);
 		}
-		if ( isset( $_POST['pll_post_id'] ) ) {
+		if ( isset( $_POST['pll_post_id'] ) && function_exists( 'pll_get_post_language' ) ) {
 			$pll_get_post_language = pll_get_post_language(
 				(int) filter_input( INPUT_POST, 'pll_post_id', FILTER_SANITIZE_STRING )
 			);
 		}
-		if ( isset( $_GET['post'] ) ) {
+		if ( isset( $_GET['post'] ) && function_exists( 'pll_get_post_language' ) ) {
 			$pll_get_post_language = pll_get_post_language(
 				(int) filter_input( INPUT_GET, 'post', FILTER_SANITIZE_STRING )
 			);
