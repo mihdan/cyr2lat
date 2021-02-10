@@ -93,7 +93,7 @@ class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 
 		$subject = Mockery::mock( WP_CLI::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		$notify = new Bar();
+		$notify = Mockery::Mock( Bar::class );
 
 		WP_Mock::userFunction( 'WP_CLI\Utils\make_progress_bar' )->
 		with( 'Regenerate existing slugs', 1 )->
