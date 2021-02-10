@@ -5,12 +5,19 @@
  * @package cyr-to-lat
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpIllegalPsrClassPathInspection */
+/** @noinspection PhpUndefinedMethodInspection */
+/** @noinspection PhpUndefinedClassConstantInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 namespace Cyr_To_Lat;
 
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
+use WP_Mock;
 
 /**
  * Class Test_Settings
@@ -23,15 +30,16 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	 * Test constructor
 	 *
 	 * @throws ReflectionException Reflection Exception.
+	 * @noinspection NullPointerExceptionInspection
 	 */
 	public function test_constructor() {
-		$classname = __NAMESPACE__ . '\Settings';
+		$classname = Settings::class;
 
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
 
 		// Set expectations for constructor calls.
-		\WP_Mock::expectActionAdded( 'plugins_loaded', [ $mock, 'init' ] );
+		WP_Mock::expectActionAdded( 'plugins_loaded', [ $mock, 'init' ] );
 
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );
@@ -58,27 +66,28 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	public function test_init_hooks() {
 		$subject = new Settings();
 
-		\WP_Mock::passthruFunction( 'plugin_basename' );
+		WP_Mock::passthruFunction( 'plugin_basename' );
 
-		\WP_Mock::expectFilterAdded(
+		WP_Mock::expectFilterAdded(
 			'plugin_action_links_' . $this->cyr_to_lat_file,
 			[ $subject, 'add_settings_link' ],
 			10,
 			4
 		);
 
-		\WP_Mock::expectActionAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
-		\WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_sections' ] );
-		\WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_fields' ] );
+		WP_Mock::expectActionAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
+		WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_sections' ] );
+		WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_fields' ] );
 
-		\WP_Mock::expectFilterAdded(
+		WP_Mock::expectFilterAdded(
 			'pre_update_option_' . $subject::OPTION_NAME,
 			[ $subject, 'pre_update_option_filter' ],
 			10,
 			3
 		);
 
-		\WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $subject, 'admin_enqueue_scripts' ] );
+		WP_Mock::expectActionAdded( 'admin_enqueue_scripts', [ $subject, 'admin_enqueue_scripts' ] );
+		WP_Mock::expectActionAdded( 'in_admin_header', [ $subject, 'in_admin_header' ] );
 
 		$subject->init_hooks();
 	}
@@ -89,7 +98,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	public function test_add_settings_link() {
 		$subject = new Settings();
 
-		\WP_Mock::passthruFunction( 'admin_url' );
+		WP_Mock::passthruFunction( 'admin_url' );
 
 		$expected = [
 			'settings' =>
@@ -97,7 +106,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				'" aria-label="View Cyr To Lat settings">Settings</a>',
 		];
 
-		$this->assertSame( $expected, $subject->add_settings_link( [], null, null, null ) );
+		self::assertSame( $expected, $subject->add_settings_link( [], null, null, null ) );
 	}
 
 	/**
@@ -150,12 +159,12 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			],
 		];
 
-		$this->assertSame( $expected, $this->get_protected_property( $subject, 'locales' ) );
+		self::assertSame( $expected, $this->get_protected_property( $subject, 'locales' ) );
 
 		$expected = [ 'something' ];
 		$this->set_protected_property( $subject, 'locales', $expected );
 		$method->invoke( $subject );
-		$this->assertSame( $expected, $this->get_protected_property( $subject, 'locales' ) );
+		self::assertSame( $expected, $this->get_protected_property( $subject, 'locales' ) );
 	}
 
 	/**
@@ -196,12 +205,12 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		\WP_Mock::userFunction( 'get_locale' )->with()->andReturn( 'iso9' );
+		WP_Mock::userFunction( 'get_locale' )->with()->andReturn( 'iso9' );
 
 		$expected = $this->get_test_form_fields();
 
 		$subject->init_form_fields();
-		$this->assertSame( $expected, $subject->form_fields );
+		self::assertSame( $expected, $subject->form_fields );
 	}
 
 	/**
@@ -214,7 +223,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	public function test_init_settings( $settings ) {
 		$subject = Mockery::mock( Settings::class )->makePartial();
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'get_option',
 			[
 				'args'   => [ $subject::OPTION_NAME, null ],
@@ -236,7 +245,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			'kk'    => [ 'kk' ],
 		];
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_list_pluck',
 			[
 				'args'   => [ $form_fields, 'default' ],
@@ -245,6 +254,8 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			]
 		);
 
+		// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+		/** @noinspection PhpUndefinedFieldInspection */
 		$subject->settings = null;
 		$subject->init_settings();
 
@@ -254,7 +265,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			$expected = array_merge( $form_fields_pluck, $settings );
 		}
 
-		$this->assertSame( $expected, $subject->settings );
+		self::assertSame( $expected, $subject->settings );
 	}
 
 	/**
@@ -278,11 +289,15 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	public function test_get_form_fields( $form_fields, $expected ) {
 		$subject = Mockery::mock( Settings::class )->makePartial();
 
+		// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+		/** @noinspection PhpUndefinedFieldInspection */
 		$subject->form_fields = null;
 
 		if ( empty( $form_fields ) ) {
 			$subject->shouldReceive( 'init_form_fields' )->andReturnUsing(
 				function () use ( $subject ) {
+					// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+					/** @noinspection PhpUndefinedFieldInspection */
 					$subject->form_fields = $this->get_test_form_fields();
 				}
 			)->once();
@@ -290,7 +305,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			$subject->form_fields = $form_fields;
 		}
 
-		$this->assertSame( $expected, $subject->get_form_fields() );
+		self::assertSame( $expected, $subject->get_form_fields() );
 	}
 
 	/**
@@ -340,7 +355,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		$slug        = $subject::PAGE;
 		$callback    = [ $subject, 'settings_page' ];
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'add_submenu_page',
 			[
 				'args' => [ $parent_slug, $page_title, $menu_title, $capability, $slug, $callback ],
@@ -362,38 +377,38 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		$subject->shouldReceive( 'is_options_screen' )->andReturn( $is_options_screen );
 
 		if ( $is_options_screen ) {
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'do_settings_sections',
 				[
 					'args'  => [ $subject::PAGE ],
 					'times' => 1,
 				]
 			);
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'settings_fields',
 				[
 					'args'  => [ $subject::OPTION_GROUP ],
 					'times' => 1,
 				]
 			);
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'submit_button',
 				[
 					'args'  => [],
 					'times' => 1,
 				]
 			);
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'wp_nonce_field',
 				[
 					'args'  => [ $subject::OPTION_GROUP . '-options' ],
 					'times' => 1,
 				]
 			);
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'submit_button',
 				[
-					'args'  => [ 'Convert Existing Slugs', 'secondary', 'cyr2lat-convert' ],
+					'args'  => [ 'Convert Existing Slugs', 'secondary', 'ctl-convert-button' ],
 					'times' => 1,
 				]
 			);
@@ -406,25 +421,11 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 							</form>
 
 			<form id="ctl-convert-existing-slugs" action="" method="post">
+				<input type="hidden" name="ctl-convert" />
 							</form>
 
-			<div id="donate">
+			<div id="appreciation">
 				<h2>
-					Donate				</h2>
-				<p>
-					Would you like to support the advancement of this plugin?				</p>
-				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-					<input type="hidden" name="cmd" value="_s-xclick">
-					<input type="hidden" name="hosted_button_id" value="BENCPARA8S224">
-					<input
-						type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"
-						name="submit" alt="PayPal - The safer, easier way to pay online!">
-					<img
-						alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
-						height="1">
-				</form>
-
-				<h2 id="appreciation">
 					Your appreciation				</h2>
 				<a
 					target="_blank"
@@ -435,11 +436,11 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		';
 			ob_start();
 			$subject->settings_page();
-			$this->assertSame( $expected, ob_get_clean() );
+			self::assertSame( $expected, ob_get_clean() );
 		} else {
 			ob_start();
 			$subject->settings_page();
-			$this->assertEmpty( ob_get_clean() );
+			self::assertEmpty( ob_get_clean() );
 		}
 	}
 
@@ -469,11 +470,11 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 
 		$subject->form_fields = $this->get_test_form_fields( $locale );
 
-		\WP_Mock::userFunction( 'get_locale' )->with()->andReturn( $locale );
+		WP_Mock::userFunction( 'get_locale' )->with()->andReturn( $locale );
 
 		if ( $is_options_screen ) {
 			$current = ( 'en_US' === $locale || 'ru_RU' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'add_settings_section',
 				[
 					'args'  => [
@@ -487,7 +488,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			);
 
 			$current = ( 'bel' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'add_settings_section',
 				[
 					'args'  => [ 'bel_section', 'bel Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
@@ -496,7 +497,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			);
 
 			$current = ( 'uk' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'add_settings_section',
 				[
 					'args'  => [ 'uk_section', 'uk Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
@@ -505,7 +506,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			);
 
 			$current = ( 'bg_BG' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'add_settings_section',
 				[
 					'args'  => [ 'bg_BG_section', 'bg_BG Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
@@ -514,7 +515,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			);
 
 			$current = ( 'mk_MK' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'add_settings_section',
 				[
 					'args'  => [ 'mk_MK_section', 'mk_MK Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
@@ -523,7 +524,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			);
 
 			$current = ( 'sr_RS' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'add_settings_section',
 				[
 					'args'  => [ 'sr_RS_section', 'sr_RS Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
@@ -532,7 +533,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			);
 
 			$current = ( 'el' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'add_settings_section',
 				[
 					'args'  => [ 'el_section', 'el Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
@@ -541,7 +542,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			);
 
 			$current = ( 'hy' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'add_settings_section',
 				[
 					'args'  => [ 'hy_section', 'hy Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
@@ -550,7 +551,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			);
 
 			$current = ( 'ka_GE' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'add_settings_section',
 				[
 					'args'  => [ 'ka_GE_section', 'ka_GE Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
@@ -559,7 +560,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			);
 
 			$current = ( 'kk' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'add_settings_section',
 				[
 					'args'  => [ 'kk_section', 'kk Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
@@ -568,7 +569,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			);
 
 			$current = ( 'he_IL' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'add_settings_section',
 				[
 					'args'  => [ 'he_IL_section', 'he_IL Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
@@ -577,7 +578,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			);
 
 			$current = ( 'zh_CN' === $locale ) ? __( '<br>(current)', 'cyr2lat' ) : '';
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'add_settings_section',
 				[
 					'args'  => [ 'zh_CN_section', 'zh_CN Table' . $current, [ $subject, 'section_callback' ], $subject::PAGE ],
@@ -618,7 +619,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	public function test_section_callback() {
 		$locale = 'iso9';
 
-		\WP_Mock::userFunction( 'get_locale' )->andReturn( $locale );
+		WP_Mock::userFunction( 'get_locale' )->andReturn( $locale );
 
 		$subject = new Settings();
 
@@ -626,13 +627,13 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		$subject->section_callback(
 			[ 'id' => $locale . '_section' ]
 		);
-		$this->assertSame( '<div id="ctl-current"></div>', ob_get_clean() );
+		self::assertSame( '<div id="ctl-current"></div>', ob_get_clean() );
 
 		ob_start();
 		$subject->section_callback(
 			[ 'id' => 'other_section' ]
 		);
-		$this->assertSame( '', ob_get_clean() );
+		self::assertSame( '', ob_get_clean() );
 	}
 
 	/**
@@ -647,25 +648,20 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		$subject->shouldReceive( 'is_options_screen' )->andReturn( $is_options_screen );
 
 		if ( $is_options_screen ) {
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'register_setting',
 				[
 					'args' => [ $subject::OPTION_GROUP, $subject::OPTION_NAME ],
 				]
 			);
-			\WP_Mock::userFunction(
-				'get_option',
-				[
-					'args'  => [ $subject::OPTION_NAME ],
-					'times' => 1,
-				]
-			);
+			// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+			/** @noinspection PhpUndefinedFieldInspection */
 			$subject->form_fields = $this->get_test_form_fields();
 
 			foreach ( $subject->form_fields as $key => $field ) {
 				$field['field_id'] = $key;
 
-				\WP_Mock::userFunction(
+				WP_Mock::userFunction(
 					'add_settings_field',
 					[
 						'args'  => [
@@ -711,43 +707,43 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		if ( isset( $arguments['field_id'] ) ) {
 			$subject->shouldReceive( 'get_option' )->with( $arguments['field_id'] )->andReturn( $arguments['default'] );
 
-			\WP_Mock::passthruFunction( 'wp_kses_post' );
-			\WP_Mock::userFunction(
+			WP_Mock::passthruFunction( 'wp_kses_post' );
+			WP_Mock::userFunction(
 				'checked',
 				[
 					'args'   => [ '', 'yes', false ],
 					'return' => 'checked="checked"',
 				]
 			);
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'checked',
 				[
 					'args'   => [ 'no', 'yes', false ],
 					'return' => '',
 				]
 			);
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'checked',
 				[
 					'args'   => [ 'yes', 'yes', false ],
 					'return' => 'checked="checked"',
 				]
 			);
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'checked',
 				[
 					'args'   => [ 1, 0, false ],
 					'return' => '',
 				]
 			);
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'checked',
 				[
 					'args'   => [ 1, 1, false ],
 					'return' => 'checked="checked"',
 				]
 			);
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'checked',
 				[
 					'args'   => [ 1, 2, false ],
@@ -755,30 +751,30 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 				]
 			);
 
-			\WP_Mock::passthruFunction( 'wp_kses' );
+			WP_Mock::passthruFunction( 'wp_kses' );
 
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'selected',
 				[
 					'args'   => [ 1, 0, false ],
 					'return' => '',
 				]
 			);
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'selected',
 				[
 					'args'   => [ 1, 1, false ],
 					'return' => 'selected="selected"',
 				]
 			);
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'selected',
 				[
 					'args'   => [ 2, 2, false ],
 					'return' => 'selected="selected"',
 				]
 			);
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'selected',
 				[
 					'args'   => [ 1, 2, false ],
@@ -789,7 +785,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 
 		ob_start();
 		$subject->field_callback( $arguments );
-		$this->assertSame( $expected, ob_get_clean() );
+		self::assertSame( $expected, ob_get_clean() );
 	}
 
 	/**
@@ -1097,11 +1093,16 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_get_option
 	 */
 	public function test_get_option( $settings, $key, $empty_value, $expected ) {
-		$subject           = Mockery::mock( Settings::class )->makePartial();
+		$subject = Mockery::mock( Settings::class )->makePartial();
+
+		// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+		/** @noinspection PhpUndefinedFieldInspection */
 		$subject->settings = null;
 		if ( empty( $settings ) ) {
 			$subject->shouldReceive( 'init_settings' )->once()->andReturnUsing(
 				function () use ( $subject ) {
+					// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+					/** @noinspection PhpUndefinedFieldInspection */
 					$subject->settings = $this->get_test_settings();
 				}
 			);
@@ -1115,7 +1116,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			}
 		}
 
-		$this->assertSame( $expected, $subject->get_option( $key, $empty_value ) );
+		self::assertSame( $expected, $subject->get_option( $key, $empty_value ) );
 	}
 
 	/**
@@ -1141,7 +1142,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	public function test_get_field_default( $field, $expected ) {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		$this->assertSame( $expected, $subject->get_field_default( $field ) );
+		self::assertSame( $expected, $subject->get_field_default( $field ) );
 	}
 
 	/**
@@ -1169,11 +1170,16 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_set_option
 	 */
 	public function test_set_option( $settings, $key, $value, $expected ) {
-		$subject           = Mockery::mock( Settings::class )->makePartial();
+		$subject = Mockery::mock( Settings::class )->makePartial();
+
+		// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+		/** @noinspection PhpUndefinedFieldInspection */
 		$subject->settings = null;
 		if ( empty( $settings ) ) {
 			$subject->shouldReceive( 'init_settings' )->once()->andReturnUsing(
 				function () use ( $subject ) {
+					// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+					/** @noinspection PhpUndefinedFieldInspection */
 					$subject->settings = $this->get_test_settings();
 				}
 			);
@@ -1182,7 +1188,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			$subject->settings = $settings;
 		}
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'update_option',
 			[
 				'args'  => [ Settings::OPTION_NAME, $expected ],
@@ -1192,7 +1198,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 
 		$subject->set_option( $key, $value );
 
-		$this->assertSame( $expected, $subject->settings );
+		self::assertSame( $expected, $subject->settings );
 	}
 
 	/**
@@ -1234,7 +1240,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 
 		$option = 'option';
 
-		$this->assertSame( $expected, $subject->pre_update_option_filter( $value, $old_value, $option ) );
+		self::assertSame( $expected, $subject->pre_update_option_filter( $value, $old_value, $option ) );
 	}
 
 	/**
@@ -1326,31 +1332,29 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		$subject->shouldReceive( 'is_options_screen' )->andReturn( $is_options_screen );
 
 		if ( $is_options_screen ) {
-			\WP_Mock::userFunction(
-				'wp_enqueue_script',
+			WP_Mock::userFunction( 'wp_enqueue_script' )->with(
+				$subject::HANDLE,
+				$this->cyr_to_lat_url . '/dist/js/settings/app.js',
+				[],
+				$this->cyr_to_lat_version,
+				true
+			)->once();
+
+			WP_Mock::userFunction( 'wp_localize_script' )->with(
+				$subject::HANDLE,
+				$subject::OBJECT,
 				[
-					'args'  => [
-						'cyr-to-lat-settings',
-						$this->cyr_to_lat_url . '/dist/js/settings/app.js',
-						[],
-						$this->cyr_to_lat_version,
-						true,
-					],
-					'times' => 1,
+					'optionsSaveSuccessMessage' => 'Options saved.',
+					'optionsSaveErrorMessage'   => 'Error saving options.',
 				]
-			);
-			\WP_Mock::userFunction(
-				'wp_enqueue_style',
-				[
-					'args'  => [
-						'cyr-to-lat-admin',
-						$this->cyr_to_lat_url . '/css/cyr-to-lat-admin.css',
-						[],
-						$this->cyr_to_lat_version,
-					],
-					'times' => 1,
-				]
-			);
+			)->once();
+
+			WP_Mock::userFunction( 'wp_enqueue_style' )->with(
+				$subject::HANDLE,
+				$this->cyr_to_lat_url . '/css/cyr-to-lat-admin.css',
+				[],
+				$this->cyr_to_lat_version
+			)->once();
 		}
 
 		$subject->admin_enqueue_scripts();
@@ -1369,13 +1373,63 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
+	 * Test in_admin_header()
+	 *
+	 * @param boolean $is_options_screen Is plugin options screen.
+	 *
+	 * @dataProvider dp_test_in_admin_header
+	 */
+	public function test_in_admin_header( $is_options_screen ) {
+		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'is_options_screen' )->andReturn( $is_options_screen );
+
+		$expected = '';
+
+		if ( $is_options_screen ) {
+			$expected = '		<div id="ctl-confirm-popup">
+			<div id="ctl-confirm-content">
+				<p>
+					<strong>Important:</strong>
+					This operation is irreversible. Please make sure that you have made backup copy of your database.				</p>
+				<p>Are you sure to continue?</p>
+				<div id="ctl-confirm-buttons">
+					<input
+						type="button" id="ctl-confirm-ok" class="button button-primary"
+						value="OK">
+					<button
+						type="button" id="ctl-confirm-cancel" class="button button-secondary">
+						Cancel					</button>
+				</div>
+			</div>
+		</div>
+		';
+		}
+
+		ob_start();
+		$subject->in_admin_header();
+		self::assertSame( $expected, ob_get_clean() );
+	}
+
+	/**
+	 * Data provider for in_admin_header().
+	 *
+	 * @return array
+	 */
+	public function dp_test_in_admin_header() {
+		return [
+			[ false ],
+			[ true ],
+		];
+	}
+
+	/**
 	 * Test load_plugin_textdomain()
 	 */
 	public function test_load_plugin_textdomain() {
 		$subject = new Settings();
 
-		\WP_Mock::passthruFunction( 'plugin_basename' );
-		\WP_Mock::userFunction(
+		WP_Mock::passthruFunction( 'plugin_basename' );
+		WP_Mock::userFunction(
 			'load_plugin_textdomain',
 			[
 				'cyr2lat',
@@ -1398,14 +1452,14 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		$subject->shouldReceive( 'get_option' )->with( $locale )->andReturn( '' );
 		$subject->shouldReceive( 'get_option' )->with( 'iso9' )->andReturn( $iso9_table );
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'get_locale',
 			[
 				'return' => $locale,
 			]
 		);
 
-		$this->assertSame( $iso9_table, $subject->get_table() );
+		self::assertSame( $iso9_table, $subject->get_table() );
 	}
 
 	/**
@@ -1419,14 +1473,14 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	public function test_is_chinese_locale( $locale, $expected ) {
 		$subject = new Settings();
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'get_locale',
 			[
 				'return' => $locale,
 			]
 		);
 
-		$this->assertSame( $expected, $subject->is_chinese_locale() );
+		self::assertSame( $expected, $subject->is_chinese_locale() );
 	}
 
 	/**
@@ -1457,7 +1511,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_chinese_locale' )->andReturn( $is_chinese_locale );
 
-		$this->assertSame( $expected, $subject->transpose_chinese_table( $table ) );
+		self::assertSame( $expected, $subject->transpose_chinese_table( $table ) );
 	}
 
 	/**
@@ -1497,14 +1551,14 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 	public function test_is_options_screen( $current_screen, $expected ) {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'get_current_screen',
 			[
 				'return' => $current_screen,
 			]
 		);
 
-		$this->assertSame( $expected, $subject->is_options_screen() );
+		self::assertSame( $expected, $subject->is_options_screen() );
 	}
 
 	/**
@@ -1640,8 +1694,9 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 			],
 		];
 
-		$locale                          = isset( $form_fields[ $locale ] ) ? $locale : 'iso9';
-		$form_fields[ $locale ]['label'] = $form_fields[ $locale ]['label'] . '<br>(current)';
+		$locale = isset( $form_fields[ $locale ] ) ? $locale : 'iso9';
+
+		$form_fields[ $locale ]['label'] .= '<br>(current)';
 
 		return $form_fields;
 	}

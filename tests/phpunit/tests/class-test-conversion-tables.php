@@ -5,6 +5,9 @@
  * @package cyr-to-lat
  */
 
+// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpIllegalPsrClassPathInspection */
+
 namespace Cyr_To_Lat;
 
 /**
@@ -1264,21 +1267,21 @@ class Test_Conversion_Tables extends Cyr_To_Lat_TestCase {
 			'Zuo'    => '昨左佐做作坐座阼唑嘬怍胙祚酢',
 		];
 
-		$this->assertSame( $iso9, Conversion_Tables::get() );
-		$this->assertSame( $bel, Conversion_Tables::get( 'bel' ) );
-		$this->assertSame( $uk, Conversion_Tables::get( 'uk' ) );
-		$this->assertSame( $bg_BG, Conversion_Tables::get( 'bg_BG' ) );
-		$this->assertSame( $mk_MK, Conversion_Tables::get( 'mk_MK' ) );
-		$this->assertSame( $sr_RS, Conversion_Tables::get( 'sr_RS' ) );
-		$this->assertSame( $el, Conversion_Tables::get( 'el' ) );
-		$this->assertSame( $hy, Conversion_Tables::get( 'hy' ) );
-		$this->assertSame( $ka_GE, Conversion_Tables::get( 'ka_GE' ) );
-		$this->assertSame( $kk, Conversion_Tables::get( 'kk' ) );
-		$this->assertSame( $he_IL, Conversion_Tables::get( 'he_IL' ) );
-		$this->assertSame( $chinese, Conversion_Tables::get( 'zh_CN' ) );
-		$this->assertSame( $chinese, Conversion_Tables::get( 'zh_HK' ) );
-		$this->assertSame( $chinese, Conversion_Tables::get( 'zh_SG' ) );
-		$this->assertSame( $chinese, Conversion_Tables::get( 'zh_TW' ) );
+		self::assertSame( $iso9, Conversion_Tables::get() );
+		self::assertSame( $bel, Conversion_Tables::get( 'bel' ) );
+		self::assertSame( $uk, Conversion_Tables::get( 'uk' ) );
+		self::assertSame( $bg_BG, Conversion_Tables::get( 'bg_BG' ) );
+		self::assertSame( $mk_MK, Conversion_Tables::get( 'mk_MK' ) );
+		self::assertSame( $sr_RS, Conversion_Tables::get( 'sr_RS' ) );
+		self::assertSame( $el, Conversion_Tables::get( 'el' ) );
+		self::assertSame( $hy, Conversion_Tables::get( 'hy' ) );
+		self::assertSame( $ka_GE, Conversion_Tables::get( 'ka_GE' ) );
+		self::assertSame( $kk, Conversion_Tables::get( 'kk' ) );
+		self::assertSame( $he_IL, Conversion_Tables::get( 'he_IL' ) );
+		self::assertSame( $chinese, Conversion_Tables::get( 'zh_CN' ) );
+		self::assertSame( $chinese, Conversion_Tables::get( 'zh_HK' ) );
+		self::assertSame( $chinese, Conversion_Tables::get( 'zh_SG' ) );
+		self::assertSame( $chinese, Conversion_Tables::get( 'zh_TW' ) );
 		// phpcs:enable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 	}
 
@@ -1293,6 +1296,6 @@ class Test_Conversion_Tables extends Cyr_To_Lat_TestCase {
 			'й' => urldecode( '%d0%B8%cc%86' ),
 		];
 
-		$this->assertSame( $fix_table, Conversion_Tables::get_fix_table_for_mac() );
+		self::assertSame( $fix_table, Conversion_Tables::get_fix_table_for_mac() );
 	}
 }

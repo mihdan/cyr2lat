@@ -1,3 +1,13 @@
+## 4.6.0 (10.02.2020) =
+* Add compatibility with Polylang
+* Add confirmation popup before mass conversion of slugs
+* Improve selection of posts and tags for conversion to avoid selection of excessive items for mass conversion
+* Fix bug with redirection from the old slug to a new one after background slug conversion
+* Fix js to run in old browsers like IE
+
+## 4.5.2 (08.12.2020)
+* Fix bug with the deployment to wp.org
+
 ## 4.5.1 (07.12.2020)
 * Tested up to WordPress 5.6
 * Tested on PHP 5.6 - 8.0

@@ -5,6 +5,9 @@
  * @package cyr-to-lat
  */
 
+// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+/** @noinspection RealpathInStreamContextInspection */
+
 use tad\FunctionMocker\FunctionMocker;
 
 /**
@@ -34,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin version.
  */
-define( 'CYR_TO_LAT_TEST_VERSION', '4.5.1' );
+define( 'CYR_TO_LAT_TEST_VERSION', '4.6.0' );
 
 /**
  * Path to the plugin dir.
@@ -87,9 +90,11 @@ FunctionMocker::init(
 			realpath( PLUGIN_PATH . '/tests/phpunit/stubs' ),
 		],
 		'redefinable-internals' => [
+			'class_exists',
 			'define',
 			'defined',
 			'constant',
+			'filter_input',
 			'function_exists',
 			'ini_get',
 			'mb_strtolower',
@@ -102,4 +107,4 @@ FunctionMocker::init(
 	]
 );
 
-\WP_Mock::bootstrap();
+WP_Mock::bootstrap();

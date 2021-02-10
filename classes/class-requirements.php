@@ -42,6 +42,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 *
 		 * @param Admin_Notices        $admin_notices Admin notices.
 		 * @param WP_Filesystem_Direct $wp_filesystem File system.
+		 *
+		 * @noinspection PhpIncludeInspection
 		 */
 		public function __construct( $admin_notices = null, $wp_filesystem = null ) {
 			$this->admin_notices = $admin_notices;
@@ -106,6 +108,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 * Check php version.
 		 *
 		 * @return bool
+		 * @noinspection ConstantCanBeUsedInspection
 		 */
 		private function is_php_version_required() {
 			if ( version_compare( constant( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION' ), phpversion(), '>' ) ) {
@@ -143,7 +146,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 
 			if ( constant( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS' ) > ini_get( 'max_input_vars' ) ) {
 				$mtime     = $this->wp_filesystem->mtime( $this->get_user_ini_filename() );
-				$ini_ttl   = intval( ini_get( 'user_ini.cache_ttl' ) );
+				$ini_ttl   = (int) ini_get( 'user_ini.cache_ttl' );
 				$time_left = ( $mtime + $ini_ttl ) - time();
 
 				if ( 0 < $time_left ) {
@@ -176,12 +179,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 
 			$content = $this->wp_filesystem->get_contents( $user_ini_filename );
 
-			$content     = str_replace( "\r\n", "\n", $content );
-			$content     = str_replace( "\r", "\n", $content );
+			$content     = str_replace( [ "\r\n", "\r" ], "\n", $content );
 			$content_arr = explode( "\n", $content );
 
 			array_map(
-				function ( $line ) use ( &$value ) {
+				static function ( $line ) use ( &$value ) {
 					if ( preg_match( '/(?<![; ])\s*?(max_input_vars).*?=\D*?(\d+)/i', $line, $matches ) ) {
 						$value = (int) $matches[2];
 					}
@@ -195,7 +197,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 
 			$content_arr = array_filter(
 				$content_arr,
-				function ( $line ) {
+				static function ( $line ) {
 					return false === strpos( $line, 'max_input_vars' );
 				}
 			);

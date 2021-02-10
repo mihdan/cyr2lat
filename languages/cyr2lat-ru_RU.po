@@ -1,19 +1,19 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Cyr To Lat\n"
-"POT-Creation-Date: 2020-05-19 22:53+0300\n"
-"PO-Revision-Date: 2020-05-19 22:55+0300\n"
+"POT-Creation-Date: 2021-02-10 14:55+0200\n"
+"PO-Revision-Date: 2021-02-10 14:57+0200\n"
 "Last-Translator: KAGG Design <info@kagg.eu>\n"
 "Language-Team: KAGG Design\n"
 "Language: ru_RU\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3.1\n"
+"X-Generator: Poedit 2.4.2\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
-"X-Poedit-KeywordsList: __;esc_html__;esc_attr__\n"
+"X-Poedit-KeywordsList: __;esc_html__;esc_attr__;esc_html_e\n"
 "X-Poedit-Flags-xgettext: --add-comments\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: .git\n"
@@ -28,85 +28,85 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-9: tests\n"
 "X-Poedit-SearchPathExcluded-10: vendor\n"
 
-#: classes/background-processes/class-post-conversion-process.php:72
+#: classes/background-processes/class-post-conversion-process.php:73
 msgid "Post slug converted:"
 msgstr "Ярлык поста сконвертирован:"
 
-#: classes/background-processes/class-post-conversion-process.php:101
+#: classes/background-processes/class-post-conversion-process.php:102
 msgid "Attachment file converted:"
 msgstr "Файл вложения сконвертирован:"
 
-#: classes/background-processes/class-post-conversion-process.php:107
+#: classes/background-processes/class-post-conversion-process.php:108
 msgid "Cannot convert attachment file for attachment id:"
 msgstr "Невозможно сконвертировать файл вложения для вложения с id:"
 
-#: classes/background-processes/class-post-conversion-process.php:125
+#: classes/background-processes/class-post-conversion-process.php:126
 msgid "Thumbnail file renamed:"
 msgstr "Файл миниатюры переименован:"
 
-#: classes/background-processes/class-post-conversion-process.php:128
+#: classes/background-processes/class-post-conversion-process.php:129
 msgid "Cannot rename thumbnail file:"
 msgstr "Невозможно переименовать файл миниатюры:"
 
-#: classes/background-processes/class-post-conversion-process.php:197
+#: classes/background-processes/class-post-conversion-process.php:198
 msgid "Post slugs conversion completed."
 msgstr "Конвертация ярлыков постов завершена."
 
-#: classes/background-processes/class-term-conversion-process.php:71
+#: classes/background-processes/class-term-conversion-process.php:72
 msgid "Term slug converted:"
 msgstr "Ярлык термина сконвертирован:"
 
-#: classes/background-processes/class-term-conversion-process.php:83
+#: classes/background-processes/class-term-conversion-process.php:84
 msgid "Term slugs conversion completed."
 msgstr "Конвертация ярлыков терминов завершена."
 
-#: classes/class-converter.php:115
+#: classes/class-converter.php:106
 msgid "Cyr To Lat converts existing post slugs in the background process."
 msgstr "Cyr To Lat конвертирует существующие ярлыки постов в фоновом процессе."
 
-#: classes/class-converter.php:122
+#: classes/class-converter.php:113
 msgid "Cyr To Lat converts existing term slugs in the background process."
 msgstr ""
 "Cyr To Lat конвертирует существующие ярлыки терминов в фоновом процессе."
 
-#: classes/class-converter.php:129
+#: classes/class-converter.php:120
 msgid "Cyr To Lat completed conversion of existing post slugs."
 msgstr "Cyr To Lat завершил конвертацию существующих ярлыков постов."
 
-#: classes/class-converter.php:136
+#: classes/class-converter.php:127
 msgid "Cyr To Lat completed conversion of existing term slugs."
 msgstr "Cyr To Lat завершил конвертацию существующих ярлыков терминов."
 
-#: classes/class-converter.php:214
+#: classes/class-converter.php:205
 msgid "Cyr To Lat has not found existing post slugs for conversion."
 msgstr "Cyr To Lat не нашёл существующих ярлыков постов для конвертации."
 
-#: classes/class-converter.php:226
+#: classes/class-converter.php:216
 msgid "Post slugs conversion started."
 msgstr "Начата конвертация ярлыков постов."
 
-#: classes/class-converter.php:228
+#: classes/class-converter.php:218
 msgid "Cyr To Lat started conversion of existing post slugs."
 msgstr "Cyr To Lat начал конвертацию существующих ярлыков постов."
 
-#: classes/class-converter.php:253
+#: classes/class-converter.php:242
 msgid "Cyr To Lat has not found existing term slugs for conversion."
 msgstr "Cyr To Lat не нашёл существующих ярлыков терминов для конвертации."
 
-#: classes/class-converter.php:265
+#: classes/class-converter.php:253
 msgid "Term slugs conversion started."
 msgstr "Начата конвертация ярлыков терминов."
 
-#: classes/class-converter.php:267
+#: classes/class-converter.php:255
 msgid "Cyr To Lat started conversion of existing term slugs."
 msgstr "Cyr To Lat начал конвертацию существующих ярлыков терминов."
 
-#: classes/class-requirements.php:99
+#: classes/class-requirements.php:101
 msgid "Cyr To Lat plugin has been deactivated."
 msgstr "Плагин Cyr To Lat был деактивирован."
 
 #. translators: 1: Current PHP version number, 2: Cyr To Lat version, 3: Minimum required PHP version number
-#: classes/class-requirements.php:113
+#: classes/class-requirements.php:116
 #, php-format
 msgid ""
 "Your server is running PHP version %1$s but Cyr To Lat %2$s requires at "
@@ -115,12 +115,12 @@ msgstr ""
 "На сервере установлен PHP версии %1$s, однако для Cyr To Lat %2$s требуется "
 "хотя бы %3$s."
 
-#: classes/class-requirements.php:134
+#: classes/class-requirements.php:137
 msgid "Unable to get filesystem access."
 msgstr "Невозможно получить доступ к файловой системе."
 
 #. translators: 1: max_input_vars value, 2: Cyr To Lat version, 3: Minimum required max_input_vars
-#: classes/class-requirements.php:151
+#: classes/class-requirements.php:154
 #, php-format
 msgid ""
 "Your server is running PHP with max_input_vars=%1$d but Cyr To Lat %2$s "
@@ -130,22 +130,22 @@ msgstr ""
 "требуется хотя бы %3$d."
 
 #. translators: 1: .user.ini filename
-#: classes/class-requirements.php:155
+#: classes/class-requirements.php:158
 #, php-format
 msgid "We have updated settings in %s."
 msgstr "Мы обновили настройки в %s."
 
 #. translators: 1: Wait time in seconds
-#: classes/class-requirements.php:158
+#: classes/class-requirements.php:161
 #, php-format
 msgid "Please try again in %d s."
 msgstr "Пожалуйста, попробуйте снова через %d сек."
 
-#: classes/class-requirements.php:224
+#: classes/class-requirements.php:226
 msgid "Please increase max input vars limit up to 1500."
 msgstr "Пожалуйста, увеличьте лимит max input vars до 1500."
 
-#: classes/class-requirements.php:227
+#: classes/class-requirements.php:229
 msgid ""
 "See: <a href=\"http://sevenspark.com/docs/ubermenu-3/faqs/menu-item-limit\" "
 "target=\"_blank\">Increasing max input vars limit.</a>"
@@ -153,100 +153,130 @@ msgstr ""
 "См.: <a href=\"http://sevenspark.com/docs/ubermenu-3/faqs/menu-item-limit\" "
 "target=\"_blank\">Увеличение лимита max input vars.</a>"
 
-#: classes/class-settings.php:129
+#: classes/class-settings.php:126
 msgid "View Cyr To Lat settings"
 msgstr "Посмотреть настройки Cyr To Lat"
 
-#: classes/class-settings.php:130
+#: classes/class-settings.php:127
 msgid "Settings"
 msgstr "Настройки"
 
-#: classes/class-settings.php:146
+#: classes/class-settings.php:143
 msgid "ISO9 Table"
 msgstr "Таблица ISO9"
 
-#: classes/class-settings.php:149
+#: classes/class-settings.php:146
 msgid "bel Table"
 msgstr "Таблица bel"
 
-#: classes/class-settings.php:152
+#: classes/class-settings.php:149
 msgid "uk Table"
 msgstr "Таблица uk"
 
-#: classes/class-settings.php:155
+#: classes/class-settings.php:152
 msgid "bg_BG Table"
 msgstr "Таблица bg_BG"
 
-#: classes/class-settings.php:158
+#: classes/class-settings.php:155
 msgid "mk_MK Table"
 msgstr "Таблица mk_MK"
 
-#: classes/class-settings.php:161
+#: classes/class-settings.php:158
 msgid "sr_RS Table"
 msgstr "Таблица sr_RS"
 
-#: classes/class-settings.php:164
+#: classes/class-settings.php:161
 msgid "el Table"
 msgstr "Таблица el"
 
-#: classes/class-settings.php:167
+#: classes/class-settings.php:164
 msgid "hy Table"
 msgstr "Таблица hy"
 
-#: classes/class-settings.php:170
+#: classes/class-settings.php:167
 msgid "ka_GE Table"
 msgstr "Таблица ka_GE"
 
-#: classes/class-settings.php:173
+#: classes/class-settings.php:170
 msgid "kk Table"
 msgstr "Таблица kk"
 
-#: classes/class-settings.php:176
+#: classes/class-settings.php:173
 msgid "he_IL Table"
 msgstr "Таблица he_IL"
 
-#: classes/class-settings.php:179
+#: classes/class-settings.php:176
 msgid "zh_CN Table"
 msgstr "Таблица zh_CN"
 
-#: classes/class-settings.php:206
+#: classes/class-settings.php:203
 msgid "(current)"
 msgstr "(текущая)"
 
-#: classes/class-settings.php:273 classes/class-settings.php:274
+#: classes/class-settings.php:270 classes/class-settings.php:271
 msgid "Cyr To Lat"
 msgstr "Cyr To Lat"
 
 #. Admin panel title.
-#: classes/class-settings.php:294
+#: classes/class-settings.php:291
 msgid "Cyr To Lat Plugin Options"
 msgstr "Опции плагина Cyr To Lat"
 
-#: classes/class-settings.php:309
+#: classes/class-settings.php:307
 msgid "Convert Existing Slugs"
 msgstr "Конвертировать существующие ярлыки"
 
-#: classes/class-settings.php:315
-msgid "Donate"
-msgstr "Пожертвовать"
-
-#: classes/class-settings.php:318
-msgid "Would you like to support the advancement of this plugin?"
-msgstr "Хотите поддержать развитие этого плагина?"
-
-#: classes/class-settings.php:332
+#: classes/class-settings.php:313
 msgid "Your appreciation"
 msgstr "Ваша оценка"
 
-#: classes/class-settings.php:337
+#: classes/class-settings.php:318
 msgid "Leave a ★★★★★ plugin review on WordPress.org"
 msgstr "Оставьте ★★★★★ обзор плагина на WordPress.org"
+
+#: classes/class-settings.php:664
+msgid "Options saved."
+msgstr "Настройки сохранены."
+
+#: classes/class-settings.php:665
+msgid "Error saving options."
+msgstr "Ошибка сохранения настроек."
+
+#: classes/class-settings.php:689
+msgid "Important:"
+msgstr "Важно:"
+
+#: classes/class-settings.php:692
+msgid ""
+"This operation is irreversible. Please make sure that you have made backup "
+"copy of your database."
+msgstr ""
+"Эта операция необратима. Пожалуйста, убедитесь, что вы сделали копию базы "
+"данных."
+
+#: classes/class-settings.php:697
+msgid "Are you sure to continue?"
+msgstr "Вы уверены, что хотите продолжить?"
+
+#: classes/class-settings.php:701
+msgid "OK"
+msgstr "OK"
+
+#: classes/class-settings.php:704
+msgid "Cancel"
+msgstr "Отмена"
 
 #. translators: %d: cron interval
 #: lib/wp-background-processing/class-wp-background-process.php:399
 #, php-format
 msgid "Every %d Minutes"
 msgstr "Каждые %d минут"
+
+#~ msgid "Donate"
+#~ msgstr "Пожертвовать"
+
+#~ msgid "Would you like to support the advancement of this plugin?"
+#~ msgstr "Хотите поддержать развитие этого плагина?"
 
 #~ msgid "Please try again."
 #~ msgstr "Пожалуйста, попробуйте снова."

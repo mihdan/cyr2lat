@@ -5,11 +5,15 @@
  * @package cyr-to-lat
  */
 
+// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpIllegalPsrClassPathInspection */
+
 namespace Cyr_To_Lat;
 
 use cli\progress\Bar;
 use Mockery;
 use tad\FunctionMocker\FunctionMocker;
+use WP_Mock;
 
 /**
  * Class Test_WP_CLI
@@ -26,6 +30,7 @@ class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 	 * @param array $convert_params Params for conversion of existing slugs.
 	 *
 	 * @dataProvider        dp_test_regenerate
+	 * @noinspection        PhpUndefinedMethodInspection
 	 */
 	public function test_regenerate( $args, $assoc_args, $convert_params ) {
 		$converter = Mockery::mock( Converter::class );
@@ -80,19 +85,21 @@ class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test make_progress_bar()
+	 *
+	 * @noinspection PhpUndefinedMethodInspection
 	 */
 	public function test_make_progress_bar() {
 		$converter = Mockery::mock( Converter::class );
 
 		$subject = Mockery::mock( WP_CLI::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		$notify = new Bar();
+		$notify = Mockery::Mock( Bar::class );
 
-		\WP_Mock::userFunction( 'WP_CLI\Utils\make_progress_bar' )->
+		WP_Mock::userFunction( 'WP_CLI\Utils\make_progress_bar' )->
 		with( 'Regenerate existing slugs', 1 )->
 		once()->
 		andReturn( $notify );
 
-		$this->assertSame( $notify, $subject->make_progress_bar() );
+		self::assertSame( $notify, $subject->make_progress_bar() );
 	}
 }

@@ -20,14 +20,14 @@ class Converter {
 	const QUERY_ARG = 'cyr-to-lat-convert';
 
 	/**
-	 * Regex of prohibited chars in slugs
-	 * [^A-Za-z0-9[.apostrophe.][.underscore.][.period.][.hyphen.]]+
-	 * So, allowed chars are A-Za-z0-9[.apostrophe.][.underscore.][.period.][.hyphen.]
-	 * % is not allowed in the slug, but could present if slug is url_encoded
+	 * Regex of allowed chars in lower-cased slugs.
+	 *
+	 * Allowed chars are a-z, 0-9, [.apostrophe.], [.hyphen.], [.period.], [.underscore.],
+	 * or any url-encoded character in the range \x20-x7F.
 	 *
 	 * @link https://dev.mysql.com/doc/refman/5.6/en/regexp.html
 	 */
-	const PROHIBITED_CHARS_REGEX = "[^A-Za-z0-9'_\.\-]+";
+	const ALLOWED_CHARS_REGEX = "^([a-z0-9\'-._]|%[2-7][0-F])+$";
 
 	/**
 	 * Plugin main class.
@@ -35,13 +35,6 @@ class Converter {
 	 * @var Main
 	 */
 	private $main;
-
-	/**
-	 * Plugin settings.
-	 *
-	 * @var Settings
-	 */
-	private $settings;
 
 	/**
 	 * Background process to convert posts.
@@ -69,20 +62,18 @@ class Converter {
 	 *
 	 * @var string
 	 */
-	private $option_group = '';
+	private $option_group;
 
 	/**
 	 * Converter constructor.
 	 *
 	 * @param Main                    $main              Plugin main class.
-	 * @param Settings                $settings          Plugin settings.
 	 * @param Post_Conversion_Process $process_all_posts Post conversion process.
 	 * @param Term_Conversion_Process $process_all_terms Term conversion process.
 	 * @param Admin_Notices           $admin_notices     Admin notices.
 	 */
-	public function __construct( $main, $settings, $process_all_posts, $process_all_terms, $admin_notices ) {
+	public function __construct( $main, $process_all_posts, $process_all_terms, $admin_notices ) {
 		$this->main              = $main;
-		$this->settings          = $settings;
 		$this->option_group      = Settings::OPTION_GROUP;
 		$this->process_all_posts = $process_all_posts;
 		$this->process_all_terms = $process_all_terms;
@@ -143,7 +134,7 @@ class Converter {
 	 * Check if we have to start conversion and start it.
 	 */
 	public function start_conversion() {
-		if ( ! isset( $_POST['cyr2lat-convert'] ) ) {
+		if ( ! isset( $_POST['ctl-convert'] ) ) {
 			return;
 		}
 		check_admin_referer( $this->option_group . '-options' );
@@ -154,7 +145,7 @@ class Converter {
 	 * Process handler.
 	 */
 	public function process_handler() {
-		if ( ! isset( $_GET[ self::QUERY_ARG ] ) || ! isset( $_GET['_wpnonce'] ) ) {
+		if ( ! isset( $_GET[ self::QUERY_ARG ], $_GET['_wpnonce'] ) ) {
 			return;
 		}
 
@@ -192,17 +183,17 @@ class Converter {
 			'post_status' => [ 'publish', 'future', 'private' ],
 		];
 
-		$args = wp_parse_args( $args, $defaults );
+		$parsed_args = wp_parse_args( $args, $defaults );
 
-		$regexp = $wpdb->prepare( '%s', self::PROHIBITED_CHARS_REGEX );
+		$regexp = $wpdb->prepare( '%s', self::ALLOWED_CHARS_REGEX );
 
 		$post_sql      =
-			'post_status IN (' . $this->main->prepare_in( $args['post_status'] ) . ')' .
-			' AND post_type IN (' . $this->main->prepare_in( $args['post_type'] ) . ')';
+			'post_status IN (' . $this->main->prepare_in( $parsed_args['post_status'] ) . ')' .
+			' AND post_type IN (' . $this->main->prepare_in( $parsed_args['post_type'] ) . ')';
 		$media_sql     = "post_status = 'inherit' AND post_type = 'attachment'";
 		$all_posts_sql = '(' . $post_sql . ') OR (' . $media_sql . ')';
 
-		$sql = "SELECT ID, post_name, post_type FROM $wpdb->posts WHERE post_name REGEXP($regexp) AND ($all_posts_sql)";
+		$sql = "SELECT ID, post_name, post_type FROM $wpdb->posts WHERE LOWER(post_name) NOT REGEXP($regexp) AND ($all_posts_sql)";
 
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
@@ -218,19 +209,17 @@ class Converter {
 			return;
 		}
 
-		if ( $posts ) {
-			foreach ( (array) $posts as $post ) {
-				$this->process_all_posts->push_to_queue( $post );
-			}
-
-			$this->log( __( 'Post slugs conversion started.', 'cyr2lat' ) );
-			$this->admin_notices->add_notice(
-				__( 'Cyr To Lat started conversion of existing post slugs.', 'cyr2lat' ),
-				'notice notice-info is-dismissible'
-			);
-
-			$this->process_all_posts->save()->dispatch();
+		foreach ( (array) $posts as $post ) {
+			$this->process_all_posts->push_to_queue( $post );
 		}
+
+		$this->log( __( 'Post slugs conversion started.', 'cyr2lat' ) );
+		$this->admin_notices->add_notice(
+			__( 'Cyr To Lat started conversion of existing post slugs.', 'cyr2lat' ),
+			'notice notice-info is-dismissible'
+		);
+
+		$this->process_all_posts->save()->dispatch();
 	}
 
 	/**
@@ -243,8 +232,8 @@ class Converter {
 		$terms = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT t.term_id, slug, tt.taxonomy, tt.term_taxonomy_id FROM $wpdb->terms t, $wpdb->term_taxonomy tt
-					WHERE t.slug REGEXP(%s) AND tt.term_id = t.term_id",
-				self::PROHIBITED_CHARS_REGEX
+					WHERE LOWER(t.slug) NOT REGEXP(%s) AND tt.term_id = t.term_id",
+				self::ALLOWED_CHARS_REGEX
 			)
 		);
 
@@ -257,31 +246,30 @@ class Converter {
 			return;
 		}
 
-		if ( $terms ) {
-			foreach ( (array) $terms as $term ) {
-				$this->process_all_terms->push_to_queue( $term );
-			}
-
-			$this->log( __( 'Term slugs conversion started.', 'cyr2lat' ) );
-			$this->admin_notices->add_notice(
-				__( 'Cyr To Lat started conversion of existing term slugs.', 'cyr2lat' ),
-				'notice notice-info is-dismissible'
-			);
-
-			$this->process_all_terms->save()->dispatch();
+		foreach ( (array) $terms as $term ) {
+			$this->process_all_terms->push_to_queue( $term );
 		}
+
+		$this->log( __( 'Term slugs conversion started.', 'cyr2lat' ) );
+		$this->admin_notices->add_notice(
+			__( 'Cyr To Lat started conversion of existing term slugs.', 'cyr2lat' ),
+			'notice notice-info is-dismissible'
+		);
+
+		$this->process_all_terms->save()->dispatch();
 	}
 
 	/**
 	 * Log.
 	 *
 	 * @param string $message Message to log.
+	 *
+	 * @noinspection ForgottenDebugOutputInspection
 	 */
 	protected function log( $message ) {
 		if ( defined( 'WP_DEBUG_LOG' ) && constant( 'WP_DEBUG_LOG' ) ) {
-			// @phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			// @phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( 'Cyr To Lat: ' . $message );
-			// @phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		}
 	}
 }

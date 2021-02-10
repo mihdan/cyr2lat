@@ -5,6 +5,9 @@
  * @package cyr-to-lat
  */
 
+// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpIllegalPsrClassPathInspection */
+
 namespace Cyr_To_Lat;
 
 use Mockery;
@@ -25,7 +28,8 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	 * Tear down.
 	 */
 	public function tearDown(): void {
-		unset ( $_GET['activate'] );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		unset( $_GET );
 
 		parent::tearDown();
 	}
@@ -34,9 +38,10 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	 * Test constructor
 	 *
 	 * @throws ReflectionException Reflection Exception.
+	 * @noinspection NullPointerExceptionInspection
 	 */
 	public function test_constructor() {
-		$classname = __NAMESPACE__ . '\Requirements';
+		$classname = Requirements::class;
 
 		Mockery::mock( Admin_Notices::class );
 		Mockery::mock( WP_Filesystem_Direct::class );
@@ -63,9 +68,10 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	 * Test constructor when no WP_Filesystem is available
 	 *
 	 * @throws ReflectionException Reflection Exception.
+	 * @noinspection NullPointerExceptionInspection
 	 */
 	public function test_constructor_when_NO_wp_filesystem_is_available() {
-		$classname = __NAMESPACE__ . '\Requirements';
+		$classname = Requirements::class;
 
 		Mockery::mock( Admin_Notices::class );
 
@@ -126,7 +132,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		WP_Mock::expectActionNotAdded( 'admin_init', [ $subject, 'deactivate_plugin' ] );
 
-		$this->assertTrue( $subject->are_requirements_met() );
+		self::assertTrue( $subject->are_requirements_met() );
 	}
 
 	/**
@@ -148,8 +154,10 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 		$required_version = explode( '.', $this->cyr_to_lat_minimum_php_required_version );
 		$wrong_version    = array_slice( $required_version, 0, 2 );
 		$wrong_version    = (float) implode( '.', $wrong_version );
-		$wrong_version    = $wrong_version - 0.1;
-		$wrong_version    = number_format( $wrong_version, 1, '.', '' );
+
+		$wrong_version -= 0.1;
+
+		$wrong_version = number_format( $wrong_version, 1, '.', '' );
 
 		FunctionMocker::replace(
 			'phpversion',
@@ -181,7 +189,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'deactivate_plugin' ] );
 
-		$this->assertFalse( $subject->are_requirements_met() );
+		self::assertFalse( $subject->are_requirements_met() );
 	}
 
 	/**
@@ -279,7 +287,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		WP_Mock::expectActionNotAdded( 'admin_init', [ $subject, 'deactivate_plugin' ] );
 
-		$this->assertTrue( $subject->are_requirements_met() );
+		self::assertTrue( $subject->are_requirements_met() );
 	}
 
 	/**
@@ -320,10 +328,9 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	 * Test are_requirements_met() when max_input_vars requirements not met and filesystem not available.
 	 */
 	public function test_vars_requirements_not_met_and_filesystem_not_available() {
-		$max_input_vars              = $this->cyr_to_lat_required_max_input_vars - 1;
-		$user_ini_filename           = '.user.ini';
-		$user_ini_filename_with_path = ABSPATH . 'wp-admin/' . $user_ini_filename;
-		$ini_ttl                     = 300;
+		$max_input_vars    = $this->cyr_to_lat_required_max_input_vars - 1;
+		$user_ini_filename = '.user.ini';
+		$ini_ttl           = 300;
 
 		$admin_notices = Mockery::mock( 'Admin_Notices' );
 
@@ -373,7 +380,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		WP_Mock::expectActionNotAdded( 'admin_init', [ $subject, 'deactivate_plugin' ] );
 
-		$this->assertTrue( $subject->are_requirements_met() );
+		self::assertTrue( $subject->are_requirements_met() );
 	}
 
 	/**
@@ -405,6 +412,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 		$subject = new Requirements( $admin_notices, $wp_filesystem );
 		$subject->deactivate_plugin();
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		self::assertArrayNotHasKey( 'activate', $_GET );
 	}
 

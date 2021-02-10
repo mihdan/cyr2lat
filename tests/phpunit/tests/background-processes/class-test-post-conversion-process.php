@@ -6,11 +6,17 @@
  * @group   process
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpIllegalPsrClassPathInspection */
+/** @noinspection PhpUndefinedMethodInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 namespace Cyr_To_Lat;
 
 use Mockery;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
+use WP_Mock;
 use wpdb;
 
 /**
@@ -39,23 +45,25 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 	public function test_task( $post_name, $transliterated_name ) {
 		global $wpdb;
 
-		$post = (object) [
+		$post              = (object) [
 			'ID'        => 5,
 			'post_name' => $post_name,
 			'post_type' => 'post',
 		];
+		$decoded_post_name = urldecode( $post->post_name );
 
 		$main = Mockery::mock( Main::class );
-		$main->shouldReceive( 'transliterate' )->with( $post_name )->andReturn( $transliterated_name );
+		$main->shouldReceive( 'transliterate' )->with( $decoded_post_name )->andReturn( $transliterated_name );
 
 		if ( $transliterated_name !== $post->post_name ) {
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'update_post_meta',
 				[
 					'args'  => [ $post->ID, '_wp_old_slug', $post->post_name ],
 					'times' => 1,
 				]
 			);
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$wpdb        = Mockery::mock( wpdb::class );
 			$wpdb->posts = 'wp_posts';
 			$wpdb
@@ -63,7 +71,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 				->with( $wpdb->posts, [ 'post_name' => $transliterated_name ], [ 'ID' => $post->ID ] );
 		}
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'get_locale',
 			[ 'return' => 'ru_RU' ]
 		);
@@ -71,12 +79,12 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()->
 		shouldAllowMockingProtectedMethods();
 
-		\WP_Mock::expectFilterAdded(
+		WP_Mock::expectFilterAdded(
 			'locale',
 			[ $subject, 'filter_post_locale' ]
 		);
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'remove_filter',
 			[
 				'args'  => [ 'locale', [ $subject, 'filter_post_locale' ] ],
@@ -87,11 +95,11 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		if ( $transliterated_name !== $post->post_name ) {
 			$subject
 				->shouldReceive( 'log' )
-				->with( 'Post slug converted: ' . $post->post_name . ' => ' . $transliterated_name )
+				->with( 'Post slug converted: ' . $decoded_post_name . ' => ' . $transliterated_name )
 				->once();
 		}
 
-		$this->assertFalse( $subject->task( $post ) );
+		self::assertFalse( $subject->task( $post ) );
 	}
 
 	/**
@@ -101,6 +109,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		return [
 			[ 'post_name', 'post_name' ],
 			[ 'post_name', 'transliterated_name' ],
+			[ '%d0%bd%d0%be%d0%b2%d1%8b%d0%b9', 'novyj' ],
 		];
 	}
 
@@ -125,16 +134,17 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$main->shouldReceive( 'transliterate' )->with( $post_name )->andReturn( $transliterated_name );
 
 		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
-		                  ->shouldAllowMockingProtectedMethods();
+			       ->shouldAllowMockingProtectedMethods();
 
 		if ( $transliterated_name !== $post->post_name ) {
-			\WP_Mock::userFunction(
+			WP_Mock::userFunction(
 				'update_post_meta',
 				[
 					'args'  => [ $post->ID, '_wp_old_slug', $post->post_name ],
 					'times' => 1,
 				]
 			);
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$wpdb        = Mockery::mock( wpdb::class );
 			$wpdb->posts = 'wp_posts';
 			$wpdb
@@ -150,17 +160,17 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 			$subject->shouldReceive( 'update_attachment_metadata' )->never();
 		}
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'get_locale',
 			[ 'return' => 'ru_RU' ]
 		);
 
-		\WP_Mock::expectFilterAdded(
+		WP_Mock::expectFilterAdded(
 			'locale',
 			[ $subject, 'filter_post_locale' ]
 		);
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'remove_filter',
 			[
 				'args'  => [ 'locale', [ $subject, 'filter_post_locale' ] ],
@@ -175,7 +185,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 				->once();
 		}
 
-		$this->assertFalse( $subject->task( $post ) );
+		self::assertFalse( $subject->task( $post ) );
 	}
 
 	/**
@@ -194,7 +204,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 	public function test_rename_attachment_when_no_file() {
 		$post_id = 5;
 
-		\WP_Mock::userFunction( 'get_attached_file' )->with( $post_id )->andReturn( false );
+		WP_Mock::userFunction( 'get_attached_file' )->with( $post_id )->andReturn( false );
 
 		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject
@@ -218,17 +228,17 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$file                = '/var/www/test/wp-content/uploads/2020/05/Скамейка.jpg';
 		$transliterated_file = '/var/www/test/wp-content/uploads/2020/05/Skamejka.jpg';
 
-		\WP_Mock::userFunction( 'get_attached_file' )->with( $post_id )->andReturn( $file );
+		WP_Mock::userFunction( 'get_attached_file' )->with( $post_id )->andReturn( $file );
 
 		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'get_transliterated_file' )->with( $file )->once()->andReturn( $transliterated_file );
 		$subject->shouldReceive( 'rename_file' )->with( $file, $transliterated_file )->once()->andReturn( $rename );
 
 		if ( $rename ) {
-			\WP_Mock::userFunction( 'update_attached_file' )->with( $post_id, $transliterated_file )
-			        ->andReturn( $updated );
+			WP_Mock::userFunction( 'update_attached_file' )->with( $post_id, $transliterated_file )
+			       ->andReturn( $updated );
 		} else {
-			\WP_Mock::userFunction( 'update_attached_file' )->never();
+			WP_Mock::userFunction( 'update_attached_file' )->never();
 		}
 
 		if ( $updated ) {
@@ -281,12 +291,12 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 		$transliterated_thumbnail_file = '/var/www/test/wp-content/uploads/2020/05/Skamejka-150x150.jpg';
 
-		\WP_Mock::userFunction( 'get_intermediate_image_sizes' )->with()->once()->andReturn( $sizes );
-		\WP_Mock::userFunction( 'wp_get_attachment_image_src' )->with( $post_id, 'thumbnail' )->once()
+		WP_Mock::userFunction( 'get_intermediate_image_sizes' )->with()->once()->andReturn( $sizes );
+		WP_Mock::userFunction( 'wp_get_attachment_image_src' )->with( $post_id, 'thumbnail' )->once()
 		        ->andReturn( $thumbnail_src );
-		\WP_Mock::userFunction( 'wp_get_attachment_image_src' )->with( $post_id, 'medium' )->once()
+		WP_Mock::userFunction( 'wp_get_attachment_image_src' )->with( $post_id, 'medium' )->once()
 		        ->andReturn( $medium_src );
-		\WP_Mock::userFunction( 'wp_get_attachment_image_src' )->with( $post_id, 'large' )->once()
+		WP_Mock::userFunction( 'wp_get_attachment_image_src' )->with( $post_id, 'large' )->once()
 		        ->andReturn( $large_src );
 
 		FunctionMocker::replace(
@@ -299,17 +309,17 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 				return null;
 			}
 		);
-		\WP_Mock::userFunction( 'untrailingslashit' )->with( $abspath )->andReturnUsing(
+		WP_Mock::userFunction( 'untrailingslashit' )->with( $abspath )->andReturnUsing(
 			function ( $string ) {
 				return rtrim( $string, '/' );
 			}
 		);
 
-		\WP_Mock::userFunction( 'wp_make_link_relative' )->with( $thumbnail_src[0] )->once()
+		WP_Mock::userFunction( 'wp_make_link_relative' )->with( $thumbnail_src[0] )->once()
 		        ->andReturn( $thumbnail_relative );
-		\WP_Mock::userFunction( 'wp_make_link_relative' )->with( $medium_src[0] )->once()
+		WP_Mock::userFunction( 'wp_make_link_relative' )->with( $medium_src[0] )->once()
 		        ->andReturn( $medium_relative );
-		\WP_Mock::userFunction( 'wp_make_link_relative' )->with( $large_src[0] )->once()
+		WP_Mock::userFunction( 'wp_make_link_relative' )->with( $large_src[0] )->once()
 		        ->andReturn( $large_relative );
 
 		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
@@ -379,8 +389,8 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
 		                  ->shouldAllowMockingProtectedMethods();
 
-		\WP_Mock::userFunction( 'wp_get_attachment_metadata' )->with( $attachment_id )->once()->andReturn( $meta );
-		\WP_Mock::userFunction( 'wp_update_attachment_metadata' )->with( $attachment_id, $transliterated_meta )->once();
+		WP_Mock::userFunction( 'wp_get_attachment_metadata' )->with( $attachment_id )->once()->andReturn( $meta );
+		WP_Mock::userFunction( 'wp_update_attachment_metadata' )->with( $attachment_id, $transliterated_meta )->once();
 
 		$subject->update_attachment_metadata( $attachment_id );
 	}
@@ -398,7 +408,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
 		                  ->shouldAllowMockingProtectedMethods();
 
-		$this->assertSame( $transliterated_file, $subject->get_transliterated_file( $file ) );
+		self::assertSame( $transliterated_file, $subject->get_transliterated_file( $file ) );
 	}
 
 	/**
@@ -414,16 +424,12 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		FunctionMocker::replace(
 			'rename',
 			function( $oldname, $newname ) use ( $file, $new_file ) {
-				if ( $oldname === $file && $newname === $new_file ) {
-					return true;
-				}
-
-				return false;
+				return $oldname === $file && $newname === $new_file;
 			}
 		);
 
-		$this->assertNull( $subject->rename_file( $file, $file ) );
-		$this->assertTrue( $subject->rename_file( $file, $new_file ) );
+		self::assertNull( $subject->rename_file( $file, $file ) );
+		self::assertTrue( $subject->rename_file( $file, $new_file ) );
 	}
 
 	/**
@@ -433,7 +439,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'log' )->with( 'Post slugs conversion completed.' )->once();
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'wp_next_scheduled',
 			[
 				'return' => null,
@@ -441,7 +447,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'set_site_transient',
 			[
 				'times' => 1,
@@ -466,9 +472,9 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 			'ID' => 5,
 		];
 
-		\WP_Mock::onFilter( 'wpml_post_language_details' )->with( false, $post->ID )->reply( $wpml_post_language_details );
+		WP_Mock::onFilter( 'wpml_post_language_details' )->with( false, $post->ID )->reply( $wpml_post_language_details );
 
-		\WP_Mock::userFunction(
+		WP_Mock::userFunction(
 			'get_locale',
 			[
 				'return' => $locale,
@@ -478,7 +484,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$main    = Mockery::mock( Main::class );
 		$subject = new Post_Conversion_Process( $main );
 		$this->set_protected_property( $subject, 'post', $post );
-		$this->assertSame( $expected, $subject->filter_post_locale() );
+		self::assertSame( $expected, $subject->filter_post_locale() );
 	}
 
 	/**

@@ -44,4 +44,10 @@
 		<severity>0</severity>
 	</rule>
 	<rule ref="Generic.Arrays.DisallowLongArraySyntax.Found"/>
+
+	<!-- Allow short ternary syntax -->
+	<rule ref="WordPress.PHP.DisallowShortTernary.Found">
+		<severity>0</severity>
+	</rule>
+
 </ruleset>

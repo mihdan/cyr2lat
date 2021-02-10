@@ -1,14 +1,13 @@
 {
   "env": {
+    "browser": true,
     "jest": true,
-    "node": true
+    "es2017": true
   },
   "extends": [
-    "eslint:recommended",
-    "wordpress"
+    "plugin:@wordpress/eslint-plugin/recommended"
   ],
   "parserOptions": {
-    "sourceType": "module",
-    "ecmaVersion": 6
+    "sourceType": "module"
   }
 }

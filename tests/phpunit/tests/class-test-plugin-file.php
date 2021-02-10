@@ -5,10 +5,14 @@
  * @package cyr-to-lat
  */
 
+// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpIllegalPsrClassPathInspection */
+
 namespace Cyr_To_Lat;
 
 use Mockery;
 use tad\FunctionMocker\FunctionMocker;
+use WP_Mock;
 
 /**
  * Class Test_Cyr_To_Lat_Plugin_File
@@ -27,6 +31,8 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test main file when Cyr-To-Lat version defined.
+	 *
+	 * @noinspection PhpIncludeInspection
 	 */
 	public function test_when_cyr_to_lat_version_defined() {
 		FunctionMocker::replace(
@@ -61,6 +67,7 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
+	 * @noinspection        PhpIncludeInspection
 	 */
 	public function test_plugin_file_when_requirements_met() {
 		global $cyr_to_lat_requirements, $cyr_to_lat_plugin;
@@ -74,8 +81,8 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 		$this->cyr_to_lat_version = CYR_TO_LAT_TEST_VERSION;
 		$this->cyr_to_lat_url     = PLUGIN_MAIN_FILE;
 
-		\WP_Mock::passthruFunction( 'plugin_dir_url' );
-		\WP_Mock::passthruFunction( 'untrailingslashit' );
+		WP_Mock::passthruFunction( 'plugin_dir_url' );
+		WP_Mock::passthruFunction( 'untrailingslashit' );
 
 		require_once PLUGIN_MAIN_FILE;
 
@@ -89,8 +96,8 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', $this->cyr_to_lat_minimum_php_required_version ] );
 		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS', $this->cyr_to_lat_required_max_input_vars ] );
 
-		$this->assertInstanceOf( Requirements::class, $cyr_to_lat_requirements );
-		$this->assertInstanceOf( Main::class, $cyr_to_lat_plugin );
+		self::assertInstanceOf( Requirements::class, $cyr_to_lat_requirements );
+		self::assertInstanceOf( Main::class, $cyr_to_lat_plugin );
 	}
 
 	/**
@@ -103,6 +110,7 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
+	 * @noinspection        PhpIncludeInspection
 	 */
 	public function test_plugin_file_when_requirements_NOT_met() {
 		global $cyr_to_lat_requirements, $cyr_to_lat_plugin;
@@ -114,8 +122,8 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 		$this->cyr_to_lat_version = CYR_TO_LAT_TEST_VERSION;
 		$this->cyr_to_lat_url     = PLUGIN_MAIN_FILE;
 
-		\WP_Mock::passthruFunction( 'plugin_dir_url' );
-		\WP_Mock::passthruFunction( 'untrailingslashit' );
+		WP_Mock::passthruFunction( 'plugin_dir_url' );
+		WP_Mock::passthruFunction( 'untrailingslashit' );
 
 		require_once PLUGIN_MAIN_FILE;
 
@@ -129,7 +137,7 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', $this->cyr_to_lat_minimum_php_required_version ] );
 		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS', $this->cyr_to_lat_required_max_input_vars ] );
 
-		$this->assertInstanceOf( Requirements::class, $cyr_to_lat_requirements );
-		$this->assertNull( $cyr_to_lat_plugin );
+		self::assertInstanceOf( Requirements::class, $cyr_to_lat_requirements );
+		self::assertNull( $cyr_to_lat_plugin );
 	}
 }

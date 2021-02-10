@@ -18,31 +18,33 @@ class Settings {
 
 	/**
 	 * Admin screen id.
-	 *
-	 * @var string
 	 */
 	const SCREEN_ID = 'settings_page_cyr-to-lat';
 
 	/**
 	 * Option group.
-	 *
-	 * @var string
 	 */
 	const OPTION_GROUP = 'cyr_to_lat_group';
 
 	/**
 	 * Option page.
-	 *
-	 * @var string
 	 */
 	const PAGE = 'cyr-to-lat';
 
 	/**
 	 * Plugin options name.
-	 *
-	 * @var string
 	 */
 	const OPTION_NAME = 'cyr_to_lat_settings';
+
+	/**
+	 * Script handle.
+	 */
+	const HANDLE = 'cyr-to-lat-settings';
+
+	/**
+	 * Script localization object.
+	 */
+	const OBJECT = 'Cyr2LatSettingsObject';
 
 	/**
 	 * Form fields.
@@ -57,13 +59,6 @@ class Settings {
 	 * @var array
 	 */
 	public $settings;
-
-	/**
-	 * Plugin options.
-	 *
-	 * @var array
-	 */
-	private $options;
 
 	/**
 	 * Served locales.
@@ -107,6 +102,7 @@ class Settings {
 		add_filter( 'pre_update_option_' . self::OPTION_NAME, [ $this, 'pre_update_option_filter' ], 10, 3 );
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
+		add_action( 'in_admin_header', [ $this, 'in_admin_header' ] );
 	}
 
 	/**
@@ -121,6 +117,7 @@ class Settings {
 	 *                            'recently_activated', 'upgrade', 'mustuse', 'dropins', and 'search'.
 	 *
 	 * @return array|mixed Plugin links
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function add_settings_link( $actions, $plugin_file, $plugin_data, $context ) {
 		$ctl_actions = [
@@ -189,7 +186,7 @@ class Settings {
 	private function get_current_locale() {
 		$current_locale = get_locale();
 
-		return in_array( $current_locale, array_keys( $this->locales ), true ) ? $current_locale : 'iso9';
+		return array_key_exists( $current_locale, $this->locales ) ? $current_locale : 'iso9';
 	}
 
 	/**
@@ -304,31 +301,15 @@ class Settings {
 			</form>
 
 			<form id="ctl-convert-existing-slugs" action="" method="post">
+				<input type="hidden" name="ctl-convert" />
 				<?php
 				wp_nonce_field( self::OPTION_GROUP . '-options' );
-				submit_button( __( 'Convert Existing Slugs', 'cyr2lat' ), 'secondary', 'cyr2lat-convert' );
+				submit_button( __( 'Convert Existing Slugs', 'cyr2lat' ), 'secondary', 'ctl-convert-button' );
 				?>
 			</form>
 
-			<div id="donate">
+			<div id="appreciation">
 				<h2>
-					<?php echo esc_html( __( 'Donate', 'cyr2lat' ) ); ?>
-				</h2>
-				<p>
-					<?php echo esc_html( __( 'Would you like to support the advancement of this plugin?', 'cyr2lat' ) ); ?>
-				</p>
-				<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-					<input type="hidden" name="cmd" value="_s-xclick">
-					<input type="hidden" name="hosted_button_id" value="BENCPARA8S224">
-					<input
-						type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif"
-						name="submit" alt="PayPal - The safer, easier way to pay online!">
-					<img
-						alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1"
-						height="1">
-				</form>
-
-				<h2 id="appreciation">
 					<?php echo esc_html( __( 'Your appreciation', 'cyr2lat' ) ); ?>
 				</h2>
 				<a
@@ -380,9 +361,6 @@ class Settings {
 		}
 
 		register_setting( self::OPTION_GROUP, self::OPTION_NAME );
-
-		// Get current settings.
-		$this->options = get_option( self::OPTION_NAME );
 
 		foreach ( $this->form_fields as $key => $field ) {
 			$field['field_id'] = $key;
@@ -508,10 +486,8 @@ class Settings {
 					$options_markup = '';
 					foreach ( $arguments['options'] as $key => $label ) {
 						$selected = '';
-						if ( is_array( $value ) ) {
-							if ( in_array( $key, $value, true ) ) {
-								$selected = selected( $key, $key, false );
-							}
+						if ( is_array( $value ) && in_array( $key, $value, true ) ) {
+							$selected = selected( $key, $key, false );
 						}
 						$options_markup .= sprintf(
 							'<option value="%s" %s>%s</option>',
@@ -600,7 +576,7 @@ class Settings {
 			$this->settings[ $key ] = isset( $form_fields[ $key ] ) ? $this->get_field_default( $form_fields[ $key ] ) : '';
 		}
 
-		if ( ! is_null( $empty_value ) && '' === $this->settings[ $key ] ) {
+		if ( '' === $this->settings[ $key ] && ! is_null( $empty_value ) ) {
 			$this->settings[ $key ] = $empty_value;
 		}
 
@@ -641,6 +617,7 @@ class Settings {
 	 * @param string $option    Option name.
 	 *
 	 * @return mixed
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function pre_update_option_filter( $value, $old_value, $option ) {
 		if ( $value === $old_value ) {
@@ -654,14 +631,10 @@ class Settings {
 
 		$form_fields = $this->get_form_fields();
 		foreach ( $form_fields as $key => $form_field ) {
-			switch ( $form_field['type'] ) {
-				case 'checkbox':
-					$form_field_value = isset( $value[ $key ] ) ? $value[ $key ] : 'no';
-					$form_field_value = '1' === $form_field_value || 'yes' === $form_field_value ? 'yes' : 'no';
-					$value[ $key ]    = $form_field_value;
-					break;
-				default:
-					break;
+			if ( 'checkbox' === $form_field['type'] ) {
+				$form_field_value = isset( $value[ $key ] ) ? $value[ $key ] : 'no';
+				$form_field_value = '1' === $form_field_value || 'yes' === $form_field_value ? 'yes' : 'no';
+				$value[ $key ]    = $form_field_value;
 			}
 		}
 
@@ -677,19 +650,63 @@ class Settings {
 		}
 
 		wp_enqueue_script(
-			'cyr-to-lat-settings',
+			self::HANDLE,
 			constant( 'CYR_TO_LAT_URL' ) . '/dist/js/settings/app.js',
 			[],
 			constant( 'CYR_TO_LAT_VERSION' ),
 			true
 		);
 
+		wp_localize_script(
+			self::HANDLE,
+			self::OBJECT,
+			[
+				'optionsSaveSuccessMessage' => __( 'Options saved.', 'cyr2lat' ),
+				'optionsSaveErrorMessage'   => __( 'Error saving options.', 'cyr2lat' ),
+			]
+		);
+
 		wp_enqueue_style(
-			'cyr-to-lat-admin',
+			self::HANDLE,
 			constant( 'CYR_TO_LAT_URL' ) . '/css/cyr-to-lat-admin.css',
 			[],
 			constant( 'CYR_TO_LAT_VERSION' )
 		);
+	}
+
+	/**
+	 * Output convert confirmation popup.
+	 */
+	public function in_admin_header() {
+		if ( ! $this->is_options_screen() ) {
+			return;
+		}
+
+		?>
+		<div id="ctl-confirm-popup">
+			<div id="ctl-confirm-content">
+				<p>
+					<strong><?php esc_html_e( 'Important:', 'cyr2lat' ); ?></strong>
+					<?php
+					esc_html_e(
+						'This operation is irreversible. Please make sure that you have made backup copy of your database.',
+						'cyr2lat'
+					);
+					?>
+				</p>
+				<p><?php esc_html_e( 'Are you sure to continue?', 'cyr2lat' ); ?></p>
+				<div id="ctl-confirm-buttons">
+					<input
+						type="button" id="ctl-confirm-ok" class="button button-primary"
+						value="<?php esc_html_e( 'OK', 'cyr2lat' ); ?>">
+					<button
+						type="button" id="ctl-confirm-cancel" class="button button-secondary">
+						<?php esc_html_e( 'Cancel', 'cyr2lat' ); ?>
+					</button>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**

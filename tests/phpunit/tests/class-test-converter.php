@@ -5,12 +5,19 @@
  * @package cyr-to-lat
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpIllegalPsrClassPathInspection */
+/** @noinspection PhpUndefinedMethodInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 namespace Cyr_To_Lat;
 
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
+use WP_Mock;
+use wpdb;
 
 /**
  * Class Test_Converter
@@ -23,22 +30,23 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	 * End test
 	 */
 	public function tearDown(): void {
-		unset( $_GET[ Converter::QUERY_ARG ] );
-		unset( $_GET['_wpnonce'] );
-		unset( $_POST['cyr2lat-convert'] );
-		unset( $GLOBALS['wpdb'] );
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		unset( $_GET[ Converter::QUERY_ARG ], $_GET['_wpnonce'], $_POST['cyr2lat-convert'], $GLOBALS['wpdb'] );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
 	 * Test constructor
 	 *
 	 * @throws ReflectionException Reflection Exception.
+	 * @noinspection NullPointerExceptionInspection
 	 */
 	public function test_constructor() {
-		$classname = __NAMESPACE__ . '\Converter';
+		$classname = Converter::class;
 
 		$main          = Mockery::mock( Main::class );
-		$settings      = Mockery::mock( Settings::class );
 		$post_cp       = Mockery::mock( Post_Conversion_Process::class );
 		$term_cp       = Mockery::mock( Term_Conversion_Process::class );
 		$admin_notices = Mockery::mock( Admin_Notices::class );
@@ -47,12 +55,12 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
 
 		// Set expectations for constructor calls.
-		$mock->expects( $this->once() )->method( 'init_hooks' );
+		$mock->expects( self::once() )->method( 'init_hooks' );
 
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );
 		$constructor     = $reflected_class->getConstructor();
-		$constructor->invoke( $mock, $main, $settings, $post_cp, $term_cp, $admin_notices );
+		$constructor->invoke( $mock, $main, $post_cp, $term_cp, $admin_notices );
 	}
 
 	/**
@@ -61,8 +69,8 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	public function test_init_hooks() {
 		$subject = $this->get_subject();
 
-		\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'process_handler' ] );
-		\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'conversion_notices' ] );
+		WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'process_handler' ] );
+		WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'conversion_notices' ] );
 
 		$subject->init_hooks();
 	}
@@ -81,14 +89,14 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$posts_process_running, $terms_process_running, $posts_process_completed, $terms_process_completed
 	) {
 		$main              = Mockery::mock( Main::class );
-		$settings          = Mockery::mock( Settings::class );
 		$process_all_posts = Mockery::mock( Post_Conversion_Process::class )->shouldAllowMockingProtectedMethods();
 		$process_all_terms = Mockery::mock( Term_Conversion_Process::class )->shouldAllowMockingProtectedMethods();
 		$admin_notices     = Mockery::mock( Admin_Notices::class );
 
+		// phpcs:disable Generic.Commenting.DocComment.MissingShort
+		/** @noinspection PhpParamsInspection */
 		$subject = new Converter(
 			$main,
-			$settings,
 			$process_all_posts,
 			$process_all_terms,
 			$admin_notices
@@ -101,7 +109,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$process_all_terms->shouldReceive( 'is_process_completed' )->andReturn( $terms_process_completed );
 
 		if ( ! $posts_process_running && ! $terms_process_running ) {
-			\WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'start_conversion' ], 20 );
+			WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'start_conversion' ], 20 );
 		}
 
 		if ( $posts_process_running ) {
@@ -171,10 +179,10 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	public function test_start_conversion( $convert ) {
 		$subject = Mockery::mock( Converter::class )->makePartial();
 
-		\WP_Mock::passthruFunction( 'check_admin_referer' );
+		WP_Mock::passthruFunction( 'check_admin_referer' );
 
 		if ( $convert ) {
-			$_POST['cyr2lat-convert'] = 'something';
+			$_POST['ctl-convert'] = 'something';
 			$subject->shouldReceive( 'convert_existing_slugs' )->once();
 		} else {
 			$subject->shouldReceive( 'convert_existing_slugs' )->never();
@@ -210,13 +218,14 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		if ( $query_arg ) {
 			$_GET[ Converter::QUERY_ARG ] = '1';
 		}
+
 		if ( $nonce ) {
 			$_GET['_wpnonce'] = $nonce;
 		}
 
 		if ( $query_arg && $nonce ) {
-			\WP_Mock::passthruFunction( 'sanitize_key' );
-			\WP_Mock::userFunction(
+			WP_Mock::passthruFunction( 'sanitize_key' );
+			WP_Mock::userFunction(
 				'wp_verify_nonce',
 				[
 					'times'  => 1,
@@ -258,14 +267,12 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		global $wpdb;
 
 		$main              = Mockery::mock( Main::class );
-		$settings          = Mockery::mock( Settings::class );
 		$process_all_posts = Mockery::mock( Post_Conversion_Process::class );
 		$process_all_terms = Mockery::mock( Term_Conversion_Process::class );
 		$admin_notices     = Mockery::mock( Admin_Notices::class );
 
 		$subject = new Converter(
 			$main,
-			$settings,
 			$process_all_posts,
 			$process_all_terms,
 			$admin_notices
@@ -288,31 +295,32 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 
 		$args = $defaults;
 
-		\WP_Mock::userFunction( 'get_post_types' )->with( [ 'public' => true ] )->andReturn( $post_types );
+		WP_Mock::userFunction( 'get_post_types' )->with( [ 'public' => true ] )->andReturn( $post_types );
 
-		\WP_Mock::userFunction( 'wp_parse_args' )->with( [], $defaults )->andReturn( $args );
+		WP_Mock::userFunction( 'wp_parse_args' )->with( [], $defaults )->andReturn( $args );
 
 		$main->shouldReceive( 'prepare_in' )->with( $args['post_status'] )->once()->andReturn( $post_statuses_in );
 		$main->shouldReceive( 'prepare_in' )->with( $args['post_type'] )->once()->andReturn( $post_types_in );
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$wpdb                = Mockery::mock( wpdb::class );
 		$wpdb->posts         = 'wp_posts';
 		$wpdb->terms         = 'wp_terms';
 		$wpdb->term_taxonomy = 'wp_term_taxonomy';
 
-		$regexp     = $subject::PROHIBITED_CHARS_REGEX;
+		$regexp     = $subject::ALLOWED_CHARS_REGEX;
 		$post_query =
 			"SELECT ID, post_name, post_type FROM $wpdb->posts " .
-			'WHERE post_name REGEXP(%s) ' .
+			'WHERE LOWER(post_name) NOT REGEXP(%s) ' .
 			"AND ((post_status IN ($post_statuses_in) AND post_type IN ($post_types_in)) OR (post_status = 'inherit' AND post_type = 'attachment'))";
 		$term_query =
 			"SELECT t.term_id, slug, tt.taxonomy, tt.term_taxonomy_id FROM $wpdb->terms t, $wpdb->term_taxonomy tt
-					WHERE t.slug REGEXP(%s) AND tt.term_id = t.term_id";
+					WHERE LOWER(t.slug) NOT REGEXP(%s) AND tt.term_id = t.term_id";
 
-		$post_query_prepared = str_replace( '%s', "'" . $subject::PROHIBITED_CHARS_REGEX . "'", $post_query );
-		$term_query_prepared = str_replace( '%s', "'" . $subject::PROHIBITED_CHARS_REGEX . "'", $term_query );
+		$post_query_prepared = str_replace( '%s', "'" . $subject::ALLOWED_CHARS_REGEX . "'", $post_query );
+		$term_query_prepared = str_replace( '%s', "'" . $subject::ALLOWED_CHARS_REGEX . "'", $term_query );
 
-		$wpdb->shouldReceive( 'prepare' )->with( '%s', $regexp )->once()->andReturn( "'" . $subject::PROHIBITED_CHARS_REGEX . "'" );
+		$wpdb->shouldReceive( 'prepare' )->with( '%s', $regexp )->once()->andReturn( "'" . $subject::ALLOWED_CHARS_REGEX . "'" );
 		$wpdb->shouldReceive( 'prepare' )->with( $term_query, $regexp )->once()->andReturn( $term_query_prepared );
 
 		$wpdb->shouldReceive( 'get_results' )->with( $post_query_prepared )->once()->andReturn( $posts );
@@ -407,9 +415,9 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 
 		$subject->log( $message );
 		if ( $debug ) {
-			$this->assertSame( [ 'Cyr To Lat: ' . $message ], $log );
+			self::assertSame( [ 'Cyr To Lat: ' . $message ], $log );
 		} else {
-			$this->assertSame( [], $log );
+			self::assertSame( [], $log );
 		}
 	}
 
@@ -432,20 +440,15 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	 */
 	private function get_subject() {
 		$main              = Mockery::mock( Main::class );
-		$settings          = Mockery::mock( Settings::class );
 		$process_all_posts = Mockery::mock( Post_Conversion_Process::class );
 		$process_all_terms = Mockery::mock( Term_Conversion_Process::class );
 		$admin_notices     = Mockery::mock( Admin_Notices::class );
 
-		$subject = new Converter(
+		return new Converter(
 			$main,
-			$settings,
 			$process_all_posts,
 			$process_all_terms,
 			$admin_notices
 		);
-
-		return $subject;
 	}
-
 }
