@@ -90,6 +90,17 @@ class Term_Conversion_Process extends Conversion_Process {
 	 * @return string
 	 */
 	public function filter_term_locale() {
+		// Polylang filter.
+		if ( class_exists( 'Polylang' ) ) {
+			$pll_pll_get_term_language = pll_get_term_language( $this->term->term_taxonomy_id );
+			if ( false !== $pll_pll_get_term_language ) {
+				return $pll_pll_get_term_language;
+			}
+
+			return $this->locale;
+		}
+
+		// WPML filter.
 		$args = [
 			'element_type' => $this->term->taxonomy,
 			'element_id'   => $this->term->term_taxonomy_id,

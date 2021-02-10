@@ -14,6 +14,7 @@ namespace Cyr_To_Lat;
 
 use Mockery;
 use ReflectionException;
+use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
 use wpdb;
 
@@ -125,17 +126,68 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Tests filter_term_locale()
+	 * Tests filter_term_locale with Polylang
+	 *
+	 * @param false|string $pll_pll_get_term_language Polylang term language.
+	 * @param string       $locale                    Site locale.
+	 * @param string       $expected                  Expected results.
+	 *
+	 * @dataProvider dp_test_filter_term_locale_with_polylang
+	 * @throws ReflectionException Reflection exception.
+	 */
+	public function test_filter_term_locale_with_polylang( $pll_pll_get_term_language, $locale, $expected ) {
+		$term = (object) [
+			'taxonomy'         => 'category',
+			'term_taxonomy_id' => 5,
+		];
+
+		WP_Mock::userFunction(
+			'get_locale',
+			[
+				'return' => $locale,
+			]
+		);
+
+		FunctionMocker::replace(
+			'class_exists',
+			function ( $class ) {
+				return 'Polylang' === $class;
+			}
+		);
+
+		WP_Mock::userFunction( 'pll_get_term_language' )->with( $term->term_taxonomy_id )
+		       ->andReturn( $pll_pll_get_term_language );
+
+		$main    = Mockery::mock( Main::class );
+		$subject = new Term_Conversion_Process( $main );
+		$this->set_protected_property( $subject, 'term', $term );
+		self::assertSame( $expected, $subject->filter_term_locale() );
+	}
+
+	/**
+	 * Data provider for test_filter_term_locale_with_polylang()
+	 *
+	 * @return array
+	 */
+	public function dp_test_filter_term_locale_with_polylang() {
+		return [
+			[ false, 'en_US', 'en_US' ],
+			[ 'ru', 'en_US', 'ru' ],
+		];
+	}
+
+	/**
+	 * Tests filter_term_locale() with WPML
 	 *
 	 * @param array  $wpml_element_language_details Element language details.
-	 * @param array  $wpml_active_languages         Activa languages.
+	 * @param array  $wpml_active_languages         Active languages.
 	 * @param string $locale                        Site locale.
 	 * @param string $expected                      Expected result.
 	 *
-	 * @dataProvider dp_test_filter_term_locale
+	 * @dataProvider dp_test_filter_term_locale_with_wpml
 	 * @throws ReflectionException Reflection exception.
 	 */
-	public function test_filter_term_locale( $wpml_element_language_details, $wpml_active_languages, $locale, $expected ) {
+	public function test_filter_term_locale_with_wpml( $wpml_element_language_details, $wpml_active_languages, $locale, $expected ) {
 		$term = (object) [
 			'taxonomy'         => 'category',
 			'term_taxonomy_id' => 5,
@@ -166,11 +218,11 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Data provider for test_filter_term_locale()
+	 * Data provider for test_filter_term_locale_with_wpml()
 	 *
 	 * @return array
 	 */
-	public function dp_test_filter_term_locale() {
+	public function dp_test_filter_term_locale_with_wpml() {
 		return [
 			[ null, null, 'ru_RU', 'ru_RU' ],
 			[ (object) [], null, 'ru_RU', 'ru_RU' ],

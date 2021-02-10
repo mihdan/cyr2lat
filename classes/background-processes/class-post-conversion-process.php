@@ -204,6 +204,7 @@ class Post_Conversion_Process extends Conversion_Process {
 	 * @return string
 	 */
 	public function filter_post_locale() {
+		// This is common filter for WPML and Polylang, since Polylang supports wpml_post_language_details filter.
 		$wpml_post_language_details = apply_filters( 'wpml_post_language_details', false, $this->post->ID );
 
 		return isset( $wpml_post_language_details['locale'] ) ? $wpml_post_language_details['locale'] : $this->locale;

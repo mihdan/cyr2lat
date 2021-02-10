@@ -308,19 +308,19 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$wpdb->terms         = 'wp_terms';
 		$wpdb->term_taxonomy = 'wp_term_taxonomy';
 
-		$regexp     = $subject::PROHIBITED_CHARS_REGEX;
+		$regexp     = $subject::ALLOWED_CHARS_REGEX;
 		$post_query =
 			"SELECT ID, post_name, post_type FROM $wpdb->posts " .
-			'WHERE post_name REGEXP(%s) ' .
+			'WHERE LOWER(post_name) NOT REGEXP(%s) ' .
 			"AND ((post_status IN ($post_statuses_in) AND post_type IN ($post_types_in)) OR (post_status = 'inherit' AND post_type = 'attachment'))";
 		$term_query =
 			"SELECT t.term_id, slug, tt.taxonomy, tt.term_taxonomy_id FROM $wpdb->terms t, $wpdb->term_taxonomy tt
-					WHERE t.slug REGEXP(%s) AND tt.term_id = t.term_id";
+					WHERE LOWER(t.slug) NOT REGEXP(%s) AND tt.term_id = t.term_id";
 
-		$post_query_prepared = str_replace( '%s', "'" . $subject::PROHIBITED_CHARS_REGEX . "'", $post_query );
-		$term_query_prepared = str_replace( '%s', "'" . $subject::PROHIBITED_CHARS_REGEX . "'", $term_query );
+		$post_query_prepared = str_replace( '%s', "'" . $subject::ALLOWED_CHARS_REGEX . "'", $post_query );
+		$term_query_prepared = str_replace( '%s', "'" . $subject::ALLOWED_CHARS_REGEX . "'", $term_query );
 
-		$wpdb->shouldReceive( 'prepare' )->with( '%s', $regexp )->once()->andReturn( "'" . $subject::PROHIBITED_CHARS_REGEX . "'" );
+		$wpdb->shouldReceive( 'prepare' )->with( '%s', $regexp )->once()->andReturn( "'" . $subject::ALLOWED_CHARS_REGEX . "'" );
 		$wpdb->shouldReceive( 'prepare' )->with( $term_query, $regexp )->once()->andReturn( $term_query_prepared );
 
 		$wpdb->shouldReceive( 'get_results' )->with( $post_query_prepared )->once()->andReturn( $posts );
