@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
 Tested up to: 5.6
-Stable tag: 4.5.2
+Stable tag: 4.6.0
 Requires PHP: 5.6.20
 
 Converts Cyrillic characters in post, page and term slugs to Latin characters.
@@ -99,7 +99,8 @@ Yes you can!
 
 == Changelog ==
 
-= 4.6.0 (08.02.2020) =
+= 4.6.0 (10.02.2020) =
+* Add compatibility with Polylang
 * Add confirmation popup before mass conversion of slugs
 * Improve selection of posts and tags for conversion to avoid selection of excessive items for mass conversion
 * Fix bug with redirection from the old slug to a new one after background slug conversion

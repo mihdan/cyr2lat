@@ -1,4 +1,5 @@
-## 4.6.0 (08.02.2020) =
+## 4.6.0 (10.02.2020) =
+* Add compatibility with Polylang
 * Add confirmation popup before mass conversion of slugs
 * Improve selection of posts and tags for conversion to avoid selection of excessive items for mass conversion
 * Fix bug with redirection from the old slug to a new one after background slug conversion
