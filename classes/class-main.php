@@ -400,37 +400,81 @@ class Main {
 			return $this->pll_locale;
 		}
 
-		if ( defined( 'REST_REQUEST' ) && constant( 'REST_REQUEST' ) ) {
-			$rest_server = rest_get_server();
-			$data        = json_decode( $rest_server::get_raw_data(), false );
-			if ( isset( $data->lang ) ) {
-				$this->pll_locale = $data->lang;
-
-				return $this->pll_locale;
-			}
-
+		$rest_locale = $this->pll_locale_filter_with_rest();
+		if ( false === $rest_locale ) {
 			return $locale;
+		}
+		if ( $rest_locale ) {
+			$this->pll_locale = $rest_locale;
+
+			return $this->pll_locale;
 		}
 
 		if ( ! is_admin() ) {
 			return $locale;
 		}
 
+		$pll_get_post_language = $this->pll_locale_filter_with_classic_editor();
+		if ( $pll_get_post_language ) {
+			$this->pll_locale = $pll_get_post_language;
+
+			return $this->pll_locale;
+		}
+
+		$pll_get_term_language = $this->pll_locale_filter_with_term();
+		if ( $pll_get_term_language ) {
+			$this->pll_locale = $pll_get_term_language;
+
+			return $this->pll_locale;
+		}
+
+		return $locale;
+	}
+
+	/**
+	 * Locale filter for Polylang with REST request.
+	 *
+	 * @return false|null|string
+	 */
+	private function pll_locale_filter_with_rest() {
+		if ( ! defined( 'REST_REQUEST' ) || ! constant( 'REST_REQUEST' ) ) {
+			return null;
+		}
+
+		$rest_server = rest_get_server();
+		$data        = json_decode( $rest_server::get_raw_data(), false );
+		if ( isset( $data->lang ) ) {
+			return $data->lang;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Locale filter for Polylang with classic editor.
+	 *
+	 * @return bool|string
+	 */
+	private function pll_locale_filter_with_classic_editor() {
+		if ( ! function_exists( 'pll_get_post_language' ) ) {
+			return false;
+		}
+
 		$pll_get_post_language = false;
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		if ( isset( $_POST['post_ID'] ) && function_exists( 'pll_get_post_language' ) ) {
+		if ( isset( $_POST['post_ID'] ) ) {
 			$pll_get_post_language = pll_get_post_language(
 				(int) filter_input( INPUT_POST, 'post_ID', FILTER_SANITIZE_STRING )
 			);
 		}
-		if ( isset( $_POST['pll_post_id'] ) && function_exists( 'pll_get_post_language' ) ) {
+		if ( isset( $_POST['pll_post_id'] ) ) {
 			$pll_get_post_language = pll_get_post_language(
 				(int) filter_input( INPUT_POST, 'pll_post_id', FILTER_SANITIZE_STRING )
 			);
 		}
-		if ( isset( $_GET['post'] ) && function_exists( 'pll_get_post_language' ) ) {
+		if ( isset( $_GET['post'] ) ) {
 			$pll_get_post_language = pll_get_post_language(
 				(int) filter_input( INPUT_GET, 'post', FILTER_SANITIZE_STRING )
 			);
@@ -438,12 +482,15 @@ class Main {
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
-		if ( false !== $pll_get_post_language ) {
-			$this->pll_locale = $pll_get_post_language;
+		return $pll_get_post_language;
+	}
 
-			return $this->pll_locale;
-		}
-
+	/**
+	 * Locale filter for Polylang with term.
+	 *
+	 * @return false|string
+	 */
+	private function pll_locale_filter_with_term() {
 		$pll_get_term_language = false;
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
@@ -458,13 +505,7 @@ class Main {
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
-		if ( false !== $pll_get_term_language ) {
-			$this->pll_locale = $pll_get_term_language;
-
-			return $this->pll_locale;
-		}
-
-		return $locale;
+		return $pll_get_term_language;
 	}
 
 	/**
