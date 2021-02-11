@@ -1,3 +1,6 @@
+## 4.6.2 (11.02.2021) =
+* Fix bug with non-existing function PLL().
+
 ## 4.6.1 (10.02.2021) =
 * Fix bug with Polylang
 
