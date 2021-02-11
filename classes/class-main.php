@@ -491,6 +491,10 @@ class Main {
 	 * @return false|string
 	 */
 	private function pll_locale_filter_with_term() {
+		if ( ! function_exists( 'PLL' ) ) {
+			return false;
+		}
+
 		$pll_get_term_language = false;
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
