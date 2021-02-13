@@ -7,7 +7,6 @@
 /.editorconfig
 /.gitignore
 /.phpcs.cache
-/.travis.yml
 /CHANGELOG.md
 /README.md
 /composer.json

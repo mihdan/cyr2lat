@@ -444,14 +444,20 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @return array
 	 */
 	public function dp_test_transliterate() {
+		$bad_multibyte_content = pack( 'C*', ...array_slice( unpack( 'C*', 'я' ), 1 ) );
+
 		return [
-			'empty string'  => [
+			'empty string'          => [
 				'',
 				'',
 			],
-			'default table' => [
+			'default table'         => [
 				'АБВГДЕЁЖЗИЙІКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯѢѲѴабвгдеёжзийіклмнопрстуфхцчшщъыьэюяѣѳѵ',
 				'ABVGDEYOZHZIJIKLMNOPRSTUFHCZCHSHSHHYEYUYAYEFHYHabvgdeyozhzijiklmnoprstufhczchshshhyeyuyayefhyh',
+			],
+			'bad multibyte content' => [
+				$bad_multibyte_content,
+				$bad_multibyte_content,
 			],
 		];
 	}
