@@ -258,12 +258,13 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test convert_existing_slugs()
 	 *
-	 * @param array $posts Posts to convert.
-	 * @param array $terms Terms to convert.
+	 * @param array $posts              Posts to convert.
+	 * @param array $terms              Terms to convert.
+	 * @param bool  $include_attachment Include attachment as post type.
 	 *
 	 * @dataProvider dp_test_convert_existing_slugs
 	 */
-	public function test_convert_existing_slugs( $posts, $terms ) {
+	public function test_convert_existing_slugs( $posts, $terms, $include_attachment ) {
 		global $wpdb;
 
 		$main              = Mockery::mock( Main::class );
@@ -278,12 +279,20 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 			$admin_notices
 		);
 
-		$post_types    = [
-			'post'       => 'post',
-			'page'       => 'page',
-			'attachment' => 'attachment',
-		];
-		$post_types_in = "'post', 'page', 'attachment'";
+		if ( $include_attachment ) {
+			$post_types    = [
+				'post'       => 'post',
+				'page'       => 'page',
+				'attachment' => 'attachment',
+			];
+			$post_types_in = "'post', 'page', 'attachment'";
+		} else {
+			$post_types    = [
+				'post' => 'post',
+				'page' => 'page',
+			];
+			$post_types_in = "'post', 'page'";
+		}
 
 		$post_statuses    = [ 'publish', 'future', 'private' ];
 		$post_statuses_in = "'publish', 'future', 'private'";
@@ -308,11 +317,20 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$wpdb->terms         = 'wp_terms';
 		$wpdb->term_taxonomy = 'wp_term_taxonomy';
 
-		$regexp     = $subject::ALLOWED_CHARS_REGEX;
-		$post_query =
-			"SELECT ID, post_name, post_type FROM $wpdb->posts " .
-			'WHERE LOWER(post_name) NOT REGEXP(%s) ' .
-			"AND ((post_status IN ($post_statuses_in) AND post_type IN ($post_types_in)) OR (post_status = 'inherit' AND post_type = 'attachment'))";
+		$regexp = $subject::ALLOWED_CHARS_REGEX;
+
+		if ( $include_attachment ) {
+			$post_query =
+				"SELECT ID, post_name, post_type FROM $wpdb->posts " .
+				'WHERE LOWER(post_name) NOT REGEXP(%s) ' .
+				"AND ((post_status IN ($post_statuses_in) AND post_type IN ($post_types_in)) OR (post_status = 'inherit' AND post_type = 'attachment'))";
+		} else {
+			$post_query =
+				"SELECT ID, post_name, post_type FROM $wpdb->posts " .
+				'WHERE LOWER(post_name) NOT REGEXP(%s) ' .
+				"AND (post_status IN ($post_statuses_in) AND post_type IN ($post_types_in))";
+		}
+
 		$term_query =
 			"SELECT t.term_id, slug, tt.taxonomy, tt.term_taxonomy_id FROM $wpdb->terms t, $wpdb->term_taxonomy tt
 					WHERE LOWER(t.slug) NOT REGEXP(%s) AND tt.term_id = t.term_id";
@@ -366,8 +384,9 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_convert_existing_slugs() {
 		return [
-			[ null, null ],
-			[ [ 'post1', 'post2' ], [ 'term1', 'term2' ] ],
+			[ null, null, true ],
+			[ [ 'post1', 'post2' ], [ 'term1', 'term2' ], true ],
+			[ [ 'post1', 'post2' ], [ 'term1', 'term2' ], false ],
 		];
 	}
 
