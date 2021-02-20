@@ -52,6 +52,7 @@ function my_ctl_table( $table ) {
 
    return $table;
 }
+
 add_filter( 'ctl_table', 'my_ctl_table' );
 `
 
@@ -75,12 +76,86 @@ function my_ctl_table( $table ) {
 
 	return $table;
 }
+
 add_filter( 'ctl_table', 'my_ctl_table' );
 `
 
-= How can I convert a large number of posts/terms using wp-cli? =
+= How can I define own transliteration of titles? =
 
-Use the following command in console:
+Add similar code to your theme's `functions.php` file:
+
+`
+/**
+* Filter title before sanitizing.
+*
+* @param string|false $result Sanitized title.
+* @param string       $title  Title.
+*
+* @return string|false
+*/
+function my_ctl_pre_sanitize_title( $result, $title ) {
+	if ( 'пиво' === $title ) {
+		return 'beer';
+	}
+
+	return $result;
+}
+
+add_filter( 'ctl_pre_sanitize_title', 10, 2 );
+`
+
+= How can I define own transliteration of filenames? =
+
+Add similar code to your theme's `functions.php` file:
+
+`
+/**
+* Filter filename before sanitizing.
+*
+* @param string|false $result   Sanitized filename.
+* @param string       $filename Title.
+*
+* @return string|false
+*/
+function my_ctl_pre_sanitize_filename( $result, $filename ) {
+	if ( 'пиво' === $filename ) {
+		return 'beer';
+	}
+
+	return $result;
+}
+
+add_filter( 'ctl_pre_sanitize_filename', 10, 2 );
+`
+
+= How can I limit post types for background conversion? =
+
+Add similar code to your theme's `functions.php` file:
+
+`
+/**
+* Filter post types allowed for background conversion.
+*
+* @param array $post_types Allowed post types.
+*
+* @return array
+*/
+function my_ctl_post_types( $post_types ) {
+	return [
+	'post'          => 'post',
+	'page'          => 'page',
+	'attachment'    => 'attachment',
+	'product'       => 'product',
+	'nav_menu_item' => 'nav_menu_item',
+	];
+}
+
+add_filter( 'ctl_post_types', 'my_ctl_post_types' );
+`
+
+= How can I convert many posts/terms using wp-cli? =
+
+Use the following command in the console:
 
 `
 wp cyr2lat regenerate [--post_type=<post_type>] [--post_status=<post_status>]
