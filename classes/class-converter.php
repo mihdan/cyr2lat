@@ -187,13 +187,16 @@ class Converter {
 
 		$regexp = $wpdb->prepare( '%s', self::ALLOWED_CHARS_REGEX );
 
-		$post_sql      =
+		$post_sql =
 			'post_status IN (' . $this->main->prepare_in( $parsed_args['post_status'] ) . ')' .
 			' AND post_type IN (' . $this->main->prepare_in( $parsed_args['post_type'] ) . ')';
-		$media_sql     = "post_status = 'inherit' AND post_type = 'attachment'";
-		$all_posts_sql = '(' . $post_sql . ') OR (' . $media_sql . ')';
 
-		$sql = "SELECT ID, post_name, post_type FROM $wpdb->posts WHERE LOWER(post_name) NOT REGEXP($regexp) AND ($all_posts_sql)";
+		if ( isset( $parsed_args['post_type']['attachment'] ) ) {
+			$media_sql = "post_status = 'inherit' AND post_type = 'attachment'";
+			$post_sql  = '(' . $post_sql . ') OR (' . $media_sql . ')';
+		}
+
+		$sql = "SELECT ID, post_name, post_type FROM $wpdb->posts WHERE LOWER(post_name) NOT REGEXP($regexp) AND ($post_sql)";
 
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
@@ -232,7 +235,7 @@ class Converter {
 		$terms = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT t.term_id, slug, tt.taxonomy, tt.term_taxonomy_id FROM $wpdb->terms t, $wpdb->term_taxonomy tt
-					WHERE LOWER(t.slug) NOT REGEXP(%s) AND tt.term_id = t.term_id",
+					WHERE LOWER(t.slug) NOT REGEXP(%s) AND tt.taxonomy NOT REGEXP ('^pa_.*$') AND tt.term_id = t.term_id",
 				self::ALLOWED_CHARS_REGEX
 			)
 		);

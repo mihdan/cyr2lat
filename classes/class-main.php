@@ -196,6 +196,8 @@ class Main {
 			return false;
 		}
 
+		$title = str_replace( 'pa_', '', $title );
+
 		$attribute_taxonomies = wc_get_attribute_taxonomies();
 
 		foreach ( $attribute_taxonomies as $attribute_taxonomy ) {

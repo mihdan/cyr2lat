@@ -416,10 +416,11 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		];
 
 		return [
-			'no wc'             => [ 'color', false, null, 1 ],
-			'no attr taxes'     => [ 'color', true, [], 1 ],
-			'not in attr taxes' => [ 'color', true, $attribute_taxonomies, 1 ],
-			'in attr taxes'     => [ 'цвет', true, $attribute_taxonomies, 0 ],
+			'no wc'                  => [ 'color', false, null, 1 ],
+			'no attr taxes'          => [ 'color', true, [], 1 ],
+			'not in attr taxes'      => [ 'color', true, $attribute_taxonomies, 1 ],
+			'in attr taxes'          => [ 'цвет', true, $attribute_taxonomies, 0 ],
+			'in attr taxes with pa_' => [ 'pa_цвет', true, $attribute_taxonomies, 0 ],
 		];
 	}
 
@@ -567,7 +568,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Data provider for test_sanitize_title
+	 * Data provider for test_sanitize_filename
 	 *
 	 * @return array
 	 */
