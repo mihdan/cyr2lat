@@ -235,7 +235,7 @@ class Converter {
 		$terms = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT t.term_id, slug, tt.taxonomy, tt.term_taxonomy_id FROM $wpdb->terms t, $wpdb->term_taxonomy tt
-					WHERE LOWER(t.slug) NOT REGEXP(%s) AND tt.term_id = t.term_id",
+					WHERE LOWER(t.slug) NOT REGEXP(%s) AND tt.taxonomy NOT REGEXP ('^pa_.*$') AND tt.term_id = t.term_id",
 				self::ALLOWED_CHARS_REGEX
 			)
 		);
