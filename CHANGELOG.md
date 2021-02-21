@@ -1,10 +1,14 @@
-## 4.6.2 (11.02.2021) =
+## 4.6.3 (21.02.2021)
+* Fix bug with attachment post type filtered by 'ctl_post_types'
+* Fix bug with background conversion of product attribute terms
+
+## 4.6.2 (11.02.2021)
 * Fix bug with non-existing function PLL().
 
-## 4.6.1 (10.02.2021) =
+## 4.6.1 (10.02.2021)
 * Fix bug with Polylang
 
-## 4.6.0 (10.02.2021) =
+## 4.6.0 (10.02.2021)
 * Add compatibility with Polylang
 * Add confirmation popup before mass conversion of slugs
 * Improve selection of posts and tags for conversion to avoid selection of excessive items for mass conversion

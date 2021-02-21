@@ -174,6 +174,10 @@ Yes you can!
 
 == Changelog ==
 
+= 4.6.3 (21.02.2021) =
+* Fix bug with attachment post type filtered by 'ctl_post_types'
+* Fix bug with background conversion of product attribute terms
+
 = 4.6.2 (11.02.2021) =
 * Fix bug with non-existing function PLL().
 

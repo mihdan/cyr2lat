@@ -333,7 +333,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 
 		$term_query =
 			"SELECT t.term_id, slug, tt.taxonomy, tt.term_taxonomy_id FROM $wpdb->terms t, $wpdb->term_taxonomy tt
-					WHERE LOWER(t.slug) NOT REGEXP(%s) AND tt.term_id = t.term_id";
+					WHERE LOWER(t.slug) NOT REGEXP(%s) AND tt.taxonomy NOT REGEXP ('^pa_.*$') AND tt.term_id = t.term_id";
 
 		$post_query_prepared = str_replace( '%s', "'" . $subject::ALLOWED_CHARS_REGEX . "'", $post_query );
 		$term_query_prepared = str_replace( '%s', "'" . $subject::ALLOWED_CHARS_REGEX . "'", $term_query );
