@@ -1,4 +1,4 @@
-import Settings from '../../js/settings/settings.js';
+import Settings from '../../../src/js/settings/settings.js';
 
 function getTables() {
 	return `

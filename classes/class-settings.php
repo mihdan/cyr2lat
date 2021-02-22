@@ -668,7 +668,7 @@ class Settings {
 
 		wp_enqueue_style(
 			self::HANDLE,
-			constant( 'CYR_TO_LAT_URL' ) . '/css/cyr-to-lat-admin.css',
+			constant( 'CYR_TO_LAT_URL' ) . '/assets/css/cyr-to-lat-admin.css',
 			[],
 			constant( 'CYR_TO_LAT_VERSION' )
 		);

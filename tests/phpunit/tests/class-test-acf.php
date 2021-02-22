@@ -75,7 +75,7 @@ class Test_ACF extends Cyr_To_Lat_TestCase {
 			[
 				'args'  => [
 					'cyr-to-lat-acf-field-group',
-					$this->cyr_to_lat_url . '/js/acf-field-group.js',
+					$this->cyr_to_lat_url . '/assets/js/acf-field-group.js',
 					[],
 					$this->cyr_to_lat_version,
 					true,
