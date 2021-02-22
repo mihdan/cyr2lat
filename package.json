@@ -12,7 +12,7 @@
     "verbose": true,
     "testURL": "http://domain.tld/",
     "setupFiles": [
-      "<rootDir>/tests/setupTests.js"
+      "<rootDir>/tests/js/setupTests.js"
     ],
     "testPathIgnorePatterns": [
       "/node_modules/"

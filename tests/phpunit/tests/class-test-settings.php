@@ -1351,7 +1351,7 @@ class Test_Settings extends Cyr_To_Lat_TestCase {
 
 			WP_Mock::userFunction( 'wp_enqueue_style' )->with(
 				$subject::HANDLE,
-				$this->cyr_to_lat_url . '/css/cyr-to-lat-admin.css',
+				$this->cyr_to_lat_url . '/assets/css/cyr-to-lat-admin.css',
 				[],
 				$this->cyr_to_lat_version
 			)->once();

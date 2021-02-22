@@ -44,10 +44,10 @@ const settings = ( env ) => {
 	const isProduction = 'production' === env;
 
 	return {
-		entry: [ 'cross-fetch', './js/settings/app.js' ],
+		entry: [ 'cross-fetch', './src/js/settings/app.js' ],
 		output: {
-			path: path.join( __dirname, '..', 'dist' ),
-			filename: path.join( 'js', 'settings', 'app.js' ),
+			path: path.join( __dirname, 'assets', 'js' ),
+			filename: path.join( 'settings', 'app.js' ),
 		},
 		module: webPackModule( ! isProduction ),
 		plugins: [ new ExtractTextPlugin( path.join( 'css', 'sample.css' ) ) ],

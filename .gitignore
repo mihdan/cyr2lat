@@ -1,6 +1,5 @@
-build/
+assets/js/settings/
 coverage/
-dist/
 node_modules/
 tests/**/*.cache
 vendor/
