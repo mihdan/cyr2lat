@@ -55,8 +55,6 @@ jobs:
           COVERALLS_RUN_LOCALLY: true
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
-          cd src
           yarn
           yarn run build:dev
           yarn run coveralls
-          cd ..
