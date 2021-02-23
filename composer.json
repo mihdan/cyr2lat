@@ -76,7 +76,7 @@
   },
   "autoload": {
     "classmap": [
-      "classes",
+      "src/php",
       "lib"
     ],
     "files": [
@@ -85,7 +85,7 @@
   },
   "autoload-dev": {
     "classmap": [
-      "classes",
+      "src/php",
       "tests/phpunit/classes",
       "tests/phpunit/stubs"
     ]
