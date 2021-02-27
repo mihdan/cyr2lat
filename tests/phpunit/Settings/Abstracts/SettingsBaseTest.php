@@ -174,7 +174,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 
 		if (
 			class_exists( \PHPUnit_Runner_Version::class ) &&
-			version_compare( substr( \PHPUnit_Runner_Version::id(), 0, 1 ), '5', '=' )
+			version_compare( substr( \PHPUnit_Runner_Version::id(), 0, 1 ), '7', '<' )
 		) {
 			self::assertContains(
 				'Cyr_To_Lat_Settings_Abstracts_SettingsBase',
