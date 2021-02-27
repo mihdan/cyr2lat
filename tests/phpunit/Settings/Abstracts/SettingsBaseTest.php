@@ -171,10 +171,21 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 
 		$this->set_method_accessibility( $subject, 'get_class_name' );
-		self::assertStringContainsString(
-			'Cyr_To_Lat_Settings_Abstracts_SettingsBase',
-			$subject->get_class_name()
-		);
+
+		if (
+			class_exists( \PHPUnit_Runner_Version::class ) &&
+			version_compare( substr( \PHPUnit_Runner_Version::id(), 0, 1 ), '5', '=' )
+		) {
+			self::assertContains(
+				'Cyr_To_Lat_Settings_Abstracts_SettingsBase',
+				$subject->get_class_name()
+			);
+		} else {
+			self::assertStringContainsString(
+				'Cyr_To_Lat_Settings_Abstracts_SettingsBase',
+				$subject->get_class_name()
+			);
+		}
 	}
 
 	/**
