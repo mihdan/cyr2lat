@@ -34,6 +34,11 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test main file.
 	 *
+	 * Does not work with php 5.6 due to the bug in Reflection class prior php 7.0,
+	 * and relevant problem in Patchwork.
+	 *
+	 * @requires            PHP >= 7.0
+	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 * @noinspection        PhpIncludeInspection
@@ -70,7 +75,7 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		$define = FunctionMocker::replace( 'define', null );
+		$define = FunctionMocker::replace( 'define' );
 
 		FunctionMocker::replace(
 			'constant',
