@@ -1,10 +1,10 @@
 /**
- * @file class Settings.
+ * @file class Tables.
  */
 
-/* global Cyr2LatSettingsObject */
+/* global Cyr2LatTablesObject */
 
-class Settings {
+class Tables {
 	/**
 	 * Class constructor.
 	 */
@@ -13,11 +13,6 @@ class Settings {
 		this.HEADER_SELECTOR = this.OPTIONS_FORM_SELECTOR + ' h2';
 		this.TABLE_SELECTOR = this.OPTIONS_FORM_SELECTOR + ' table';
 		this.SUBMIT_SELECTOR = this.OPTIONS_FORM_SELECTOR + ' #submit';
-		this.CONVERT_FORM_SELECTOR = '#ctl-convert-existing-slugs';
-		this.CONVERT_BUTTON_SELECTOR = '#ctl-convert-button';
-		this.CONFIRM_POPUP_SELECTOR = '#ctl-confirm-popup';
-		this.CONFIRM_OK_SELECTOR = '#ctl-confirm-ok';
-		this.CONFIRM_CANCEL_SELECTOR = '#ctl-confirm-cancel';
 		this.CURRENT_STUB_ID = 'ctl-current';
 		this.CURRENT_NAV_TAB_CLASS = 'nav-tab-current';
 		this.ACTIVE_NAV_TAB_CLASS = 'nav-tab-active';
@@ -36,18 +31,16 @@ class Settings {
 		this.optionsForm = document.querySelector( this.OPTIONS_FORM_SELECTOR );
 		this.tablesData = this.getTablesData();
 		this.submitButton = document.querySelector( this.SUBMIT_SELECTOR );
-		this.confirmPopup = document.querySelector(
-			this.CONFIRM_POPUP_SELECTOR
-		);
 
 		// Copy to class properties, otherwise eslint marks some properties of global object as unresolved.
 		this.optionsSaveSuccessMessage =
-			Cyr2LatSettingsObject.optionsSaveSuccessMessage;
+			Cyr2LatTablesObject.optionsSaveSuccessMessage;
 		this.optionsSaveErrorMessage =
-			Cyr2LatSettingsObject.optionsSaveErrorMessage;
+			Cyr2LatTablesObject.optionsSaveErrorMessage;
 
 		this.addWrapper();
 		this.addMessageLines();
+		this.moveTabs();
 		this.addEditLabelInput();
 		this.hideTables();
 		this.bindEvents();
@@ -294,6 +287,16 @@ class Settings {
 	}
 
 	/**
+	 * Make tabs the first element in the form.
+	 */
+	moveTabs() {
+		const tabs = document.querySelector( '.ctl-settings-tabs' );
+		if ( tabs ) {
+			this.optionsForm.insertBefore( tabs, this.optionsForm.firstChild );
+		}
+	}
+
+	/**
 	 * Add edit label input.
 	 */
 	addEditLabelInput() {
@@ -479,40 +482,6 @@ class Settings {
 			this.saveActiveTable();
 			return false;
 		};
-
-		document.querySelector( this.CONVERT_BUTTON_SELECTOR ).onclick = (
-			event
-		) => {
-			event.preventDefault();
-			this.confirmPopup.style.display = 'block';
-			return false;
-		};
-
-		this.confirmPopup.onclick = () => {
-			this.hideConfirmPopup();
-		};
-
-		document.querySelector( this.CONFIRM_OK_SELECTOR ).onclick = (
-			event
-		) => {
-			event.stopPropagation();
-			this.hideConfirmPopup();
-			document.querySelector( this.CONVERT_FORM_SELECTOR ).submit();
-		};
-
-		document.querySelector( this.CONFIRM_CANCEL_SELECTOR ).onclick = (
-			event
-		) => {
-			event.stopPropagation();
-			this.hideConfirmPopup();
-		};
-	}
-
-	/**
-	 * Hide confirmation popup.
-	 */
-	hideConfirmPopup() {
-		this.confirmPopup.style.display = 'none';
 	}
 
 	/**
@@ -638,4 +607,4 @@ class Settings {
 	}
 }
 
-export default Settings;
+export default Tables;

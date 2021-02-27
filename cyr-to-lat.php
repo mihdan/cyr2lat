@@ -79,14 +79,9 @@ define( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS', 1000 );
 /**
  * Init plugin on plugin load.
  */
-require_once constant( 'CYR_TO_LAT_PATH' ) . '/vendor/autoload.php';
-
-$cyr_to_lat_requirements = new Requirements();
-
-if ( ! $cyr_to_lat_requirements->are_requirements_met() ) {
-	return;
-}
+require_once 'vendor/autoload.php';
 
 global $cyr_to_lat_plugin;
 
 $cyr_to_lat_plugin = new Main();
+$cyr_to_lat_plugin->init();

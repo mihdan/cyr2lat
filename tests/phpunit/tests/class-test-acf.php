@@ -10,6 +10,7 @@
 
 namespace Cyr_To_Lat;
 
+use Cyr_To_Lat\Settings\Settings;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;

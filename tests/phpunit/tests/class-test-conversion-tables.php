@@ -13,7 +13,7 @@ namespace Cyr_To_Lat;
 /**
  * Class Test_Conversion_Tables
  *
- * @group tables
+ * @group conversion-tables
  */
 class Test_Conversion_Tables extends Cyr_To_Lat_TestCase {
 
