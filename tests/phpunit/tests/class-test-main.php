@@ -13,6 +13,7 @@
 
 namespace Cyr_To_Lat;
 
+use Cyr_To_Lat\Settings\Settings;
 use Exception;
 use Mockery;
 use ReflectionClass;
@@ -54,9 +55,18 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$classname = Main::class;
 
 		Mockery::mock( 'overload:' . Settings::class );
+		Mockery::mock( 'overload:' . Admin_Notices::class );
+
+		$requirements     = Mockery::mock( 'overload:' . Requirements::class );
+		$requirements_met = true;
+		$requirements->shouldReceive( 'are_requirements_met' )->with()->andReturnUsing(
+			function () use ( &$requirements_met ) {
+				return $requirements_met;
+			}
+		);
+
 		Mockery::mock( 'overload:' . Post_Conversion_Process::class );
 		Mockery::mock( 'overload:' . Term_Conversion_Process::class );
-		Mockery::mock( 'overload:' . Admin_Notices::class );
 		Mockery::mock( 'overload:' . Converter::class );
 		Mockery::mock( 'overload:' . WP_CLI::class );
 		Mockery::mock( 'overload:' . ACF::class );
@@ -86,13 +96,36 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
 
-		// Set expectations for constructor calls.
-		$mock->expects( self::once() )->method( 'init' );
+		// Now call the constructor.
+		$reflected_class = new ReflectionClass( $classname );
+		$constructor     = $reflected_class->getConstructor();
+		$constructor->invoke( $mock );
+
+		self::assertInstanceOf( Settings::class, $this->get_protected_property( $mock, 'settings' ) );
+		self::assertInstanceOf( Admin_Notices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
+		self::assertInstanceOf( Post_Conversion_Process::class, $this->get_protected_property( $mock, 'process_all_posts' ) );
+		self::assertInstanceOf( Term_Conversion_Process::class, $this->get_protected_property( $mock, 'process_all_terms' ) );
+		self::assertInstanceOf( Converter::class, $this->get_protected_property( $mock, 'converter' ) );
+		self::assertInstanceOf( WP_CLI::class, $this->get_protected_property( $mock, 'cli' ) );
+		self::assertInstanceOf( ACF::class, $this->get_protected_property( $mock, 'acf' ) );
+
+		$requirements_met = false;
+
+		// Get mock, without the constructor being called.
+		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
 
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );
 		$constructor     = $reflected_class->getConstructor();
 		$constructor->invoke( $mock );
+
+		self::assertInstanceOf( Settings::class, $this->get_protected_property( $mock, 'settings' ) );
+		self::assertInstanceOf( Admin_Notices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'process_all_posts' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'process_all_terms' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'converter' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'cli' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'acf' ) );
 	}
 
 	/**

@@ -975,4 +975,130 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 
 		return $table;
 	}
+
+	/**
+	 * Get test form fields.
+	 *
+	 * @param string $locale Current locale.
+	 *
+	 * @return array
+	 */
+	protected function get_test_form_fields( $locale = 'iso9' ) {
+		$form_fields = [
+			'iso9'  => [
+				'label'        => 'ISO9 Table',
+				'section'      => 'iso9_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'iso9' ],
+			],
+			'bel'   => [
+				'label'        => 'bel Table',
+				'section'      => 'bel_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'bel' ],
+			],
+			'uk'    => [
+				'label'        => 'uk Table',
+				'section'      => 'uk_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'uk' ],
+			],
+			'bg_BG' => [
+				'label'        => 'bg_BG Table',
+				'section'      => 'bg_BG_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'bg_BG' ],
+			],
+			'mk_MK' => [
+				'label'        => 'mk_MK Table',
+				'section'      => 'mk_MK_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'mk_MK' ],
+			],
+			'sr_RS' => [
+				'label'        => 'sr_RS Table',
+				'section'      => 'sr_RS_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'sr_RS' ],
+			],
+			'el'    => [
+				'label'        => 'el Table',
+				'section'      => 'el_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'el' ],
+			],
+			'hy'    => [
+				'label'        => 'hy Table',
+				'section'      => 'hy_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'hy' ],
+			],
+			'ka_GE' => [
+				'label'        => 'ka_GE Table',
+				'section'      => 'ka_GE_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'ka_GE' ],
+			],
+			'kk'    => [
+				'label'        => 'kk Table',
+				'section'      => 'kk_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'kk' ],
+			],
+			'he_IL' => [
+				'label'        => 'he_IL Table',
+				'section'      => 'he_IL_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'he_IL' ],
+			],
+			'zh_CN' => [
+				'label'        => 'zh_CN Table',
+				'section'      => 'zh_CN_section',
+				'type'         => 'table',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => [ 'zh_CN' ],
+			],
+		];
+
+		$locale = isset( $form_fields[ $locale ] ) ? $locale : 'iso9';
+
+		$form_fields[ $locale ]['label'] .= '<br>(current)';
+
+		return $form_fields;
+	}
 }

@@ -49,7 +49,7 @@ class Admin_Notices {
 	 */
 	public function show_notices() {
 		foreach ( $this->notices as $notice ) {
-			if ( ! $this->is_page_allowed( $notice ) ) {
+			if ( ! $this->is_screen_allowed( $notice ) ) {
 				continue;
 			}
 
@@ -72,17 +72,16 @@ class Admin_Notices {
 	 *
 	 * @return bool
 	 */
-	protected function is_page_allowed( $notice ) {
-		$page = isset( $notice['options']['page'] ) ? $notice['options']['page'] : null;
-		if ( ! $page ) {
+	protected function is_screen_allowed( $notice ) {
+		$screen_ids = isset( $notice['options']['screen_ids'] ) ? (array) $notice['options']['screen_ids'] : null;
+		if ( empty( $screen_ids ) ) {
 			return true;
 		}
-		$pages = (array) $page;
 
 		$current_screen = get_current_screen();
 
-		foreach ( $pages as $page ) {
-			if ( $current_screen && $page === $current_screen->id ) {
+		foreach ( $screen_ids as $screen_id ) {
+			if ( $current_screen && $screen_id === $current_screen->id ) {
 				return true;
 			}
 		}

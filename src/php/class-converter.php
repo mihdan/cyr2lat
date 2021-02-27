@@ -58,13 +58,6 @@ class Converter {
 	private $admin_notices;
 
 	/**
-	 * Option group.
-	 *
-	 * @var string
-	 */
-	private $option_group;
-
-	/**
 	 * Converter constructor.
 	 *
 	 * @param Main                    $main              Plugin main class.
@@ -74,7 +67,6 @@ class Converter {
 	 */
 	public function __construct( $main, $process_all_posts, $process_all_terms, $admin_notices ) {
 		$this->main              = $main;
-		$this->option_group      = Settings::OPTION_GROUP;
 		$this->process_all_posts = $process_all_posts;
 		$this->process_all_terms = $process_all_terms;
 		$this->admin_notices     = $admin_notices;
@@ -137,7 +129,7 @@ class Converter {
 		if ( ! isset( $_POST['ctl-convert'] ) ) {
 			return;
 		}
-		check_admin_referer( $this->option_group . '-options' );
+		check_admin_referer( Settings\Converter::NONCE );
 		$this->convert_existing_slugs();
 	}
 

@@ -7,6 +7,7 @@
 
 namespace Cyr_To_Lat;
 
+use Cyr_To_Lat\Settings\Settings;
 use WP_Filesystem_Direct;
 
 if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
@@ -15,6 +16,13 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 	 * Class Requirements
 	 */
 	class Requirements {
+
+		/**
+		 * Settings.
+		 *
+		 * @var Settings
+		 */
+		protected $settings;
 
 		/**
 		 * Admin notices.
@@ -31,27 +39,24 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		protected $wp_filesystem;
 
 		/**
-		 * Restrict notice to Cyr To Lat settings page.
+		 * Restrict notices to Cyr To Lat settings admin screens.
 		 *
 		 * @var array
 		 */
-		protected $cyr2lat_page;
+		protected $screen_ids;
 
 		/**
 		 * Requirements constructor.
 		 *
+		 * @param Settings             $settings      Settings.
 		 * @param Admin_Notices        $admin_notices Admin notices.
 		 * @param WP_Filesystem_Direct $wp_filesystem File system.
-		 *
-		 * @noinspection PhpIncludeInspection
 		 */
-		public function __construct( $admin_notices = null, $wp_filesystem = null ) {
-			$this->admin_notices = $admin_notices;
-			if ( ! $this->admin_notices ) {
-				$this->admin_notices = new Admin_Notices();
-			}
+		public function __construct( $settings, $admin_notices, $wp_filesystem = null ) {
+			$this->settings   = $settings;
+			$this->screen_ids = [ 'screen_ids' => $this->settings->screen_ids() ];
 
-			$this->cyr2lat_page = [ 'page' => Settings::SCREEN_ID ];
+			$this->admin_notices = $admin_notices;
 
 			// @codeCoverageIgnoreStart
 			if ( ! function_exists( 'WP_Filesystem' ) ) {
@@ -136,7 +141,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 					$this->admin_notices->add_notice(
 						__( 'Unable to get filesystem access.', 'cyr2lat' ),
 						'notice notice-error',
-						$this->cyr2lat_page
+						$this->screen_ids
 					);
 					$this->ask_to_increase_max_input_vars();
 
@@ -160,7 +165,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 					/* translators: 1: Wait time in seconds */
 					$message .= sprintf( __( 'Please try again in %d s.', 'cyr2lat' ), $time_left );
 
-					$this->admin_notices->add_notice( $message, 'notice notice-error', $this->cyr2lat_page );
+					$this->admin_notices->add_notice( $message, 'notice notice-error', $this->screen_ids );
 				} else {
 					$this->ask_to_increase_max_input_vars();
 				}
@@ -231,7 +236,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 			$this->admin_notices->add_notice(
 				$message,
 				'notice notice-error',
-				[ 'page' => Settings::SCREEN_ID ]
+				[ 'screen_ids' => $this->settings->screen_ids() ]
 			);
 		}
 	}

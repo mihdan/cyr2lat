@@ -9,6 +9,7 @@ namespace Cyr_To_Lat;
 
 use wpdb;
 use Exception;
+use Cyr_To_Lat\Settings\Settings;
 use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
 
 /**
@@ -76,10 +77,16 @@ class Main {
 	 * Main constructor.
 	 */
 	public function __construct() {
-		$this->settings          = new Settings();
+		$this->settings      = new Settings();
+		$this->admin_notices = new Admin_Notices();
+		$requirements        = new Requirements( $this->settings, $this->admin_notices );
+
+		if ( ! $requirements->are_requirements_met() ) {
+			return;
+		}
+
 		$this->process_all_posts = new Post_Conversion_Process( $this );
 		$this->process_all_terms = new Term_Conversion_Process( $this );
-		$this->admin_notices     = new Admin_Notices();
 		$this->converter         = new Converter(
 			$this,
 			$this->process_all_posts,
@@ -92,8 +99,6 @@ class Main {
 		}
 
 		$this->acf = new ACF( $this->settings );
-
-		$this->init();
 	}
 
 	/**
