@@ -1,7 +1,15 @@
-import Settings from '../../../src/js/settings/settings.js';
+import Tables from '../../../src/js/tables/tables.js';
 
 function getTables() {
 	return `
+<div class="ctl-settings-tabs">
+	<a class="ctl-settings-tab active" href="http://test.test/wp-admin/options-general.php?page=cyr-to-lat&tab=tables">
+		Tables
+	</a>
+	<a class="ctl-settings-tab" href="http://test.test/wp-admin/options-general.php?page=cyr-to-lat&tab=converter">
+		Converter
+	</a>
+</div>
 <form id="ctl-options" action="http://test.test/wp-admin/options.php" method="post">
     <h2>ISO9 Table</h2>
     <table class="form-table">
@@ -66,30 +74,6 @@ function getTables() {
         <input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">
     </p>
 </form>
-<form id="ctl-convert-existing-slugs" action="" method="post">
-    <input type="hidden" name="ctl-convert">
-    <input type="hidden" id="_wpnonce" name="_wpnonce" value="28715e56d8">
-    <input type="hidden" name="_wp_http_referer" value="/wp-admin/options-general.php?page=cyr-to-lat">
-    <p class="submit">
-        <input type="submit" name="ctl-convert-button" id="ctl-convert-button" class="button"
-               value="Convert Existing Slugs">
-    </p>
-</form>
-<div id="ctl-confirm-popup">
-    <div id="ctl-confirm-content">
-        <p>
-            <strong>Important:</strong>
-            This operation is irreversible. Please make sure that you have made backup copy of your database.
-        </p>
-        <p>Are you sure to continue?</p>
-        <div id="ctl-confirm-buttons">
-            <input type="button" id="ctl-confirm-ok" class="button button-primary" value="OK">
-            <button type="button" id="ctl-confirm-cancel" class="button button-secondary">
-                Cancel
-            </button>
-        </div>
-    </div>
-</div>
 `
 		.replace( /\n/g, '' )
 		.replace( />\s+</g, '><' )
@@ -132,11 +116,11 @@ beforeEach( () => {
 	global.fetch.mockClear();
 } );
 
-describe( 'Settings', () => {
+describe( 'Tables', () => {
 	test( 'Add wrapper', () => {
 		document.body.innerHTML = getTables();
 
-		new Settings();
+		new Tables();
 
 		const wrapper = document.querySelector(
 			'#ctl-options ul.nav-tab-wrapper'
@@ -147,7 +131,7 @@ describe( 'Settings', () => {
 	test( 'Add message lines', () => {
 		document.body.innerHTML = getTables();
 
-		new Settings();
+		new Tables();
 
 		const successMessage = document.querySelector(
 			'#ctl-options #ctl-success'
@@ -163,7 +147,7 @@ describe( 'Settings', () => {
 	test( 'Hide tables', () => {
 		document.body.innerHTML = getTables();
 
-		new Settings();
+		new Tables();
 
 		const tables = [ ...document.querySelectorAll( '#ctl-options table' ) ];
 		tables.map( ( table, index ) => {
@@ -196,7 +180,7 @@ describe( 'Settings', () => {
 	test( 'Click headers', () => {
 		document.body.innerHTML = getTables();
 
-		const settings = new Settings();
+		const tables = new Tables();
 
 		const headers = [
 			...document.querySelectorAll( '#ctl-options ul h2' ),
@@ -221,7 +205,7 @@ describe( 'Settings', () => {
 			} );
 		};
 
-		const spySaveActiveTable = jest.spyOn( settings, 'saveActiveTable' );
+		const spySaveActiveTable = jest.spyOn( tables, 'saveActiveTable' );
 
 		checkActive( 1 );
 
@@ -243,9 +227,9 @@ describe( 'Settings', () => {
 
 	test( 'Click submit', () => {
 		document.body.innerHTML = getTables();
-		const settings = new Settings();
+		const tables = new Tables();
 		const submit = document.querySelector( '#ctl-options #submit' );
-		const spySaveActiveTable = jest.spyOn( settings, 'saveActiveTable' );
+		const spySaveActiveTable = jest.spyOn( tables, 'saveActiveTable' );
 
 		const event = new Event( 'click' );
 		submit.dispatchEvent( event );
@@ -253,46 +237,9 @@ describe( 'Settings', () => {
 		expect( spySaveActiveTable ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	test( 'Click convert button', () => {
-		document.body.innerHTML = getTables();
-		new Settings();
-
-		window.HTMLFormElement.prototype.submit = () => {};
-		const convertForm = document.querySelector(
-			'#ctl-convert-existing-slugs'
-		);
-		const convertButton = document.querySelector( '#ctl-convert-button' );
-		const confirmPopup = document.querySelector( '#ctl-confirm-popup' );
-		const confirmOK = document.querySelector( '#ctl-confirm-ok' );
-		const confirmCancel = document.querySelector( '#ctl-confirm-cancel' );
-		const spyConvertSubmit = jest.spyOn( convertForm, 'submit' );
-
-		const event = new Event( 'click' );
-		confirmPopup.style.display = 'none';
-
-		convertButton.dispatchEvent( event );
-		expect( confirmPopup.style.display ).toBe( 'block' );
-
-		confirmPopup.dispatchEvent( event );
-		expect( confirmPopup.style.display ).toBe( 'none' );
-
-		convertButton.dispatchEvent( event );
-		expect( confirmPopup.style.display ).toBe( 'block' );
-
-		confirmCancel.dispatchEvent( event );
-		expect( confirmPopup.style.display ).toBe( 'none' );
-
-		convertButton.dispatchEvent( event );
-		expect( confirmPopup.style.display ).toBe( 'block' );
-
-		confirmOK.dispatchEvent( event );
-		expect( confirmPopup.style.display ).toBe( 'none' );
-		expect( spyConvertSubmit ).toHaveBeenCalledTimes( 1 );
-	} );
-
 	test( 'Show message', () => {
 		document.body.innerHTML = getTables();
-		const settings = new Settings();
+		const tables = new Tables();
 		const successMessage = document.querySelector(
 			'#ctl-options #ctl-success'
 		);
@@ -308,11 +255,11 @@ describe( 'Settings', () => {
 		expect( errorMessage.innerHTML ).toBe( '' );
 		expect( errorMessage.classList.contains( 'active' ) ).toBe( false );
 
-		settings.showMessage( settings.successMessage, 'Success.' );
+		tables.showMessage( tables.successMessage, 'Success.' );
 		expect( successMessage.innerHTML ).toBe( 'Success.' );
 		expect( successMessage.classList.contains( 'active' ) ).toBe( true );
 
-		settings.showMessage( settings.errorMessage, 'Error.' );
+		tables.showMessage( tables.errorMessage, 'Error.' );
 		expect( errorMessage.innerHTML ).toBe( 'Error.' );
 		expect( errorMessage.classList.contains( 'active' ) ).toBe( true );
 
@@ -328,13 +275,13 @@ describe( 'Settings', () => {
 		expect( errorMessage.innerHTML ).toBe( '' );
 
 		expect( clearTimeout ).toHaveBeenCalledTimes( 1 );
-		expect( clearTimeout ).toHaveBeenCalledWith( settings.msgTimer );
+		expect( clearTimeout ).toHaveBeenCalledWith( tables.msgTimer );
 	} );
 
 	test( 'Set submit status', () => {
 		document.body.innerHTML = getTables();
 
-		new Settings();
+		new Tables();
 
 		const submitButton = document.querySelector( '#ctl-options #submit' );
 		expect( typeof submitButton ).not.toBe( undefined );
@@ -353,10 +300,10 @@ describe( 'Settings', () => {
 
 	test( 'Do not save active table when not modified', () => {
 		document.body.innerHTML = getTables();
-		const settings = new Settings();
+		const tables = new Tables();
 		const fetch = jest.spyOn( global, 'fetch' );
 
-		settings.saveActiveTable();
+		tables.saveActiveTable();
 
 		expect( fetch ).not.toHaveBeenCalled();
 	} );
@@ -364,7 +311,7 @@ describe( 'Settings', () => {
 	test( 'Save active table', () => {
 		document.body.innerHTML = getTables();
 
-		const settings = new Settings();
+		const tables = new Tables();
 
 		const successMessage = document.querySelector(
 			'#ctl-options #ctl-success'
@@ -403,8 +350,8 @@ describe( 'Settings', () => {
 		const event = new Event( 'input' );
 		input.dispatchEvent( event );
 
-		settings.saveActiveTable().finally( () => {
-			expect( settings.isActiveTableChanged() ).toBe( false );
+		tables.saveActiveTable().finally( () => {
+			expect( tables.isActiveTableChanged() ).toBe( false );
 
 			expect( successMessage.innerHTML ).toBe( 'Options saved.' );
 			expect( successMessage.classList.contains( 'active' ) ).toBe(
@@ -424,7 +371,7 @@ describe( 'Settings', () => {
 	test( 'Save active table with error', () => {
 		document.body.innerHTML = getTables();
 
-		const settings = new Settings();
+		const tables = new Tables();
 
 		const successMessage = document.querySelector(
 			'#ctl-options #ctl-success'
@@ -463,8 +410,8 @@ describe( 'Settings', () => {
 		const event = new Event( 'input' );
 		input.dispatchEvent( event );
 
-		settings.saveActiveTable().finally( () => {
-			expect( settings.isActiveTableChanged() ).toBe( true );
+		tables.saveActiveTable().finally( () => {
+			expect( tables.isActiveTableChanged() ).toBe( true );
 
 			expect( successMessage.innerHTML ).toBe( '' );
 			expect( successMessage.classList.contains( 'active' ) ).not.toBe(
@@ -482,7 +429,7 @@ describe( 'Settings', () => {
 	test( 'Edit label', () => {
 		document.body.innerHTML = getTables();
 
-		new Settings();
+		new Tables();
 
 		const labels = [
 			...document.querySelectorAll(
@@ -508,10 +455,10 @@ describe( 'Settings', () => {
 	test( 'Add label', () => {
 		document.body.innerHTML = getTables();
 
-		const settings = new Settings();
+		const tables = new Tables();
 
-		const spyeditLabel = jest.spyOn( settings, 'editLabel' );
-		const spybindEvents = jest.spyOn( settings, 'bindEvents' );
+		const spyeditLabel = jest.spyOn( tables, 'editLabel' );
+		const spybindEvents = jest.spyOn( tables, 'bindEvents' );
 
 		const labels = [
 			...document.querySelectorAll(
@@ -549,7 +496,7 @@ describe( 'Settings', () => {
 	test( 'Hide edit label input', () => {
 		document.body.innerHTML = getTables();
 
-		const settings = new Settings();
+		const tables = new Tables();
 
 		const labels = [
 			...document.querySelectorAll(
@@ -559,7 +506,7 @@ describe( 'Settings', () => {
 		const label = labels[ 0 ];
 		label.click();
 
-		settings.hideEditLabelInput();
+		tables.hideEditLabelInput();
 
 		const editLabelInput = document.querySelector(
 			'body > #ctl-edit-label'
@@ -575,14 +522,14 @@ describe( 'Settings', () => {
 	test( 'Do NOT save label when editLabelInput is hidden', () => {
 		document.body.innerHTML = getTables();
 
-		const settings = new Settings();
+		const tables = new Tables();
 		const spyHideEditLabelInput = jest.spyOn(
-			settings,
+			tables,
 			'hideEditLabelInput'
 		);
-		const spySetSubmitStatus = jest.spyOn( settings, 'setSubmitStatus' );
+		const spySetSubmitStatus = jest.spyOn( tables, 'setSubmitStatus' );
 
-		settings.saveLabel();
+		tables.saveLabel();
 
 		expect( spyHideEditLabelInput ).not.toHaveBeenCalled();
 		expect( spySetSubmitStatus ).not.toHaveBeenCalled();
@@ -591,12 +538,12 @@ describe( 'Settings', () => {
 	test( 'Do NOT save label when editLabelInput is empty', () => {
 		document.body.innerHTML = getTables();
 
-		const settings = new Settings();
+		const tables = new Tables();
 		const spyHideEditLabelInput = jest.spyOn(
-			settings,
+			tables,
 			'hideEditLabelInput'
 		);
-		const spySetSubmitStatus = jest.spyOn( settings, 'setSubmitStatus' );
+		const spySetSubmitStatus = jest.spyOn( tables, 'setSubmitStatus' );
 
 		let labels = [
 			...document.querySelectorAll(
@@ -610,7 +557,7 @@ describe( 'Settings', () => {
 
 		editLabelInput.value = '';
 
-		settings.saveLabel();
+		tables.saveLabel();
 
 		labels = [
 			...document.querySelectorAll(
@@ -628,9 +575,9 @@ describe( 'Settings', () => {
 	test( 'Do NOT save label when cancelled', () => {
 		document.body.innerHTML = getTables();
 
-		const settings = new Settings();
+		const tables = new Tables();
 		const spyHideEditLabelInput = jest.spyOn(
-			settings,
+			tables,
 			'hideEditLabelInput'
 		);
 
@@ -642,7 +589,7 @@ describe( 'Settings', () => {
 		const label = labels[ 0 ];
 		label.click();
 
-		settings.saveLabel( true );
+		tables.saveLabel( true );
 
 		labels = [
 			...document.querySelectorAll(
@@ -658,9 +605,9 @@ describe( 'Settings', () => {
 	test( 'Do NOT save label when label not changed', () => {
 		document.body.innerHTML = getTables();
 
-		const settings = new Settings();
+		const tables = new Tables();
 		const spyHideEditLabelInput = jest.spyOn(
-			settings,
+			tables,
 			'hideEditLabelInput'
 		);
 
@@ -672,7 +619,7 @@ describe( 'Settings', () => {
 		const label = labels[ 0 ];
 		label.click();
 
-		settings.saveLabel();
+		tables.saveLabel();
 
 		labels = [
 			...document.querySelectorAll(
@@ -688,7 +635,7 @@ describe( 'Settings', () => {
 	test( 'Do NOT save label when label is not unique', () => {
 		document.body.innerHTML = getTables();
 
-		const settings = new Settings();
+		const tables = new Tables();
 
 		let labels = [
 			...document.querySelectorAll(
@@ -702,7 +649,7 @@ describe( 'Settings', () => {
 
 		editLabelInput.value = 'Б';
 
-		settings.saveLabel();
+		tables.saveLabel();
 
 		labels = [
 			...document.querySelectorAll(
@@ -719,8 +666,8 @@ describe( 'Settings', () => {
 	test( 'Save label', () => {
 		document.body.innerHTML = getTables();
 
-		const settings = new Settings();
-		const spySetSubmitStatus = jest.spyOn( settings, 'setSubmitStatus' );
+		const tables = new Tables();
+		const spySetSubmitStatus = jest.spyOn( tables, 'setSubmitStatus' );
 
 		let labels = [
 			...document.querySelectorAll(
@@ -735,7 +682,7 @@ describe( 'Settings', () => {
 
 		editLabelInput.value = ' ' + newValue + '  ';
 
-		settings.saveLabel();
+		tables.saveLabel();
 
 		labels = [
 			...document.querySelectorAll(
@@ -762,8 +709,8 @@ describe( 'Settings', () => {
 	test( 'Save label on blur, escape and enter', () => {
 		document.body.innerHTML = getTables();
 
-		const settings = new Settings();
-		const spySaveLabel = jest.spyOn( settings, 'saveLabel' );
+		const tables = new Tables();
+		const spySaveLabel = jest.spyOn( tables, 'saveLabel' );
 
 		const labels = [
 			...document.querySelectorAll(
