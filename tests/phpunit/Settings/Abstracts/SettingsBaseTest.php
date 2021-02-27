@@ -173,15 +173,15 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$this->set_method_accessibility( $subject, 'get_class_name' );
 
 		if (
-			class_exists( \PHPUnit_Runner_Version::class ) &&
-			version_compare( substr( \PHPUnit_Runner_Version::id(), 0, 1 ), '7', '<' )
+			class_exists( \PHPUnit\Runner\Version::class ) &&
+			version_compare( substr( \PHPUnit\Runner\Version::id(), 0, 1 ), '7', '>=' )
 		) {
-			self::assertContains(
+			self::assertStringContainsString(
 				'Cyr_To_Lat_Settings_Abstracts_SettingsBase',
 				$subject->get_class_name()
 			);
 		} else {
-			self::assertStringContainsString(
+			self::assertContains(
 				'Cyr_To_Lat_Settings_Abstracts_SettingsBase',
 				$subject->get_class_name()
 			);
