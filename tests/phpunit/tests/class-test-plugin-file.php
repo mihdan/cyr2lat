@@ -70,7 +70,7 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		$define = FunctionMocker::replace( 'define' );
+		$define = FunctionMocker::replace( 'define', null );
 
 		FunctionMocker::replace(
 			'constant',
