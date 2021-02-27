@@ -36,11 +36,11 @@ jobs:
 
       - name: Run PHPUnit tests
         if: ${{ matrix.php-version != '7.4' }}
-        run: vendor/bin/phpunit --configuration tests/phpunit/phpunit.xml
+        run: vendor/bin/phpunit
 
       - name: Run PHPUnit tests with coverage
         if: ${{ matrix.php-version == '7.4' }}
-        run: vendor/bin/phpunit --configuration tests/phpunit/phpunit.xml --coverage-clover coverage.xml
+        run: vendor/bin/phpunit --coverage-clover coverage.xml
 
       - name: Run Coveralls for PHPUnit tests
         if: ${{ matrix.php-version == '7.4' }}
