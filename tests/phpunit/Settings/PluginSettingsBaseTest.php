@@ -22,7 +22,7 @@ class PluginSettingsBaseTest extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test plugin_basename().
 	 */
-	public function test_plugin_basename(): void {
+	public function test_plugin_basename() {
 		$plugin_file      = '/var/www/wp-content/plugins/cyr2lat/cyr-to-lat.php';
 		$plugin_base_name = 'cyr2lat/cur-to-lat.php';
 
@@ -39,7 +39,7 @@ class PluginSettingsBaseTest extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test plugin_url().
 	 */
-	public function test_plugin_url(): void {
+	public function test_plugin_url() {
 		$plugin_url = 'http://test.test/wp-content/plugins/cyr2lat';
 
 		$subject = \Mockery::mock( PluginSettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
@@ -53,7 +53,7 @@ class PluginSettingsBaseTest extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test plugin_version().
 	 */
-	public function test_plugin_version(): void {
+	public function test_plugin_version() {
 		$plugin_version = '1.0.0';
 
 		$subject = \Mockery::mock( PluginSettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
@@ -67,7 +67,7 @@ class PluginSettingsBaseTest extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test settings_link_label().
 	 */
-	public function test_settings_link_label(): void {
+	public function test_settings_link_label() {
 		$subject = \Mockery::mock( PluginSettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( 'View Cyr To Lat settings', $subject->settings_link_label() );
@@ -76,7 +76,7 @@ class PluginSettingsBaseTest extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test settings_link_text().
 	 */
-	public function test_settings_link_text(): void {
+	public function test_settings_link_text() {
 		$subject = \Mockery::mock( PluginSettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( 'Settings', $subject->settings_link_text() );
@@ -85,7 +85,7 @@ class PluginSettingsBaseTest extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test text_domain().
 	 */
-	public function test_text_domain(): void {
+	public function test_text_domain() {
 		$subject = \Mockery::mock( PluginSettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( 'cyr2lat', $subject->text_domain() );

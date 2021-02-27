@@ -218,7 +218,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'constant',
-			function ( string $name ) use ( $plugin_url, $plugin_version ): string {
+			function ( string $name ) use ( $plugin_url, $plugin_version ) {
 				if ( 'CYR_TO_LAT_URL' === $name ) {
 					return $plugin_url;
 				}
