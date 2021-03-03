@@ -8,9 +8,9 @@
  * Author: Sergey Biryukov, Mikhail Kobzarev, Igor Gergel
  * Author URI: https://profiles.wordpress.org/sergeybiryukov/
  * Requires at least: 5.1
- * Tested up to: 5.6
- * Version: 4.6.3
- * Stable tag: 4.6.3
+ * Tested up to: 5.7
+ * Version: 4.6.4
+ * Stable tag: 4.6.4
  *
  * Text Domain: cyr2lat
  * Domain Path: /languages/
@@ -34,7 +34,7 @@ if ( defined( 'CYR_TO_LAT_VERSION' ) ) {
 /**
  * Plugin version.
  */
-define( 'CYR_TO_LAT_VERSION', '4.6.3' );
+define( 'CYR_TO_LAT_VERSION', '4.6.4' );
 
 /**
  * Path to the plugin dir.

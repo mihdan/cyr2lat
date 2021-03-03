@@ -1,3 +1,6 @@
+## 4.6.4 (03.03.2021)
+* Tested up to WordPress 5.7
+
 ## 4.6.3 (21.02.2021)
 * Fix bug with attachment post type filtered by 'ctl_post_types'
 * Fix bug with background conversion of product attribute terms
