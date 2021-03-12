@@ -473,17 +473,20 @@ class Main {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_POST['post_ID'] ) ) {
 			$pll_get_post_language = pll_get_post_language(
-				(int) filter_input( INPUT_POST, 'post_ID', FILTER_SANITIZE_STRING )
+				(int) filter_input( INPUT_POST, 'post_ID', FILTER_SANITIZE_STRING ),
+				'locale'
 			);
 		}
 		if ( isset( $_POST['pll_post_id'] ) ) {
 			$pll_get_post_language = pll_get_post_language(
-				(int) filter_input( INPUT_POST, 'pll_post_id', FILTER_SANITIZE_STRING )
+				(int) filter_input( INPUT_POST, 'pll_post_id', FILTER_SANITIZE_STRING ),
+				'locale'
 			);
 		}
 		if ( isset( $_GET['post'] ) ) {
 			$pll_get_post_language = pll_get_post_language(
-				(int) filter_input( INPUT_GET, 'post', FILTER_SANITIZE_STRING )
+				(int) filter_input( INPUT_GET, 'post', FILTER_SANITIZE_STRING ),
+				'locale'
 			);
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
@@ -511,7 +514,7 @@ class Main {
 			);
 
 			if ( $pll_get_language ) {
-				$pll_get_term_language = $pll_get_language->slug;
+				$pll_get_term_language = $pll_get_language->locale;
 			}
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Missing

@@ -871,7 +871,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		self::assertSame( $locale, $subject->pll_locale_filter( $locale ) );
 
-		WP_Mock::userFunction( 'pll_get_post_language' )->with( $post_id )->andReturn( $pll_locale );
+		WP_Mock::userFunction( 'pll_get_post_language' )->with( $post_id, 'locale' )->andReturn( $pll_locale );
 
 		FunctionMocker::replace(
 			'filter_input',
@@ -911,7 +911,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		self::assertSame( $locale, $subject->pll_locale_filter( $locale ) );
 
-		WP_Mock::userFunction( 'pll_get_post_language' )->with( $post_id )->andReturn( $pll_locale );
+		WP_Mock::userFunction( 'pll_get_post_language' )->with( $post_id, 'locale' )->andReturn( $pll_locale );
 
 		FunctionMocker::replace(
 			'filter_input',
@@ -951,7 +951,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		self::assertSame( $locale, $subject->pll_locale_filter( $locale ) );
 
-		WP_Mock::userFunction( 'pll_get_post_language' )->with( $post_id )->andReturn( $pll_locale );
+		WP_Mock::userFunction( 'pll_get_post_language' )->with( $post_id, 'locale' )->andReturn( $pll_locale );
 
 		FunctionMocker::replace(
 			'filter_input',
@@ -989,8 +989,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
 
-		$pll_get_language       = Mockery::mock( PLL_Language::class );
-		$pll_get_language->slug = $pll_locale;
+		$pll_get_language         = Mockery::mock( PLL_Language::class );
+		$pll_get_language->locale = $pll_locale;
 
 		$model = Mockery::mock( PLL_Model::class );
 		$model->shouldReceive( 'get_language' )->with( $term_lang_choice )->andReturn( $pll_get_language );
