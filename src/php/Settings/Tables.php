@@ -199,7 +199,7 @@ class Tables extends PluginSettingsBase {
 			<h2 id="title">
 				<?php
 				// Admin panel title.
-				echo( esc_html( __( 'Cyr To Lat Plugin Options', 'cyr2lat' ) ) );
+				esc_html_e( 'Cyr To Lat Plugin Options', 'cyr2lat' );
 				?>
 			</h2>
 
@@ -213,7 +213,7 @@ class Tables extends PluginSettingsBase {
 
 			<div id="appreciation">
 				<h2>
-					<?php echo esc_html( __( 'Your appreciation', 'cyr2lat' ) ); ?>
+					<?php echo esc_html( __( 'Your Appreciation', 'cyr2lat' ) ); ?>
 				</h2>
 				<a
 					target="_blank"
@@ -268,5 +268,19 @@ class Tables extends PluginSettingsBase {
 			[],
 			constant( 'CYR_TO_LAT_VERSION' )
 		);
+	}
+
+	/**
+	 * Setup settings sections.
+	 */
+	public function setup_sections() {
+		foreach ( $this->form_fields as $form_field ) {
+			add_settings_section(
+				$form_field['section'],
+				$form_field['label'],
+				[ $this, 'section_callback' ],
+				$this->option_page()
+			);
+		}
 	}
 }

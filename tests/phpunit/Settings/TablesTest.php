@@ -224,7 +224,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 
 			<div id="appreciation">
 				<h2>
-					Your appreciation				</h2>
+					Your Appreciation				</h2>
 				<a
 					target="_blank"
 					href="https://wordpress.org/support/view/plugin-reviews/cyr2lat?rate=5#postform">
@@ -329,5 +329,34 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 		\WP_Mock::userFunction( 'wp_enqueue_style' )->never();
 
 		$subject->admin_enqueue_scripts();
+	}
+
+	/**
+	 * Test setup_sections().
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_setup_sections() {
+		$tab_option_page = 'cyr-to-lat';
+
+		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'option_page' )->andReturn( $tab_option_page );
+
+		$form_fields = $this->get_test_form_fields();
+
+		$this->set_protected_property( $subject, 'form_fields', $form_fields );
+
+		foreach ( $form_fields as $form_field ) {
+			WP_Mock::userFunction( 'add_settings_section' )
+			       ->with(
+				       $form_field['section'],
+				       $form_field['label'],
+				       [ $subject, 'section_callback' ],
+				       $tab_option_page
+			       )
+			       ->once();
+		}
+
+		$subject->setup_sections();
 	}
 }

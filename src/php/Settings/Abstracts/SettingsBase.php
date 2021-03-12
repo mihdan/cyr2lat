@@ -379,9 +379,10 @@ abstract class SettingsBase {
 		$tab = $this->get_active_tab();
 
 		foreach ( $this->form_fields as $form_field ) {
+			$title = isset( $form_field['title'] ) ? $form_field['title'] : '';
 			add_settings_section(
 				$form_field['section'],
-				$form_field['label'],
+				$title,
 				[ $tab, 'section_callback' ],
 				$tab->option_page()
 			);

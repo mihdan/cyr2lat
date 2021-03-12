@@ -100,7 +100,56 @@ class Converter extends PluginSettingsBase {
 	 * Init form fields.
 	 */
 	public function init_form_fields() {
+		$default_post_types = [ 'post', 'page', 'nav_menu_item' ];
+
+		$post_types = get_post_types( [ 'public' => true ] );
+
+		$post_types += [ 'nav_menu_item' => 'nav_menu_item' ];
+
+		$filtered_post_types = apply_filters( 'ctl_post_types', $post_types );
+
 		$this->form_fields = [];
+
+		foreach ( $post_types as $post_type ) {
+			if ( in_array( $post_type, $filtered_post_types, true ) ) {
+				$default  = in_array( $post_type, $default_post_types, true ) ? 'yes' : 'no';
+				$disabled = 'no';
+			} else {
+				$default  = 'no';
+				$disabled = 'yes';
+			}
+
+			$this->form_fields[ 'background_' . $post_type ] = [
+				'label'        => $post_type,
+				'section'      => 'post_type_section',
+				'title'        => __( 'Post Types for Background Conversion', 'cyr2lat' ),
+				'type'         => 'checkbox',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => $default,
+				'disabled'     => $disabled,
+			];
+		}
+
+		$default_post_statuses = [ 'publish', 'future', 'private' ];
+
+		$post_statuses = [ 'publish', 'future', 'private', 'draft', 'pending' ];
+
+		foreach ( $post_statuses as $post_status ) {
+			$default = in_array( $post_status, $default_post_statuses, true ) ? 'yes' : 'no';
+
+			$this->form_fields[ 'background_' . $post_status ] = [
+				'label'        => $post_status,
+				'section'      => 'post_statuses_section',
+				'title'        => __( 'Post Statuses for Background Conversion', 'cyr2lat' ),
+				'type'         => 'checkbox',
+				'placeholder'  => '',
+				'helper'       => '',
+				'supplemental' => '',
+				'default'      => $default,
+			];
+		}
 	}
 
 	/**
@@ -120,7 +169,7 @@ class Converter extends PluginSettingsBase {
 		<div class="wrap">
 			<h2 id="title">
 				<?php
-				echo( esc_html( __( 'Cyr To Lat Plugin Options', 'cyr2lat' ) ) );
+				esc_html_e( 'Cyr To Lat Plugin Options', 'cyr2lat' );
 				?>
 			</h2>
 

@@ -441,14 +441,18 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$subject->shouldReceive( 'get_active_tab' )->once()->andReturn( $tab );
 
 		$form_fields = $this->get_test_form_fields();
+
+		$form_fields['iso9']['title'] = 'Some Section Title';
+
 		$this->set_protected_property( $subject, 'form_fields', $form_fields );
 		$this->set_protected_property( $subject, 'tabs', $tabs );
 
 		foreach ( $form_fields as $form_field ) {
+			$title = isset( $form_field['title'] ) ? $form_field['title'] : '';
 			WP_Mock::userFunction( 'add_settings_section' )
 			       ->with(
 				       $form_field['section'],
-				       $form_field['label'],
+				       $title,
 				       [ $tab, 'section_callback' ],
 				       $tab_option_page
 			       )
