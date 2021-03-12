@@ -1,3 +1,7 @@
+## 5.0.0 (12.03.2021)
+* Introduce tabs on options page
+* Fix bug with Polylang when locale is not equal to language slug
+
 ## 4.6.4 (03.03.2021)
 * Tested up to WordPress 5.7
 
