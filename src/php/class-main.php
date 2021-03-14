@@ -89,6 +89,7 @@ class Main {
 		$this->process_all_terms = new Term_Conversion_Process( $this );
 		$this->converter         = new Converter(
 			$this,
+			$this->settings,
 			$this->process_all_posts,
 			$this->process_all_terms,
 			$this->admin_notices
