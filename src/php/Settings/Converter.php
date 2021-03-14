@@ -101,8 +101,7 @@ class Converter extends PluginSettingsBase {
 	 */
 	public function init_form_fields() {
 		$default_post_types = [ 'post', 'page', 'nav_menu_item' ];
-
-		$post_types = get_post_types( [ 'public' => true ] );
+		$post_types         = get_post_types( [ 'public' => true ] );
 
 		$post_types += [ 'nav_menu_item' => 'nav_menu_item' ];
 
@@ -110,46 +109,46 @@ class Converter extends PluginSettingsBase {
 
 		$this->form_fields = [];
 
-		foreach ( $post_types as $post_type ) {
-			if ( in_array( $post_type, $filtered_post_types, true ) ) {
-				$default  = in_array( $post_type, $default_post_types, true ) ? 'yes' : 'no';
-				$disabled = 'no';
-			} else {
-				$default  = 'no';
-				$disabled = 'yes';
-			}
+		$this->form_fields['background_post_types'] = [
+			'label'        => __( 'Post Types', 'cyr2lat' ),
+			'section'      => 'background_section',
+			'type'         => 'checkbox',
+			'placeholder'  => '',
+			'helper'       => '',
+			'supplemental' => '',
+			'options'      => [],
+		];
 
-			$this->form_fields[ 'background_' . $post_type ] = [
-				'label'        => $post_type,
-				'section'      => 'post_type_section',
-				'title'        => __( 'Post Types for Background Conversion', 'cyr2lat' ),
-				'type'         => 'checkbox',
-				'placeholder'  => '',
-				'helper'       => '',
-				'supplemental' => '',
-				'default'      => $default,
-				'disabled'     => $disabled,
-			];
+		foreach ( $post_types as $post_type ) {
+			$label = $post_type;
+
+			$this->form_fields['background_post_types']['options'][ $post_type ] = $label;
 		}
+
+		$this->form_fields['background_post_types']['default']  = $default_post_types;
+		$this->form_fields['background_post_types']['disabled'] = array_diff( $default_post_types, $filtered_post_types );
+
 
 		$default_post_statuses = [ 'publish', 'future', 'private' ];
+		$post_statuses         = [ 'publish', 'future', 'private', 'draft', 'pending' ];
 
-		$post_statuses = [ 'publish', 'future', 'private', 'draft', 'pending' ];
+		$this->form_fields['background_post_statuses'] = [
+			'label'        => __( 'Post Statuses', 'cyr2lat' ),
+			'section'      => 'background_section',
+			'type'         => 'checkbox',
+			'placeholder'  => '',
+			'helper'       => '',
+			'supplemental' => '',
+			'options'      => [],
+		];
 
 		foreach ( $post_statuses as $post_status ) {
-			$default = in_array( $post_status, $default_post_statuses, true ) ? 'yes' : 'no';
+			$label = $post_status;
 
-			$this->form_fields[ 'background_' . $post_status ] = [
-				'label'        => $post_status,
-				'section'      => 'post_statuses_section',
-				'title'        => __( 'Post Statuses for Background Conversion', 'cyr2lat' ),
-				'type'         => 'checkbox',
-				'placeholder'  => '',
-				'helper'       => '',
-				'supplemental' => '',
-				'default'      => $default,
-			];
+			$this->form_fields['background_post_statuses']['options'][ $post_status ] = $label;
 		}
+
+		$this->form_fields['background_post_statuses']['default'] = $default_post_statuses;
 	}
 
 	/**
@@ -167,16 +166,17 @@ class Converter extends PluginSettingsBase {
 	public function settings_page() {
 		?>
 		<div class="wrap">
-			<h2 id="title">
+			<h1>
 				<?php
 				esc_html_e( 'Cyr To Lat Plugin Options', 'cyr2lat' );
 				?>
-			</h2>
+			</h1>
 
 			<form id="ctl-options" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
 				<?php
 				do_settings_sections( $this->option_page() ); // Sections with options.
 				settings_fields( $this->option_group() ); // Hidden protection fields.
+				submit_button();
 				?>
 			</form>
 
@@ -197,6 +197,15 @@ class Converter extends PluginSettingsBase {
 	 * @param array $arguments Section arguments.
 	 */
 	public function section_callback( $arguments ) {
+		if ( 'background_section' === $arguments['id'] ) {
+			?>
+			<h2 class="title">
+				<?php
+				esc_html_e( 'Existing Slugs Conversion Settings', 'cyr2lat' );
+				?>
+			</h2>
+			<?php
+		}
 	}
 
 	/**

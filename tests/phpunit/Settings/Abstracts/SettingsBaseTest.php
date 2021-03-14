@@ -927,7 +927,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'field_id'     => 'some_id',
 				],
 				'<fieldset><label for="some_id_1"><input id="some_id_1"' .
-				' name="cyr_to_lat_settings[some_id]" type="checkbox" value="yes"  />' .
+				' name="cyr_to_lat_settings[some_id][]" type="checkbox" value="yes"  />' .
 				' </label><br/></fieldset>',
 			],
 			'Checkbox not checked'      => [
@@ -942,7 +942,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'field_id'     => 'some_id',
 				],
 				'<fieldset><label for="some_id_1"><input id="some_id_1"' .
-				' name="cyr_to_lat_settings[some_id]" type="checkbox" value="yes"  />' .
+				' name="cyr_to_lat_settings[some_id][]" type="checkbox" value="yes"  />' .
 				' </label><br/></fieldset>',
 			],
 			'Checkbox checked'          => [
@@ -957,7 +957,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'field_id'     => 'some_id',
 				],
 				'<fieldset><label for="some_id_1"><input id="some_id_1"' .
-				' name="cyr_to_lat_settings[some_id]" type="checkbox" value="yes" checked="checked" />' .
+				' name="cyr_to_lat_settings[some_id][]" type="checkbox" value="yes" checked="checked" />' .
 				' </label><br/></fieldset>',
 			],
 		];

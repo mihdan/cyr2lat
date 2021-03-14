@@ -216,8 +216,8 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 		WP_Mock::userFunction( 'submit_button' )->with()->once();
 
 		$expected = '		<div class="wrap">
-			<h2 id="title">
-				Cyr To Lat Plugin Options			</h2>
+			<h1>
+				Cyr To Lat Plugin Options			</h1>
 
 			<form id="ctl-options" action="' . $admin_url . '" method="post">
 							</form>

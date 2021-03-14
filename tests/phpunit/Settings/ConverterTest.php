@@ -101,108 +101,43 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 	public function test_init_form_fields() {
 		$post_types = [ 'post', 'page', 'attachment' ];
 		$expected   = [
-			'background_post'          =>
+			'background_post_types'    =>
 				[
-					'label'        => 'post',
-					'section'      => 'post_type_section',
-					'title'        => 'Post Types for Background Conversion',
+					'label'        => 'Post Types',
+					'section'      => 'background_section',
 					'type'         => 'checkbox',
 					'placeholder'  => '',
 					'helper'       => '',
 					'supplemental' => '',
-					'default'      => 'yes',
-					'disabled'     => 'no',
+					'options'      =>
+						[
+							'post'          => 'post',
+							'page'          => 'page',
+							'attachment'    => 'attachment',
+							'nav_menu_item' => 'nav_menu_item',
+						],
+					'default'      =>
+						[ 'post', 'page', 'nav_menu_item' ],
+					'disabled'     => [],
 				],
-			'background_page'          =>
+			'background_post_statuses' =>
 				[
-					'label'        => 'page',
-					'section'      => 'post_type_section',
-					'title'        => 'Post Types for Background Conversion',
+					'label'        => 'Post Statuses',
+					'section'      => 'background_section',
 					'type'         => 'checkbox',
 					'placeholder'  => '',
 					'helper'       => '',
 					'supplemental' => '',
-					'default'      => 'yes',
-					'disabled'     => 'no',
-				],
-			'background_attachment'    =>
-				[
-					'label'        => 'attachment',
-					'section'      => 'post_type_section',
-					'title'        => 'Post Types for Background Conversion',
-					'type'         => 'checkbox',
-					'placeholder'  => '',
-					'helper'       => '',
-					'supplemental' => '',
-					'default'      => 'no',
-					'disabled'     => 'no',
-				],
-			'background_nav_menu_item' =>
-				[
-					'label'        => 'nav_menu_item',
-					'section'      => 'post_type_section',
-					'title'        => 'Post Types for Background Conversion',
-					'type'         => 'checkbox',
-					'placeholder'  => '',
-					'helper'       => '',
-					'supplemental' => '',
-					'default'      => 'yes',
-					'disabled'     => 'no',
-				],
-			'background_publish'       =>
-				[
-					'label'        => 'publish',
-					'section'      => 'post_statuses_section',
-					'title'        => 'Post Statuses for Background Conversion',
-					'type'         => 'checkbox',
-					'placeholder'  => '',
-					'helper'       => '',
-					'supplemental' => '',
-					'default'      => 'yes',
-				],
-			'background_future'        =>
-				[
-					'label'        => 'future',
-					'section'      => 'post_statuses_section',
-					'title'        => 'Post Statuses for Background Conversion',
-					'type'         => 'checkbox',
-					'placeholder'  => '',
-					'helper'       => '',
-					'supplemental' => '',
-					'default'      => 'yes',
-				],
-			'background_private'       =>
-				[
-					'label'        => 'private',
-					'section'      => 'post_statuses_section',
-					'title'        => 'Post Statuses for Background Conversion',
-					'type'         => 'checkbox',
-					'placeholder'  => '',
-					'helper'       => '',
-					'supplemental' => '',
-					'default'      => 'yes',
-				],
-			'background_draft'         =>
-				[
-					'label'        => 'draft',
-					'section'      => 'post_statuses_section',
-					'title'        => 'Post Statuses for Background Conversion',
-					'type'         => 'checkbox',
-					'placeholder'  => '',
-					'helper'       => '',
-					'supplemental' => '',
-					'default'      => 'no',
-				],
-			'background_pending'       =>
-				[
-					'label'        => 'pending',
-					'section'      => 'post_statuses_section',
-					'title'        => 'Post Statuses for Background Conversion',
-					'type'         => 'checkbox',
-					'placeholder'  => '',
-					'helper'       => '',
-					'supplemental' => '',
-					'default'      => 'no',
+					'options'      =>
+						[
+							'publish' => 'publish',
+							'future'  => 'future',
+							'private' => 'private',
+							'draft'   => 'draft',
+							'pending' => 'pending',
+						],
+					'default'      =>
+						[ 'publish', 'future', 'private' ],
 				],
 		];
 
@@ -243,12 +178,13 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 		WP_Mock::userFunction( 'do_settings_sections' )->with( $option_page )->once();
 		WP_Mock::userFunction( 'settings_fields' )->with( $option_group )->once();
 		WP_Mock::userFunction( 'wp_nonce_field' )->with( $subject::NONCE )->once();
+		WP_Mock::userFunction( 'submit_button' )->with()->once();
 		WP_Mock::userFunction( 'submit_button' )
 		       ->with( 'Convert Existing Slugs', 'secondary', 'ctl-convert-button' )->once();
 
 		$expected = '		<div class="wrap">
-			<h2 id="title">
-				Cyr To Lat Plugin Options			</h2>
+			<h1>
+				Cyr To Lat Plugin Options			</h1>
 
 			<form id="ctl-options" action="' . $admin_url . '" method="post">
 							</form>
@@ -265,10 +201,35 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test section_callback()
+	 *
+	 * @param string $id       Section id.
+	 * @param string $expected Expected value.
+	 *
+	 * @dataProvider dp_test_section_callback
 	 */
-	public function test_section_callback() {
+	public function test_section_callback( $id, $expected ) {
 		$converter = new Converter();
-		$converter->section_callback( [] );
+
+		ob_start();
+		$converter->section_callback( [ 'id' => $id ] );
+		self::assertSame( $expected, ob_get_clean() );
+	}
+
+	/**
+	 * Data provider for test_section_callback().
+	 *
+	 * @return array
+	 */
+	public function dp_test_section_callback() {
+		return [
+			'Non-existing id'    => [ '', '' ],
+			'Background section' => [
+				'background_section',
+				'			<h2 class="title">
+				Existing Slugs Conversion Settings			</h2>
+			',
+			],
+		];
 	}
 
 	/**

@@ -561,18 +561,73 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Print checkbox/radio field.
+	 * Print checkbox field.
 	 *
 	 * @param array $arguments Field arguments.
 	 *
 	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
 	private function print_check_box_field( array $arguments ) {
-		$value = $this->get( $arguments['field_id'] );
+		$value = (array) $this->get( $arguments['field_id'] );
 
-		if ( 'checkbox' === $arguments['type'] ) {
+		if ( empty( $arguments['options'] ) || ! is_array( $arguments['options'] ) ) {
 			$arguments['options'] = [ 'yes' => '' ];
 		}
+
+		$options_markup = '';
+		$iterator       = 0;
+		foreach ( $arguments['options'] as $key => $label ) {
+			$iterator ++;
+			$checked = false;
+			if ( is_array( $value ) && in_array( $key, $value, true ) ) {
+				$checked = checked( $key, $key, false );
+			}
+			$options_markup .= sprintf(
+				'<label for="%2$s_%7$s">' .
+				'<input id="%2$s_%7$s" name="%1$s[%2$s][]" type="%3$s" value="%4$s" %5$s />' .
+				' %6$s' .
+				'</label>' .
+				'<br/>',
+				esc_html( $this->option_name() ),
+				$arguments['field_id'],
+				$arguments['type'],
+				$key,
+				$checked,
+				$label,
+				$iterator
+			);
+		}
+
+		printf(
+			'<fieldset>%s</fieldset>',
+			wp_kses(
+				$options_markup,
+				[
+					'label' => [
+						'for' => [],
+					],
+					'input' => [
+						'id'      => [],
+						'name'    => [],
+						'type'    => [],
+						'value'   => [],
+						'checked' => [],
+					],
+					'br'    => [],
+				]
+			)
+		);
+	}
+
+	/**
+	 * Print radio field.
+	 *
+	 * @param array $arguments Field arguments.
+	 *
+	 * @noinspection PhpUnusedPrivateMethodInspection
+	 */
+	private function print_radio_field( array $arguments ) {
+		$value = $this->get( $arguments['field_id'] );
 
 		if ( empty( $arguments['options'] ) || ! is_array( $arguments['options'] ) ) {
 			return;
@@ -760,7 +815,7 @@ abstract class SettingsBase {
 			'number'   => 'print_number_field',
 			'textarea' => 'print_text_area_field',
 			'checkbox' => 'print_check_box_field',
-			'radio'    => 'print_check_box_field',
+			'radio'    => 'print_radio_field',
 			'select'   => 'print_select_field',
 			'multiple' => 'print_multiple_select_field',
 			'table'    => 'print_table_field',

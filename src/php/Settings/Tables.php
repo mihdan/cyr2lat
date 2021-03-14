@@ -196,12 +196,12 @@ class Tables extends PluginSettingsBase {
 	public function settings_page() {
 		?>
 		<div class="wrap">
-			<h2 id="title">
+			<h1>
 				<?php
 				// Admin panel title.
 				esc_html_e( 'Cyr To Lat Plugin Options', 'cyr2lat' );
 				?>
-			</h2>
+			</h1>
 
 			<form id="ctl-options" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
 				<?php
