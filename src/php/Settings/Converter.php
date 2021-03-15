@@ -128,7 +128,6 @@ class Converter extends PluginSettingsBase {
 		$this->form_fields['background_post_types']['default']  = $default_post_types;
 		$this->form_fields['background_post_types']['disabled'] = array_diff( $default_post_types, $filtered_post_types );
 
-
 		$default_post_statuses = [ 'publish', 'future', 'private' ];
 		$post_statuses         = [ 'publish', 'future', 'private', 'draft', 'pending' ];
 
