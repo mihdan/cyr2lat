@@ -204,6 +204,14 @@ class Converter extends PluginSettingsBase {
 				esc_html_e( 'Existing Slugs Conversion Settings', 'cyr2lat' );
 				?>
 			</h2>
+			<p>
+				<?php
+				esc_html_e(
+					'Existing product attribute slugs will NOT be converted.',
+					'cyr2lat'
+				);
+				?>
+			</p>
 			<?php
 		}
 	}
@@ -224,6 +232,23 @@ class Converter extends PluginSettingsBase {
 					<?php
 					esc_html_e(
 						'This operation is irreversible. Please make sure that you have made a backup copy of your database.',
+						'cyr2lat'
+					);
+					?>
+				</p>
+				<p>
+					<?php
+					esc_html_e(
+						'Also, you have to make a copy of your media files if the attachment post type is selected for
+				conversion.',
+						'cyr2lat'
+					);
+					?>
+				</p>
+				<p>
+					<?php
+					esc_html_e(
+						'Upon conversion of attachments, please regenerate thumbnails.',
 						'cyr2lat'
 					);
 					?>

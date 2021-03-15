@@ -227,6 +227,8 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 				'background_section',
 				'			<h2 class="title">
 				Existing Slugs Conversion Settings			</h2>
+			<p>
+				Existing product attribute slugs will NOT be converted.			</p>
 			',
 			],
 		];
@@ -244,6 +246,11 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 				<p>
 					<strong>Important:</strong>
 					This operation is irreversible. Please make sure that you have made a backup copy of your database.				</p>
+				<p>
+					Also, you have to make a copy of your media files if the attachment post type is selected for
+				conversion.				</p>
+				<p>
+					Upon conversion of attachments, please regenerate thumbnails.				</p>
 				<p>Are you sure to continue?</p>
 				<div id="ctl-confirm-buttons">
 					<input
