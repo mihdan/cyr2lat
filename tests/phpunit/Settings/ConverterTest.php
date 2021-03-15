@@ -107,7 +107,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 					'section'      => 'background_section',
 					'type'         => 'checkbox',
 					'placeholder'  => '',
-					'helper'       => '',
+					'helper'       => 'Post types included in the conversion.',
 					'supplemental' => '',
 					'options'      =>
 						[
@@ -126,7 +126,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 					'section'      => 'background_section',
 					'type'         => 'checkbox',
 					'placeholder'  => '',
-					'helper'       => '',
+					'helper'       => 'Post statuses included in the conversion.',
 					'supplemental' => '',
 					'options'      =>
 						[
@@ -208,6 +208,8 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_section_callback
 	 */
 	public function test_section_callback( $id, $expected ) {
+		WP_Mock::passthruFunction( 'wp_kses_post' );
+
 		$converter = new Converter();
 
 		ob_start();
@@ -228,7 +230,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 				'			<h2 class="title">
 				Existing Slugs Conversion Settings			</h2>
 			<p>
-				Existing product attribute slugs will NOT be converted.			</p>
+				Existing <strong>product attribute</strong> slugs will <strong>NOT</strong> be converted.			</p>
 			',
 			],
 		];

@@ -114,7 +114,7 @@ class Converter extends PluginSettingsBase {
 			'section'      => 'background_section',
 			'type'         => 'checkbox',
 			'placeholder'  => '',
-			'helper'       => '',
+			'helper'       => __( 'Post types included in the conversion.', 'cyr2lat' ),
 			'supplemental' => '',
 			'options'      => [],
 		];
@@ -137,7 +137,7 @@ class Converter extends PluginSettingsBase {
 			'section'      => 'background_section',
 			'type'         => 'checkbox',
 			'placeholder'  => '',
-			'helper'       => '',
+			'helper'       => __( 'Post statuses included in the conversion.', 'cyr2lat' ),
 			'supplemental' => '',
 			'options'      => [],
 		];
@@ -206,9 +206,11 @@ class Converter extends PluginSettingsBase {
 			</h2>
 			<p>
 				<?php
-				esc_html_e(
-					'Existing product attribute slugs will NOT be converted.',
-					'cyr2lat'
+				echo wp_kses_post(
+					__(
+						'Existing <strong>product attribute</strong> slugs will <strong>NOT</strong> be converted.',
+						'cyr2lat'
+					)
 				);
 				?>
 			</p>
