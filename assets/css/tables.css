@@ -49,7 +49,7 @@ body.js #ctl-options .ctl-table {
 	clear: both;
 	width: 100%;
 	box-sizing: border-box;
-	border: 1px solid #ccc;
+	border: 1px solid #c3c4c7;
 }
 
 #ctl-options .submit, #ctl-convert-existing-slugs {
@@ -64,12 +64,12 @@ body.js #ctl-options .ctl-table {
 }
 
 #ctl-options .nav-tab-active {
-	background: #fff;
-	border-bottom: 1px solid #ccc;
+	background: #646970;
+	color: #fff;
 }
 
 .nav-tab-current {
-	box-shadow: 0 0 5px 5px #fff;
+	box-shadow: 0 0 5px 5px #646970;
 }
 
 .ctl-table.active {
