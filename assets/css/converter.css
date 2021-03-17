@@ -67,3 +67,8 @@
 .helper:hover .helper-content {
 	display: block;
 }
+
+#ctl-convert-button {
+	color: #d63638;
+	border-color: #d63638;
+}
