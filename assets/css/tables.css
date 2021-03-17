@@ -27,6 +27,7 @@
 	max-height: 34px;
 	height: 14px;
 	line-height: 14px;
+	margin-top: 15px;
 }
 
 #ctl-options .nav-tab-wrapper {
@@ -64,12 +65,16 @@ body.js #ctl-options .ctl-table {
 }
 
 #ctl-options .nav-tab-active {
-	background: #646970;
+	background: #4f94d4;
 	color: #fff;
+	border-color: #2271b1;
 }
 
-.nav-tab-current {
-	box-shadow: 0 0 5px 5px #646970;
+#ctl-options .nav-tab-current.nav-tab-active {
+	/*box-shadow: 0 0 5px 5px #2271b1;*/
+	background: #2271b1;
+	color: #fff;
+	border-color: #0a4b78;
 }
 
 .ctl-table.active {

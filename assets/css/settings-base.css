@@ -10,16 +10,16 @@
 	font-size: 1.1em;
 	text-decoration: none;
 	margin-right: 30px;
-	color: #666;
+	color: #646970;
 	border-bottom: 2px solid transparent;
 }
 
 .ctl-settings-tab:hover {
 	color: #666;
-	border-color: #999;
+	border-color: #646970;
 	border-bottom: 2px solid;
 }
 
 .ctl-settings-tab.active {
-	border-bottom: 2px solid #007cba;
+	border-bottom: 2px solid #4f94d4;
 }
