@@ -1,6 +1,6 @@
-build/
+assets/js/tables/
+assets/js/converter/
 coverage/
-dist/
 node_modules/
 tests/**/*.cache
 vendor/
@@ -13,6 +13,7 @@ vendor/
 .DS_Store
 .idea/
 .phpcs.cache
+.phpunit.result.cache
 Thumbs.db
 coverage.*
 wp-cli.local.yml

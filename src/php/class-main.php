@@ -9,6 +9,7 @@ namespace Cyr_To_Lat;
 
 use wpdb;
 use Exception;
+use Cyr_To_Lat\Settings\Settings;
 use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
 
 /**
@@ -76,12 +77,19 @@ class Main {
 	 * Main constructor.
 	 */
 	public function __construct() {
-		$this->settings          = new Settings();
+		$this->settings      = new Settings();
+		$this->admin_notices = new Admin_Notices();
+		$requirements        = new Requirements( $this->settings, $this->admin_notices );
+
+		if ( ! $requirements->are_requirements_met() ) {
+			return;
+		}
+
 		$this->process_all_posts = new Post_Conversion_Process( $this );
 		$this->process_all_terms = new Term_Conversion_Process( $this );
-		$this->admin_notices     = new Admin_Notices();
 		$this->converter         = new Converter(
 			$this,
+			$this->settings,
 			$this->process_all_posts,
 			$this->process_all_terms,
 			$this->admin_notices
@@ -92,8 +100,6 @@ class Main {
 		}
 
 		$this->acf = new ACF( $this->settings );
-
-		$this->init();
 	}
 
 	/**
@@ -468,17 +474,20 @@ class Main {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_POST['post_ID'] ) ) {
 			$pll_get_post_language = pll_get_post_language(
-				(int) filter_input( INPUT_POST, 'post_ID', FILTER_SANITIZE_STRING )
+				(int) filter_input( INPUT_POST, 'post_ID', FILTER_SANITIZE_STRING ),
+				'locale'
 			);
 		}
 		if ( isset( $_POST['pll_post_id'] ) ) {
 			$pll_get_post_language = pll_get_post_language(
-				(int) filter_input( INPUT_POST, 'pll_post_id', FILTER_SANITIZE_STRING )
+				(int) filter_input( INPUT_POST, 'pll_post_id', FILTER_SANITIZE_STRING ),
+				'locale'
 			);
 		}
 		if ( isset( $_GET['post'] ) ) {
 			$pll_get_post_language = pll_get_post_language(
-				(int) filter_input( INPUT_GET, 'post', FILTER_SANITIZE_STRING )
+				(int) filter_input( INPUT_GET, 'post', FILTER_SANITIZE_STRING ),
+				'locale'
 			);
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
@@ -506,7 +515,7 @@ class Main {
 			);
 
 			if ( $pll_get_language ) {
-				$pll_get_term_language = $pll_get_language->slug;
+				$pll_get_term_language = $pll_get_language->locale;
 			}
 		}
 		// phpcs:enable WordPress.Security.NonceVerification.Missing

@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
 Tested up to: 5.7
-Stable tag: 4.6.4
+Stable tag: 5.0.0
 Requires PHP: 5.6.20
 
 Converts Cyrillic characters in post, page and term slugs to Latin characters.
@@ -21,11 +21,15 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 * [Has many advantages over similar plugins](https://kagg.eu/en/the-benefits-of-cyr-to-lat/)
 * [Officially compatible with WPML](https://wpml.org/plugin/cyr-to-lat/)
 
-![WPML Certificate](https://ps.w.org/cyr2lat/assets/Cyr-To-Lat---WPML-Compatibility-Certificate-240x250.png)
+<img src="https://ps.w.org/cyr2lat/assets/Cyr-To-Lat---WPML-Compatibility-Certificate-240x250.png" alt="WPML Certificate" />
 
 Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
 
-[](http://coderisk.com/wp/plugin/cyr2lat/RIPS-nt7iXCmzoc)
+== Screenshots ==
+
+1. Tables settings page
+2. Converter settings page
+3. Block editor with transliterated slug
 
 == Installation ==
 
@@ -173,6 +177,12 @@ Yes you can!
 * Join in on our [Telegram Channel](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 5.0.0 (18.03.2021) =
+* Introduce tabs on options page
+* Add options to select post types and statuses for background conversion
+* Make colors compatible to WP official palette
+* Fix bug with Polylang when locale is not equal to language slug
 
 = 4.6.4 (03.03.2021) =
 * Tested up to WordPress 5.7

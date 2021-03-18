@@ -4,7 +4,6 @@
   "license": "GPL-2.0",
   "keywords": [
     "cyrillic",
-    "georgian",
     "latin",
     "l10n",
     "russian",
@@ -65,8 +64,8 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "lucatume/function-mocker": "dev-test-on-windows",
-    "10up/wp_mock": "~0.2",
+    "lucatume/function-mocker": "dev-php8",
+    "10up/wp_mock": "0.2 - 0.4",
     "phpunit/phpunit": "5.7 - 9.5",
     "squizlabs/php_codesniffer": "^3.5",
     "phpcompatibility/php-compatibility": "^9.3",
@@ -76,7 +75,7 @@
   },
   "autoload": {
     "classmap": [
-      "classes",
+      "src/php",
       "lib"
     ],
     "files": [
@@ -85,7 +84,7 @@
   },
   "autoload-dev": {
     "classmap": [
-      "classes",
+      "src/php",
       "tests/phpunit/classes",
       "tests/phpunit/stubs"
     ]

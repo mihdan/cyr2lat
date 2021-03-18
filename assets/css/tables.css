@@ -27,6 +27,7 @@
 	max-height: 34px;
 	height: 14px;
 	line-height: 14px;
+	margin-top: 15px;
 }
 
 #ctl-options .nav-tab-wrapper {
@@ -49,7 +50,7 @@ body.js #ctl-options .ctl-table {
 	clear: both;
 	width: 100%;
 	box-sizing: border-box;
-	border: 1px solid #ccc;
+	border: 1px solid #c3c4c7;
 }
 
 #ctl-options .submit, #ctl-convert-existing-slugs {
@@ -64,12 +65,16 @@ body.js #ctl-options .ctl-table {
 }
 
 #ctl-options .nav-tab-active {
-	background: #fff;
-	border-bottom: 1px solid #ccc;
+	background: #4f94d4;
+	color: #fff;
+	border-color: #2271b1;
 }
 
-.nav-tab-current {
-	box-shadow: 0 0 5px 5px #fff;
+#ctl-options .nav-tab-current.nav-tab-active {
+	/*box-shadow: 0 0 5px 5px #2271b1;*/
+	background: #2271b1;
+	color: #fff;
+	border-color: #0a4b78;
 }
 
 .ctl-table.active {
@@ -134,27 +139,7 @@ body.js #ctl-options .ctl-table {
 
 #appreciation {
 	clear: both;
-}
-
-#ctl-confirm-popup {
-	display: none;
-	position: fixed;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	background: rgba(241,241,241,0.8);
-	z-index: 9999;
-}
-
-#ctl-confirm-content {
-	display: block;
-	position: fixed;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-	background: #fff;
-	padding: 20px;
+	padding-top: 10px;
 }
 
 @media screen and (max-width: 767px) {

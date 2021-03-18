@@ -7,6 +7,8 @@
 
 namespace Cyr_To_Lat;
 
+use Cyr_To_Lat\Settings\Settings;
+
 /**
  * Class Converter
  *
@@ -34,47 +36,48 @@ class Converter {
 	 *
 	 * @var Main
 	 */
-	private $main;
+	protected $main;
+
+	/**
+	 * Plugin settings class.
+	 *
+	 * @var Settings
+	 */
+	protected $settings;
 
 	/**
 	 * Background process to convert posts.
 	 *
 	 * @var Post_Conversion_Process
 	 */
-	private $process_all_posts;
+	protected $process_all_posts;
 
 	/**
 	 * Background process to convert terms.
 	 *
 	 * @var Term_Conversion_Process
 	 */
-	private $process_all_terms;
+	protected $process_all_terms;
 
 	/**
 	 * Admin notices.
 	 *
 	 * @var Admin_Notices
 	 */
-	private $admin_notices;
-
-	/**
-	 * Option group.
-	 *
-	 * @var string
-	 */
-	private $option_group;
+	protected $admin_notices;
 
 	/**
 	 * Converter constructor.
 	 *
 	 * @param Main                    $main              Plugin main class.
+	 * @param Settings                $settings          Plugin settings.
 	 * @param Post_Conversion_Process $process_all_posts Post conversion process.
 	 * @param Term_Conversion_Process $process_all_terms Term conversion process.
 	 * @param Admin_Notices           $admin_notices     Admin notices.
 	 */
-	public function __construct( $main, $process_all_posts, $process_all_terms, $admin_notices ) {
+	public function __construct( $main, $settings, $process_all_posts, $process_all_terms, $admin_notices ) {
 		$this->main              = $main;
-		$this->option_group      = Settings::OPTION_GROUP;
+		$this->settings          = $settings;
 		$this->process_all_posts = $process_all_posts;
 		$this->process_all_terms = $process_all_terms;
 		$this->admin_notices     = $admin_notices;
@@ -137,7 +140,7 @@ class Converter {
 		if ( ! isset( $_POST['ctl-convert'] ) ) {
 			return;
 		}
-		check_admin_referer( $this->option_group . '-options' );
+		check_admin_referer( \Cyr_To_Lat\Settings\Converter::NONCE );
 		$this->convert_existing_slugs();
 	}
 
@@ -174,13 +177,12 @@ class Converter {
 	protected function convert_existing_post_slugs( $args = [] ) {
 		global $wpdb;
 
-		$post_types = get_post_types( [ 'public' => true ] );
-
-		$post_types += [ 'nav_menu_item' => 'nav_menu_item' ];
+		$post_types    = $this->settings->get( 'background_post_types' );
+		$post_statuses = $this->settings->get( 'background_post_statuses' );
 
 		$defaults = [
 			'post_type'   => apply_filters( 'ctl_post_types', $post_types ),
-			'post_status' => [ 'publish', 'future', 'private' ],
+			'post_status' => $post_statuses,
 		];
 
 		$parsed_args = wp_parse_args( $args, $defaults );
@@ -191,7 +193,7 @@ class Converter {
 			'post_status IN (' . $this->main->prepare_in( $parsed_args['post_status'] ) . ')' .
 			' AND post_type IN (' . $this->main->prepare_in( $parsed_args['post_type'] ) . ')';
 
-		if ( isset( $parsed_args['post_type']['attachment'] ) ) {
+		if ( in_array( 'attachment', $parsed_args['post_type'], true ) ) {
 			$media_sql = "post_status = 'inherit' AND post_type = 'attachment'";
 			$post_sql  = '(' . $post_sql . ') OR (' . $media_sql . ')';
 		}

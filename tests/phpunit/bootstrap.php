@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin version.
  */
-define( 'CYR_TO_LAT_TEST_VERSION', '4.6.4' );
+define( 'CYR_TO_LAT_TEST_VERSION', '5.0.0' );
 
 /**
  * Path to the plugin dir.
@@ -86,7 +86,7 @@ FunctionMocker::init(
 		],
 		'whitelist'             => [
 			realpath( PLUGIN_PATH . '/cyr-to-lat.php' ),
-			realpath( PLUGIN_PATH . '/classes' ),
+			realpath( PLUGIN_PATH . '/src/php' ),
 			realpath( PLUGIN_PATH . '/tests/phpunit/stubs' ),
 		],
 		'redefinable-internals' => [

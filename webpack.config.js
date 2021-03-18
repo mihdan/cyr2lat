@@ -40,14 +40,14 @@ const webPackModule = ( production = true ) => {
 	};
 };
 
-const settings = ( env ) => {
+const tables = ( env ) => {
 	const isProduction = 'production' === env;
 
 	return {
-		entry: [ 'cross-fetch', './js/settings/app.js' ],
+		entry: [ 'cross-fetch', './src/js/tables/app.js' ],
 		output: {
-			path: path.join( __dirname, '..', 'dist' ),
-			filename: path.join( 'js', 'settings', 'app.js' ),
+			path: path.join( __dirname, 'assets', 'js' ),
+			filename: path.join( 'tables', 'app.js' ),
 		},
 		module: webPackModule( ! isProduction ),
 		plugins: [ new ExtractTextPlugin( path.join( 'css', 'sample.css' ) ) ],
@@ -55,4 +55,19 @@ const settings = ( env ) => {
 	};
 };
 
-module.exports = [ settings ];
+const converter = ( env ) => {
+	const isProduction = 'production' === env;
+
+	return {
+		entry: [ 'cross-fetch', './src/js/converter/app.js' ],
+		output: {
+			path: path.join( __dirname, 'assets', 'js' ),
+			filename: path.join( 'converter', 'app.js' ),
+		},
+		module: webPackModule( ! isProduction ),
+		plugins: [ new ExtractTextPlugin( path.join( 'css', 'sample.css' ) ) ],
+		devtool: isProduction ? '' : 'inline-source-map',
+	};
+};
+
+module.exports = [ tables, converter ];

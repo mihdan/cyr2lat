@@ -1,3 +1,9 @@
+## 5.0.0 (18.03.2021)
+* Introduce tabs on options page
+* Add options to select post types and statuses for background conversion
+* Make colors compatible to WP official palette
+* Fix bug with Polylang when locale is not equal to language slug
+
 ## 4.6.4 (03.03.2021)
 * Tested up to WordPress 5.7
 

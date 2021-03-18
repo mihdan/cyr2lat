@@ -45,7 +45,7 @@ class Test_Admin_Notices extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test add_notice() and show_notices()
 	 */
-	public function test_add_show_notices() {
+	public function test_add_and_show_notices() {
 		$expected = '			<div class="notice">
 				<p>
 					<strong>
@@ -89,7 +89,7 @@ class Test_Admin_Notices extends Cyr_To_Lat_TestCase {
 
 		$subject = new Admin_Notices();
 
-		$subject->add_notice( 'Message', 'notice', [ 'page' => $page_slug ] );
+		$subject->add_notice( 'Message', 'notice', [ 'screen_ids' => $page_slug ] );
 
 		ob_start();
 		$subject->show_notices();
@@ -119,7 +119,7 @@ class Test_Admin_Notices extends Cyr_To_Lat_TestCase {
 
 		WP_Mock::passthruFunction( 'wp_kses_post' );
 
-		$subject->add_notice( 'Message', 'notice', [ 'page' => $page_slug ] );
+		$subject->add_notice( 'Message', 'notice', [ 'screen_ids' => $page_slug ] );
 
 		ob_start();
 		$subject->show_notices();

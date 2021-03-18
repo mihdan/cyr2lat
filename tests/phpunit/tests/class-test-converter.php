@@ -12,6 +12,7 @@
 
 namespace Cyr_To_Lat;
 
+use Cyr_To_Lat\Settings\Settings;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
@@ -47,6 +48,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$classname = Converter::class;
 
 		$main          = Mockery::mock( Main::class );
+		$settings      = Mockery::mock( Settings::class );
 		$post_cp       = Mockery::mock( Post_Conversion_Process::class );
 		$term_cp       = Mockery::mock( Term_Conversion_Process::class );
 		$admin_notices = Mockery::mock( Admin_Notices::class );
@@ -60,7 +62,13 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );
 		$constructor     = $reflected_class->getConstructor();
-		$constructor->invoke( $mock, $main, $post_cp, $term_cp, $admin_notices );
+		$constructor->invoke( $mock, $main, $settings, $post_cp, $term_cp, $admin_notices );
+
+		self::assertInstanceOf( Main::class, $this->get_protected_property( $mock, 'main' ) );
+		self::assertInstanceOf( Settings::class, $this->get_protected_property( $mock, 'settings' ) );
+		self::assertInstanceOf( Post_Conversion_Process::class, $this->get_protected_property( $mock, 'process_all_posts' ) );
+		self::assertInstanceOf( Term_Conversion_Process::class, $this->get_protected_property( $mock, 'process_all_terms' ) );
+		self::assertInstanceOf( Admin_Notices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
 	}
 
 	/**
@@ -89,6 +97,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$posts_process_running, $terms_process_running, $posts_process_completed, $terms_process_completed
 	) {
 		$main              = Mockery::mock( Main::class );
+		$settings          = Mockery::mock( Settings::class );
 		$process_all_posts = Mockery::mock( Post_Conversion_Process::class )->shouldAllowMockingProtectedMethods();
 		$process_all_terms = Mockery::mock( Term_Conversion_Process::class )->shouldAllowMockingProtectedMethods();
 		$admin_notices     = Mockery::mock( Admin_Notices::class );
@@ -97,6 +106,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		/** @noinspection PhpParamsInspection */
 		$subject = new Converter(
 			$main,
+			$settings,
 			$process_all_posts,
 			$process_all_terms,
 			$admin_notices
@@ -268,29 +278,24 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		global $wpdb;
 
 		$main              = Mockery::mock( Main::class );
+		$settings          = Mockery::mock( Settings::class );
 		$process_all_posts = Mockery::mock( Post_Conversion_Process::class );
 		$process_all_terms = Mockery::mock( Term_Conversion_Process::class );
 		$admin_notices     = Mockery::mock( Admin_Notices::class );
 
 		$subject = new Converter(
 			$main,
+			$settings,
 			$process_all_posts,
 			$process_all_terms,
 			$admin_notices
 		);
 
 		if ( $include_attachment ) {
-			$post_types    = [
-				'post'       => 'post',
-				'page'       => 'page',
-				'attachment' => 'attachment',
-			];
+			$post_types    = [ 'post', 'page', 'attachment' ];
 			$post_types_in = "'post', 'page', 'attachment'";
 		} else {
-			$post_types    = [
-				'post' => 'post',
-				'page' => 'page',
-			];
+			$post_types    = [ 'post', 'page' ];
 			$post_types_in = "'post', 'page'";
 		}
 
@@ -298,13 +303,14 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$post_statuses_in = "'publish', 'future', 'private'";
 
 		$defaults = [
-			'post_type'   => array_merge( $post_types, [ 'nav_menu_item' => 'nav_menu_item' ] ),
+			'post_type'   => $post_types,
 			'post_status' => $post_statuses,
 		];
 
 		$args = $defaults;
 
-		WP_Mock::userFunction( 'get_post_types' )->with( [ 'public' => true ] )->andReturn( $post_types );
+		$settings->shouldReceive( 'get' )->with( 'background_post_types' )->andReturn( $post_types );
+		$settings->shouldReceive( 'get' )->with( 'background_post_statuses' )->andReturn( $post_statuses );
 
 		WP_Mock::userFunction( 'wp_parse_args' )->with( [], $defaults )->andReturn( $args );
 
@@ -459,12 +465,14 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	 */
 	private function get_subject() {
 		$main              = Mockery::mock( Main::class );
+		$settings          = Mockery::mock( Settings::class );
 		$process_all_posts = Mockery::mock( Post_Conversion_Process::class );
 		$process_all_terms = Mockery::mock( Term_Conversion_Process::class );
 		$admin_notices     = Mockery::mock( Admin_Notices::class );
 
 		return new Converter(
 			$main,
+			$settings,
 			$process_all_posts,
 			$process_all_terms,
 			$admin_notices
