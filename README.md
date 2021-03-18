@@ -14,7 +14,7 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 * [Has many advantages over similar plugins](https://kagg.eu/en/the-benefits-of-cyr-to-lat/)
 * [Officially compatible with WPML](https://wpml.org/plugin/cyr-to-lat/)
 
-![WPML Certificate](./assets/Cyr-To-Lat---WPML-Compatibility-Certificate-240x250.png)
+![WPML Certificate](./.wordpress-org/Cyr-To-Lat---WPML-Compatibility-Certificate-240x250.png)
 
 ## Installation
 
