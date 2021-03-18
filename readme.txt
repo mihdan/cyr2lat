@@ -21,11 +21,15 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 * [Has many advantages over similar plugins](https://kagg.eu/en/the-benefits-of-cyr-to-lat/)
 * [Officially compatible with WPML](https://wpml.org/plugin/cyr-to-lat/)
 
-![WPML Certificate](https://ps.w.org/cyr2lat/assets/Cyr-To-Lat---WPML-Compatibility-Certificate-240x250.png)
+<img src="https://ps.w.org/cyr2lat/assets/Cyr-To-Lat---WPML-Compatibility-Certificate-240x250.png" alt="WPML Certificate" />
 
 Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
 
-[](http://coderisk.com/wp/plugin/cyr2lat/RIPS-nt7iXCmzoc)
+== Screenshots ==
+
+1. Tables settings page
+2. Converter settings page
+3. Block editor with transliterated slug
 
 == Installation ==
 
