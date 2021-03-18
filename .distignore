@@ -12,7 +12,6 @@
 /.gitignore
 /.phpcs.cache
 /.phpunit.result.cache
-/.postcss.config.js
 /CHANGELOG.md
 /Makefile
 /README.md
@@ -22,6 +21,7 @@
 /package.json
 /phpcs.xml
 /phpunit.xml
+/postcss.config.js
 /webpack.config.js
 /yarn.lock
 
@@ -31,5 +31,6 @@
 /.idea
 /.make
 /.wordpress-org
+/node_modules
 /src/js
 /tests
