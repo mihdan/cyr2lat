@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 bootstrap="tests/phpunit/bootstrap.php"
-		 backupGlobals="false"
 		 colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true"
 		 convertWarningsToExceptions="true" beStrictAboutTestsThatDoNotTestAnything="false"
 		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
