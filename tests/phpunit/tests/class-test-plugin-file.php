@@ -84,6 +84,10 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 					return PLUGIN_MAIN_FILE;
 				}
 
+				if ( 'CYR_TO_LAT_PATH' === $name ) {
+					return dirname( PLUGIN_MAIN_FILE );
+				}
+
 				return null;
 			}
 		);
@@ -99,7 +103,7 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 		$defined->wasCalledWithTimes( [ 'ABSPATH' ], 2 );
 		$defined->wasCalledWithTimes( [ 'CYR_TO_LAT_VERSION' ], 2 );
 
-		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_VERSION', '5.0.0' ] );
+		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_VERSION', '5.0.1' ] );
 		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_FILE', PLUGIN_MAIN_FILE ] );
 		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_PATH', dirname( PLUGIN_MAIN_FILE ) ] );
 		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_URL', $plugin_dir_url_unslash ] );

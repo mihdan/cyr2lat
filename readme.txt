@@ -31,6 +31,10 @@ Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
 2. Converter settings page
 3. Block editor with transliterated slug
 
+== Plugin Support ==
+* [Support Forum](https://wordpress.org/support/plugin/cyr2lat/)
+* [Telegram Channel](https://t.me/cyr2lat)
+
 == Installation ==
 
 1. Upload `cyr2lat` folder to the `/wp-content/plugins/` directory.
@@ -177,6 +181,9 @@ Yes you can!
 * Join in on our [Telegram Channel](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 5.0.1 (22.03.2021) =
+* Fixed fatal error during plugin load on some servers
 
 = 5.0.0 (18.03.2021) =
 * Introduce tabs on options page
