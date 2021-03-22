@@ -32,6 +32,7 @@ Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
 3. Block editor with transliterated slug
 
 == Plugin Support ==
+
 * [Support Forum](https://wordpress.org/support/plugin/cyr2lat/)
 * [Telegram Channel](https://t.me/cyr2lat)
 
