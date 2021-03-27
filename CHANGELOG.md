@@ -1,5 +1,8 @@
+## 5.0.2 (27.03.2021)
+* Fix bug creating tag with the same slug as category
+
 ## 5.0.1 (22.03.2021)
-* Fixed fatal error during plugin load on some servers
+* Fix fatal error during plugin load on some servers
 
 ## 5.0.0 (18.03.2021)
 * Introduce tabs on options page
