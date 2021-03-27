@@ -364,16 +364,29 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function wp_insert_term( $title, $term, $expected ) {
 		global $wpdb;
 
+		$taxonomy = 'category';
+
 		$subject = $this->get_subject();
 
+		WP_Mock::userFunction( 'is_wp_error' )->with( $term )->andReturn( false );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$wpdb        = Mockery::mock( wpdb::class );
-		$wpdb->terms = 'wp_terms';
-		$wpdb->shouldReceive( 'prepare' )->once()->andReturn( '' );
-		$wpdb->shouldReceive( 'get_var' )->once()->andReturn( $term );
+		if ( $term ) {
+			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			$wpdb                = Mockery::mock( wpdb::class );
+			$wpdb->terms         = 'wp_terms';
+			$wpdb->term_taxonomy = 'wp_term_taxonomy';
+			$wpdb->shouldReceive( 'prepare' )->once()->with(
+				"SELECT slug FROM {$wpdb->terms} t LEFT JOIN {$wpdb->term_taxonomy} tt
+							ON t.term_id = tt.term_id
+							WHERE t.name = %s AND tt.taxonomy = %s",
+				$title,
+				$taxonomy
+			)->andReturn( '' );
+			$wpdb->shouldReceive( 'get_var' )->once()->andReturn( $term );
+		}
 
+		$subject->pre_term_filter( $term, $taxonomy );
 		self::assertSame( $expected, $subject->sanitize_title( $title ) );
 	}
 

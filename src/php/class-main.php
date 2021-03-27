@@ -7,6 +7,7 @@
 
 namespace Cyr_To_Lat;
 
+use WP_Error;
 use wpdb;
 use Exception;
 use Cyr_To_Lat\Settings\Settings;
@@ -65,6 +66,20 @@ class Main {
 	 * @var ACF
 	 */
 	protected $acf;
+
+	/**
+	 * Term saved in pre_insert_term filter.
+	 *
+	 * @var string|WP_Error|null
+	 */
+	private $term;
+
+	/**
+	 * Taxonomy saved in pre_insert_term filter.
+	 *
+	 * @var string|null
+	 */
+	private $taxonomy;
 
 	/**
 	 * Polylang locale.
@@ -131,6 +146,7 @@ class Main {
 		add_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9, 3 );
 		add_filter( 'sanitize_file_name', [ $this, 'sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 2 );
+		add_filter( 'pre_insert_term', [ $this, 'pre_term_filter' ], PHP_INT_MAX, 2 );
 
 		if ( class_exists( 'Polylang' ) ) {
 			add_filter( 'locale', [ $this, 'pll_locale_filter' ] );
@@ -177,9 +193,24 @@ class Main {
 			}
 		}
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery
-		$term = $is_term ? $wpdb->get_var( $wpdb->prepare( "SELECT slug FROM $wpdb->terms WHERE name = %s", $title ) ) : '';
-		// phpcs:enable
+		$term = '';
+		if ( $is_term && null !== $this->term && null !== $this->taxonomy ) {
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery
+			$term = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
+							ON t.term_id = tt.term_id
+							WHERE t.name = %s AND tt.taxonomy = %s",
+					$title,
+					$this->taxonomy
+				)
+			);
+			// phpcs:enable
+
+			// Make sure we search in the db only once being called from wp_insert_term().
+			$this->term     = null;
+			$this->taxonomy = null;
+		}
 
 		if ( ! empty( $term ) ) {
 			$title = $term;
@@ -311,6 +342,7 @@ class Main {
 
 		if ( function_exists( 'iconv' ) ) {
 			$new_string = iconv( 'UTF-8', 'UTF-8//TRANSLIT//IGNORE', $string );
+
 			return $new_string ?: $string;
 		}
 
@@ -323,13 +355,13 @@ class Main {
 	 * @link https://kagg.eu/how-to-catch-gutenberg/
 	 *
 	 * @return bool
-	 * @noinspection PhpIncludeInspection
 	 */
 	private function is_classic_editor_plugin_active() {
 		// @codeCoverageIgnoreStart
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
+
 		// @codeCoverageIgnoreEnd
 
 		return is_plugin_active( 'classic-editor/classic-editor.php' );
@@ -394,6 +426,32 @@ class Main {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Filters a term before it is sanitized and inserted into the database.
+	 *
+	 * @param string|int|WP_Error $term     The term name to add, or a WP_Error object if there's an error.
+	 * @param string              $taxonomy Taxonomy slug.
+	 *
+	 * @return mixed
+	 */
+	public function pre_term_filter( $term, $taxonomy ) {
+		$this->term     = null;
+		$this->taxonomy = null;
+
+		if (
+			0 === $term ||
+			'' === trim( $term ) ||
+			is_wp_error( $term )
+		) {
+			return $term;
+		}
+
+		$this->term     = $term;
+		$this->taxonomy = $taxonomy;
+
+		return $term;
 	}
 
 	/**
@@ -518,6 +576,7 @@ class Main {
 				$pll_get_term_language = $pll_get_language->locale;
 			}
 		}
+
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		return $pll_get_term_language;
