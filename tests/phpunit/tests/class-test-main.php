@@ -482,6 +482,9 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_transliterate( $string, $expected ) {
 		$subject = $this->get_subject();
 
+		$settings = $this->get_protected_property( $subject, 'settings' );
+		WP_Mock::expectFilter( 'ctl_table', $settings->get_table() );
+
 		self::assertSame( $expected, $subject->transliterate( $string ) );
 	}
 
