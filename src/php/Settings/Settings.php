@@ -118,7 +118,7 @@ class Settings implements SettingsInterface {
 	 */
 	public function get_table() {
 		// List of locales: https://make.wordpress.org/polyglots/teams/.
-		$locale = get_locale();
+		$locale = (string) apply_filters( 'ctl_locale', get_locale() );
 		$table  = $this->get( $locale );
 		if ( empty( $table ) ) {
 			$table = $this->get( 'iso9' );

@@ -71,22 +71,21 @@ For instance, if your non-standard locale is uk_UA, you can redefine it to `uk` 
 
 `
 /**
- * Use conversion table for non-standard locale.
- *
- * @param array $table Conversion table.
- *
- * @return array
- */
-function my_ctl_table( $table ) {
-	if ( 'uk_UA' === get_locale() ) {
-		$settings = new Cyr_To_Lat_Settings();
-		$table    = $settings->get_option( 'uk' );
+* Use non-standard locale.
+*
+* @param string $locale Current locale.
+*
+* @return string
+*/
+function my_ctl_locale( $locale ) {
+	if ( 'uk_UA' === $locale ) {
+		return 'uk';
 	}
 
-	return $table;
+	return $locale;
 }
 
-add_filter( 'ctl_table', 'my_ctl_table' );
+add_filter( 'ctl_locale', 'my_ctl_locale' );
 `
 
 = How can I define own transliteration of titles? =
@@ -182,6 +181,9 @@ Yes you can!
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 5.0.3 (31.03.2021) =
+* Add filter 'ctl_locale'
 
 = 5.0.2 (27.03.2021) =
 * Fix bug creating tag with the same slug as category

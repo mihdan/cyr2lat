@@ -101,6 +101,8 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 			]
 		);
 
+		WP_Mock::expectFilter( 'ctl_locale', $locale );
+
 		self::assertSame( $iso9_table, $subject->get_table() );
 	}
 
