@@ -5,6 +5,10 @@
  * @package cyr-to-lat
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUndefinedClassInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 namespace Cyr_To_Lat;
 
 use WP_Error;
@@ -131,7 +135,7 @@ class Main {
 				 * @noinspection PhpParamsInspection
 				 */
 				\WP_CLI::add_command( 'cyr2lat', $this->cli );
-			} catch ( Exception $e ) {
+			} catch ( Exception ) {
 				return;
 			}
 		}

@@ -1202,6 +1202,7 @@ class Conversion_Tables {
 	 * On MacOS, files containing characters in the table, are sometimes encoded improperly.
 	 *
 	 * @return array
+	 * @noinspection PhpArrayShapeAttributeCanBeAddedInspection
 	 */
 	public static function get_fix_table_for_mac() {
 		/**

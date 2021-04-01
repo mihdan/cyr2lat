@@ -215,6 +215,7 @@ abstract class SettingsBase {
 	 * Is this the main menu page.
 	 *
 	 * @return bool
+	 * @noinspection PhpPureAttributeCanBeAddedInspection
 	 */
 	protected function is_main_menu_page() {
 		// Main menu page should have empty string as parent slug.
@@ -566,6 +567,7 @@ abstract class SettingsBase {
 	 * @param array $arguments Field arguments.
 	 *
 	 * @noinspection PhpUnusedPrivateMethodInspection
+	 * @noinspection HtmlUnknownAttribute
 	 */
 	private function print_check_box_field( array $arguments ) {
 		$value = (array) $this->get( $arguments['field_id'] );
@@ -625,6 +627,7 @@ abstract class SettingsBase {
 	 * @param array $arguments Field arguments.
 	 *
 	 * @noinspection PhpUnusedPrivateMethodInspection
+	 * @noinspection HtmlUnknownAttribute
 	 */
 	private function print_radio_field( array $arguments ) {
 		$value = $this->get( $arguments['field_id'] );
@@ -680,6 +683,7 @@ abstract class SettingsBase {
 	 * @param array $arguments Field arguments.
 	 *
 	 * @noinspection PhpUnusedPrivateMethodInspection
+	 * @noinspection HtmlUnknownAttribute
 	 */
 	private function print_select_field( array $arguments ) {
 		$value = $this->get( $arguments['field_id'] );
@@ -720,6 +724,7 @@ abstract class SettingsBase {
 	 * @param array $arguments Field arguments.
 	 *
 	 * @noinspection PhpUnusedPrivateMethodInspection
+	 * @noinspection HtmlUnknownAttribute
 	 */
 	private function print_multiple_select_field( array $arguments ) {
 		$value = $this->get( $arguments['field_id'] );

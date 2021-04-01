@@ -5,6 +5,10 @@
  * @package cyr-to-lat
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUndefinedClassInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 namespace Cyr_To_Lat;
 
 use Cyr_To_Lat\Settings\Settings;
@@ -178,6 +182,8 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 
 		/**
 		 * Try to fix max_input_vars.
+		 *
+		 * @noinspection PhpStrFunctionsInspection
 		 */
 		protected function try_to_fix_max_input_vars() {
 			$user_ini_filename = $this->get_user_ini_filename();
@@ -219,6 +225,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 * Get .user.ini filename.
 		 *
 		 * @return string
+		 * @noinspection PhpPureAttributeCanBeAddedInspection
 		 */
 		private function get_user_ini_filename() {
 			return ABSPATH . 'wp-admin/' . ini_get( 'user_ini.filename' );
