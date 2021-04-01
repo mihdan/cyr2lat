@@ -506,17 +506,21 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	public function test_tabs_callback() {
 		$option_page        = 'cyr-to-lat';
 		$subject_class_name = 'Tables';
+		$subject_page_title = 'Tables';
 		$tab_class_name     = 'Converter';
+		$tab_page_title     = 'Converter';
 		$subject_url        = 'http://test.test/wp-admin/admin.php?page=cyr-to-lat';
 		$subject_url_arg    = 'http://test.test/wp-admin/admin.php?page=cyr-to-lat';
 		$tab_url_arg        = 'http://test.test/wp-admin/admin.php?page=cyr-to-lat&tab=converter';
 
 		$tab = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$tab->shouldReceive( 'get_class_name' )->with()->andReturn( $tab_class_name );
+		$tab->shouldReceive( 'page_title' )->with()->andReturn( $tab_page_title );
 
 		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'option_page' )->with()->twice()->andReturn( $option_page );
 		$subject->shouldReceive( 'get_class_name' )->with()->andReturn( $subject_class_name );
+		$subject->shouldReceive( 'page_title' )->with()->andReturn( $subject_page_title );
 		$subject->shouldReceive( 'is_tab_active' )->with( $subject )->once()->andReturn( true );
 		$subject->shouldReceive( 'is_tab_active' )->with( $tab )->once()->andReturn( false );
 
@@ -531,9 +535,9 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 
 		$expected = '		<div class="ctl-settings-tabs">
 					<a class="ctl-settings-tab active" href="http://test.test/wp-admin/admin.php?page=cyr-to-lat">
-			Tables		</a>
+			' . $subject_page_title . '		</a>
 				<a class="ctl-settings-tab" href="http://test.test/wp-admin/admin.php?page=cyr-to-lat&tab=converter">
-			Converter		</a>
+			' . $tab_page_title . '		</a>
 				</div>
 		';
 

@@ -432,7 +432,7 @@ abstract class SettingsBase {
 
 		?>
 		<a class="ctl-settings-tab<?php echo esc_attr( $active ); ?>" href="<?php echo esc_url( $url ); ?>">
-			<?php echo esc_html( $tab->tab_name() ); ?>
+			<?php echo esc_html( $tab->page_title() ); ?>
 		</a>
 		<?php
 	}
