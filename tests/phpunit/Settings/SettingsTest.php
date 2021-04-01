@@ -5,6 +5,11 @@
  * @package cyr-to-lat
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUndefinedMethodInspection */
+/** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 // phpcs:disable WordPress.WP.AlternativeFunctions.json_encode_json_encode
 
 namespace Cyr_To_Lat\Tests\Settings;
@@ -15,6 +20,7 @@ use Cyr_To_Lat\Settings\Settings;
 use Cyr_To_Lat\Cyr_To_Lat_TestCase;
 use Mockery;
 use ReflectionClass;
+use ReflectionException;
 use WP_Mock;
 
 /**
@@ -27,6 +33,8 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test constructor.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_constructor() {
 		$class_name = Settings::class;
@@ -44,6 +52,9 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 * @noinspection        JsonEncodingApiUsageInspection
 	 */
 	public function test_init_and_screen_ids() {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
@@ -67,6 +78,8 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test get().
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_get() {
 		$option   = 'some option';

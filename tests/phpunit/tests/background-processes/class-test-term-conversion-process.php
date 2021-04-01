@@ -6,9 +6,10 @@
  */
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
-/** @noinspection PhpIllegalPsrClassPathInspection */
 /** @noinspection PhpUndefinedMethodInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
+
+// phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
 namespace Cyr_To_Lat;
 
@@ -57,8 +58,8 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$wpdb        = Mockery::mock( wpdb::class );
 			$wpdb->terms = 'wp_terms';
-			$wpdb->shouldReceive( 'update' )->once()->
-			with( $wpdb->terms, [ 'slug' => $transliterated_slug ], [ 'term_id' => $term->term_id ] );
+			$wpdb->shouldReceive( 'update' )->once()
+				->with( $wpdb->terms, [ 'slug' => $transliterated_slug ], [ 'term_id' => $term->term_id ] );
 		}
 
 		WP_Mock::userFunction(
@@ -66,8 +67,8 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 			[ 'return' => 'ru_RU' ]
 		);
 
-		$subject = Mockery::mock( Term_Conversion_Process::class, [ $main ] )->makePartial()->
-		shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Term_Conversion_Process::class, [ $main ] )->makePartial()
+			->shouldAllowMockingProtectedMethods();
 
 		WP_Mock::expectFilterAdded(
 			'locale',
@@ -83,8 +84,8 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 		);
 
 		if ( $transliterated_slug !== $term->slug ) {
-			$subject->shouldReceive( 'log' )->
-			with( 'Term slug converted: ' . $term->slug . ' => ' . $transliterated_slug )->once();
+			$subject->shouldReceive( 'log' )
+				->with( 'Term slug converted: ' . $term->slug . ' => ' . $transliterated_slug )->once();
 		}
 
 		self::assertFalse( $subject->task( $term ) );
@@ -156,7 +157,7 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 		);
 
 		WP_Mock::userFunction( 'pll_get_term_language' )->with( $term->term_taxonomy_id )
-		       ->andReturn( $pll_pll_get_term_language );
+			->andReturn( $pll_pll_get_term_language );
 
 		$main    = Mockery::mock( Main::class );
 		$subject = new Term_Conversion_Process( $main );
@@ -198,11 +199,10 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 			'element_id'   => $term->term_taxonomy_id,
 		];
 
-		WP_Mock::onFilter( 'wpml_element_language_details' )->
-		with( false, $args )->reply( $wpml_element_language_details );
+		WP_Mock::onFilter( 'wpml_element_language_details' )->with( false, $args )
+			->reply( $wpml_element_language_details );
 
-		WP_Mock::onFilter( 'wpml_active_languages' )->
-		with( false, [] )->reply( $wpml_active_languages );
+		WP_Mock::onFilter( 'wpml_active_languages' )->with( false, [] )->reply( $wpml_active_languages );
 
 		WP_Mock::userFunction(
 			'get_locale',

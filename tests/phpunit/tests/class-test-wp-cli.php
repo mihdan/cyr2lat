@@ -5,8 +5,9 @@
  * @package cyr-to-lat
  */
 
-// phpcs:ignore Generic.Commenting.DocComment.MissingShort
-/** @noinspection PhpIllegalPsrClassPathInspection */
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUndefinedClassInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 namespace Cyr_To_Lat;
 
@@ -31,6 +32,7 @@ class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 	 *
 	 * @dataProvider        dp_test_regenerate
 	 * @noinspection        PhpUndefinedMethodInspection
+	 * @noinspection        PhpRedundantOptionalArgumentInspection
 	 */
 	public function test_regenerate( $args, $assoc_args, $convert_params ) {
 		$converter = Mockery::mock( Converter::class );
@@ -95,10 +97,8 @@ class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 
 		$notify = Mockery::Mock( Bar::class );
 
-		WP_Mock::userFunction( 'WP_CLI\Utils\make_progress_bar' )->
-		with( 'Regenerate existing slugs', 1 )->
-		once()->
-		andReturn( $notify );
+		WP_Mock::userFunction( 'WP_CLI\Utils\make_progress_bar' )->with( 'Regenerate existing slugs', 1 )->once()
+			->andReturn( $notify );
 
 		self::assertSame( $notify, $subject->make_progress_bar() );
 	}

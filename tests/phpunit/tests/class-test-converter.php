@@ -6,9 +6,10 @@
  */
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
-/** @noinspection PhpIllegalPsrClassPathInspection */
 /** @noinspection PhpUndefinedMethodInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
+
+// phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
 namespace Cyr_To_Lat;
 
@@ -344,7 +345,8 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$post_query_prepared = str_replace( '%s', "'" . $subject::ALLOWED_CHARS_REGEX . "'", $post_query );
 		$term_query_prepared = str_replace( '%s', "'" . $subject::ALLOWED_CHARS_REGEX . "'", $term_query );
 
-		$wpdb->shouldReceive( 'prepare' )->with( '%s', $regexp )->once()->andReturn( "'" . $subject::ALLOWED_CHARS_REGEX . "'" );
+		$wpdb->shouldReceive( 'prepare' )->with( '%s', $regexp )->once()
+			->andReturn( "'" . $subject::ALLOWED_CHARS_REGEX . "'" );
 		$wpdb->shouldReceive( 'prepare' )->with( $term_query, $regexp )->once()->andReturn( $term_query_prepared );
 
 		$wpdb->shouldReceive( 'get_results' )->with( $post_query_prepared )->once()->andReturn( $posts );

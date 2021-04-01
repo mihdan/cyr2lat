@@ -5,10 +5,14 @@
  * @package cyr-to-lat
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUndefinedMethodInspection */
+/** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 namespace Cyr_To_Lat\Tests\Settings;
 
 use Cyr_To_Lat\Settings\Converter;
-use Cyr_To_Lat\Settings\Tables;
 use Cyr_To_Lat\Cyr_To_Lat_TestCase;
 use Mockery;
 use ReflectionException;
@@ -97,6 +101,8 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test init_form_fields()
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_form_fields() {
 		$post_types = [ 'post', 'page', 'attachment' ];
@@ -164,6 +170,8 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test settings_page()
+	 *
+	 * @noinspection PhpUndefinedClassConstantInspection
 	 */
 	public function test_settings_page() {
 		$admin_url    = 'http://test.test/wp-admin/options.php';
@@ -180,7 +188,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 		WP_Mock::userFunction( 'wp_nonce_field' )->with( $subject::NONCE )->once();
 		WP_Mock::userFunction( 'submit_button' )->with()->once();
 		WP_Mock::userFunction( 'submit_button' )
-		       ->with( 'Convert Existing Slugs', 'secondary', 'ctl-convert-button' )->once();
+			->with( 'Convert Existing Slugs', 'secondary', 'ctl-convert-button' )->once();
 
 		$expected = '		<div class="wrap">
 			<h1>
@@ -309,24 +317,24 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		\WP_Mock::userFunction( 'wp_enqueue_script' )
-		        ->with(
-			        Converter::HANDLE,
-			        $plugin_url . '/assets/js/converter/app.js',
-			        [],
-			        $plugin_version,
-			        true
-		        )
-		        ->once();
+		WP_Mock::userFunction( 'wp_enqueue_script' )
+			->with(
+				Converter::HANDLE,
+				$plugin_url . '/assets/js/converter/app.js',
+				[],
+				$plugin_version,
+				true
+			)
+			->once();
 
-		\WP_Mock::userFunction( 'wp_enqueue_style' )
-		        ->with(
-			        Converter::HANDLE,
-			        $plugin_url . '/assets/css/converter.css',
-			        [],
-			        $plugin_version
-		        )
-		        ->once();
+		WP_Mock::userFunction( 'wp_enqueue_style' )
+			->with(
+				Converter::HANDLE,
+				$plugin_url . '/assets/css/converter.css',
+				[],
+				$plugin_version
+			)
+			->once();
 
 		$subject->admin_enqueue_scripts();
 	}
@@ -338,8 +346,8 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->with()->andReturn( false );
 
-		\WP_Mock::userFunction( 'wp_enqueue_script' )->never();
-		\WP_Mock::userFunction( 'wp_enqueue_style' )->never();
+		WP_Mock::userFunction( 'wp_enqueue_script' )->never();
+		WP_Mock::userFunction( 'wp_enqueue_style' )->never();
 
 		$subject->admin_enqueue_scripts();
 	}

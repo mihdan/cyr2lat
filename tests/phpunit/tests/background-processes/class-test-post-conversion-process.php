@@ -7,9 +7,10 @@
  */
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
-/** @noinspection PhpIllegalPsrClassPathInspection */
 /** @noinspection PhpUndefinedMethodInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
+
+// phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
 namespace Cyr_To_Lat;
 
@@ -76,8 +77,8 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 			[ 'return' => 'ru_RU' ]
 		);
 
-		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()->
-		shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
+			->shouldAllowMockingProtectedMethods();
 
 		WP_Mock::expectFilterAdded(
 			'locale',
@@ -134,7 +135,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$main->shouldReceive( 'transliterate' )->with( $post_name )->andReturn( $transliterated_name );
 
 		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
-			       ->shouldAllowMockingProtectedMethods();
+			->shouldAllowMockingProtectedMethods();
 
 		if ( $transliterated_name !== $post->post_name ) {
 			WP_Mock::userFunction(
@@ -236,7 +237,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 		if ( $rename ) {
 			WP_Mock::userFunction( 'update_attached_file' )->with( $post_id, $transliterated_file )
-			       ->andReturn( $updated );
+				->andReturn( $updated );
 		} else {
 			WP_Mock::userFunction( 'update_attached_file' )->never();
 		}
@@ -293,11 +294,11 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 		WP_Mock::userFunction( 'get_intermediate_image_sizes' )->with()->once()->andReturn( $sizes );
 		WP_Mock::userFunction( 'wp_get_attachment_image_src' )->with( $post_id, 'thumbnail' )->once()
-		        ->andReturn( $thumbnail_src );
+			->andReturn( $thumbnail_src );
 		WP_Mock::userFunction( 'wp_get_attachment_image_src' )->with( $post_id, 'medium' )->once()
-		        ->andReturn( $medium_src );
+			->andReturn( $medium_src );
 		WP_Mock::userFunction( 'wp_get_attachment_image_src' )->with( $post_id, 'large' )->once()
-		        ->andReturn( $large_src );
+			->andReturn( $large_src );
 
 		FunctionMocker::replace(
 			'constant',
@@ -316,35 +317,34 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		);
 
 		WP_Mock::userFunction( 'wp_make_link_relative' )->with( $thumbnail_src[0] )->once()
-		        ->andReturn( $thumbnail_relative );
+			->andReturn( $thumbnail_relative );
 		WP_Mock::userFunction( 'wp_make_link_relative' )->with( $medium_src[0] )->once()
-		        ->andReturn( $medium_relative );
+			->andReturn( $medium_relative );
 		WP_Mock::userFunction( 'wp_make_link_relative' )->with( $large_src[0] )->once()
-		        ->andReturn( $large_relative );
+			->andReturn( $large_relative );
 
 		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'get_transliterated_file' )->with( $thumbnail_file )->once()
-		        ->andReturn( $transliterated_thumbnail_file );
+			->andReturn( $transliterated_thumbnail_file );
 		$subject->shouldReceive( 'get_transliterated_file' )->with( $medium_file )->once()
-		        ->andReturn( $medium_file );
+			->andReturn( $medium_file );
 		$subject->shouldReceive( 'get_transliterated_file' )->with( $large_file )->once()
-		        ->andReturn( $large_file );
+			->andReturn( $large_file );
 
 		$subject->shouldReceive( 'rename_file' )->with( $thumbnail_file, $transliterated_thumbnail_file )->once()
-		        ->andReturn( true );
+			->andReturn( true );
 		$subject->shouldReceive( 'rename_file' )->with( $medium_file, $medium_file )->once()
-		        ->andReturn( false );
+			->andReturn( false );
 		$subject->shouldReceive( 'rename_file' )->with( $large_file, $large_file )->once()
-		        ->andReturn( false );
+			->andReturn( false );
 
 		$subject->shouldReceive( 'log' )
-		        ->with( 'Thumbnail file renamed: ' . $thumbnail_file . ' => ' . $transliterated_thumbnail_file )
-		        ->once();
+			->with( 'Thumbnail file renamed: ' . $thumbnail_file . ' => ' . $transliterated_thumbnail_file )
+			->once();
 		$subject->shouldReceive( 'log' )
-		        ->with( 'Cannot rename thumbnail file: ' . $medium_file )->once();
+			->with( 'Cannot rename thumbnail file: ' . $medium_file )->once();
 		$subject->shouldReceive( 'log' )
-		        ->with( 'Cannot rename thumbnail file: ' . $large_file )->once();
-
+			->with( 'Cannot rename thumbnail file: ' . $large_file )->once();
 
 		$subject->rename_thumbnails( $post_id );
 	}
@@ -384,10 +384,10 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$main = Mockery::mock( Main::class );
 		$main->shouldReceive( 'transliterate' )->with( $meta['file'] )->andReturn( $transliterated_meta['file'] );
 		$main->shouldReceive( 'transliterate' )->with( $meta['sizes']['thumbnail']['file'] )
-		     ->andReturn( $transliterated_meta['sizes']['thumbnail']['file'] );
+			->andReturn( $transliterated_meta['sizes']['thumbnail']['file'] );
 
 		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
-		                  ->shouldAllowMockingProtectedMethods();
+			->shouldAllowMockingProtectedMethods();
 
 		WP_Mock::userFunction( 'wp_get_attachment_metadata' )->with( $attachment_id )->once()->andReturn( $meta );
 		WP_Mock::userFunction( 'wp_update_attachment_metadata' )->with( $attachment_id, $transliterated_meta )->once();
@@ -406,7 +406,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$main->shouldReceive( 'transliterate' )->with( 'Скамейка' )->andReturn( 'Skamejka' );
 
 		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
-		                  ->shouldAllowMockingProtectedMethods();
+			->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( $transliterated_file, $subject->get_transliterated_file( $file ) );
 	}
@@ -419,11 +419,11 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$new_file = '/var/www/test/wp-content/uploads/2020/05/Skamejka.jpg';
 
 		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()
-		                  ->shouldAllowMockingProtectedMethods();
+			->shouldAllowMockingProtectedMethods();
 
 		FunctionMocker::replace(
 			'rename',
-			function( $oldname, $newname ) use ( $file, $new_file ) {
+			function ( $oldname, $newname ) use ( $file, $new_file ) {
 				return $oldname === $file && $newname === $new_file;
 			}
 		);
@@ -472,7 +472,8 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 			'ID' => 5,
 		];
 
-		WP_Mock::onFilter( 'wpml_post_language_details' )->with( false, $post->ID )->reply( $wpml_post_language_details );
+		WP_Mock::onFilter( 'wpml_post_language_details' )->with( false, $post->ID )
+			->reply( $wpml_post_language_details );
 
 		WP_Mock::userFunction(
 			'get_locale',

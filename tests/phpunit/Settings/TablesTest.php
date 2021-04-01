@@ -5,6 +5,11 @@
  * @package cyr-to-lat
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUndefinedMethodInspection */
+/** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 namespace Cyr_To_Lat\Tests\Settings;
 
 use Cyr_To_Lat\Settings\Tables;
@@ -26,7 +31,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 	 * Test screen_id().
 	 */
 	public function test_screen_id() {
-		$subject = \Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( 'settings_page_cyr-to-lat', $subject->screen_id() );
 	}
@@ -35,7 +40,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 	 * Test option_group().
 	 */
 	public function test_option_group() {
-		$subject = \Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( 'cyr_to_lat_group', $subject->option_group() );
 	}
@@ -44,7 +49,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 	 * Test option_page().
 	 */
 	public function test_option_page() {
-		$subject = \Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( 'cyr-to-lat', $subject->option_page() );
 	}
@@ -53,7 +58,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 	 * Test option_name().
 	 */
 	public function test_option_name() {
-		$subject = \Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( 'cyr_to_lat_settings', $subject->option_name() );
 	}
@@ -62,7 +67,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 	 * Test page_title().
 	 */
 	public function test_page_title() {
-		$subject = \Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( 'Tables', $subject->page_title() );
 	}
@@ -71,7 +76,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 	 * Test menu_title().
 	 */
 	public function test_menu_title() {
-		$subject = \Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( 'Cyr To Lat', $subject->menu_title() );
 	}
@@ -80,7 +85,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 	 * Test section_title().
 	 */
 	public function test_section_title() {
-		$subject = \Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( '', $subject->section_title() );
 	}
@@ -89,7 +94,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 	 * Test parent_slug().
 	 */
 	public function test_parent_slug() {
-		$subject = \Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( 'options-general.php', $subject->parent_slug() );
 	}
@@ -154,6 +159,10 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test init_form_fields()
+	 *
+	 * @noinspection PhpSwitchCanBeReplacedWithMatchExpressionInspection
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_form_fields() {
 		$subject = new Tables();
@@ -267,7 +276,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 		$plugin_url     = 'http://test.test/wp-content/plugins/cyr-to-lat';
 		$plugin_version = '1.0.0';
 
-		$subject = \Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->with()->andReturn( true );
 
 		FunctionMocker::replace(
@@ -284,35 +293,35 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		\WP_Mock::userFunction( 'wp_enqueue_script' )
-		        ->with(
-			        Tables::HANDLE,
-			        $plugin_url . '/assets/js/tables/app.js',
-			        [],
-			        $plugin_version,
-			        true
-		        )
-		        ->once();
+		WP_Mock::userFunction( 'wp_enqueue_script' )
+			->with(
+				Tables::HANDLE,
+				$plugin_url . '/assets/js/tables/app.js',
+				[],
+				$plugin_version,
+				true
+			)
+			->once();
 
-		\WP_Mock::userFunction( 'wp_localize_script' )
-		        ->with(
-			        Tables::HANDLE,
-			        Tables::OBJECT,
-			        [
-				        'optionsSaveSuccessMessage' => 'Options saved.',
-				        'optionsSaveErrorMessage'   => 'Error saving options.',
-			        ]
-		        )
-		        ->once();
+		WP_Mock::userFunction( 'wp_localize_script' )
+			->with(
+				Tables::HANDLE,
+				Tables::OBJECT,
+				[
+					'optionsSaveSuccessMessage' => 'Options saved.',
+					'optionsSaveErrorMessage'   => 'Error saving options.',
+				]
+			)
+			->once();
 
-		\WP_Mock::userFunction( 'wp_enqueue_style' )
-		        ->with(
-			        Tables::HANDLE,
-			        $plugin_url . '/assets/css/tables.css',
-			        [],
-			        $plugin_version
-		        )
-		        ->once();
+		WP_Mock::userFunction( 'wp_enqueue_style' )
+			->with(
+				Tables::HANDLE,
+				$plugin_url . '/assets/css/tables.css',
+				[],
+				$plugin_version
+			)
+			->once();
 
 		$subject->admin_enqueue_scripts();
 	}
@@ -321,12 +330,12 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 	 * Test admin_enqueue_scripts() not on own screen.
 	 */
 	public function test_admin_enqueue_scripts_not_on_own_screen() {
-		$subject = \Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->with()->andReturn( false );
 
-		\WP_Mock::userFunction( 'wp_enqueue_script' )->never();
-		\WP_Mock::userFunction( 'wp_localize_script' )->never();
-		\WP_Mock::userFunction( 'wp_enqueue_style' )->never();
+		WP_Mock::userFunction( 'wp_enqueue_script' )->never();
+		WP_Mock::userFunction( 'wp_localize_script' )->never();
+		WP_Mock::userFunction( 'wp_enqueue_style' )->never();
 
 		$subject->admin_enqueue_scripts();
 	}
@@ -348,13 +357,13 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 
 		foreach ( $form_fields as $form_field ) {
 			WP_Mock::userFunction( 'add_settings_section' )
-			       ->with(
-				       $form_field['section'],
-				       $form_field['label'],
-				       [ $subject, 'section_callback' ],
-				       $tab_option_page
-			       )
-			       ->once();
+				->with(
+					$form_field['section'],
+					$form_field['label'],
+					[ $subject, 'section_callback' ],
+					$tab_option_page
+				)
+				->once();
 		}
 
 		$subject->setup_sections();

@@ -6,14 +6,17 @@
  */
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
-/** @noinspection PhpIllegalPsrClassPathInspection */
 /** @noinspection PhpUndefinedClassInspection */
 /** @noinspection PhpUndefinedMethodInspection */
+/** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
+
+// phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
 namespace Cyr_To_Lat;
 
 use Cyr_To_Lat\Settings\Settings;
+use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
 use Exception;
 use Mockery;
 use ReflectionClass;
@@ -181,6 +184,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test init() with CLI
+	 *
+	 * @noinspection PhpRedundantOptionalArgumentInspection
 	 */
 	public function test_init_with_cli() {
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -360,6 +365,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @test
 	 * @dataProvider dp_wp_insert_term
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection SqlResolve
 	 */
 	public function wp_insert_term( $title, $term, $expected ) {
 		global $wpdb;
@@ -993,6 +999,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test pll_locale_filter() with term.
+	 *
+	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public function test_pll_locale_filter_with_term() {
 		$locale           = 'en_US';
@@ -1138,7 +1146,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	protected function transpose_chinese_table( $table ) {
 		$transposed_table = [];
 		foreach ( $table as $key => $item ) {
-			$hieroglyphs = mb_str_split( $item );
+			$hieroglyphs = Mbstring::mb_str_split( $item );
 			foreach ( $hieroglyphs as $hieroglyph ) {
 				$transposed_table[ $hieroglyph ] = $key;
 			}

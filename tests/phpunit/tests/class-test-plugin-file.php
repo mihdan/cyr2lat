@@ -5,10 +5,7 @@
  * @package cyr-to-lat
  */
 
-// phpcs:disable Generic.Commenting.DocComment.MissingShort
-/** @noinspection PhpIllegalPsrClassPathInspection */
-/** @noinspection ReturnTypeCanBeDeclaredInspection */
-// phpcs:enable Generic.Commenting.DocComment.MissingShort
+// phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
 namespace Cyr_To_Lat;
 
@@ -21,7 +18,7 @@ use WP_Mock;
  *
  * @group plugin-file
  */
-class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
+class Test_Cyr_To_Lat_Plugin_File extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Tear down.
@@ -47,10 +44,10 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 		$plugin_dir_url         = 'http://test.test/wp-content/plugins/cyr2lat/';
 		$plugin_dir_url_unslash = rtrim( $plugin_dir_url, '/' );
 
-		\WP_Mock::userFunction( 'plugin_dir_url' )->with( PLUGIN_MAIN_FILE )
-		        ->andReturn( $plugin_dir_url );
-		\WP_Mock::userFunction( 'untrailingslashit' )->with( $plugin_dir_url )
-		        ->andReturn( $plugin_dir_url_unslash );
+		WP_Mock::userFunction( 'plugin_dir_url' )->with( PLUGIN_MAIN_FILE )
+			->andReturn( $plugin_dir_url );
+		WP_Mock::userFunction( 'untrailingslashit' )->with( $plugin_dir_url )
+			->andReturn( $plugin_dir_url_unslash );
 
 		$defined = FunctionMocker::replace(
 			'defined',
@@ -92,7 +89,7 @@ class Test_Cyr_To_Lat_Plugin_File  extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		$main = \Mockery::mock( 'overload:' . Main::class );
+		$main = Mockery::mock( 'overload:' . Main::class );
 		$main->shouldReceive( 'init' )->once();
 
 		require PLUGIN_MAIN_FILE;

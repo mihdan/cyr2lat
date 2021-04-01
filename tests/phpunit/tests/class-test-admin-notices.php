@@ -5,9 +5,6 @@
  * @package cyr-to-lat
  */
 
-// phpcs:ignore Generic.Commenting.DocComment.MissingShort
-/** @noinspection PhpIllegalPsrClassPathInspection */
-
 namespace Cyr_To_Lat;
 
 use ReflectionClass;

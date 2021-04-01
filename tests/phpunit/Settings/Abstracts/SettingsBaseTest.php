@@ -7,6 +7,7 @@
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
 /** @noinspection PhpUndefinedMethodInspection */
+/** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 // phpcs:disable WordPress.WP.AlternativeFunctions.json_encode_json_encode
@@ -16,6 +17,7 @@ namespace Cyr_To_Lat\Tests\Settings\Abstracts;
 use Cyr_To_Lat\Cyr_To_Lat_TestCase;
 use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
 use Mockery;
+use PHPUnit\Runner\Version;
 use ReflectionClass;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
@@ -173,8 +175,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$this->set_method_accessibility( $subject, 'get_class_name' );
 
 		if (
-			class_exists( \PHPUnit\Runner\Version::class ) &&
-			version_compare( substr( \PHPUnit\Runner\Version::id(), 0, 1 ), '7', '>=' )
+			class_exists( Version::class ) &&
+			version_compare( substr( Version::id(), 0, 1 ), '7', '>=' )
 		) {
 			self::assertStringContainsString(
 				'Cyr_To_Lat_Settings_Abstracts_SettingsBase',
@@ -253,7 +255,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		];
 
 		WP_Mock::userFunction( 'wp_list_pluck' )->with( $form_fields, 'default' )->once()
-		       ->andReturn( $form_fields_pluck );
+			->andReturn( $form_fields_pluck );
 
 		$this->set_protected_property( $subject, 'settings', null );
 		$subject->init_settings();
@@ -362,10 +364,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 
 		if ( $is_main_menu_page ) {
 			WP_Mock::userFunction( 'add_menu_page' )
-			       ->with( $page_title, $menu_title, $capability, $slug, $callback );
+				->with( $page_title, $menu_title, $capability, $slug, $callback );
 		} else {
 			WP_Mock::userFunction( 'add_submenu_page' )
-			       ->with( $parent_slug, $page_title, $menu_title, $capability, $slug, $callback );
+				->with( $parent_slug, $page_title, $menu_title, $capability, $slug, $callback );
 		}
 
 		$subject->add_settings_page();
@@ -412,13 +414,13 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$subject->shouldReceive( 'plugin_version' )->once()->andReturn( $plugin_version );
 
 		WP_Mock::userFunction( 'wp_enqueue_style' )
-		       ->with(
-			       SettingsBase::HANDLE,
-			       $plugin_url . '/assets/css/settings-base.css',
-			       [],
-			       $plugin_version
-		       )
-		       ->once();
+			->with(
+				SettingsBase::HANDLE,
+				$plugin_url . '/assets/css/settings-base.css',
+				[],
+				$plugin_version
+			)
+			->once();
 
 		$subject->base_admin_enqueue_scripts();
 	}
@@ -430,6 +432,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 *
 	 * @dataProvider dp_test_setup_sections
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection NullCoalescingOperatorCanBeUsedInspection
 	 */
 	public function test_setup_sections( $tabs ) {
 		$tab_option_page = 'cyr-to-lat';
@@ -450,13 +453,13 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		foreach ( $form_fields as $form_field ) {
 			$title = isset( $form_field['title'] ) ? $form_field['title'] : '';
 			WP_Mock::userFunction( 'add_settings_section' )
-			       ->with(
-				       $form_field['section'],
-				       $title,
-				       [ $tab, 'section_callback' ],
-				       $tab_option_page
-			       )
-			       ->once();
+				->with(
+					$form_field['section'],
+					$title,
+					[ $tab, 'section_callback' ],
+					$tab_option_page
+				)
+				->once();
 		}
 
 		$subject->setup_sections();
@@ -487,13 +490,13 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$subject->shouldReceive( 'get_active_tab' )->once()->andReturn( $tab );
 
 		WP_Mock::userFunction( 'add_settings_section' )
-		       ->with(
-			       'tabs_section',
-			       '',
-			       [ $subject, 'tabs_callback' ],
-			       $tab_option_page
-		       )
-		       ->once();
+			->with(
+				'tabs_section',
+				'',
+				[ $subject, 'tabs_callback' ],
+				$tab_option_page
+			)
+			->once();
 
 		$subject->setup_tabs_section();
 	}
@@ -527,11 +530,11 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$this->set_protected_property( $subject, 'tabs', [ $tab ] );
 
 		WP_Mock::userFunction( 'menu_page_url' )
-		       ->with( $option_page, false )->twice()->andReturn( $subject_url );
+			->with( $option_page, false )->twice()->andReturn( $subject_url );
 		WP_Mock::userFunction( 'add_query_arg' )
-		       ->with( 'tab', strtolower( $subject_class_name ), $subject_url )->andReturn( $subject_url_arg );
+			->with( 'tab', strtolower( $subject_class_name ), $subject_url )->andReturn( $subject_url_arg );
 		WP_Mock::userFunction( 'add_query_arg' )
-		       ->with( 'tab', strtolower( $tab_class_name ), $subject_url )->andReturn( $tab_url_arg );
+			->with( 'tab', strtolower( $tab_class_name ), $subject_url )->andReturn( $tab_url_arg );
 
 		$expected = '		<div class="ctl-settings-tabs">
 					<a class="ctl-settings-tab active" href="http://test.test/wp-admin/admin.php?page=cyr-to-lat">
@@ -601,6 +604,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 * Test get_active_tab().
 	 *
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection JsonEncodingApiUsageInspection
 	 */
 	public function test_get_active_tab() {
 		$tab = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
@@ -638,22 +642,22 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$this->set_protected_property( $subject, 'form_fields', $form_fields_test_data );
 
 		WP_Mock::userFunction( 'register_setting' )
-		       ->with( $option_group, $option_name )
-		       ->once();
+			->with( $option_group, $option_name )
+			->once();
 
 		foreach ( $form_fields_test_data as $key => $field ) {
 			$field['field_id'] = $key;
 
 			WP_Mock::userFunction( 'add_settings_field' )
-			       ->with(
-				       $key,
-				       $field['label'],
-				       [ $subject, 'field_callback' ],
-				       $option_page,
-				       $field['section'],
-				       $field
-			       )
-			       ->once();
+				->with(
+					$key,
+					$field['label'],
+					[ $subject, 'field_callback' ],
+					$option_page,
+					$field['section'],
+					$field
+				)
+				->once();
 		}
 
 		$subject->setup_fields();
@@ -676,8 +680,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$this->set_protected_property( $subject, 'form_fields', [] );
 
 		WP_Mock::userFunction( 'register_setting' )
-		       ->with( $option_group, $option_name )
-		       ->once();
+			->with( $option_group, $option_name )
+			->once();
 
 		WP_Mock::userFunction( 'add_settings_field' )->never();
 
@@ -705,6 +709,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 * @param string $expected  Expected result.
 	 *
 	 * @dataProvider dp_test_field_callback
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function test_field_callback( $arguments, $expected ) {
 		$option_name = 'cyr_to_lat_settings';
@@ -1550,7 +1555,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$subject->shouldReceive( 'plugin_basename' )->andReturn( $plugin_base_name );
 
 		WP_Mock::userFunction( 'load_plugin_textdomain' )
-		       ->with( $text_domain, false, dirname( $plugin_base_name ) . '/languages/' )->once();
+			->with( $text_domain, false, dirname( $plugin_base_name ) . '/languages/' )->once();
 
 		$subject->load_plugin_textdomain();
 	}

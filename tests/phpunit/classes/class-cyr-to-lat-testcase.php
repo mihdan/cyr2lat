@@ -5,11 +5,11 @@
  * @package cyr-to-lat
  */
 
-// phpcs:ignore Generic.Commenting.DocComment.MissingShort
-/** @noinspection PhpIllegalPsrClassPathInspection */
+// phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
 namespace Cyr_To_Lat;
 
+use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -551,13 +551,13 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 					'ת' => 'th',
 				];
 				for ( $code = 0x0590; $code <= 0x05CF; $code ++ ) {
-					$table[ mb_chr( $code ) ] = '';
+					$table[ Mbstring::mb_chr( $code ) ] = '';
 				}
 				for ( $code = 0x05F0; $code <= 0x05F5; $code ++ ) {
-					$table[ mb_chr( $code ) ] = '';
+					$table[ Mbstring::mb_chr( $code ) ] = '';
 				}
 				for ( $code = 0xFB1D; $code <= 0xFB4F; $code ++ ) {
-					$table[ mb_chr( $code ) ] = '';
+					$table[ Mbstring::mb_chr( $code ) ] = '';
 				}
 				break;
 			// phpcs:disable PSR2.ControlStructures.SwitchDeclaration.TerminatingComment
