@@ -1,6 +1,7 @@
-## 5.0.3 (02.04.2021)
+## 5.0.3 (03.04.2021)
 * Add filter 'ctl_locale'
 * Fix translation of tabs in admin
+* Fix registered post types in conversion settings
 
 ## 5.0.2 (27.03.2021)
 * Fix bug creating tag with the same slug as category

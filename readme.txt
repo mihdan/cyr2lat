@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
 Tested up to: 5.7
-Stable tag: 5.0.2
+Stable tag: 5.0.3
 Requires PHP: 5.6.20
 
 Convert Non-Latin characters in post, page and term slugs to Latin characters.
@@ -183,9 +183,10 @@ Yes you can!
 
 == Changelog ==
 
-= 5.0.3 (02.04.2021) =
+= 5.0.3 (03.04.2021) =
 * Add filter 'ctl_locale'
 * Fix translation of tabs on settings pages
+* Fix registered post types in conversion settings
 
 = 5.0.2 (27.03.2021) =
 * Fix bug creating tag with the same slug as category
