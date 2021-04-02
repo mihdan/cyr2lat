@@ -136,12 +136,39 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
+	 * Test get_convertible_post_types().
+	 */
+	public function test_get_convertible_post_types() {
+		$post_types = [
+			'post'       => 'post',
+			'page'       => 'page',
+			'attachment' => 'attachment',
+		];
+		$expected   = [
+			'post'          => 'post',
+			'page'          => 'page',
+			'attachment'    => 'attachment',
+			'nav_menu_item' => 'nav_menu_item',
+		];
+
+		WP_Mock::userFunction( 'get_post_types' )->with( [ 'public' => true ] )->andReturn( $post_types );
+
+		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+
+		self::assertSame( $expected, $subject->get_convertible_post_types() );
+	}
+
+	/**
 	 * Test delayed_init_form_fields()
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_delayed_init_form_fields() {
-		$post_types = [ 'post', 'page', 'attachment' ];
+		$post_types = [
+			'post'       => 'post',
+			'page'       => 'page',
+			'attachment' => 'attachment',
+		];
 		$expected   = [
 			'background_post_types'    =>
 				[

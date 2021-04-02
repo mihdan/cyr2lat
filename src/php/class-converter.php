@@ -177,7 +177,10 @@ class Converter {
 	protected function convert_existing_post_slugs( $args = [] ) {
 		global $wpdb;
 
-		$post_types    = $this->settings->get( 'background_post_types' );
+		$post_types    = array_intersect(
+			\Cyr_To_Lat\Settings\Converter::get_convertible_post_types(),
+			$this->settings->get( 'background_post_types' )
+		);
 		$post_statuses = $this->settings->get( 'background_post_statuses' );
 
 		$defaults = [

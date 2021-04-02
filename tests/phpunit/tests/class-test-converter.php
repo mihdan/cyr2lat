@@ -293,22 +293,26 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		);
 
 		if ( $include_attachment ) {
-			$post_types    = [ 'post', 'page', 'attachment' ];
-			$post_types_in = "'post', 'page', 'attachment'";
+			$post_types             = [ 'post', 'page', 'notification', 'attachment' ];
+			$convertible_post_types = [ 'post', 'page', 'product', 'attachment' ];
+			$post_types_in          = "'post', 'page', 'attachment'";
 		} else {
-			$post_types    = [ 'post', 'page' ];
-			$post_types_in = "'post', 'page'";
+			$post_types             = [ 'post', 'page', 'notification' ];
+			$convertible_post_types = [ 'post', 'page', 'product' ];
+			$post_types_in          = "'post', 'page'";
 		}
 
 		$post_statuses    = [ 'publish', 'future', 'private' ];
 		$post_statuses_in = "'publish', 'future', 'private'";
 
 		$defaults = [
-			'post_type'   => $post_types,
+			'post_type'   => array_intersect( $post_types, $convertible_post_types ),
 			'post_status' => $post_statuses,
 		];
 
 		$args = $defaults;
+
+		FunctionMocker::replace( '\Cyr_To_Lat\Settings\Converter::get_convertible_post_types', $convertible_post_types );
 
 		$settings->shouldReceive( 'get' )->with( 'background_post_types' )->andReturn( $post_types );
 		$settings->shouldReceive( 'get' )->with( 'background_post_statuses' )->andReturn( $post_statuses );
@@ -392,9 +396,9 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_convert_existing_slugs() {
 		return [
-			[ null, null, true ],
-			[ [ 'post1', 'post2' ], [ 'term1', 'term2' ], true ],
-			[ [ 'post1', 'post2' ], [ 'term1', 'term2' ], false ],
+			'no posts/terms'               => [ null, null, true ],
+			'posts, terms, attachments'    => [ [ 'post1', 'post2' ], [ 'term1', 'term2' ], true ],
+			'posts, terms, no attachments' => [ [ 'post1', 'post2' ], [ 'term1', 'term2' ], false ],
 		];
 	}
 

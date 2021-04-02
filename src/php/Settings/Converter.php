@@ -120,13 +120,23 @@ class Converter extends PluginSettingsBase {
 	}
 
 	/**
+	 * Get convertible post types.
+	 *
+	 * @return array
+	 */
+	public static function get_convertible_post_types() {
+		$post_types = get_post_types( [ 'public' => true ] );
+
+		return array_merge( $post_types, [ 'nav_menu_item' => 'nav_menu_item' ] );
+	}
+
+	/**
 	 * Init form fields.
 	 */
 	public function delayed_init_form_fields() {
 		$default_post_types = [ 'post', 'page', 'nav_menu_item' ];
-		$post_types         = get_post_types( [ 'public' => true ] );
 
-		$post_types += [ 'nav_menu_item' => 'nav_menu_item' ];
+		$post_types = self::get_convertible_post_types();
 
 		$filtered_post_types = apply_filters( 'ctl_post_types', $post_types );
 
