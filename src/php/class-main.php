@@ -125,6 +125,7 @@ class Main {
 	 * Init class.
 	 *
 	 * @noinspection PhpUndefinedClassInspection
+	 * @noinspection PhpUnusedLocalVariableInspection
 	 */
 	public function init() {
 		if ( defined( 'WP_CLI' ) && constant( 'WP_CLI' ) ) {
@@ -135,7 +136,7 @@ class Main {
 				 * @noinspection PhpParamsInspection
 				 */
 				\WP_CLI::add_command( 'cyr2lat', $this->cli );
-			} catch ( Exception ) {
+			} catch ( Exception $ex ) {
 				return;
 			}
 		}
