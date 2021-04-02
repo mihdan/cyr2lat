@@ -1602,21 +1602,4 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 			'Plugin screen, main menu page' => [ (object) [ 'id' => 'toplevel_page_cyr-to-lat' ], true, true ],
 		];
 	}
-
-	/**
-	 * Get test settings.
-	 *
-	 * @return array
-	 */
-	private function get_test_settings() {
-		return [
-			'iso9'  => [ 'iso9' ],
-			'bel'   => [ 'bel' ],
-			'uk'    => [ 'uk' ],
-			'bg_BG' => [ 'bg_BG' ],
-			'mk_MK' => [ 'mk_MK' ],
-			'ka_GE' => [ 'ka_GE' ],
-			'kk'    => [ 'kk' ],
-		];
-	}
 }

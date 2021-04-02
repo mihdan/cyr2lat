@@ -100,11 +100,47 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test init_form_fields()
+	 * Test init_hooks()
+	 */
+	public function test_init_hooks() {
+		$mock = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$mock->shouldReceive( 'plugin_basename' )->with()->andReturn( 'cyr2lat/cyr-to-lat.php' );
+		$mock->shouldReceive( 'option_name' )->with()->andReturn( 'cyr_to_lat_settings' );
+
+		WP_Mock::expectActionAdded( 'in_admin_header', [ $mock, 'in_admin_header' ] );
+		WP_Mock::expectActionAdded( 'init', [ $mock, 'delayed_init_settings' ], PHP_INT_MAX );
+
+		$mock->init_hooks();
+	}
+
+	/**
+	 * Test init_form_fields().
+	 */
+	public function test_init_form_fields() {
+		$mock = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+
+		$mock->init_form_fields();
+
+		self::assertSame( [], $this->get_protected_property( $mock, 'form_fields' ) );
+	}
+
+	/**
+	 * Test init_settings().
+	 */
+	public function test_init_settings() {
+		$mock = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+
+		WP_Mock::userFunction( 'get_option' )->with( 'cyr_to_lat_settings', null )->andReturn( null );
+
+		$mock->init_settings();
+	}
+
+	/**
+	 * Test delayed_init_form_fields()
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_form_fields() {
+	public function test_delayed_init_form_fields() {
 		$post_types = [ 'post', 'page', 'attachment' ];
 		$expected   = [
 			'background_post_types'    =>
@@ -151,21 +187,23 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		$subject->init_form_fields();
+		$subject->delayed_init_form_fields();
 		self::assertSame( $expected, $this->get_protected_property( $subject, 'form_fields' ) );
 	}
 
 	/**
-	 * Test init_hooks()
+	 * Test delayed_init_settings().
 	 */
-	public function test_init_hooks() {
-		$mock = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$mock->shouldReceive( 'plugin_basename' )->with()->andReturn( 'cyr2lat/cyr-to-lat.php' );
-		$mock->shouldReceive( 'option_name' )->with()->andReturn( 'cyr_to_lat_settings' );
+	public function test_delayed_init_settings() {
+		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'delayed_init_form_fields' )->with()->once();
 
-		WP_Mock::expectActionAdded( 'in_admin_header', [ $mock, 'in_admin_header' ] );
+		$form_fields_pluck = $this->get_test_settings();
 
-		$mock->init_hooks();
+		WP_Mock::userFunction( 'wp_list_pluck' )->with( [], 'default' )->once()
+			->andReturn( $form_fields_pluck );
+
+		$subject->delayed_init_settings();
 	}
 
 	/**

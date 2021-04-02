@@ -97,9 +97,32 @@ class Converter extends PluginSettingsBase {
 	}
 
 	/**
-	 * Init form fields.
+	 * Init class hooks.
+	 */
+	protected function init_hooks() {
+		parent::init_hooks();
+
+		add_action( 'in_admin_header', [ $this, 'in_admin_header' ] );
+		add_action( 'init', [ $this, 'delayed_init_settings' ], PHP_INT_MAX );
+	}
+
+	/**
+	 * Empty method. Do stuff in the delayed_init_form_fields.
 	 */
 	public function init_form_fields() {
+		$this->form_fields = [];
+	}
+
+	/**
+	 * Empty method. Do stuff in the delayed_init_settings.
+	 */
+	public function init_settings() {
+	}
+
+	/**
+	 * Init form fields.
+	 */
+	public function delayed_init_form_fields() {
 		$default_post_types = [ 'post', 'page', 'nav_menu_item' ];
 		$post_types         = get_post_types( [ 'public' => true ] );
 
@@ -151,12 +174,13 @@ class Converter extends PluginSettingsBase {
 	}
 
 	/**
-	 * Init class hooks.
+	 * Init form fields and settings late, on 'init' hook with PHP_INT_MAX priority,
+	 * to allow all plugins to register post types.
 	 */
-	protected function init_hooks() {
-		parent::init_hooks();
+	public function delayed_init_settings() {
+		$this->delayed_init_form_fields();
 
-		add_action( 'in_admin_header', [ $this, 'in_admin_header' ] );
+		parent::init_settings();
 	}
 
 	/**

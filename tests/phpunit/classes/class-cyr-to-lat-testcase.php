@@ -1101,4 +1101,21 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 
 		return $form_fields;
 	}
+
+	/**
+	 * Get test settings.
+	 *
+	 * @return array
+	 */
+	protected function get_test_settings() {
+		return [
+			'iso9'  => [ 'iso9' ],
+			'bel'   => [ 'bel' ],
+			'uk'    => [ 'uk' ],
+			'bg_BG' => [ 'bg_BG' ],
+			'mk_MK' => [ 'mk_MK' ],
+			'ka_GE' => [ 'ka_GE' ],
+			'kk'    => [ 'kk' ],
+		];
+	}
 }
