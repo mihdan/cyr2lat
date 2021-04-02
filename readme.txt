@@ -30,6 +30,7 @@ Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
 1. Tables settings page
 2. Converter settings page
 3. Block editor with transliterated slug
+4. WPML Certificate
 
 == Plugin Support ==
 
@@ -182,8 +183,9 @@ Yes you can!
 
 == Changelog ==
 
-= 5.0.3 (31.03.2021) =
+= 5.0.3 (02.04.2021) =
 * Add filter 'ctl_locale'
+* Fix translation of tabs on settings pages
 
 = 5.0.2 (27.03.2021) =
 * Fix bug creating tag with the same slug as category
