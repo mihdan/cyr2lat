@@ -105,7 +105,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_locales() {
-		$subject = Mockery::mock( Tables::class )->makePartial();
+		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$method = $this->set_method_accessibility( $subject, 'init_locales' );
 		$method->invoke( $subject );
@@ -165,7 +165,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_form_fields() {
-		$subject = Mockery::mock( Tables::class )->makePartial();
+		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		FunctionMocker::replace(
 			'\Cyr_To_Lat\Conversion_Tables::get',
@@ -254,7 +254,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 
 		WP_Mock::userFunction( 'get_locale' )->andReturn( $locale );
 
-		$subject = Mockery::mock( Tables::class )->makePartial();
+		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		ob_start();
 		$subject->section_callback(
