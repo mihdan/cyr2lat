@@ -19,6 +19,7 @@ use Cyr_To_Lat\Settings\Converter;
 use Cyr_To_Lat\Settings\Settings;
 use Cyr_To_Lat\Cyr_To_Lat_TestCase;
 use Mockery;
+use PHPUnit\Runner\Version;
 use ReflectionClass;
 use ReflectionException;
 use WP_Mock;
@@ -114,7 +115,12 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		WP_Mock::expectFilter( 'ctl_locale', $locale );
+		if (
+			class_exists( Version::class ) &&
+			version_compare( substr( Version::id(), 0, 1 ), '7', '>=' )
+		) {
+			WP_Mock::expectFilter( 'ctl_locale', $locale );
+		}
 
 		self::assertSame( $iso9_table, $subject->get_table() );
 	}

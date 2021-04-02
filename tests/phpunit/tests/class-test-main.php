@@ -19,6 +19,7 @@ use Cyr_To_Lat\Settings\Settings;
 use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
 use Exception;
 use Mockery;
+use PHPUnit\Runner\Version;
 use ReflectionClass;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
@@ -489,7 +490,13 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$subject = $this->get_subject();
 
 		$settings = $this->get_protected_property( $subject, 'settings' );
-		WP_Mock::expectFilter( 'ctl_table', $settings->get_table() );
+
+		if (
+			class_exists( Version::class ) &&
+			version_compare( substr( Version::id(), 0, 1 ), '7', '>=' )
+		) {
+			WP_Mock::expectFilter( 'ctl_table', $settings->get_table() );
+		}
 
 		self::assertSame( $expected, $subject->transliterate( $string ) );
 	}
