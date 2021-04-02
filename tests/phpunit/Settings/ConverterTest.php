@@ -149,7 +149,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 
 		WP_Mock::userFunction( 'get_post_types' )->with( [ 'public' => true ] )->andReturn( $post_types );
 
-		$subject = new Converter();
+		$subject = Mockery::mock( Converter::class )->makePartial();
 
 		$subject->init_form_fields();
 		self::assertSame( $expected, $this->get_protected_property( $subject, 'form_fields' ) );
@@ -218,7 +218,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 	public function test_section_callback( $id, $expected ) {
 		WP_Mock::passthruFunction( 'wp_kses_post' );
 
-		$converter = new Converter();
+		$converter = Mockery::mock( Converter::class )->makePartial();
 
 		ob_start();
 		$converter->section_callback( [ 'id' => $id ] );

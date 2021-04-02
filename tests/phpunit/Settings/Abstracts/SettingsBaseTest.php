@@ -50,13 +50,13 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		if ( $is_tab ) {
 			WP_Mock::expectActionNotAdded( 'current_screen', [ $subject, 'setup_tabs_section' ] );
 		} else {
-			WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_tabs_section' ] );
+			WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_tabs_section' ], 9 );
 		}
 
 		if ( $is_active ) {
-			WP_Mock::expectActionAdded( 'plugins_loaded', [ $subject, 'init' ] );
+			$subject->shouldReceive( 'init' )->once()->with();
 		} else {
-			WP_Mock::expectActionNotAdded( 'plugins_loaded', [ $subject, 'init' ] );
+			$subject->shouldNotReceive( 'init' );
 		}
 
 		$reflected_class = new ReflectionClass( $classname );
@@ -83,7 +83,6 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_init() {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'load_plugin_textdomain' )->once();
 		$subject->shouldReceive( 'init_form_fields' )->once();
 		$subject->shouldReceive( 'init_settings' )->once();
 		$subject->shouldReceive( 'init_hooks' )->once();
@@ -101,6 +100,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'plugin_basename' )->andReturn( $plugin_base_name );
 		$subject->shouldReceive( 'option_name' )->andReturn( $option_name );
+
+		WP_Mock::expectActionAdded( 'plugins_loaded', [ $subject, 'load_plugin_textdomain' ] );
 
 		WP_Mock::expectFilterAdded(
 			'plugin_action_links_' . $plugin_base_name,

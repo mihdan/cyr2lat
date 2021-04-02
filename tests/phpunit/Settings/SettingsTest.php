@@ -134,7 +134,7 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_is_chinese_locale
 	 */
 	public function test_is_chinese_locale( $locale, $expected ) {
-		$subject = new Settings();
+		$subject = Mockery::mock( Settings::class )->makePartial();
 
 		WP_Mock::userFunction(
 			'get_locale',

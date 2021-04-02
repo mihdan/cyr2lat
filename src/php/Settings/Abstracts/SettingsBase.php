@@ -164,11 +164,11 @@ abstract class SettingsBase {
 		$this->tabs = $tabs;
 
 		if ( ! $this->is_tab() ) {
-			add_action( 'current_screen', [ $this, 'setup_tabs_section' ] );
+			add_action( 'current_screen', [ $this, 'setup_tabs_section' ], 9 );
 		}
 
 		if ( $this->is_tab_active( $this ) ) {
-			add_action( 'plugins_loaded', [ $this, 'init' ] );
+			$this->init();
 		}
 	}
 
@@ -176,7 +176,6 @@ abstract class SettingsBase {
 	 * Init class.
 	 */
 	public function init() {
-		$this->load_plugin_textdomain();
 		$this->init_form_fields();
 		$this->init_settings();
 		$this->init_hooks();
@@ -186,6 +185,8 @@ abstract class SettingsBase {
 	 * Init class hooks.
 	 */
 	protected function init_hooks() {
+		add_action( 'plugins_loaded', [ $this, 'load_plugin_textdomain' ] );
+
 		add_filter(
 			'plugin_action_links_' . $this->plugin_basename(),
 			[ $this, 'add_settings_link' ],
