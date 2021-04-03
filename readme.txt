@@ -62,22 +62,21 @@ function my_ctl_table( $table ) {
 
    return $table;
 }
-
 add_filter( 'ctl_table', 'my_ctl_table' );
 `
 
-= How can I redefine non-standard locale ? =
+= How can I redefine non-standard locale? =
 
 For instance, if your non-standard locale is uk_UA, you can redefine it to `uk` by adding the following code to your theme's `function.php` file:
 
 `
 /**
-* Use non-standard locale.
-*
-* @param string $locale Current locale.
-*
-* @return string
-*/
+ * Use non-standard locale.
+ *
+ * @param string $locale Current locale.
+ *
+ * @return string
+ */
 function my_ctl_locale( $locale ) {
 	if ( 'uk_UA' === $locale ) {
 		return 'uk';
@@ -85,7 +84,6 @@ function my_ctl_locale( $locale ) {
 
 	return $locale;
 }
-
 add_filter( 'ctl_locale', 'my_ctl_locale' );
 `
 
@@ -95,13 +93,13 @@ Add similar code to your theme's `functions.php` file:
 
 `
 /**
-* Filter title before sanitizing.
-*
-* @param string|false $result Sanitized title.
-* @param string       $title  Title.
-*
-* @return string|false
-*/
+ * Filter title before sanitizing.
+ *
+ * @param string|false $result Sanitized title.
+ * @param string       $title  Title.
+ *
+ * @return string|false
+ */
 function my_ctl_pre_sanitize_title( $result, $title ) {
 	if ( 'пиво' === $title ) {
 		return 'beer';
@@ -109,7 +107,6 @@ function my_ctl_pre_sanitize_title( $result, $title ) {
 
 	return $result;
 }
-
 add_filter( 'ctl_pre_sanitize_title', 10, 2 );
 `
 
@@ -119,13 +116,13 @@ Add similar code to your theme's `functions.php` file:
 
 `
 /**
-* Filter filename before sanitizing.
-*
-* @param string|false $result   Sanitized filename.
-* @param string       $filename Title.
-*
-* @return string|false
-*/
+ * Filter filename before sanitizing.
+ *
+ * @param string|false $result   Sanitized filename.
+ * @param string       $filename Title.
+ *
+ * @return string|false
+ */
 function my_ctl_pre_sanitize_filename( $result, $filename ) {
 	if ( 'пиво' === $filename ) {
 		return 'beer';
@@ -133,7 +130,6 @@ function my_ctl_pre_sanitize_filename( $result, $filename ) {
 
 	return $result;
 }
-
 add_filter( 'ctl_pre_sanitize_filename', 10, 2 );
 `
 
@@ -143,22 +139,21 @@ Add similar code to your theme's `functions.php` file:
 
 `
 /**
-* Filter post types allowed for background conversion.
-*
-* @param array $post_types Allowed post types.
-*
-* @return array
-*/
+ * Filter post types allowed for background conversion.
+ *
+ * @param array $post_types Allowed post types.
+ *
+ * @return array
+ */
 function my_ctl_post_types( $post_types ) {
 	return [
-	'post'          => 'post',
-	'page'          => 'page',
-	'attachment'    => 'attachment',
-	'product'       => 'product',
-	'nav_menu_item' => 'nav_menu_item',
+		'post'          => 'post',
+		'page'          => 'page',
+		'attachment'    => 'attachment',
+		'product'       => 'product',
+		'nav_menu_item' => 'nav_menu_item',
 	];
 }
-
 add_filter( 'ctl_post_types', 'my_ctl_post_types' );
 `
 
