@@ -1,3 +1,6 @@
+## 5.0.4 (17.04.2021)
+* Fix bug in converter without saved options
+
 ## 5.0.3 (03.04.2021)
 * Add filter 'ctl_locale'
 * Fix translation of tabs in admin
