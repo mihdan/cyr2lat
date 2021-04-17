@@ -334,7 +334,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 			$post_query =
 				"SELECT ID, post_name, post_type FROM $wpdb->posts " .
 				'WHERE LOWER(post_name) NOT REGEXP(%s) ' .
-				"AND ((post_status IN ($post_statuses_in) AND post_type IN ($post_types_in)) OR (post_status = 'inherit' AND post_type = 'attachment'))";
+				"AND (post_status IN ($post_statuses_in) AND post_type IN ($post_types_in)) OR (post_status = 'inherit' AND post_type = 'attachment')";
 		} else {
 			$post_query =
 				"SELECT ID, post_name, post_type FROM $wpdb->posts " .
@@ -396,9 +396,10 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_convert_existing_slugs() {
 		return [
-			'no posts/terms'               => [ null, null, true ],
-			'posts, terms, attachments'    => [ [ 'post1', 'post2' ], [ 'term1', 'term2' ], true ],
-			'posts, terms, no attachments' => [ [ 'post1', 'post2' ], [ 'term1', 'term2' ], false ],
+			'no posts, no terms, no attachments' => [ null, null, false ],
+			'no posts, no terms, attachments'    => [ null, null, true ],
+			'posts, terms, no attachments'       => [ [ 'post1', 'post2' ], [ 'term1', 'term2' ], false ],
+			'posts, terms, attachments'          => [ [ 'post1', 'post2' ], [ 'term1', 'term2' ], true ],
 		];
 	}
 

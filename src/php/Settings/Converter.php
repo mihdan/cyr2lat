@@ -111,36 +111,12 @@ class Converter extends PluginSettingsBase {
 	 */
 	public function init_form_fields() {
 		$this->form_fields = [];
-	}
 
-	/**
-	 * Empty method. Do stuff in the delayed_init_settings.
-	 */
-	public function init_settings() {
-	}
-
-	/**
-	 * Get convertible post types.
-	 *
-	 * @return array
-	 */
-	public static function get_convertible_post_types() {
-		$post_types = get_post_types( [ 'public' => true ] );
-
-		return array_merge( $post_types, [ 'nav_menu_item' => 'nav_menu_item' ] );
-	}
-
-	/**
-	 * Init form fields.
-	 */
-	public function delayed_init_form_fields() {
 		$default_post_types = [ 'post', 'page', 'nav_menu_item' ];
 
-		$post_types = self::get_convertible_post_types();
+		$post_types = $default_post_types;
 
-		$filtered_post_types = apply_filters( 'ctl_post_types', $post_types );
-
-		$this->form_fields = [];
+		$filtered_post_types = array_filter( (array) apply_filters( 'ctl_post_types', $post_types ) );
 
 		$this->form_fields['background_post_types'] = [
 			'label'        => __( 'Post Types', 'cyr2lat' ),
@@ -158,7 +134,8 @@ class Converter extends PluginSettingsBase {
 			$this->form_fields['background_post_types']['options'][ $post_type ] = $label;
 		}
 
-		$this->form_fields['background_post_types']['default']  = $default_post_types;
+		$this->form_fields['background_post_types']['default'] = $default_post_types;
+		// @todo Mark as disabled.
 		$this->form_fields['background_post_types']['disabled'] = array_diff( $default_post_types, $filtered_post_types );
 
 		$default_post_statuses = [ 'publish', 'future', 'private' ];
@@ -181,6 +158,40 @@ class Converter extends PluginSettingsBase {
 		}
 
 		$this->form_fields['background_post_statuses']['default'] = $default_post_statuses;
+	}
+
+	/**
+	 * Get convertible post types.
+	 *
+	 * @return array
+	 */
+	public static function get_convertible_post_types() {
+		$post_types = get_post_types( [ 'public' => true ] );
+
+		return array_merge( $post_types, [ 'nav_menu_item' => 'nav_menu_item' ] );
+	}
+
+	/**
+	 * Init form fields.
+	 */
+	public function delayed_init_form_fields() {
+		$post_types = self::get_convertible_post_types();
+
+		$filtered_post_types = array_filter( (array) apply_filters( 'ctl_post_types', $post_types ) );
+
+		$this->form_fields['background_post_types']['options'] = [];
+
+		foreach ( $post_types as $post_type ) {
+			$label = $post_type;
+
+			$this->form_fields['background_post_types']['options'][ $post_type ] = $label;
+		}
+
+		// @todo Mark as disabled.
+		$this->form_fields['background_post_types']['disabled'] = array_diff(
+			$this->form_fields['background_post_types']['default'],
+			$filtered_post_types
+		);
 	}
 
 	/**

@@ -34,18 +34,16 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test constructor.
 	 *
-	 * @param bool $is_tab    Is this a tab.
-	 * @param bool $is_active Is this an active tab.
+	 * @param bool $is_tab Is this a tab.
 	 *
 	 * @dataProvider dp_test_constructor
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_constructor( $is_tab, $is_active ) {
+	public function test_constructor( $is_tab ) {
 		$classname = SettingsBase::class;
 
 		$subject = Mockery::mock( $classname )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_tab' )->once()->andReturn( $is_tab );
-		$subject->shouldReceive( 'is_tab_active' )->once()->with( $subject )->andReturn( $is_active );
 
 		if ( $is_tab ) {
 			WP_Mock::expectActionNotAdded( 'current_screen', [ $subject, 'setup_tabs_section' ] );
@@ -53,11 +51,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 			WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_tabs_section' ], 9 );
 		}
 
-		if ( $is_active ) {
-			$subject->shouldReceive( 'init' )->once()->with();
-		} else {
-			$subject->shouldNotReceive( 'init' );
-		}
+		$subject->shouldReceive( 'init' )->once()->with();
 
 		$reflected_class = new ReflectionClass( $classname );
 		$constructor     = $reflected_class->getConstructor();
@@ -71,23 +65,43 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_constructor() {
 		return [
-			'Tab, active'           => [ true, true ],
-			'Not a tab, active'     => [ false, true ],
-			'Tab, not active'       => [ true, false ],
-			'Not a tab, not active' => [ false, false ],
+			'Tab'       => [ true ],
+			'Not a tab' => [ false ],
 		];
 	}
 
 	/**
 	 * Test init().
+	 *
+	 * @param bool $is_active Is this an active tab.
+	 *
+	 * @dataProvider dp_test_init
 	 */
-	public function test_init() {
+	public function test_init( $is_active ) {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'init_form_fields' )->once();
 		$subject->shouldReceive( 'init_settings' )->once();
-		$subject->shouldReceive( 'init_hooks' )->once();
+		$subject->shouldReceive( 'is_tab_active' )->once()->with( $subject )->andReturn( $is_active );
+
+		if ( $is_active ) {
+			$subject->shouldReceive( 'init_hooks' )->once();
+		} else {
+			$subject->shouldReceive( 'init_hooks' )->never();
+		}
 
 		$subject->init();
+	}
+
+	/**
+	 * Data provider for test_init().
+	 *
+	 * @return array
+	 */
+	public function dp_test_init() {
+		return [
+			'Active tab'     => [ true ],
+			'Not active tab' => [ false ],
+		];
 	}
 
 	/**
@@ -599,6 +613,19 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 			'Proper input, not a tab' => [ 'general', false, 'General', true ],
 			'Proper input, tab'       => [ 'general', true, 'General', true ],
 		];
+	}
+
+	/**
+	 * Test get_tabs().
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_get_tabs() {
+		$tab     = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$tabs    = [ $tab ];
+		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$this->set_protected_property( $subject, 'tabs', $tabs );
+		self::assertSame( $tabs, $subject->get_tabs() );
 	}
 
 	/**

@@ -167,9 +167,7 @@ abstract class SettingsBase {
 			add_action( 'current_screen', [ $this, 'setup_tabs_section' ], 9 );
 		}
 
-		if ( $this->is_tab_active( $this ) ) {
-			$this->init();
-		}
+		$this->init();
 	}
 
 	/**
@@ -178,7 +176,10 @@ abstract class SettingsBase {
 	public function init() {
 		$this->init_form_fields();
 		$this->init_settings();
-		$this->init_hooks();
+
+		if ( $this->is_tab_active( $this ) ) {
+			$this->init_hooks();
+		}
 	}
 
 	/**
@@ -454,6 +455,15 @@ abstract class SettingsBase {
 		}
 
 		return strtolower( $tab->get_class_name() ) === $current_tab_name;
+	}
+
+	/**
+	 * Get tabs.
+	 *
+	 * @return array|null
+	 */
+	public function get_tabs() {
+		return $this->tabs;
 	}
 
 	/**

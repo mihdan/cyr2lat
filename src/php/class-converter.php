@@ -179,12 +179,12 @@ class Converter {
 
 		$post_types    = array_intersect(
 			\Cyr_To_Lat\Settings\Converter::get_convertible_post_types(),
-			$this->settings->get( 'background_post_types' )
+			array_filter( (array) $this->settings->get( 'background_post_types' ) )
 		);
-		$post_statuses = $this->settings->get( 'background_post_statuses' );
+		$post_statuses = array_filter( (array) $this->settings->get( 'background_post_statuses' ) );
 
 		$defaults = [
-			'post_type'   => apply_filters( 'ctl_post_types', $post_types ),
+			'post_type'   => array_filter( (array) apply_filters( 'ctl_post_types', $post_types ) ),
 			'post_status' => $post_statuses,
 		];
 
@@ -192,16 +192,20 @@ class Converter {
 
 		$regexp = $wpdb->prepare( '%s', self::ALLOWED_CHARS_REGEX );
 
-		$post_sql =
-			'post_status IN (' . $this->main->prepare_in( $parsed_args['post_status'] ) . ')' .
-			' AND post_type IN (' . $this->main->prepare_in( $parsed_args['post_type'] ) . ')';
+		$post_status_in = $this->main->prepare_in( $parsed_args['post_status'] );
+		$post_status_in = $post_status_in ? 'post_status IN (' . $post_status_in . ')' : '';
+		$post_type_in   = $this->main->prepare_in( $parsed_args['post_type'] );
+		$post_type_in   = $post_type_in ? 'post_type IN (' . $post_type_in . ')' : '';
+		$and            = $post_status_in && $post_type_in ? ' AND ' : '';
+		$post_sql       = $post_status_in . $and . $post_type_in;
+		$post_sql       = $post_sql ? 'AND (' . $post_sql . ')' : '';
 
 		if ( in_array( 'attachment', $parsed_args['post_type'], true ) ) {
 			$media_sql = "post_status = 'inherit' AND post_type = 'attachment'";
-			$post_sql  = '(' . $post_sql . ') OR (' . $media_sql . ')';
+			$post_sql  = $post_sql ? $post_sql . ' OR (' . $media_sql . ')' : 'AND (' . $media_sql . ')';
 		}
 
-		$sql = "SELECT ID, post_name, post_type FROM $wpdb->posts WHERE LOWER(post_name) NOT REGEXP($regexp) AND ($post_sql)";
+		$sql = "SELECT ID, post_name, post_type FROM $wpdb->posts WHERE LOWER(post_name) NOT REGEXP($regexp) $post_sql";
 
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
