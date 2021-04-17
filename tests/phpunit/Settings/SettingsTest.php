@@ -83,18 +83,57 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_get() {
-		$option   = 'some option';
-		$expected = 'some value';
+		$tables_key      = 'some tables key';
+		$tables_value    = 'some table';
+		$converter_key   = 'some converter key';
+		$converter_value = 'some value';
 
 		$tables = Mockery::mock( Tables::class );
-		$tables->shouldReceive( 'get' )->once()->andReturn( $expected );
+		$tables->shouldReceive( 'get' )->andReturnUsing(
+			function( $key, $empty_value ) use ( $tables_key, $tables_value ) {
+				if ( $key === $tables_key ) {
+					return $tables_value;
+				}
+
+				if ( ! is_null( $empty_value ) ) {
+					return $empty_value;
+				}
+
+				return '';
+			}
+		);
+
+		$converter = Mockery::mock( Converter::class );
+		$converter->shouldReceive( 'get' )->andReturnUsing(
+			function( $key, $empty_value ) use ( $converter_key, $converter_value ) {
+				if ( $key === $converter_key ) {
+					return $converter_value;
+				}
+
+				if ( ! is_null( $empty_value ) ) {
+					return $empty_value;
+				}
+
+				return '';
+			}
+		);
+
 		$menu_pages = [ $tables ];
 
+		$tabs = [ $converter ];
+		$this->set_protected_property( $tables, 'tabs', $tabs );
+
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$tables->shouldReceive( 'get_tabs' )->andReturn( [ $converter ] );
 
 		$this->set_protected_property( $subject, 'menu_pages', $menu_pages );
 
-		self::assertSame( $expected, $subject->get( $option ) );
+		self::assertSame( $tables_value, $subject->get( $tables_key ) );
+		self::assertSame( $converter_value, $subject->get( $converter_key ) );
+		self::assertSame( '', $subject->get( 'non-existent key' ) );
+
+		$empty_value = 'empty value';
+		self::assertSame( $empty_value, $subject->get( 'non-existent key', $empty_value ) );
 	}
 
 	/**

@@ -90,16 +90,39 @@ class Settings implements SettingsInterface {
 	 * @return string|array The value specified for the option or a default value for the option.
 	 */
 	public function get( $key, $empty_value = null ) {
-		return $this->get_main_page()->get( $key, $empty_value );
-	}
+		$value = '';
 
-	/**
-	 * Get main admin page.
-	 *
-	 * @return SettingsBase
-	 */
-	private function get_main_page() {
-		return $this->menu_pages[0];
+		foreach ( $this->menu_pages as $menu_page ) {
+			/**
+			 * Menu page.
+			 *
+			 * @var SettingsBase $menu_page
+			 */
+			$value = $menu_page->get( $key, $empty_value );
+			if ( ! empty( $value ) ) {
+				break;
+			}
+
+			$tabs = $menu_page->get_tabs();
+
+			foreach ( $tabs as $tab ) {
+				/**
+				 * Tab.
+				 *
+				 * @var SettingsBase $tab
+				 */
+				$value = $tab->get( $key, $empty_value );
+				if ( ! empty( $value ) ) {
+					break 2;
+				}
+			}
+		}
+
+		if ( '' === $value && ! is_null( $empty_value ) ) {
+			$value = $empty_value;
+		}
+
+		return $value;
 	}
 
 	/**

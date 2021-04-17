@@ -184,7 +184,7 @@ class Converter {
 		$post_statuses = array_filter( (array) $this->settings->get( 'background_post_statuses' ) );
 
 		$defaults = [
-			'post_type'   => apply_filters( 'ctl_post_types', $post_types ),
+			'post_type'   => array_filter( (array) apply_filters( 'ctl_post_types', $post_types ) ),
 			'post_status' => $post_statuses,
 		];
 

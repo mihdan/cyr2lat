@@ -12,9 +12,11 @@
 
 namespace Cyr_To_Lat\Tests\Settings;
 
+use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
 use Cyr_To_Lat\Settings\Converter;
 use Cyr_To_Lat\Cyr_To_Lat_TestCase;
 use Mockery;
+use ReflectionClass;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
@@ -115,24 +117,55 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test init_form_fields().
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_form_fields() {
+		$expected = [
+			'background_post_types'    =>
+				[
+					'label'        => 'Post Types',
+					'section'      => 'background_section',
+					'type'         => 'checkbox',
+					'placeholder'  => '',
+					'helper'       => 'Post types included in the conversion.',
+					'supplemental' => '',
+					'options'      =>
+						[
+							'post'          => 'post',
+							'page'          => 'page',
+							'nav_menu_item' => 'nav_menu_item',
+						],
+					'default'      =>
+						[ 'post', 'page', 'nav_menu_item' ],
+					'disabled'     => [],
+				],
+			'background_post_statuses' =>
+				[
+					'label'        => 'Post Statuses',
+					'section'      => 'background_section',
+					'type'         => 'checkbox',
+					'placeholder'  => '',
+					'helper'       => 'Post statuses included in the conversion.',
+					'supplemental' => '',
+					'options'      =>
+						[
+							'publish' => 'publish',
+							'future'  => 'future',
+							'private' => 'private',
+							'draft'   => 'draft',
+							'pending' => 'pending',
+						],
+					'default'      =>
+						[ 'publish', 'future', 'private' ],
+				],
+		];
+
 		$mock = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$mock->init_form_fields();
 
-		self::assertSame( [], $this->get_protected_property( $mock, 'form_fields' ) );
-	}
-
-	/**
-	 * Test init_settings().
-	 */
-	public function test_init_settings() {
-		$mock = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
-
-		WP_Mock::userFunction( 'get_option' )->with( 'cyr_to_lat_settings', null )->andReturn( null );
-
-		$mock->init_settings();
+		self::assertSame( $expected, $this->get_protected_property( $mock, 'form_fields' ) );
 	}
 
 	/**
@@ -214,6 +247,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
+		$subject->init_form_fields();
 		$subject->delayed_init_form_fields();
 		self::assertSame( $expected, $this->get_protected_property( $subject, 'form_fields' ) );
 	}
@@ -222,13 +256,18 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 	 * Test delayed_init_settings().
 	 */
 	public function test_delayed_init_settings() {
+		$option_name   = 'cyr_to_lat_settings';
+		$form_fields   = $this->get_test_form_fields();
+		$test_settings = $this->get_test_settings();
+
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'delayed_init_form_fields' )->with()->once();
+		$subject->shouldReceive( 'option_name' )->with()->once()->andReturn( $option_name );
+		$subject->shouldReceive( 'form_fields' )->with()->once()->andReturn( $form_fields );
 
-		$form_fields_pluck = $this->get_test_settings();
-
-		WP_Mock::userFunction( 'wp_list_pluck' )->with( [], 'default' )->once()
-			->andReturn( $form_fields_pluck );
+		WP_Mock::userFunction( 'get_option' )->with( $option_name, null )->once()->andReturn( $test_settings );
+		WP_Mock::userFunction( 'wp_list_pluck' )->with( $form_fields, 'default' )->once()
+			->andReturn( $form_fields );
 
 		$subject->delayed_init_settings();
 	}
