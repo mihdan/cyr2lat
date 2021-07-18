@@ -237,6 +237,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
 		WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ], 10, 2 );
 		WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ], 10, 2 );
+		WP_Mock::expectFilterAdded( 'pre_insert_term', [ $subject, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
+		WP_Mock::expectFilterAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
 
 		FunctionMocker::replace(
 			'class_exists',
@@ -356,51 +358,63 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test sanitize_title() for term
-	 * Name of this function must be wp_insert_term() to use debug_backtrace in the tested method
+	 * Test sanitize_title() for terms
 	 *
 	 * @param string $title    Title to sanitize.
 	 * @param string $term     Term to sanitize.
 	 * @param string $expected Expected result.
 	 *
-	 * @test
-	 * @dataProvider dp_wp_insert_term
+	 * @dataProvider dp_test_sanitize_title_for_insert_term_and_get_terms
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection SqlResolve
 	 */
-	public function wp_insert_term( $title, $term, $expected ) {
+	public function test_sanitize_title_for_insert_term_and_get_terms( $title, $term, $expected ) {
 		global $wpdb;
 
-		$taxonomy = 'category';
+		$taxonomy     = 'category';
+		$prepared_tax = '\'category\'';
 
 		$subject = $this->get_subject();
 
 		WP_Mock::userFunction( 'is_wp_error' )->with( $term )->andReturn( false );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
-		if ( $term ) {
-			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-			$wpdb                = Mockery::mock( wpdb::class );
-			$wpdb->terms         = 'wp_terms';
-			$wpdb->term_taxonomy = 'wp_term_taxonomy';
-			$wpdb->shouldReceive( 'prepare' )->once()->with(
-				"SELECT slug FROM {$wpdb->terms} t LEFT JOIN {$wpdb->term_taxonomy} tt
-							ON t.term_id = tt.term_id
-							WHERE t.name = %s AND tt.taxonomy = %s",
-				$title,
-				$taxonomy
-			)->andReturn( '' );
-			$wpdb->shouldReceive( 'get_var' )->once()->andReturn( $term );
-		}
+		$times = $term ? 2 : 1;
 
-		$subject->pre_term_filter( $term, $taxonomy );
+		$subject->shouldReceive( 'prepare_in' )->times( $times )->with( [ $taxonomy ] )->andReturn( $prepared_tax );
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wpdb                = Mockery::mock( wpdb::class );
+		$wpdb->terms         = 'wp_terms';
+		$wpdb->term_taxonomy = 'wp_term_taxonomy';
+
+		$request          = "SELECT slug FROM {$wpdb->terms} t LEFT JOIN {$wpdb->term_taxonomy} tt
+							ON t.term_id = tt.term_id
+							WHERE t.name = %s";
+		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN {$wpdb->term_taxonomy} tt
+							ON t.term_id = tt.term_id
+							WHERE t.name = " . $title;
+		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
+
+		$wpdb->shouldReceive( 'prepare' )->times( $times )->with(
+			$request,
+			$title
+		)->andReturn( $prepared_request );
+		$wpdb->shouldReceive( 'get_var' )->times( $times )->with( $sql )->andReturn( $term );
+
+		$subject->pre_insert_term_filter( $term, $taxonomy );
 		self::assertSame( $expected, $subject->sanitize_title( $title ) );
+		// Make sure we search in the db only once being called from wp_insert_term().
+		self::assertSame( $title, $subject->sanitize_title( $title ) );
+
+		$subject->get_terms_args_filter( [ 'some args' ], [ $taxonomy ] );
+		self::assertSame( $expected, $subject->sanitize_title( $title ) );
+		// Make sure we search in the db only once being called from wp_insert_term().
+		self::assertSame( $title, $subject->sanitize_title( $title ) );
 	}
 
 	/**
 	 * Data provider for wp_insert_term()
 	 */
-	public function dp_wp_insert_term() {
+	public function dp_test_sanitize_title_for_insert_term_and_get_terms() {
 		return [
 			[ 'title', 'term', 'term' ],
 			[ 'title', '', 'title' ],
