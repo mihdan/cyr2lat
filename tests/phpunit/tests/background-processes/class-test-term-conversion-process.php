@@ -109,6 +109,14 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$subject->shouldReceive( 'log' )->with( 'Term slugs conversion completed.' )->once();
 
 		WP_Mock::userFunction(
+			'wp_cache_flush',
+			[
+				'return' => null,
+				'times'  => 1,
+			]
+		);
+
+		WP_Mock::userFunction(
 			'wp_next_scheduled',
 			[
 				'return' => null,
