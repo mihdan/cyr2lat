@@ -2,8 +2,8 @@
 Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
-Tested up to: 5.7
-Stable tag: 5.0.4
+Tested up to: 5.8
+Stable tag: 5.1.0
 Requires PHP: 5.6.20
 
 Convert Non-Latin characters in post, page and term slugs to Latin characters.
@@ -187,6 +187,11 @@ Yes you can!
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 5.1.0 (18.07.2021) =
+* Fix issue-95 - 404 on localized terms created before plugin install.
+* Add cache flushing after batch conversion.
+* Tested with WordPress 5.8
 
 = 5.0.4 (17.04.2021) =
 * Fix bug in converter without saved options
