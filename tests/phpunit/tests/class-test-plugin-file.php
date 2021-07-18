@@ -100,9 +100,40 @@ class Test_Cyr_To_Lat_Plugin_File extends Cyr_To_Lat_TestCase {
 		$defined->wasCalledWithTimes( [ 'ABSPATH' ], 2 );
 		$defined->wasCalledWithTimes( [ 'CYR_TO_LAT_VERSION' ], 2 );
 
+		$expected    = [
+			'version' => CYR_TO_LAT_TEST_VERSION,
+		];
+		$plugin_file = PLUGIN_MAIN_FILE;
+
+		$plugin_headers = $this->get_file_data(
+			$plugin_file,
+			[ 'version' => 'Version' ],
+			'plugin'
+		);
+
+		self::assertSame( $expected, $plugin_headers );
+
 		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_VERSION', CYR_TO_LAT_TEST_VERSION ] );
 		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_FILE', PLUGIN_MAIN_FILE ] );
 		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_PATH', dirname( PLUGIN_MAIN_FILE ) ] );
 		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_URL', $plugin_dir_url_unslash ] );
+	}
+
+	/**
+	 * Test that readme.txt contains proper stable tag.
+	 */
+	public function test_readme_txt() {
+		$expected    = [
+			'stable_tag' => CYR_TO_LAT_TEST_VERSION,
+		];
+		$readme_file = PLUGIN_PATH . '/readme.txt';
+
+		$readme_headers = $this->get_file_data(
+			$readme_file,
+			[ 'stable_tag' => 'Stable tag' ],
+			'plugin'
+		);
+
+		self::assertSame( $expected, $readme_headers );
 	}
 }
