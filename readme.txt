@@ -169,6 +169,16 @@ Where
   `-post_type` is list of post types,
   `-post_status` is list of post statuses.
 
+= How can I regenerate thumbnails safely? =
+
+Regeneration of thumbnails with the command `wp media regenerate` can break links in old posts as file names become transliterated.
+
+To avoid it, deactivate cyr2lat plugin during regeneration:
+
+`
+wp media regenerate --skip-plugins=cyr2lat
+`
+
 = Can I contribute? =
 
 Yes you can!
