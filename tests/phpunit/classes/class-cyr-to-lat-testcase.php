@@ -1180,7 +1180,7 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 
 		foreach ( $all_headers as $field => $regex ) {
 			if ( preg_match( '/^(?:[ \t]*<\?php)?[ \t\/*#@]*' . preg_quote( $regex, '/' ) . ':(.*)$/mi', $file_data, $match ) && $match[1] ) {
-				$all_headers[ $field ] = $this->_cleanup_header_comment( $match[1] );
+				$all_headers[ $field ] = $this->cleanup_header_comment( $match[1] );
 			} else {
 				$all_headers[ $field ] = '';
 			}
@@ -1200,7 +1200,7 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 	 * @param string $str Header comment to clean up.
 	 * @return string
 	 */
-	private function _cleanup_header_comment( $str ) {
+	private function cleanup_header_comment( $str ) {
 		return trim( preg_replace( '/\s*(?:\*\/|\?>).*/', '', $str ) );
 	}
 }
