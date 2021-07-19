@@ -257,7 +257,7 @@ class Main {
 		}
 
 		if ( seems_utf8( $filename ) ) {
-			$filename = mb_strtolower( $filename );
+			$filename = (string) Mbstring::mb_strtolower( $filename );
 		}
 
 		return $this->transliterate( $filename );
