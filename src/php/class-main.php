@@ -332,15 +332,8 @@ class Main {
 
 		$string = $this->fix_mac_string( $string );
 		$string = $this->split_chinese_string( $string, $table );
-		$string = strtr( $string, $table );
 
-		if ( function_exists( 'iconv' ) ) {
-			$new_string = iconv( 'UTF-8', 'UTF-8//TRANSLIT//IGNORE', $string );
-
-			return $new_string ?: $string;
-		}
-
-		return $string;
+		return strtr( $string, $table );
 	}
 
 	/**
