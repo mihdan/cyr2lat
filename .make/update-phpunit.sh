@@ -77,31 +77,31 @@ echo "Building with phpunit-$PHP_UNIT"
 if [[ $PHP_UNIT == '5.7' ]]; then
   composer config platform.php 5.6
   composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock
-  composer require --dev lucatume/function-mocker:dev-test-on-windows phpunit/phpunit 10up/wp_mock
+  composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock
 fi
 
 if [[ $PHP_UNIT == '6.5' ]]; then
   composer config platform.php 7.0
   composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock symfony/config php-coveralls/php-coveralls
-  composer require --dev lucatume/function-mocker:dev-test-on-windows phpunit/phpunit 10up/wp_mock symfony/config php-coveralls/php-coveralls
+  composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock symfony/config php-coveralls/php-coveralls
 fi
 
 if [[ $PHP_UNIT == '7.5' ]]; then
   composer config platform.php 7.1
   composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock
-  composer require --dev lucatume/function-mocker:dev-test-on-windows phpunit/phpunit 10up/wp_mock
+  composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock
 fi
 
 if [[ $PHP_UNIT == '8.5' ]]; then
   composer config platform.php 7.2
   composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock
-  composer require --dev lucatume/function-mocker:dev-php8 phpunit/phpunit 10up/wp_mock
+  composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock
 fi
 
 if [[ $PHP_UNIT == '9.5' ]]; then
   composer config platform.php 7.3
   composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock
-  composer require --dev lucatume/function-mocker:dev-php8 phpunit/phpunit 10up/wp_mock
+  composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock
 fi
 
 RESULT=$?
