@@ -188,7 +188,7 @@ Yes you can!
 
 == Changelog ==
 
-= 5.1.0 (18.07.2021) =
+= 5.1.0 (19.07.2021) =
 * Fix issue-95 - 404 on localized terms created before plugin install.
 * Add cache flushing after batch conversion.
 * Tested with WordPress 5.8
