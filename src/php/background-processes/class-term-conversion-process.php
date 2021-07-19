@@ -81,6 +81,8 @@ class Term_Conversion_Process extends Conversion_Process {
 	protected function complete() {
 		parent::complete();
 
+		wp_cache_flush();
+
 		$this->log( __( 'Term slugs conversion completed.', 'cyr2lat' ) );
 	}
 

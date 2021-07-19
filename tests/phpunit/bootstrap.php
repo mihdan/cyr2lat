@@ -25,6 +25,11 @@ define( 'PLUGIN_MAIN_FILE', realpath( __DIR__ . '/../../cyr-to-lat.php' ) );
  */
 define( 'PLUGIN_PATH', realpath( dirname( PLUGIN_MAIN_FILE ) ) );
 
+/**
+ * Kilobytes in bytes.
+ */
+define( 'KB_IN_BYTES', 1024 );
+
 require_once PLUGIN_PATH . '/vendor/autoload.php';
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,7 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin version.
  */
-define( 'CYR_TO_LAT_TEST_VERSION', '5.0.4' );
+define( 'CYR_TO_LAT_TEST_VERSION', '5.1.0' );
 
 /**
  * Path to the plugin dir.
