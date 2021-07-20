@@ -13,7 +13,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install dependencies in prod version
-        run: make install-prod
+        run: |
+          composer config github-oauth.github.com ${{ secrets.GITHUB_TOKEN }}
+          make install-prod
         env:
           COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
