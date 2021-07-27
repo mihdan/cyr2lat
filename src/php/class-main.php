@@ -11,6 +11,8 @@
 
 namespace Cyr_To_Lat;
 
+use Polylang;
+use SitePress;
 use WP_Error;
 use wpdb;
 use Exception;
@@ -153,8 +155,14 @@ class Main {
 		add_filter( 'pre_insert_term', [ $this, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
 		add_filter( 'get_terms_args', [ $this, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
 
-		if ( class_exists( 'Polylang' ) ) {
+		if ( class_exists( Polylang::class ) ) {
 			add_filter( 'locale', [ $this, 'pll_locale_filter' ] );
+		}
+
+		if ( class_exists( SitePress::class ) ) {
+			// We cannot use locale filter here
+			// as WPML reverts locale at PHP_INT_MAX in \WPML\ST\MO\Hooks\LanguageSwitch::filterLocale.
+			add_filter( 'ctl_locale', [ $this, 'wpml_locale_filter' ], - PHP_INT_MAX );
 		}
 	}
 
@@ -577,6 +585,24 @@ class Main {
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 		return $pll_get_term_language;
+	}
+
+	/**
+	 * Locale filter for WPML.
+	 *
+	 * @param string $locale Locale.
+	 *
+	 * @return string
+	 */
+	public function wpml_locale_filter( $locale ) {
+		$language_code = wpml_get_current_language();
+		$languages     = apply_filters( 'wpml_active_languages', null );
+
+		if ( isset( $languages[ $language_code ] ) ) {
+			return $languages[ $language_code ]['default_locale'];
+		}
+
+		return $locale;
 	}
 
 	/**
