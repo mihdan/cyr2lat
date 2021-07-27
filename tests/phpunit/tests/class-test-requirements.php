@@ -283,7 +283,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 			$message = 'Please increase max input vars limit up to 1500.';
 
 			$message .= '<br>';
-			$message .= 'See: <a href="http://sevenspark.com/docs/ubermenu-3/faqs/menu-item-limit" target="_blank">Increasing max input vars limit.</a>';
+			$message .= 'See: <a href="https://sevenspark.com/docs/ubermenu-3/faqs/menu-item-limit" target="_blank">Increasing max input vars limit.</a>';
 		}
 
 		$admin_notices->shouldReceive( 'add_notice' )->with( $message, 'notice notice-error', $screen_ids );
@@ -435,7 +435,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 		$message = 'Please increase max input vars limit up to 1500.';
 
 		$message .= '<br>';
-		$message .= 'See: <a href="http://sevenspark.com/docs/ubermenu-3/faqs/menu-item-limit" target="_blank">Increasing max input vars limit.</a>';
+		$message .= 'See: <a href="https://sevenspark.com/docs/ubermenu-3/faqs/menu-item-limit" target="_blank">Increasing max input vars limit.</a>';
 
 		$admin_notices->shouldReceive( 'add_notice' )->with( $message, 'notice notice-error', $screen_ids );
 

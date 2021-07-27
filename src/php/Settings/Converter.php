@@ -88,15 +88,6 @@ class Converter extends PluginSettingsBase {
 	}
 
 	/**
-	 * Get parent slug.
-	 *
-	 * @return string
-	 */
-	protected function parent_slug() {
-		return 'options-general.php';
-	}
-
-	/**
 	 * Init class hooks.
 	 */
 	protected function init_hooks() {
@@ -201,7 +192,7 @@ class Converter extends PluginSettingsBase {
 	public function delayed_init_settings() {
 		$this->delayed_init_form_fields();
 
-		parent::init_settings();
+		$this->init_settings();
 	}
 
 	/**

@@ -182,8 +182,6 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 
 		/**
 		 * Try to fix max_input_vars.
-		 *
-		 * @noinspection PhpStrFunctionsInspection
 		 */
 		protected function try_to_fix_max_input_vars() {
 			$user_ini_filename = $this->get_user_ini_filename();
@@ -225,7 +223,6 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 * Get .user.ini filename.
 		 *
 		 * @return string
-		 * @noinspection PhpPureAttributeCanBeAddedInspection
 		 */
 		private function get_user_ini_filename() {
 			return ABSPATH . 'wp-admin/' . ini_get( 'user_ini.filename' );
@@ -238,7 +235,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 			$message = __( 'Please increase max input vars limit up to 1500.', 'cyr2lat' );
 
 			$message .= '<br>';
-			$message .= __( 'See: <a href="http://sevenspark.com/docs/ubermenu-3/faqs/menu-item-limit" target="_blank">Increasing max input vars limit.</a>', 'cyr2lat' );
+			$message .= __( 'See: <a href="https://sevenspark.com/docs/ubermenu-3/faqs/menu-item-limit" target="_blank">Increasing max input vars limit.</a>', 'cyr2lat' );
 
 			$this->admin_notices->add_notice(
 				$message,

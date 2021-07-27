@@ -11,6 +11,8 @@
 
 namespace Cyr_To_Lat;
 
+use Polylang;
+use SitePress;
 use WP_Error;
 use wpdb;
 use Exception;
@@ -153,8 +155,14 @@ class Main {
 		add_filter( 'pre_insert_term', [ $this, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
 		add_filter( 'get_terms_args', [ $this, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
 
-		if ( class_exists( 'Polylang' ) ) {
+		if ( class_exists( Polylang::class ) ) {
 			add_filter( 'locale', [ $this, 'pll_locale_filter' ] );
+		}
+
+		if ( class_exists( SitePress::class ) ) {
+			// We cannot use locale filter here
+			// as WPML reverts locale at PHP_INT_MAX in \WPML\ST\MO\Hooks\LanguageSwitch::filterLocale.
+			add_filter( 'ctl_locale', [ $this, 'wpml_locale_filter' ], - PHP_INT_MAX );
 		}
 	}
 
@@ -390,7 +398,7 @@ class Main {
 	 * @param array $data    An array of slashed post data.
 	 * @param array $postarr An array of sanitized, but otherwise unmodified post data.
 	 *
-	 * @return mixed
+	 * @return array
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function sanitize_post_name( $data, $postarr = [] ) {
@@ -580,6 +588,24 @@ class Main {
 	}
 
 	/**
+	 * Locale filter for WPML.
+	 *
+	 * @param string $locale Locale.
+	 *
+	 * @return string
+	 */
+	public function wpml_locale_filter( $locale ) {
+		$language_code = wpml_get_current_language();
+		$languages     = apply_filters( 'wpml_active_languages', null );
+
+		if ( isset( $languages[ $language_code ] ) ) {
+			return $languages[ $language_code ]['default_locale'];
+		}
+
+		return $locale;
+	}
+
+	/**
 	 * Changes array of items into string of items, separated by comma and sql-escaped
 	 *
 	 * @see https://coderwall.com/p/zepnaw
@@ -593,14 +619,15 @@ class Main {
 	public function prepare_in( $items, $format = '%s' ) {
 		global $wpdb;
 
-		$items    = (array) $items;
-		$how_many = count( $items );
+		$prepared_in = '';
+		$items       = (array) $items;
+		$how_many    = count( $items );
+
 		if ( $how_many > 0 ) {
 			$placeholders    = array_fill( 0, $how_many, $format );
 			$prepared_format = implode( ',', $placeholders );
-			$prepared_in     = $wpdb->prepare( $prepared_format, $items ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		} else {
-			$prepared_in = '';
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$prepared_in = $wpdb->prepare( $prepared_format, $items );
 		}
 
 		return $prepared_in;

@@ -217,7 +217,6 @@ abstract class SettingsBase {
 	 * Is this the main menu page.
 	 *
 	 * @return bool
-	 * @noinspection PhpPureAttributeCanBeAddedInspection
 	 */
 	protected function is_main_menu_page() {
 		// Main menu page should have empty string as parent slug.
@@ -262,7 +261,7 @@ abstract class SettingsBase {
 	 *                            With Multisite active this can also include
 	 *                            'network_active' and 'network_only' items.
 	 *
-	 * @return array|mixed Plugin links
+	 * @return array|string[] Plugin links
 	 */
 	public function add_settings_link( array $actions ) {
 		$new_actions = [

@@ -48,6 +48,8 @@ class Settings implements SettingsInterface {
 
 	/**
 	 * Init class.
+	 *
+	 * @noinspection UnnecessaryCastingInspection
 	 */
 	protected function init() {
 		// Allow to specify MENU_PAGES item as one class, not an array.

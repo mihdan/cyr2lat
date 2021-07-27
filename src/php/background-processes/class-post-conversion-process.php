@@ -52,7 +52,7 @@ class Post_Conversion_Process extends Conversion_Process {
 	 *
 	 * @param stdClass $post Queue item to iterate over.
 	 *
-	 * @return mixed
+	 * @return boolean
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function task( $post ) {

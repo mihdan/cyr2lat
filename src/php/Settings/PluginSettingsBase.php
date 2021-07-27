@@ -29,8 +29,6 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 * Get plugin url.
 	 *
 	 * @return string
-	 *
-	 * @noinspection PhpPureAttributeCanBeAddedInspection
 	 */
 	protected function plugin_url() {
 		return constant( 'CYR_TO_LAT_URL' );
@@ -40,8 +38,6 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 * Get plugin version.
 	 *
 	 * @return string
-	 *
-	 * @noinspection PhpPureAttributeCanBeAddedInspection
 	 */
 	protected function plugin_version() {
 		return constant( 'CYR_TO_LAT_VERSION' );

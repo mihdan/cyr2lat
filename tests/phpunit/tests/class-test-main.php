@@ -227,11 +227,12 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test init_hooks()
 	 *
-	 * @param string $polylang Polylang is active.
+	 * @param boolean $polylang  Polylang is active.
+	 * @param boolean $sitepress WPML is active.
 	 *
 	 * @dataProvider dp_test_init_hooks
 	 */
-	public function test_init_hooks( $polylang ) {
+	public function test_init_hooks( $polylang, $sitepress ) {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
@@ -242,18 +243,29 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'class_exists',
-			function ( $class ) use ( $polylang ) {
+			function ( $class ) use ( $polylang, $sitepress ) {
 				if ( 'Polylang' === $class ) {
 					return $polylang;
+				}
+
+				if ( 'SitePress' === $class ) {
+					return $sitepress;
 				}
 
 				return null;
 			}
 		);
+
 		if ( $polylang ) {
 			WP_Mock::expectFilterAdded( 'locale', [ $subject, 'pll_locale_filter' ] );
 		} else {
 			WP_Mock::expectFilterNotAdded( 'locale', [ $subject, 'pll_locale_filter' ] );
+		}
+
+		if ( $sitepress ) {
+			WP_Mock::expectFilterAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ], - PHP_INT_MAX );
+		} else {
+			WP_Mock::expectFilterNotAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ] );
 		}
 
 		$subject->init_hooks();
@@ -266,8 +278,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_init_hooks() {
 		return [
-			[ true ],
-			[ false ],
+			[ false, false ],
+			[ true, false ],
+			[ false, true ],
+			[ true, true ],
 		];
 	}
 
@@ -1067,6 +1081,91 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		// Test that result is cached.
 		FunctionMocker::replace( 'filter_input' );
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
+	}
+
+	/**
+	 * Test wpml_locale_filter().
+	 *
+	 * @param string $locale        Current locale.
+	 * @param string $language_code Current language code.
+	 * @param string $expected      Expected.
+	 *
+	 * @dataProvider dp_test_wpml_locale_filter
+	 */
+	public function test_wpml_locale_filter( $locale, $language_code, $expected ) {
+		$languages = [
+			'be' =>
+				[
+					'code'           => 'be',
+					'id'             => '64',
+					'english_name'   => 'Belarusian',
+					'native_name'    => 'Belarusian',
+					'major'          => '0',
+					'active'         => '1',
+					'default_locale' => 'be_BY',
+					'encode_url'     => '0',
+					'tag'            => 'be',
+					'display_name'   => 'Belarusian',
+				],
+			'en' =>
+				[
+					'code'           => 'en',
+					'id'             => '1',
+					'english_name'   => 'English',
+					'native_name'    => 'English',
+					'major'          => '1',
+					'active'         => '1',
+					'default_locale' => 'en_US',
+					'encode_url'     => '0',
+					'tag'            => 'en',
+					'display_name'   => 'English',
+				],
+			'ru' =>
+				[
+					'code'           => 'ru',
+					'id'             => '46',
+					'english_name'   => 'Russian',
+					'native_name'    => 'Русский',
+					'major'          => '1',
+					'active'         => '1',
+					'default_locale' => 'ru_RU',
+					'encode_url'     => '0',
+					'tag'            => 'ru',
+					'display_name'   => 'Russian',
+				],
+			'uk' =>
+				[
+					'code'           => 'uk',
+					'id'             => '55',
+					'english_name'   => 'Ukrainian',
+					'native_name'    => 'Ukrainian',
+					'major'          => '0',
+					'active'         => '1',
+					'default_locale' => 'uk',
+					'encode_url'     => '0',
+					'tag'            => 'uk',
+					'display_name'   => 'Ukrainian',
+				],
+		];
+
+		WP_Mock::userFunction( 'wpml_get_current_language' )->with()->andReturn( $language_code );
+		WP_Mock::onFilter( 'wpml_active_languages' )->with( null )->reply( $languages );
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		self::assertSame( $expected, $subject->wpml_locale_filter( $locale ) );
+	}
+
+	/**
+	 * Data provider for test_wpml_locale_filter().
+	 *
+	 * @return array
+	 */
+	public function dp_test_wpml_locale_filter() {
+		return [
+			'Existing language code, return locale from wpml' => [ 'en_US', 'ru', 'ru_RU' ],
+			'Not existing language code, return from current' => [ 'en_US', 'some', 'en_US' ],
+		];
 	}
 
 	/**
