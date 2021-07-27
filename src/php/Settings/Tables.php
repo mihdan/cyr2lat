@@ -97,16 +97,6 @@ class Tables extends PluginSettingsBase {
 	}
 
 	/**
-	 * Get parent slug.
-	 *
-	 * @return string
-	 */
-	protected function parent_slug() {
-		// Indicate that it is the main menu page.
-		return 'options-general.php';
-	}
-
-	/**
 	 * Init locales.
 	 */
 	protected function init_locales() {

@@ -45,7 +45,7 @@ class Conversion_Process extends WP_Background_Process {
 	 *
 	 * @param mixed $item Queue item to iterate over.
 	 *
-	 * @return mixed
+	 * @return boolean
 	 */
 	protected function task( $item ) {
 		return false;

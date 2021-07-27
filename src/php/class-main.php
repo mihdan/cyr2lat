@@ -398,7 +398,7 @@ class Main {
 	 * @param array $data    An array of slashed post data.
 	 * @param array $postarr An array of sanitized, but otherwise unmodified post data.
 	 *
-	 * @return mixed
+	 * @return array
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function sanitize_post_name( $data, $postarr = [] ) {
@@ -619,14 +619,15 @@ class Main {
 	public function prepare_in( $items, $format = '%s' ) {
 		global $wpdb;
 
-		$items    = (array) $items;
-		$how_many = count( $items );
+		$prepared_in = '';
+		$items       = (array) $items;
+		$how_many    = count( $items );
+
 		if ( $how_many > 0 ) {
 			$placeholders    = array_fill( 0, $how_many, $format );
 			$prepared_format = implode( ',', $placeholders );
-			$prepared_in     = $wpdb->prepare( $prepared_format, $items ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		} else {
-			$prepared_in = '';
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$prepared_in = $wpdb->prepare( $prepared_format, $items );
 		}
 
 		return $prepared_in;
