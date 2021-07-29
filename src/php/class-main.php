@@ -92,7 +92,14 @@ class Main {
 	 *
 	 * @var string
 	 */
-	private $pll_locale = false;
+	private $pll_locale;
+
+	/**
+	 * WPML locale.
+	 *
+	 * @var string
+	 */
+	private $wpml_locale;
 
 	/**
 	 * Main constructor.
@@ -598,11 +605,17 @@ class Main {
 	 * @return string
 	 */
 	public function wpml_locale_filter( $locale ) {
+		if ( $this->wpml_locale ) {
+			return $this->wpml_locale;
+		}
+
 		$language_code = wpml_get_current_language();
 		$languages     = apply_filters( 'wpml_active_languages', null );
 
 		if ( isset( $languages[ $language_code ] ) ) {
-			return $languages[ $language_code ]['default_locale'];
+			$this->wpml_locale = $languages[ $language_code ]['default_locale'];
+
+			return $this->wpml_locale;
 		}
 
 		return $locale;
