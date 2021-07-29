@@ -92,7 +92,14 @@ class Main {
 	 *
 	 * @var string
 	 */
-	private $pll_locale = false;
+	private $pll_locale;
+
+	/**
+	 * WPML locale.
+	 *
+	 * @var string
+	 */
+	private $wpml_locale;
 
 	/**
 	 * Main constructor.
@@ -197,13 +204,16 @@ class Main {
 
 		$term = '';
 		if ( $this->is_term ) {
-			$sql  = $wpdb->prepare(
+			$sql = $wpdb->prepare(
 				"SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
 							WHERE t.name = %s",
 				$title
 			);
-			$sql .= ' AND tt.taxonomy IN (' . $this->prepare_in( $this->taxonomies ) . ')';
+
+			if ( $this->taxonomies ) {
+				$sql .= ' AND tt.taxonomy IN (' . $this->prepare_in( $this->taxonomies ) . ')';
+			}
 
 			// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
@@ -434,8 +444,8 @@ class Main {
 	public function pre_insert_term_filter( $term, $taxonomy ) {
 		if (
 			0 === $term ||
-			'' === trim( $term ) ||
-			is_wp_error( $term )
+			is_wp_error( $term ) ||
+			'' === trim( $term )
 		) {
 			return $term;
 		}
@@ -595,11 +605,17 @@ class Main {
 	 * @return string
 	 */
 	public function wpml_locale_filter( $locale ) {
+		if ( $this->wpml_locale ) {
+			return $this->wpml_locale;
+		}
+
 		$language_code = wpml_get_current_language();
 		$languages     = apply_filters( 'wpml_active_languages', null );
 
 		if ( isset( $languages[ $language_code ] ) ) {
-			return $languages[ $language_code ]['default_locale'];
+			$this->wpml_locale = $languages[ $language_code ]['default_locale'];
+
+			return $this->wpml_locale;
 		}
 
 		return $locale;

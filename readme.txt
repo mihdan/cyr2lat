@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
 Tested up to: 5.8
-Stable tag: 5.2.0
+Stable tag: 5.2.1
 Requires PHP: 5.6.20
 
 Convert Non-Latin characters in post, page and term slugs to Latin characters.
@@ -187,6 +187,10 @@ Yes you can!
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 5.2.1 (29.07.2021) =
+* Determine WPML language only once to improve performance.
+* Avoid notice on bad SQL request when taxonomies are empty.
 
 = 5.2.0 (27.07.2021) =
 * Add support for categories and tags in other languages with wpml.

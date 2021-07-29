@@ -372,27 +372,33 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test sanitize_title() for terms
+	 * Test sanitize_title() for insert_term
 	 *
-	 * @param string $title    Title to sanitize.
-	 * @param string $term     Term to sanitize.
-	 * @param string $expected Expected result.
+	 * @param string            $title    Title to sanitize.
+	 * @param string|int|object $term     Term to use.
+	 * @param string            $expected Expected result.
 	 *
-	 * @dataProvider dp_test_sanitize_title_for_insert_term_and_get_terms
+	 * @dataProvider dp_test_sanitize_title_for_insert_term
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_sanitize_title_for_insert_term_and_get_terms( $title, $term, $expected ) {
+	public function test_sanitize_title_for_insert_term( $title, $term, $expected ) {
 		global $wpdb;
 
-		$taxonomy     = 'category';
-		$prepared_tax = '\'category\'';
+		$taxonomy     = 'taxonomy';
+		$prepared_tax = '\'' . $taxonomy . '\'';
 
 		$subject = $this->get_subject();
 
-		WP_Mock::userFunction( 'is_wp_error' )->with( $term )->andReturn( false );
-		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
+		$times = $term ? 1 : 0;
 
-		$times = $term ? 2 : 1;
+		if ( is_object( $term ) ) {
+			WP_Mock::userFunction( 'is_wp_error' )->with( $term )->andReturn( true );
+			$times = 0;
+		} else {
+			WP_Mock::userFunction( 'is_wp_error' )->with( $term )->andReturn( false );
+		}
+
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
 		$subject->shouldReceive( 'prepare_in' )->times( $times )->with( [ $taxonomy ] )->andReturn( $prepared_tax );
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -418,20 +424,81 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		self::assertSame( $expected, $subject->sanitize_title( $title ) );
 		// Make sure we search in the db only once being called from wp_insert_term().
 		self::assertSame( $title, $subject->sanitize_title( $title ) );
+	}
 
-		$subject->get_terms_args_filter( [ 'some args' ], [ $taxonomy ] );
+	/**
+	 * Data provider for test_sanitize_title_for_insert_term()
+	 */
+	public function dp_test_sanitize_title_for_insert_term() {
+		return [
+			[ 'title', 'term', 'term' ],
+			[ 'title', '', 'title' ],
+			[ 'title', 0, 'title' ],
+			[ 'title', (object) [], 'title' ],
+		];
+	}
+
+	/**
+	 * Test sanitize_title() for get_terms
+	 *
+	 * @param string $title               Title to sanitize.
+	 * @param string $term                Term to us.
+	 * @param array  $taxonomies          Taxonomies to use.
+	 * @param string $prepared_taxonomies Prepared taxonomies to use.
+	 * @param string $expected            Expected result.
+	 *
+	 * @dataProvider dp_test_sanitize_title_for_get_terms
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_sanitize_title_for_get_terms( $title, $term, $taxonomies, $prepared_taxonomies, $expected ) {
+		global $wpdb;
+
+		$subject = $this->get_subject();
+
+		$times = $taxonomies ? 1 : 0;
+
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
+
+		$subject->shouldReceive( 'prepare_in' )->times( $times )->with( $taxonomies )
+			->andReturn( $prepared_taxonomies );
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wpdb                = Mockery::mock( wpdb::class );
+		$wpdb->terms         = 'wp_terms';
+		$wpdb->term_taxonomy = 'wp_term_taxonomy';
+
+		$request          = "SELECT slug FROM {$wpdb->terms} t LEFT JOIN {$wpdb->term_taxonomy} tt
+							ON t.term_id = tt.term_id
+							WHERE t.name = %s";
+		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN {$wpdb->term_taxonomy} tt
+							ON t.term_id = tt.term_id
+							WHERE t.name = " . $title;
+
+		$sql = $prepared_request;
+
+		if ( $taxonomies ) {
+			$sql .= ' AND tt.taxonomy IN (' . $prepared_taxonomies . ')';
+		}
+
+		$wpdb->shouldReceive( 'prepare' )->once()->with(
+			$request,
+			$title
+		)->andReturn( $prepared_request );
+		$wpdb->shouldReceive( 'get_var' )->once()->with( $sql )->andReturn( $term );
+
+		$subject->get_terms_args_filter( [ 'some args' ], $taxonomies );
 		self::assertSame( $expected, $subject->sanitize_title( $title ) );
 		// Make sure we search in the db only once being called from wp_insert_term().
 		self::assertSame( $title, $subject->sanitize_title( $title ) );
 	}
 
 	/**
-	 * Data provider for wp_insert_term()
+	 * Data provider for test_sanitize_title_for_get_terms()
 	 */
-	public function dp_test_sanitize_title_for_insert_term_and_get_terms() {
+	public function dp_test_sanitize_title_for_get_terms() {
 		return [
-			[ 'title', 'term', 'term' ],
-			[ 'title', '', 'title' ],
+			[ 'title', 'term', [ 'taxonomy' ], "'taxonomy'", 'term' ],
+			[ 'title', 'term', [ 'taxonomy1', 'taxonomy2' ], "'taxonomy1', 'taxonomy2'", 'term' ],
+			[ 'title', 'term', [], '', 'term' ],
 		];
 	}
 
@@ -1148,11 +1215,16 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 				],
 		];
 
-		WP_Mock::userFunction( 'wpml_get_current_language' )->with()->andReturn( $language_code );
+		$times = array_key_exists( $language_code, $languages ) ? 1 : 2;
+
+		WP_Mock::userFunction( 'wpml_get_current_language' )->times( $times )->with()->andReturn( $language_code );
 		WP_Mock::onFilter( 'wpml_active_languages' )->with( null )->reply( $languages );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 
+		self::assertSame( $expected, $subject->wpml_locale_filter( $locale ) );
+
+		// Make sure that we do call wpml_get_current_language() anymore if language code exists.
 		self::assertSame( $expected, $subject->wpml_locale_filter( $locale ) );
 	}
 
