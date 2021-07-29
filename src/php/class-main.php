@@ -197,13 +197,16 @@ class Main {
 
 		$term = '';
 		if ( $this->is_term ) {
-			$sql  = $wpdb->prepare(
+			$sql = $wpdb->prepare(
 				"SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
 							WHERE t.name = %s",
 				$title
 			);
-			$sql .= ' AND tt.taxonomy IN (' . $this->prepare_in( $this->taxonomies ) . ')';
+
+			if ( $this->taxonomies ) {
+				$sql .= ' AND tt.taxonomy IN (' . $this->prepare_in( $this->taxonomies ) . ')';
+			}
 
 			// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
@@ -434,8 +437,8 @@ class Main {
 	public function pre_insert_term_filter( $term, $taxonomy ) {
 		if (
 			0 === $term ||
-			'' === trim( $term ) ||
-			is_wp_error( $term )
+			is_wp_error( $term ) ||
+			'' === trim( $term )
 		) {
 			return $term;
 		}
