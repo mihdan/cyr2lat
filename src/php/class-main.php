@@ -285,11 +285,11 @@ class Main {
 	 * Fix string encoding on MacOS.
 	 *
 	 * @param string $string String.
+	 * @param array  $table  Conversion table.
 	 *
 	 * @return string
 	 */
-	private function fix_mac_string( $string ) {
-		$table     = $this->get_filtered_table();
+	private function fix_mac_string( $string, $table ) {
 		$fix_table = Conversion_Tables::get_fix_table_for_mac();
 
 		$fix = [];
@@ -330,15 +330,6 @@ class Main {
 	}
 
 	/**
-	 * Get transliteration table.
-	 *
-	 * @return array
-	 */
-	private function get_filtered_table() {
-		return (array) apply_filters( 'ctl_table', $this->settings->get_table() );
-	}
-
-	/**
 	 * Transliterate string using a table.
 	 *
 	 * @param string $string String.
@@ -346,9 +337,9 @@ class Main {
 	 * @return string
 	 */
 	public function transliterate( $string ) {
-		$table = $this->get_filtered_table();
+		$table = (array) apply_filters( 'ctl_table', $this->settings->get_table() );
 
-		$string = $this->fix_mac_string( $string );
+		$string = $this->fix_mac_string( $string, $table );
 		$string = $this->split_chinese_string( $string, $table );
 
 		return strtr( $string, $table );
