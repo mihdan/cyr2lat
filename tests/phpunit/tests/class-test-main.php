@@ -1215,16 +1215,14 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 				],
 		];
 
-		$times = array_key_exists( $language_code, $languages ) ? 1 : 2;
-
-		WP_Mock::userFunction( 'wpml_get_current_language' )->times( $times )->with()->andReturn( $language_code );
+		WP_Mock::userFunction( 'wpml_get_current_language' )->times( 1 )->with()->andReturn( $language_code );
 		WP_Mock::onFilter( 'wpml_active_languages' )->with( null )->reply( $languages );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		self::assertSame( $expected, $subject->wpml_locale_filter( $locale ) );
 
-		// Make sure that we do call wpml_get_current_language() anymore if language code exists.
+		// Make sure that we do not call wpml_get_current_language() more than once.
 		self::assertSame( $expected, $subject->wpml_locale_filter( $locale ) );
 	}
 
