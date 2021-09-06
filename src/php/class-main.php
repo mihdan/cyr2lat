@@ -495,6 +495,7 @@ class Main {
 		if ( false === $rest_locale ) {
 			return $locale;
 		}
+
 		if ( $rest_locale ) {
 			$this->pll_locale = $rest_locale;
 

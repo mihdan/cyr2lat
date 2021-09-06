@@ -58,11 +58,22 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_constructor() {
 		$classname = Main::class;
 
+		// Test when requirements are met and not frontend.
+		$requirements_met = true;
+		$is_frontend      = false;
+
+		$request = Mockery::mock( 'overload:' . Request::class );
+		$request->shouldReceive( 'is_frontend' )->with()->andReturnUsing(
+			function () use ( &$is_frontend ) {
+				return $is_frontend;
+			}
+		);
+		$request->shouldReceive( 'is_cli' )->with()->andReturn( true );
+
 		Mockery::mock( 'overload:' . Settings::class );
 		Mockery::mock( 'overload:' . Admin_Notices::class );
 
-		$requirements     = Mockery::mock( 'overload:' . Requirements::class );
-		$requirements_met = true;
+		$requirements = Mockery::mock( 'overload:' . Requirements::class );
 		$requirements->shouldReceive( 'are_requirements_met' )->with()->andReturnUsing(
 			function () use ( &$requirements_met ) {
 				return $requirements_met;
@@ -75,28 +86,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		Mockery::mock( 'overload:' . WP_CLI::class );
 		Mockery::mock( 'overload:' . ACF::class );
 
-		FunctionMocker::replace(
-			'defined',
-			function ( $name ) {
-				if ( 'WP_CLI' === $name ) {
-					return true;
-				}
-
-				return null;
-			}
-		);
-
-		FunctionMocker::replace(
-			'constant',
-			function ( $name ) {
-				if ( 'WP_CLI' === $name ) {
-					return true;
-				}
-
-				return null;
-			}
-		);
-
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
 
@@ -105,6 +94,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$constructor     = $reflected_class->getConstructor();
 		$constructor->invoke( $mock );
 
+		self::assertInstanceOf( Request::class, $this->get_protected_property( $mock, 'request' ) );
 		self::assertInstanceOf( Settings::class, $this->get_protected_property( $mock, 'settings' ) );
 		self::assertInstanceOf( Admin_Notices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
 		self::assertInstanceOf( Post_Conversion_Process::class, $this->get_protected_property( $mock, 'process_all_posts' ) );
@@ -113,6 +103,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		self::assertInstanceOf( WP_CLI::class, $this->get_protected_property( $mock, 'cli' ) );
 		self::assertInstanceOf( ACF::class, $this->get_protected_property( $mock, 'acf' ) );
 
+		// Test when requirements are not met.
 		$requirements_met = false;
 
 		// Get mock, without the constructor being called.
@@ -123,8 +114,29 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$constructor     = $reflected_class->getConstructor();
 		$constructor->invoke( $mock );
 
+		self::assertInstanceOf( Request::class, $this->get_protected_property( $mock, 'request' ) );
 		self::assertInstanceOf( Settings::class, $this->get_protected_property( $mock, 'settings' ) );
 		self::assertInstanceOf( Admin_Notices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'process_all_posts' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'process_all_terms' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'converter' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'cli' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'acf' ) );
+
+		// Test on frontend.
+		$is_frontend = true;
+
+		// Get mock, without the constructor being called.
+		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
+
+		// Now call the constructor.
+		$reflected_class = new ReflectionClass( $classname );
+		$constructor     = $reflected_class->getConstructor();
+		$constructor->invoke( $mock );
+
+		self::assertInstanceOf( Request::class, $this->get_protected_property( $mock, 'request' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'settings' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'admin_notices' ) );
 		self::assertNull( $this->get_protected_property( $mock, 'process_all_posts' ) );
 		self::assertNull( $this->get_protected_property( $mock, 'process_all_terms' ) );
 		self::assertNull( $this->get_protected_property( $mock, 'converter' ) );
@@ -134,10 +146,33 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test init()
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init() {
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_frontend' )->andReturn( false );
+		$request->shouldReceive( 'is_cli' )->andReturn( false );
+
 		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 		$subject->shouldReceive( 'init_hooks' )->once();
+
+		$subject->init();
+	}
+
+	/**
+	 * Test init() on frontend
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_init_on_frontend() {
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_frontend' )->andReturn( true );
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
+		$subject->shouldReceive( 'init_hooks' )->never();
 
 		$subject->init();
 	}
@@ -146,30 +181,13 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Test init() with CLI when CLI throws an Exception
 	 */
 	public function test_init_with_cli_error() {
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_frontend' )->andReturn( false );
+		$request->shouldReceive( 'is_cli' )->andReturn( true );
+
 		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 		$subject->shouldReceive( 'init_hooks' )->never();
-
-		FunctionMocker::replace(
-			'defined',
-			function ( $name ) {
-				if ( 'WP_CLI' === $name ) {
-					return true;
-				}
-
-				return null;
-			}
-		);
-
-		FunctionMocker::replace(
-			'constant',
-			function ( $name ) {
-				if ( 'WP_CLI' === $name ) {
-					return true;
-				}
-
-				return null;
-			}
-		);
 
 		$add_command = FunctionMocker::replace(
 			'\WP_CLI::add_command',
@@ -189,30 +207,13 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @noinspection PhpRedundantOptionalArgumentInspection
 	 */
 	public function test_init_with_cli() {
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_frontend' )->andReturn( false );
+		$request->shouldReceive( 'is_cli' )->andReturn( true );
+
 		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 		$subject->shouldReceive( 'init_hooks' )->once();
-
-		FunctionMocker::replace(
-			'defined',
-			function ( $name ) {
-				if ( 'WP_CLI' === $name ) {
-					return true;
-				}
-
-				return null;
-			}
-		);
-
-		FunctionMocker::replace(
-			'constant',
-			function ( $name ) {
-				if ( 'WP_CLI' === $name ) {
-					return true;
-				}
-
-				return null;
-			}
-		);
 
 		$add_command = FunctionMocker::replace(
 			'\WP_CLI::add_command',
@@ -937,21 +938,11 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$pll_locale = 'ru';
 		$data       = '';
 
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_rest' )->andReturn( true );
+
 		$subject = Mockery::mock( Main::class )->makePartial();
-
-		FunctionMocker::replace(
-			'defined',
-			function ( $constant_name ) {
-				return 'REST_REQUEST' === $constant_name;
-			}
-		);
-
-		FunctionMocker::replace(
-			'constant',
-			function ( $name ) {
-				return 'REST_REQUEST' === $name;
-			}
-		);
+		$this->set_protected_property( $subject, 'request', $request );
 
 		$rest_server = new WP_REST_Server();
 		WP_Mock::userFunction( 'rest_get_server' )->andReturn( $rest_server );
@@ -969,7 +960,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 
 		// Test that result is cached.
-		FunctionMocker::replace( 'defined' );
+		$request->shouldReceive( 'is_rest' )->andReturn( false );
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 	}
 
@@ -979,9 +970,11 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_pll_locale_filter_on_frontend() {
 		$locale = 'en_US';
 
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_rest' )->andReturn( false );
 
-		FunctionMocker::replace( 'defined' );
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( false );
 
@@ -996,9 +989,11 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$pll_locale = 'ru';
 		$post_id    = 23;
 
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_rest' )->andReturn( false );
 
-		FunctionMocker::replace( 'defined' );
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
 
@@ -1036,9 +1031,11 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$pll_locale = 'ru';
 		$post_id    = 23;
 
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_rest' )->andReturn( false );
 
-		FunctionMocker::replace( 'defined' );
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
 
@@ -1076,9 +1073,11 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$pll_locale = 'ru';
 		$post_id    = 23;
 
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_rest' )->andReturn( false );
 
-		FunctionMocker::replace( 'defined' );
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
 
@@ -1118,9 +1117,11 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$pll_locale       = 'ru';
 		$term_lang_choice = 92;
 
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_rest' )->andReturn( false );
 
-		FunctionMocker::replace( 'defined' );
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
 
