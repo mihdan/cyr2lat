@@ -37,6 +37,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * End test
+	 *
+	 * @noinspection PhpLanguageLevelInspection
 	 */
 	public function tearDown(): void {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
@@ -58,11 +60,22 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_constructor() {
 		$classname = Main::class;
 
+		// Test when requirements are met and not frontend.
+		$requirements_met = true;
+		$is_frontend      = false;
+
+		$request = Mockery::mock( 'overload:' . Request::class );
+		$request->shouldReceive( 'is_frontend' )->with()->andReturnUsing(
+			function () use ( &$is_frontend ) {
+				return $is_frontend;
+			}
+		);
+		$request->shouldReceive( 'is_cli' )->with()->andReturn( true );
+
 		Mockery::mock( 'overload:' . Settings::class );
 		Mockery::mock( 'overload:' . Admin_Notices::class );
 
-		$requirements     = Mockery::mock( 'overload:' . Requirements::class );
-		$requirements_met = true;
+		$requirements = Mockery::mock( 'overload:' . Requirements::class );
 		$requirements->shouldReceive( 'are_requirements_met' )->with()->andReturnUsing(
 			function () use ( &$requirements_met ) {
 				return $requirements_met;
@@ -75,28 +88,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		Mockery::mock( 'overload:' . WP_CLI::class );
 		Mockery::mock( 'overload:' . ACF::class );
 
-		FunctionMocker::replace(
-			'defined',
-			function ( $name ) {
-				if ( 'WP_CLI' === $name ) {
-					return true;
-				}
-
-				return null;
-			}
-		);
-
-		FunctionMocker::replace(
-			'constant',
-			function ( $name ) {
-				if ( 'WP_CLI' === $name ) {
-					return true;
-				}
-
-				return null;
-			}
-		);
-
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
 
@@ -105,6 +96,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$constructor     = $reflected_class->getConstructor();
 		$constructor->invoke( $mock );
 
+		self::assertInstanceOf( Request::class, $this->get_protected_property( $mock, 'request' ) );
 		self::assertInstanceOf( Settings::class, $this->get_protected_property( $mock, 'settings' ) );
 		self::assertInstanceOf( Admin_Notices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
 		self::assertInstanceOf( Post_Conversion_Process::class, $this->get_protected_property( $mock, 'process_all_posts' ) );
@@ -113,6 +105,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		self::assertInstanceOf( WP_CLI::class, $this->get_protected_property( $mock, 'cli' ) );
 		self::assertInstanceOf( ACF::class, $this->get_protected_property( $mock, 'acf' ) );
 
+		// Test when requirements are not met.
 		$requirements_met = false;
 
 		// Get mock, without the constructor being called.
@@ -123,8 +116,29 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$constructor     = $reflected_class->getConstructor();
 		$constructor->invoke( $mock );
 
+		self::assertInstanceOf( Request::class, $this->get_protected_property( $mock, 'request' ) );
 		self::assertInstanceOf( Settings::class, $this->get_protected_property( $mock, 'settings' ) );
 		self::assertInstanceOf( Admin_Notices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'process_all_posts' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'process_all_terms' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'converter' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'cli' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'acf' ) );
+
+		// Test on frontend.
+		$is_frontend = true;
+
+		// Get mock, without the constructor being called.
+		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
+
+		// Now call the constructor.
+		$reflected_class = new ReflectionClass( $classname );
+		$constructor     = $reflected_class->getConstructor();
+		$constructor->invoke( $mock );
+
+		self::assertInstanceOf( Request::class, $this->get_protected_property( $mock, 'request' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'settings' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'admin_notices' ) );
 		self::assertNull( $this->get_protected_property( $mock, 'process_all_posts' ) );
 		self::assertNull( $this->get_protected_property( $mock, 'process_all_terms' ) );
 		self::assertNull( $this->get_protected_property( $mock, 'converter' ) );
@@ -134,42 +148,50 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test init()
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init() {
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_frontend' )->andReturn( false );
+		$request->shouldReceive( 'is_cli' )->andReturn( false );
+
 		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 		$subject->shouldReceive( 'init_hooks' )->once();
 
 		$subject->init();
 	}
 
 	/**
-	 * Test init() with CLI when CLI throws an Exception
+	 * Test init() on frontend
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_with_cli_error() {
+	public function test_init_on_frontend() {
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_frontend' )->andReturn( true );
+
 		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 		$subject->shouldReceive( 'init_hooks' )->never();
 
-		FunctionMocker::replace(
-			'defined',
-			function ( $name ) {
-				if ( 'WP_CLI' === $name ) {
-					return true;
-				}
+		$subject->init();
+	}
 
-				return null;
-			}
-		);
+	/**
+	 * Test init() with CLI when CLI throws an Exception
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_init_with_cli_error() {
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_frontend' )->andReturn( false );
+		$request->shouldReceive( 'is_cli' )->andReturn( true );
 
-		FunctionMocker::replace(
-			'constant',
-			function ( $name ) {
-				if ( 'WP_CLI' === $name ) {
-					return true;
-				}
-
-				return null;
-			}
-		);
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
+		$subject->shouldReceive( 'init_hooks' )->never();
 
 		$add_command = FunctionMocker::replace(
 			'\WP_CLI::add_command',
@@ -186,33 +208,17 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test init() with CLI
 	 *
+	 * @throws ReflectionException ReflectionException.
 	 * @noinspection PhpRedundantOptionalArgumentInspection
 	 */
 	public function test_init_with_cli() {
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_frontend' )->andReturn( false );
+		$request->shouldReceive( 'is_cli' )->andReturn( true );
+
 		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 		$subject->shouldReceive( 'init_hooks' )->once();
-
-		FunctionMocker::replace(
-			'defined',
-			function ( $name ) {
-				if ( 'WP_CLI' === $name ) {
-					return true;
-				}
-
-				return null;
-			}
-		);
-
-		FunctionMocker::replace(
-			'constant',
-			function ( $name ) {
-				if ( 'WP_CLI' === $name ) {
-					return true;
-				}
-
-				return null;
-			}
-		);
 
 		$add_command = FunctionMocker::replace(
 			'\WP_CLI::add_command',
@@ -231,9 +237,12 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @param boolean $sitepress WPML is active.
 	 *
 	 * @dataProvider dp_test_init_hooks
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_hooks( $polylang, $sitepress ) {
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$wpml_locale = 'en_US';
+
+		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
 		WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ], 10, 2 );
@@ -263,12 +272,24 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		}
 
 		if ( $sitepress ) {
+			$subject->shouldReceive( 'get_wpml_locale' )->andReturn( $wpml_locale );
+
 			WP_Mock::expectFilterAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ], - PHP_INT_MAX );
+			WP_Mock::expectActionAdded(
+				'wpml_language_has_switched',
+				[ $subject, 'wpml_language_has_switched' ],
+				10,
+				3
+			);
 		} else {
 			WP_Mock::expectFilterNotAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ] );
 		}
 
 		$subject->init_hooks();
+
+		if ( $sitepress ) {
+			self::assertSame( $wpml_locale, $this->get_protected_property( $subject, 'wpml_locale' ) );
+		}
 	}
 
 	/**
@@ -406,10 +427,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$wpdb->terms         = 'wp_terms';
 		$wpdb->term_taxonomy = 'wp_term_taxonomy';
 
-		$request          = "SELECT slug FROM {$wpdb->terms} t LEFT JOIN {$wpdb->term_taxonomy} tt
+		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
 							WHERE t.name = %s";
-		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN {$wpdb->term_taxonomy} tt
+		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
 							WHERE t.name = " . $title;
 		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
@@ -466,10 +487,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$wpdb->terms         = 'wp_terms';
 		$wpdb->term_taxonomy = 'wp_term_taxonomy';
 
-		$request          = "SELECT slug FROM {$wpdb->terms} t LEFT JOIN {$wpdb->term_taxonomy} tt
+		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
 							WHERE t.name = %s";
-		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN {$wpdb->term_taxonomy} tt
+		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
 							WHERE t.name = " . $title;
 
@@ -922,27 +943,19 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test pll_locale_filter() with REST.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pll_locale_filter_with_rest() {
 		$locale     = 'en_US';
 		$pll_locale = 'ru';
 		$data       = '';
 
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_rest' )->andReturn( true );
+
 		$subject = Mockery::mock( Main::class )->makePartial();
-
-		FunctionMocker::replace(
-			'defined',
-			function ( $constant_name ) {
-				return 'REST_REQUEST' === $constant_name;
-			}
-		);
-
-		FunctionMocker::replace(
-			'constant',
-			function ( $name ) {
-				return 'REST_REQUEST' === $name;
-			}
-		);
+		$this->set_protected_property( $subject, 'request', $request );
 
 		$rest_server = new WP_REST_Server();
 		WP_Mock::userFunction( 'rest_get_server' )->andReturn( $rest_server );
@@ -960,19 +973,23 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 
 		// Test that result is cached.
-		FunctionMocker::replace( 'defined' );
+		$request->shouldReceive( 'is_rest' )->andReturn( false );
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 	}
 
 	/**
 	 * Test pll_locale_filter() on frontend.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pll_locale_filter_on_frontend() {
 		$locale = 'en_US';
 
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_rest' )->andReturn( false );
 
-		FunctionMocker::replace( 'defined' );
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( false );
 
@@ -981,15 +998,19 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test pll_locale_filter() with classic editor and post_id.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pll_locale_filter_with_classic_editor_and_post_id() {
 		$locale     = 'en_US';
 		$pll_locale = 'ru';
 		$post_id    = 23;
 
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_rest' )->andReturn( false );
 
-		FunctionMocker::replace( 'defined' );
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
 
@@ -1021,15 +1042,19 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test pll_locale_filter() with classic editor and pll_post_id.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pll_locale_filter_with_classic_editor_and_pll_post_id() {
 		$locale     = 'en_US';
 		$pll_locale = 'ru';
 		$post_id    = 23;
 
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_rest' )->andReturn( false );
 
-		FunctionMocker::replace( 'defined' );
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
 
@@ -1061,15 +1086,19 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test pll_locale_filter() with classic editor and post.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pll_locale_filter_with_classic_editor_and_post() {
 		$locale     = 'en_US';
 		$pll_locale = 'ru';
 		$post_id    = 23;
 
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_rest' )->andReturn( false );
 
-		FunctionMocker::replace( 'defined' );
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
 
@@ -1102,6 +1131,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test pll_locale_filter() with term.
 	 *
+	 * @throws ReflectionException ReflectionException.
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public function test_pll_locale_filter_with_term() {
@@ -1109,9 +1139,11 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$pll_locale       = 'ru';
 		$term_lang_choice = 92;
 
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_rest' )->andReturn( false );
 
-		FunctionMocker::replace( 'defined' );
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
 
@@ -1153,13 +1185,29 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test wpml_locale_filter().
 	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_wpml_locale_filter() {
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		$locale = 'en_US';
+		self::assertSame( $locale, $subject->wpml_locale_filter( $locale ) );
+
+		$new_locale = 'ru_RU';
+		$this->set_protected_property( $subject, 'wpml_locale', $new_locale );
+		self::assertSame( $new_locale, $subject->wpml_locale_filter( $locale ) );
+	}
+
+	/**
+	 * Test get_wpml_locale().
+	 *
 	 * @param string $locale        Current locale.
 	 * @param string $language_code Current language code.
 	 * @param string $expected      Expected.
 	 *
 	 * @dataProvider dp_test_wpml_locale_filter
 	 */
-	public function test_wpml_locale_filter( $locale, $language_code, $expected ) {
+	public function test_get_wpml_locale( $locale, $language_code, $expected ) {
 		$languages = [
 			'be' =>
 				[
@@ -1215,17 +1263,12 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 				],
 		];
 
-		$times = array_key_exists( $language_code, $languages ) ? 1 : 2;
-
-		WP_Mock::userFunction( 'wpml_get_current_language' )->times( $times )->with()->andReturn( $language_code );
+		WP_Mock::userFunction( 'wpml_get_current_language' )->times( 1 )->with()->andReturn( $language_code );
 		WP_Mock::onFilter( 'wpml_active_languages' )->with( null )->reply( $languages );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 
-		self::assertSame( $expected, $subject->wpml_locale_filter( $locale ) );
-
-		// Make sure that we do call wpml_get_current_language() anymore if language code exists.
-		self::assertSame( $expected, $subject->wpml_locale_filter( $locale ) );
+		self::assertSame( $expected, $subject->get_wpml_locale( $locale ) );
 	}
 
 	/**
@@ -1235,8 +1278,94 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_wpml_locale_filter() {
 		return [
-			'Existing language code, return locale from wpml' => [ 'en_US', 'ru', 'ru_RU' ],
-			'Not existing language code, return from current' => [ 'en_US', 'some', 'en_US' ],
+			'Existing language code, return from wpml' => [ 'en_US', 'ru', 'ru_RU' ],
+			'Not existing language code, return null'  => [ 'en_US', 'some', null ],
+		];
+	}
+
+	/**
+	 * Test wpml_language_has_switched().
+	 *
+	 * @param string $language_code Current language code.
+	 * @param string $expected      Expected.
+	 *
+	 * @dataProvider dp_test_wpml_language_has_switched
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_wpml_language_has_switched( $language_code, $expected ) {
+		$languages = [
+			'be' =>
+				[
+					'code'           => 'be',
+					'id'             => '64',
+					'english_name'   => 'Belarusian',
+					'native_name'    => 'Belarusian',
+					'major'          => '0',
+					'active'         => '1',
+					'default_locale' => 'be_BY',
+					'encode_url'     => '0',
+					'tag'            => 'be',
+					'display_name'   => 'Belarusian',
+				],
+			'en' =>
+				[
+					'code'           => 'en',
+					'id'             => '1',
+					'english_name'   => 'English',
+					'native_name'    => 'English',
+					'major'          => '1',
+					'active'         => '1',
+					'default_locale' => 'en_US',
+					'encode_url'     => '0',
+					'tag'            => 'en',
+					'display_name'   => 'English',
+				],
+			'ru' =>
+				[
+					'code'           => 'ru',
+					'id'             => '46',
+					'english_name'   => 'Russian',
+					'native_name'    => 'Русский',
+					'major'          => '1',
+					'active'         => '1',
+					'default_locale' => 'ru_RU',
+					'encode_url'     => '0',
+					'tag'            => 'ru',
+					'display_name'   => 'Russian',
+				],
+			'uk' =>
+				[
+					'code'           => 'uk',
+					'id'             => '55',
+					'english_name'   => 'Ukrainian',
+					'native_name'    => 'Ukrainian',
+					'major'          => '0',
+					'active'         => '1',
+					'default_locale' => 'uk',
+					'encode_url'     => '0',
+					'tag'            => 'uk',
+					'display_name'   => 'Ukrainian',
+				],
+		];
+
+		WP_Mock::onFilter( 'wpml_active_languages' )->with( null )->reply( $languages );
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		$subject->wpml_language_has_switched( $language_code, 'some cookie', 'en_US' );
+		self::assertSame( $expected, $this->get_protected_property( $subject, 'wpml_locale' ) );
+	}
+
+	/**
+	 * Data provider for test_wpml_language_has_switched().
+	 *
+	 * @return array
+	 */
+	public function dp_test_wpml_language_has_switched() {
+		return [
+			'Existing language code'     => [ 'ru', 'ru_RU' ],
+			'Not existing language code' => [ 'some', null ],
+			'Null language code'         => [ null, null ],
 		];
 	}
 

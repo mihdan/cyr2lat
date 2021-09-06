@@ -395,6 +395,15 @@ abstract class SettingsBase {
 	 * Setup tabs section.
 	 */
 	public function setup_tabs_section() {
+		/**
+		 * Protection from the bug in \Automattic\Jetpack\Sync\Sender::get_items_to_send(),
+		 * which sets screen without loading of wp-admin/includes/template.php,
+		 * where add_settings_section() is defined.
+		 */
+		if ( ! function_exists( 'add_settings_section' ) ) {
+			return;
+		}
+
 		$tab = $this->get_active_tab();
 
 		add_settings_section(

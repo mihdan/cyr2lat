@@ -180,6 +180,22 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
+	 * Test tab_name().
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_tab_name() {
+		$class_name = 'SomeClassName';
+
+		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'get_class_name' )->with()->once()->andReturn( $class_name );
+
+		$this->set_method_accessibility( $subject, 'tab_name' );
+
+		self::assertSame( $class_name, $subject->tab_name() );
+	}
+
+	/**
 	 * Test get_class_name().
 	 *
 	 * @throws ReflectionException ReflectionException.
@@ -490,6 +506,22 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 			'No tabs'   => [ [] ],
 			'Some tabs' => [ [ 'some tab' ] ],
 		];
+	}
+
+	/**
+	 * Test setup_tabs_section() without add_settings_section().
+	 */
+	public function test_setup_tabs_section_without_add_settings_section() {
+		FunctionMocker::replace(
+			'function_exists',
+			static function ( $function ) {
+				return 'add_settings_section' !== $function;
+			}
+		);
+
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+
+		$subject->setup_tabs_section();
 	}
 
 	/**
