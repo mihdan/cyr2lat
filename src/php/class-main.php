@@ -25,6 +25,13 @@ use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
 class Main {
 
 	/**
+	 * Request type.
+	 *
+	 * @var Request
+	 */
+	protected $request;
+
+	/**
 	 * Plugin settings.
 	 *
 	 * @var Settings
@@ -105,6 +112,12 @@ class Main {
 	 * Main constructor.
 	 */
 	public function __construct() {
+		$this->request = new Request();
+
+		if ( $this->request->is_frontend() ) {
+			return;
+		}
+
 		$this->settings      = new Settings();
 		$this->admin_notices = new Admin_Notices();
 		$requirements        = new Requirements( $this->settings, $this->admin_notices );
@@ -123,7 +136,7 @@ class Main {
 			$this->admin_notices
 		);
 
-		if ( defined( 'WP_CLI' ) && constant( 'WP_CLI' ) ) {
+		if ( $this->request->is_cli() ) {
 			$this->cli = new WP_CLI( $this->converter );
 		}
 
@@ -136,7 +149,11 @@ class Main {
 	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function init() {
-		if ( defined( 'WP_CLI' ) && constant( 'WP_CLI' ) ) {
+		if ( $this->request->is_frontend() ) {
+			return;
+		}
+
+		if ( $this->request->is_cli() ) {
 			try {
 				/**
 				 * Method WP_CLI::add_command() accepts class as callable.
@@ -511,7 +528,7 @@ class Main {
 	 * @return false|null|string
 	 */
 	private function pll_locale_filter_with_rest() {
-		if ( ! defined( 'REST_REQUEST' ) || ! constant( 'REST_REQUEST' ) ) {
+		if ( ! $this->request->is_rest() ) {
 			return null;
 		}
 

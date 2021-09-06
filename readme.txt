@@ -191,6 +191,7 @@ Yes you can!
 = 5.2.2 (15.08.2021) =
 * Fix issue caused by the bug in Jetpack sync.
 * Optimize code related to WPML locale filtering.
+* Fix endless loading of a taxonomy page with WPML.
 
 = 5.2.1 (29.07.2021) =
 * Determine WPML language only once to improve performance.
