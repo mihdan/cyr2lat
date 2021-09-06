@@ -37,6 +37,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * End test
+	 *
+	 * @noinspection PhpLanguageLevelInspection
 	 */
 	public function tearDown(): void {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
@@ -179,6 +181,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test init() with CLI when CLI throws an Exception
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_with_cli_error() {
 		$request = Mockery::mock( Request::class );
@@ -204,6 +208,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test init() with CLI
 	 *
+	 * @throws ReflectionException ReflectionException.
 	 * @noinspection PhpRedundantOptionalArgumentInspection
 	 */
 	public function test_init_with_cli() {
@@ -270,10 +275,12 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			$subject->shouldReceive( 'get_wpml_locale' )->andReturn( $wpml_locale );
 
 			WP_Mock::expectFilterAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ], - PHP_INT_MAX );
-			WP_Mock::expectActionAdded( 'wpml_language_has_switched', [
-				$subject,
+			WP_Mock::expectActionAdded(
 				'wpml_language_has_switched',
-			], 10, 3 );
+				[ $subject, 'wpml_language_has_switched' ],
+				10,
+				3
+			);
 		} else {
 			WP_Mock::expectFilterNotAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ] );
 		}
@@ -420,10 +427,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$wpdb->terms         = 'wp_terms';
 		$wpdb->term_taxonomy = 'wp_term_taxonomy';
 
-		$request          = "SELECT slug FROM {$wpdb->terms} t LEFT JOIN {$wpdb->term_taxonomy} tt
+		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
 							WHERE t.name = %s";
-		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN {$wpdb->term_taxonomy} tt
+		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
 							WHERE t.name = " . $title;
 		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
@@ -480,10 +487,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$wpdb->terms         = 'wp_terms';
 		$wpdb->term_taxonomy = 'wp_term_taxonomy';
 
-		$request          = "SELECT slug FROM {$wpdb->terms} t LEFT JOIN {$wpdb->term_taxonomy} tt
+		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
 							WHERE t.name = %s";
-		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN {$wpdb->term_taxonomy} tt
+		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
 							WHERE t.name = " . $title;
 
@@ -936,6 +943,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test pll_locale_filter() with REST.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pll_locale_filter_with_rest() {
 		$locale     = 'en_US';
@@ -970,6 +979,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test pll_locale_filter() on frontend.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pll_locale_filter_on_frontend() {
 		$locale = 'en_US';
@@ -987,6 +998,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test pll_locale_filter() with classic editor and post_id.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pll_locale_filter_with_classic_editor_and_post_id() {
 		$locale     = 'en_US';
@@ -1029,6 +1042,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test pll_locale_filter() with classic editor and pll_post_id.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pll_locale_filter_with_classic_editor_and_pll_post_id() {
 		$locale     = 'en_US';
@@ -1071,6 +1086,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test pll_locale_filter() with classic editor and post.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pll_locale_filter_with_classic_editor_and_post() {
 		$locale     = 'en_US';
@@ -1114,6 +1131,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test pll_locale_filter() with term.
 	 *
+	 * @throws ReflectionException ReflectionException.
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public function test_pll_locale_filter_with_term() {
@@ -1166,6 +1184,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test wpml_locale_filter().
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_wpml_locale_filter() {
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -1270,7 +1290,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @param string $expected      Expected.
 	 *
 	 * @dataProvider dp_test_wpml_language_has_switched
-	 * @throws ReflectionException
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_wpml_language_has_switched( $language_code, $expected ) {
 		$languages = [

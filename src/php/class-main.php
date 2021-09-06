@@ -303,7 +303,7 @@ class Main {
 	}
 
 	/**
-	 * Fix string encoding on MacOS.
+	 * Fix string encoding on macOS.
 	 *
 	 * @param string $string String.
 	 * @param array  $table  Conversion table.
@@ -372,6 +372,8 @@ class Main {
 	 * @link https://kagg.eu/how-to-catch-gutenberg/
 	 *
 	 * @return bool
+	 *
+	 * @noinspection PhpIncludeInspection
 	 */
 	private function is_classic_editor_plugin_active() {
 		// @codeCoverageIgnoreStart
