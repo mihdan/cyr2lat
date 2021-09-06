@@ -5,6 +5,8 @@
  * @package cyr-to-lat
  */
 
+// phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
+
 namespace Cyr_To_Lat;
 
 use Mockery;
