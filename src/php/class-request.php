@@ -15,13 +15,6 @@ use WP_Rewrite;
 class Request {
 
 	/**
-	 * REST route.
-	 *
-	 * @var string
-	 */
-	public $rest_route = '';
-
-	/**
 	 * Is frontend.
 	 *
 	 * @return bool
@@ -59,20 +52,11 @@ class Request {
 
 		// Case #1.
 		if ( defined( 'REST_REQUEST' ) && constant( 'REST_REQUEST' ) ) {
-			$this->rest_route = $this->get_rest_route();
-
 			return true;
 		}
 
 		// Case #2.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$rest_route = isset( $_GET['rest_route'] ) ?
-			filter_input( INPUT_GET, 'rest_route', FILTER_SANITIZE_STRING ) :
-			'';
-
-		if ( $rest_route ) {
-			$this->rest_route = ltrim( $rest_route, '/' );
-
+		if ( filter_input( INPUT_GET, 'rest_route', FILTER_SANITIZE_STRING ) ) {
 			return true;
 		}
 
@@ -86,10 +70,8 @@ class Request {
 			// @codeCoverageIgnoreEnd
 		}
 
-		$this->rest_route = $this->get_rest_route();
-
 		// Case #4.
-		return (bool) $this->rest_route;
+		return (bool) $this->get_rest_route();
 	}
 
 	/**
