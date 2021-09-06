@@ -167,6 +167,8 @@ class Main {
 		}
 
 		if ( class_exists( SitePress::class ) ) {
+			$this->wpml_locale = $this->get_wpml_locale();
+
 			// We cannot use locale filter here
 			// as WPML reverts locale at PHP_INT_MAX in \WPML\ST\MO\Hooks\LanguageSwitch::filterLocale.
 			add_filter( 'ctl_locale', [ $this, 'wpml_locale_filter' ], - PHP_INT_MAX );
@@ -600,16 +602,19 @@ class Main {
 			return $this->wpml_locale;
 		}
 
-		$this->wpml_locale = $locale;
+		return $locale;
+	}
 
+	/**
+	 * Get wpml locale.
+	 *
+	 * @return string|null
+	 */
+	private function get_wpml_locale() {
 		$language_code = wpml_get_current_language();
 		$languages     = apply_filters( 'wpml_active_languages', null );
 
-		if ( isset( $languages[ $language_code ]['default_locale'] ) ) {
-			$this->wpml_locale = $languages[ $language_code ]['default_locale'];
-		}
-
-		return $this->wpml_locale;
+		return isset( $languages[ $language_code ] ) ? $languages[ $language_code ]['default_locale'] : null;
 	}
 
 	/**
