@@ -231,9 +231,12 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @param boolean $sitepress WPML is active.
 	 *
 	 * @dataProvider dp_test_init_hooks
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_hooks( $polylang, $sitepress ) {
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$wpml_locale = 'en_US';
+
+		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
 		WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ], 10, 2 );
@@ -263,12 +266,18 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		}
 
 		if ( $sitepress ) {
+			$subject->shouldReceive( 'get_wpml_locale' )->andReturn( $wpml_locale );
+
 			WP_Mock::expectFilterAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ], - PHP_INT_MAX );
 		} else {
 			WP_Mock::expectFilterNotAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ] );
 		}
 
 		$subject->init_hooks();
+
+		if ( $sitepress ) {
+			self::assertSame( $wpml_locale, $this->get_protected_property( $subject, 'wpml_locale' ) );
+		}
 	}
 
 	/**
@@ -1152,6 +1161,20 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test wpml_locale_filter().
+	 */
+	public function test_wpml_locale_filter() {
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		$locale = 'en_US';
+		self::assertSame( $locale, $subject->wpml_locale_filter( $locale ) );
+
+		$new_locale = 'ru_RU';
+		$this->set_protected_property( $subject, 'wpml_locale', $new_locale );
+		self::assertSame( $new_locale, $subject->wpml_locale_filter( $locale ) );
+	}
+
+	/**
+	 * Test get_wpml_locale().
 	 *
 	 * @param string $locale        Current locale.
 	 * @param string $language_code Current language code.
@@ -1159,7 +1182,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 *
 	 * @dataProvider dp_test_wpml_locale_filter
 	 */
-	public function test_wpml_locale_filter( $locale, $language_code, $expected ) {
+	public function test_get_wpml_locale( $locale, $language_code, $expected ) {
 		$languages = [
 			'be' =>
 				[
@@ -1220,10 +1243,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 
-		self::assertSame( $expected, $subject->wpml_locale_filter( $locale ) );
-
-		// Make sure that we do not call wpml_get_current_language() more than once.
-		self::assertSame( $expected, $subject->wpml_locale_filter( $locale ) );
+		self::assertSame( $expected, $subject->get_wpml_locale( $locale ) );
 	}
 
 	/**
@@ -1234,7 +1254,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function dp_test_wpml_locale_filter() {
 		return [
 			'Existing language code, return locale from wpml' => [ 'en_US', 'ru', 'ru_RU' ],
-			'Not existing language code, return from current' => [ 'en_US', 'some', 'en_US' ],
+			'Not existing language code, return null' => [ 'en_US', 'some', null ],
 		];
 	}
 

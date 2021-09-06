@@ -99,7 +99,7 @@ class Main {
 	 *
 	 * @var string
 	 */
-	private $wpml_locale;
+	protected $wpml_locale;
 
 	/**
 	 * Main constructor.
@@ -610,7 +610,7 @@ class Main {
 	 *
 	 * @return string|null
 	 */
-	private function get_wpml_locale() {
+	protected function get_wpml_locale() {
 		$language_code = wpml_get_current_language();
 		$languages     = apply_filters( 'wpml_active_languages', null );
 
