@@ -189,6 +189,8 @@ class Main {
 			// We cannot use locale filter here
 			// as WPML reverts locale at PHP_INT_MAX in \WPML\ST\MO\Hooks\LanguageSwitch::filterLocale.
 			add_filter( 'ctl_locale', [ $this, 'wpml_locale_filter' ], - PHP_INT_MAX );
+
+			add_action( 'wpml_language_has_switched', [ $this, 'wpml_language_has_switched' ], 10, 3 );
 		}
 	}
 
@@ -633,6 +635,21 @@ class Main {
 		$languages     = apply_filters( 'wpml_active_languages', null );
 
 		return isset( $languages[ $language_code ] ) ? $languages[ $language_code ]['default_locale'] : null;
+	}
+
+	/**
+	 * Save switched locale.
+	 *
+	 * @param null|string $language_code     Language code to switch into.
+	 * @param bool|string $cookie_lang       Optionally also switch the cookie language to the value given.
+	 * @param string      $original_language Original language.
+	 *
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function wpml_language_has_switched( $language_code, $cookie_lang, $original_language ) {
+		$languages = apply_filters( 'wpml_active_languages', null );
+
+		$this->wpml_locale = isset( $languages[ $language_code ] ) ? $languages[ $language_code ]['default_locale'] : null;
 	}
 
 	/**

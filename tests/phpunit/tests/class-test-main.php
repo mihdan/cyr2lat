@@ -270,6 +270,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			$subject->shouldReceive( 'get_wpml_locale' )->andReturn( $wpml_locale );
 
 			WP_Mock::expectFilterAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ], - PHP_INT_MAX );
+			WP_Mock::expectActionAdded( 'wpml_language_has_switched', [
+				$subject,
+				'wpml_language_has_switched',
+			], 10, 3 );
 		} else {
 			WP_Mock::expectFilterNotAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ] );
 		}
@@ -1254,8 +1258,94 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_wpml_locale_filter() {
 		return [
-			'Existing language code, return locale from wpml' => [ 'en_US', 'ru', 'ru_RU' ],
-			'Not existing language code, return null' => [ 'en_US', 'some', null ],
+			'Existing language code, return from wpml' => [ 'en_US', 'ru', 'ru_RU' ],
+			'Not existing language code, return null'  => [ 'en_US', 'some', null ],
+		];
+	}
+
+	/**
+	 * Test wpml_language_has_switched().
+	 *
+	 * @param string $language_code Current language code.
+	 * @param string $expected      Expected.
+	 *
+	 * @dataProvider dp_test_wpml_language_has_switched
+	 * @throws ReflectionException
+	 */
+	public function test_wpml_language_has_switched( $language_code, $expected ) {
+		$languages = [
+			'be' =>
+				[
+					'code'           => 'be',
+					'id'             => '64',
+					'english_name'   => 'Belarusian',
+					'native_name'    => 'Belarusian',
+					'major'          => '0',
+					'active'         => '1',
+					'default_locale' => 'be_BY',
+					'encode_url'     => '0',
+					'tag'            => 'be',
+					'display_name'   => 'Belarusian',
+				],
+			'en' =>
+				[
+					'code'           => 'en',
+					'id'             => '1',
+					'english_name'   => 'English',
+					'native_name'    => 'English',
+					'major'          => '1',
+					'active'         => '1',
+					'default_locale' => 'en_US',
+					'encode_url'     => '0',
+					'tag'            => 'en',
+					'display_name'   => 'English',
+				],
+			'ru' =>
+				[
+					'code'           => 'ru',
+					'id'             => '46',
+					'english_name'   => 'Russian',
+					'native_name'    => 'Русский',
+					'major'          => '1',
+					'active'         => '1',
+					'default_locale' => 'ru_RU',
+					'encode_url'     => '0',
+					'tag'            => 'ru',
+					'display_name'   => 'Russian',
+				],
+			'uk' =>
+				[
+					'code'           => 'uk',
+					'id'             => '55',
+					'english_name'   => 'Ukrainian',
+					'native_name'    => 'Ukrainian',
+					'major'          => '0',
+					'active'         => '1',
+					'default_locale' => 'uk',
+					'encode_url'     => '0',
+					'tag'            => 'uk',
+					'display_name'   => 'Ukrainian',
+				],
+		];
+
+		WP_Mock::onFilter( 'wpml_active_languages' )->with( null )->reply( $languages );
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		$subject->wpml_language_has_switched( $language_code, 'some cookie', 'en_US' );
+		self::assertSame( $expected, $this->get_protected_property( $subject, 'wpml_locale' ) );
+	}
+
+	/**
+	 * Data provider for test_wpml_language_has_switched().
+	 *
+	 * @return array
+	 */
+	public function dp_test_wpml_language_has_switched() {
+		return [
+			'Existing language code'     => [ 'ru', 'ru_RU' ],
+			'Not existing language code' => [ 'some', null ],
+			'Null language code'         => [ null, null ],
 		];
 	}
 
