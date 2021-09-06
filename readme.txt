@@ -188,7 +188,7 @@ Yes you can!
 
 == Changelog ==
 
-= 5.2.2 (15.08.2021) =
+= 5.2.2 (06.09.2021) =
 * Fix issue caused by the bug in Jetpack sync.
 * Optimize code related to WPML locale filtering.
 * Fix endless loading of a taxonomy page with WPML.
