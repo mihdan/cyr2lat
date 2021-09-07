@@ -112,12 +112,7 @@ class Main {
 	 * Main constructor.
 	 */
 	public function __construct() {
-		$this->request = new Request();
-
-		if ( ! $this->request->is_allowed() ) {
-			return;
-		}
-
+		$this->request       = new Request();
 		$this->settings      = new Settings();
 		$this->admin_notices = new Admin_Notices();
 		$requirements        = new Requirements( $this->settings, $this->admin_notices );
@@ -149,10 +144,6 @@ class Main {
 	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function init() {
-		if ( ! $this->request->is_allowed() ) {
-			return;
-		}
-
 		if ( $this->request->is_cli() ) {
 			try {
 				/**
@@ -177,7 +168,10 @@ class Main {
 		add_filter( 'sanitize_file_name', [ $this, 'sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 2 );
 		add_filter( 'pre_insert_term', [ $this, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
-		add_filter( 'get_terms_args', [ $this, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
+
+		if ( ! $this->request->is_frontend() ) {
+			add_filter( 'get_terms_args', [ $this, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
+		}
 
 		if ( class_exists( Polylang::class ) ) {
 			add_filter( 'locale', [ $this, 'pll_locale_filter' ] );
