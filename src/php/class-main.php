@@ -114,7 +114,7 @@ class Main {
 	public function __construct() {
 		$this->request = new Request();
 
-		if ( $this->request->is_frontend() ) {
+		if ( ! $this->request->is_allowed() ) {
 			return;
 		}
 
@@ -149,7 +149,7 @@ class Main {
 	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function init() {
-		if ( $this->request->is_frontend() ) {
+		if ( ! $this->request->is_allowed() ) {
 			return;
 		}
 
@@ -533,7 +533,7 @@ class Main {
 	 * @return false|null|string
 	 */
 	private function pll_locale_filter_with_rest() {
-		if ( ! $this->request->is_rest() ) {
+		if ( ! defined( 'REST_REQUEST' ) || ! constant( 'REST_REQUEST' ) ) {
 			return null;
 		}
 

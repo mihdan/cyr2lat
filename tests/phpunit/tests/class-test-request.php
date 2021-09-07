@@ -28,9 +28,41 @@ class Test_Request extends Cyr_To_Lat_TestCase {
 	 */
 	public function tearDown(): void {
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		unset( $_SERVER['REQUEST_URI'], $GLOBALS['wp_rewrite'] );
+		unset( $_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $GLOBALS['wp_rewrite'] );
 
 		parent::tearDown();
+	}
+
+	/**
+	 * Test is_allowed().
+	 *
+	 * @param bool $frontend Is frontend.
+	 * @param bool $post     Is POST.
+	 * @param bool $expected Expected.
+	 *
+	 * @dataProvider dp_test_is_allowed
+	 * @noinspection PhpUndefinedMethodInspection
+	 */
+	public function test_is_allowed( $frontend, $post, $expected ) {
+		$subject = Mockery::mock( Request::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'is_frontend' )->with()->andReturn( $frontend );
+		$subject->shouldReceive( 'is_post' )->with()->andReturn( $post );
+
+		self::assertSame( $expected, $subject->is_allowed() );
+	}
+
+	/**
+	 * Data provider for test_is_allowed().
+	 *
+	 * @return array
+	 */
+	public function dp_test_is_allowed() {
+		return [
+			[ false, false, true ],
+			[ false, true, true ],
+			[ true, false, false ],
+			[ true, true, true ],
+		];
 	}
 
 	/**
@@ -238,5 +270,21 @@ class Test_Request extends Cyr_To_Lat_TestCase {
 			'rest request' => [ '/wp-json/wp/v2/posts', '/wp/v2/posts' ],
 			'some request' => [ '/some-request', '' ],
 		];
+	}
+
+	/**
+	 * Test is_post().
+	 */
+	public function test_is_post() {
+		WP_Mock::passthruFunction( 'wp_unslash' );
+
+		$subject = new Request();
+		self::assertFalse( $subject->is_post() );
+
+		$_SERVER['REQUEST_METHOD'] = 'some';
+		self::assertFalse( $subject->is_post() );
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		self::assertTrue( $subject->is_post() );
 	}
 }
