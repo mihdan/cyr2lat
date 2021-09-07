@@ -60,16 +60,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_constructor() {
 		$classname = Main::class;
 
-		// Test when requirements are met and allowed request.
+		// Test when requirements are met.
 		$requirements_met = true;
-		$is_allowed       = true;
 
 		$request = Mockery::mock( 'overload:' . Request::class );
-		$request->shouldReceive( 'is_allowed' )->with()->andReturnUsing(
-			function () use ( &$is_allowed ) {
-				return $is_allowed;
-			}
-		);
 		$request->shouldReceive( 'is_cli' )->with()->andReturn( true );
 
 		Mockery::mock( 'overload:' . Settings::class );
@@ -124,26 +118,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		self::assertNull( $this->get_protected_property( $mock, 'converter' ) );
 		self::assertNull( $this->get_protected_property( $mock, 'cli' ) );
 		self::assertNull( $this->get_protected_property( $mock, 'acf' ) );
-
-		// Test on not allowed request.
-		$is_allowed = false;
-
-		// Get mock, without the constructor being called.
-		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
-
-		// Now call the constructor.
-		$reflected_class = new ReflectionClass( $classname );
-		$constructor     = $reflected_class->getConstructor();
-		$constructor->invoke( $mock );
-
-		self::assertInstanceOf( Request::class, $this->get_protected_property( $mock, 'request' ) );
-		self::assertNull( $this->get_protected_property( $mock, 'settings' ) );
-		self::assertNull( $this->get_protected_property( $mock, 'admin_notices' ) );
-		self::assertNull( $this->get_protected_property( $mock, 'process_all_posts' ) );
-		self::assertNull( $this->get_protected_property( $mock, 'process_all_terms' ) );
-		self::assertNull( $this->get_protected_property( $mock, 'converter' ) );
-		self::assertNull( $this->get_protected_property( $mock, 'cli' ) );
-		self::assertNull( $this->get_protected_property( $mock, 'acf' ) );
 	}
 
 	/**
@@ -153,28 +127,11 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_init() {
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 		$request->shouldReceive( 'is_cli' )->andReturn( false );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
 		$subject->shouldReceive( 'init_hooks' )->once();
-
-		$subject->init();
-	}
-
-	/**
-	 * Test init() on allowed request.
-	 *
-	 * @throws ReflectionException ReflectionException.
-	 */
-	public function test_init_on_allowed_request() {
-		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_allowed' )->andReturn( false );
-
-		$subject = Mockery::mock( Main::class )->makePartial();
-		$this->set_protected_property( $subject, 'request', $request );
-		$subject->shouldReceive( 'init_hooks' )->never();
 
 		$subject->init();
 	}
@@ -186,7 +143,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_init_with_cli_error() {
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -213,7 +169,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_init_with_cli() {
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -235,20 +190,25 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 *
 	 * @param boolean $polylang  Polylang is active.
 	 * @param boolean $sitepress WPML is active.
+	 * @param boolean $frontend  It is frontend.
 	 *
 	 * @dataProvider dp_test_init_hooks
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_hooks( $polylang, $sitepress ) {
+	public function test_init_hooks( $polylang, $sitepress, $frontend ) {
 		$wpml_locale = 'en_US';
 
+		$request = Mockery::mock( Request::class );
+
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$request->shouldReceive( 'is_frontend' )->andReturn( $frontend );
+
+		$this->set_protected_property( $subject, 'request', $request );
 
 		WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
 		WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ], 10, 2 );
 		WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ], 10, 2 );
 		WP_Mock::expectFilterAdded( 'pre_insert_term', [ $subject, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
-		WP_Mock::expectFilterAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
 
 		FunctionMocker::replace(
 			'class_exists',
@@ -264,6 +224,12 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 				return null;
 			}
 		);
+
+		if ( $frontend ) {
+			WP_Mock::expectFilterNotAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ] );
+		} else {
+			WP_Mock::expectFilterAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
+		}
 
 		if ( $polylang ) {
 			WP_Mock::expectFilterAdded( 'locale', [ $subject, 'pll_locale_filter' ] );
@@ -299,10 +265,14 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_init_hooks() {
 		return [
-			[ false, false ],
-			[ true, false ],
-			[ false, true ],
-			[ true, true ],
+			[ false, false, false ],
+			[ false, false, true ],
+			[ false, true, false ],
+			[ false, true, true ],
+			[ true, false, false ],
+			[ true, false, true ],
+			[ true, true, false ],
+			[ true, true, true ],
 		];
 	}
 
@@ -943,8 +913,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test pll_locale_filter() with REST.
-	 *
-	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pll_locale_filter_with_rest() {
 		$locale     = 'en_US';
@@ -992,11 +960,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_pll_locale_filter_on_allowed_request() {
+	public function test_pll_locale_filter_on_frontend() {
 		$locale = 'en_US';
 
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_rest' )->andReturn( false );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
