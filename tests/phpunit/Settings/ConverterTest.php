@@ -12,11 +12,9 @@
 
 namespace Cyr_To_Lat\Tests\Settings;
 
-use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
 use Cyr_To_Lat\Settings\Converter;
 use Cyr_To_Lat\Cyr_To_Lat_TestCase;
 use Mockery;
-use ReflectionClass;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;

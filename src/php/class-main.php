@@ -373,8 +373,6 @@ class Main {
 	 * @link https://kagg.eu/how-to-catch-gutenberg/
 	 *
 	 * @return bool
-	 *
-	 * @noinspection PhpIncludeInspection
 	 */
 	private function is_classic_editor_plugin_active() {
 		// @codeCoverageIgnoreStart

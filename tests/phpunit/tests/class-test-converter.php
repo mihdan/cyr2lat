@@ -30,6 +30,9 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * End test
+	 *
+	 * @noinspection PhpLanguageLevelInspection
+	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function tearDown(): void {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended

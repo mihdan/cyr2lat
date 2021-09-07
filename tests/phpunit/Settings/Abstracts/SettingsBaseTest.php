@@ -199,6 +199,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 * Test get_class_name().
 	 *
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_get_class_name() {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
@@ -463,7 +464,6 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 *
 	 * @dataProvider dp_test_setup_sections
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection NullCoalescingOperatorCanBeUsedInspection
 	 */
 	public function test_setup_sections( $tabs ) {
 		$tab_option_page = 'cyr-to-lat';
@@ -664,7 +664,6 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 * Test get_active_tab().
 	 *
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection JsonEncodingApiUsageInspection
 	 */
 	public function test_get_active_tab() {
 		$tab = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
@@ -1624,7 +1623,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 * Test is_options_screen().
 	 *
 	 * @param mixed   $current_screen    Current admin screen.
-	 * @param boolean $is_main_menu_page It it the main menu page.
+	 * @param boolean $is_main_menu_page It is the main menu page.
 	 * @param boolean $expected          Expected result.
 	 *
 	 * @dataProvider dp_test_is_options_screen
@@ -1648,7 +1647,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Data provider for test_is_options_screen(0.
+	 * Data provider for test_is_options_screen().
 	 *
 	 * @return array
 	 */

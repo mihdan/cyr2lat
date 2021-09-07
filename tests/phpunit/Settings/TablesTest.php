@@ -160,8 +160,6 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test init_form_fields()
 	 *
-	 * @noinspection PhpSwitchCanBeReplacedWithMatchExpressionInspection
-	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_form_fields() {
