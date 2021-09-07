@@ -88,6 +88,9 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 
 	/**
 	 * Setup test
+	 *
+	 * @noinspection PhpLanguageLevelInspection
+	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function setUp(): void {
 		FunctionMocker::setUp();
@@ -131,6 +134,9 @@ abstract class Cyr_To_Lat_TestCase extends TestCase {
 
 	/**
 	 * End test
+	 *
+	 * @noinspection PhpLanguageLevelInspection
+	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function tearDown(): void {
 		WP_Mock::tearDown();

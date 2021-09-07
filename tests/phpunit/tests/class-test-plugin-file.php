@@ -22,6 +22,9 @@ class Test_Cyr_To_Lat_Plugin_File extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Tear down.
+	 *
+	 * @noinspection PhpLanguageLevelInspection
+	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function tearDown(): void {
 		unset( $GLOBALS['cyr_to_lat_plugin'] );
@@ -38,7 +41,6 @@ class Test_Cyr_To_Lat_Plugin_File extends Cyr_To_Lat_TestCase {
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
-	 * @noinspection        PhpIncludeInspection
 	 */
 	public function test_main_plugin_file() {
 		$plugin_dir_url         = 'http://test.test/wp-content/plugins/cyr2lat/';

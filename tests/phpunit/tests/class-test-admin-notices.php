@@ -25,7 +25,7 @@ class Test_Admin_Notices extends Cyr_To_Lat_TestCase {
 	 * @noinspection NullPointerExceptionInspection
 	 */
 	public function test_constructor() {
-		$classname = __NAMESPACE__ . '\Admin_Notices';
+		$classname = Admin_Notices::class;
 
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();

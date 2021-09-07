@@ -109,15 +109,17 @@ class Main {
 	protected $wpml_locale;
 
 	/**
+	 * WPML languages.
+	 *
+	 * @var array
+	 */
+	protected $wpml_languages;
+
+	/**
 	 * Main constructor.
 	 */
 	public function __construct() {
-		$this->request = new Request();
-
-		if ( ! $this->request->is_allowed() ) {
-			return;
-		}
-
+		$this->request       = new Request();
 		$this->settings      = new Settings();
 		$this->admin_notices = new Admin_Notices();
 		$requirements        = new Requirements( $this->settings, $this->admin_notices );
@@ -149,10 +151,6 @@ class Main {
 	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function init() {
-		if ( ! $this->request->is_allowed() ) {
-			return;
-		}
-
 		if ( $this->request->is_cli() ) {
 			try {
 				/**
@@ -177,7 +175,10 @@ class Main {
 		add_filter( 'sanitize_file_name', [ $this, 'sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 2 );
 		add_filter( 'pre_insert_term', [ $this, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
-		add_filter( 'get_terms_args', [ $this, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
+
+		if ( ! $this->request->is_frontend() ) {
+			add_filter( 'get_terms_args', [ $this, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
+		}
 
 		if ( class_exists( Polylang::class ) ) {
 			add_filter( 'locale', [ $this, 'pll_locale_filter' ] );
@@ -372,8 +373,6 @@ class Main {
 	 * @link https://kagg.eu/how-to-catch-gutenberg/
 	 *
 	 * @return bool
-	 *
-	 * @noinspection PhpIncludeInspection
 	 */
 	private function is_classic_editor_plugin_active() {
 		// @codeCoverageIgnoreStart
@@ -633,10 +632,14 @@ class Main {
 	 * @return string|null
 	 */
 	protected function get_wpml_locale() {
-		$language_code = wpml_get_current_language();
-		$languages     = apply_filters( 'wpml_active_languages', null );
+		$language_code        = wpml_get_current_language();
+		$this->wpml_languages = (array) apply_filters( 'wpml_active_languages', [] );
 
-		return isset( $languages[ $language_code ] ) ? $languages[ $language_code ]['default_locale'] : null;
+		return (
+		isset( $this->wpml_languages[ $language_code ] ) ?
+			$this->wpml_languages[ $language_code ]['default_locale'] :
+			null
+		);
 	}
 
 	/**
@@ -649,9 +652,12 @@ class Main {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function wpml_language_has_switched( $language_code, $cookie_lang, $original_language ) {
-		$languages = apply_filters( 'wpml_active_languages', null );
+		$language_code = (string) $language_code;
 
-		$this->wpml_locale = isset( $languages[ $language_code ] ) ? $languages[ $language_code ]['default_locale'] : null;
+		$this->wpml_locale =
+			isset( $this->wpml_languages[ $language_code ] ) ?
+				$this->wpml_languages[ $language_code ]['default_locale'] :
+				null;
 	}
 
 	/**

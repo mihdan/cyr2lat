@@ -31,6 +31,8 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Tear down.
+	 *
+	 * @noinspection PhpLanguageLevelInspection
 	 */
 	public function tearDown(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -133,8 +135,6 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test if are_requirements_met() returns true when requirements met.
-	 *
-	 * @noinspection PhpSwitchCanBeReplacedWithMatchExpressionInspection
 	 */
 	public function test_requirements_met() {
 		$settings = Mockery::mock( Settings::class );
@@ -180,8 +180,6 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test if are_requirements_met() returns false when php requirements not met.
-	 *
-	 * @noinspection PhpSwitchCanBeReplacedWithMatchExpressionInspection
 	 */
 	public function test_php_requirements_not_met() {
 		$settings = Mockery::mock( Settings::class );
@@ -249,7 +247,6 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 	 *
 	 * @dataProvider dp_test_vars_requirements_not_met
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection PhpSwitchCanBeReplacedWithMatchExpressionInspection
 	 */
 	public function test_vars_requirements_not_met( $within_timeout, $content, $expected ) {
 		$max_input_vars              = $this->cyr_to_lat_required_max_input_vars - 1;
@@ -381,8 +378,6 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test are_requirements_met() when max_input_vars requirements not met and filesystem not available.
-	 *
-	 * @noinspection PhpSwitchCanBeReplacedWithMatchExpressionInspection
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */

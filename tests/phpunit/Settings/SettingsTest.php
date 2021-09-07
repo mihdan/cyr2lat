@@ -55,7 +55,6 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 	 * @preserveGlobalState disabled
 	 *
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection        JsonEncodingApiUsageInspection
 	 */
 	public function test_init_and_screen_ids() {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
