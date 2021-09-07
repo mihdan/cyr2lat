@@ -1183,6 +1183,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @param string $expected      Expected.
 	 *
 	 * @dataProvider dp_test_wpml_locale_filter
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_get_wpml_locale( $locale, $language_code, $expected ) {
 		$languages = [
@@ -1241,11 +1242,15 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		];
 
 		WP_Mock::userFunction( 'wpml_get_current_language' )->times( 1 )->with()->andReturn( $language_code );
-		WP_Mock::onFilter( 'wpml_active_languages' )->with( null )->reply( $languages );
+		WP_Mock::onFilter( 'wpml_active_languages' )->with( [] )->reply( $languages );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 
+		self::assertNull( $this->get_protected_property( $subject, 'wpml_languages' ) );
+
 		self::assertSame( $expected, $subject->get_wpml_locale( $locale ) );
+
+		self::assertSame( $languages, $this->get_protected_property( $subject, 'wpml_languages' ) );
 	}
 
 	/**
@@ -1325,9 +1330,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 				],
 		];
 
-		WP_Mock::onFilter( 'wpml_active_languages' )->with( null )->reply( $languages );
-
 		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'wpml_languages', $languages );
 
 		$subject->wpml_language_has_switched( $language_code, 'some cookie', 'en_US' );
 		self::assertSame( $expected, $this->get_protected_property( $subject, 'wpml_locale' ) );
