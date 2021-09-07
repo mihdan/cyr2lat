@@ -60,14 +60,14 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_constructor() {
 		$classname = Main::class;
 
-		// Test when requirements are met and not frontend.
+		// Test when requirements are met and allowed request.
 		$requirements_met = true;
-		$is_frontend      = false;
+		$is_allowed       = true;
 
 		$request = Mockery::mock( 'overload:' . Request::class );
-		$request->shouldReceive( 'is_frontend' )->with()->andReturnUsing(
-			function () use ( &$is_frontend ) {
-				return $is_frontend;
+		$request->shouldReceive( 'is_allowed' )->with()->andReturnUsing(
+			function () use ( &$is_allowed ) {
+				return $is_allowed;
 			}
 		);
 		$request->shouldReceive( 'is_cli' )->with()->andReturn( true );
@@ -125,8 +125,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		self::assertNull( $this->get_protected_property( $mock, 'cli' ) );
 		self::assertNull( $this->get_protected_property( $mock, 'acf' ) );
 
-		// Test on frontend.
-		$is_frontend = true;
+		// Test on not allowed request.
+		$is_allowed = false;
 
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
@@ -153,7 +153,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_init() {
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_frontend' )->andReturn( false );
+		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 		$request->shouldReceive( 'is_cli' )->andReturn( false );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -164,13 +164,13 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test init() on frontend
+	 * Test init() on allowed request.
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_on_frontend() {
+	public function test_init_on_allowed_request() {
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_frontend' )->andReturn( true );
+		$request->shouldReceive( 'is_allowed' )->andReturn( false );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -186,7 +186,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_init_with_cli_error() {
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_frontend' )->andReturn( false );
+		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -213,7 +213,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_init_with_cli() {
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_frontend' )->andReturn( false );
+		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -978,11 +978,11 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test pll_locale_filter() on frontend.
+	 * Test pll_locale_filter() on allowed request.
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_pll_locale_filter_on_frontend() {
+	public function test_pll_locale_filter_on_allowed_request() {
 		$locale = 'en_US';
 
 		$request = Mockery::mock( Request::class );

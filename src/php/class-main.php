@@ -114,7 +114,7 @@ class Main {
 	public function __construct() {
 		$this->request = new Request();
 
-		if ( $this->request->is_frontend() ) {
+		if ( ! $this->request->is_allowed() ) {
 			return;
 		}
 
@@ -149,7 +149,7 @@ class Main {
 	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function init() {
-		if ( $this->request->is_frontend() ) {
+		if ( ! $this->request->is_allowed() ) {
 			return;
 		}
 
