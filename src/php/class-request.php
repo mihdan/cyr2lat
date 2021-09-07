@@ -15,15 +15,6 @@ use WP_Rewrite;
 class Request {
 
 	/**
-	 * Is allowed request for plugin to work.
-	 *
-	 * @return bool
-	 */
-	public function is_allowed() {
-		return ! $this->is_frontend() || ( $this->is_frontend() && $this->is_post() );
-	}
-
-	/**
 	 * Is frontend.
 	 *
 	 * @return bool
@@ -96,19 +87,5 @@ class Request {
 		$is_rest = 0 === strpos( $current_path, $rest_path );
 
 		return $is_rest ? substr( $current_path, strlen( $rest_path ) ) : '';
-	}
-
-	/**
-	 * If current request is POST.
-	 *
-	 * @return bool
-	 */
-	public function is_post() {
-		$request_method = filter_var(
-			isset( $_SERVER['REQUEST_METHOD'] ) ? wp_unslash( $_SERVER['REQUEST_METHOD'] ) : '',
-			FILTER_SANITIZE_STRING
-		);
-
-		return 'POST' === $request_method;
 	}
 }
