@@ -109,6 +109,13 @@ class Main {
 	protected $wpml_locale;
 
 	/**
+	 * WPML languages.
+	 *
+	 * @var array
+	 */
+	protected $wpml_languages;
+
+	/**
 	 * Main constructor.
 	 */
 	public function __construct() {
@@ -627,10 +634,14 @@ class Main {
 	 * @return string|null
 	 */
 	protected function get_wpml_locale() {
-		$language_code = wpml_get_current_language();
-		$languages     = apply_filters( 'wpml_active_languages', null );
+		$language_code        = wpml_get_current_language();
+		$this->wpml_languages = (array) apply_filters( 'wpml_active_languages', [] );
 
-		return isset( $languages[ $language_code ] ) ? $languages[ $language_code ]['default_locale'] : null;
+		return (
+		isset( $this->wpml_languages[ $language_code ] ) ?
+			$this->wpml_languages[ $language_code ]['default_locale'] :
+			null
+		);
 	}
 
 	/**
@@ -643,9 +654,12 @@ class Main {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function wpml_language_has_switched( $language_code, $cookie_lang, $original_language ) {
-		$languages = apply_filters( 'wpml_active_languages', null );
+		$language_code = (string) $language_code;
 
-		$this->wpml_locale = isset( $languages[ $language_code ] ) ? $languages[ $language_code ]['default_locale'] : null;
+		$this->wpml_locale =
+			isset( $this->wpml_languages[ $language_code ] ) ?
+				$this->wpml_languages[ $language_code ]['default_locale'] :
+				null;
 	}
 
 	/**
