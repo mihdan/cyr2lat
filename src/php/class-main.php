@@ -533,7 +533,7 @@ class Main {
 	 * @return false|null|string
 	 */
 	private function pll_locale_filter_with_rest() {
-		if ( ! $this->request->is_rest() ) {
+		if ( ! defined( 'REST_REQUEST' ) || ! constant( 'REST_REQUEST' ) ) {
 			return null;
 		}
 

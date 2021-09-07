@@ -951,11 +951,21 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$pll_locale = 'ru';
 		$data       = '';
 
-		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_rest' )->andReturn( true );
-
 		$subject = Mockery::mock( Main::class )->makePartial();
-		$this->set_protected_property( $subject, 'request', $request );
+
+		FunctionMocker::replace(
+			'defined',
+			function ( $constant_name ) {
+				return 'REST_REQUEST' === $constant_name;
+			}
+		);
+
+		FunctionMocker::replace(
+			'constant',
+			function ( $name ) {
+				return 'REST_REQUEST' === $name;
+			}
+		);
 
 		$rest_server = new WP_REST_Server();
 		WP_Mock::userFunction( 'rest_get_server' )->andReturn( $rest_server );
@@ -973,7 +983,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 
 		// Test that result is cached.
-		$request->shouldReceive( 'is_rest' )->andReturn( false );
+		FunctionMocker::replace( 'defined' );
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 	}
 
