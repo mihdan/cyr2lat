@@ -509,6 +509,10 @@ class Main {
 			return $locale;
 		}
 
+		if ( ! $this->request->is_post() ) {
+			return $locale;
+		}
+
 		$pll_get_post_language = $this->pll_locale_filter_with_classic_editor();
 		if ( $pll_get_post_language ) {
 			$this->pll_locale = $pll_get_post_language;

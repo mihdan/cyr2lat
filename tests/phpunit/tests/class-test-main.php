@@ -956,7 +956,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test pll_locale_filter() on allowed request.
+	 * Test pll_locale_filter() on frontend.
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
@@ -964,6 +964,25 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$locale = 'en_US';
 
 		$request = Mockery::mock( Request::class );
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
+
+		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( false );
+
+		self::assertSame( $locale, $subject->pll_locale_filter( $locale ) );
+	}
+
+	/**
+	 * Test pll_locale_filter() on backend GET.
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_pll_locale_filter_on_backend_get() {
+		$locale = 'en_US';
+
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_post' )->andReturn( false );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -984,7 +1003,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$post_id    = 23;
 
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_rest' )->andReturn( false );
+		$request->shouldReceive( 'is_post' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -1028,7 +1047,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$post_id    = 23;
 
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_rest' )->andReturn( false );
+		$request->shouldReceive( 'is_post' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -1072,7 +1091,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$post_id    = 23;
 
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_rest' )->andReturn( false );
+		$request->shouldReceive( 'is_post' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -1117,7 +1136,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$term_lang_choice = 92;
 
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_rest' )->andReturn( false );
+		$request->shouldReceive( 'is_post' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );

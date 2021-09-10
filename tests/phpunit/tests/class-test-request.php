@@ -239,4 +239,20 @@ class Test_Request extends Cyr_To_Lat_TestCase {
 			'some request' => [ '/some-request', '' ],
 		];
 	}
+
+	/**
+	 * Test is_post().
+	 */
+	public function test_is_post() {
+		WP_Mock::passthruFunction( 'wp_unslash' );
+
+		$subject = new Request();
+		self::assertFalse( $subject->is_post() );
+
+		$_SERVER['REQUEST_METHOD'] = 'some';
+		self::assertFalse( $subject->is_post() );
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		self::assertTrue( $subject->is_post() );
+	}
 }

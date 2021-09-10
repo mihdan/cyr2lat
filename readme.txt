@@ -188,6 +188,9 @@ Yes you can!
 
 == Changelog ==
 
+= 5.2.5 (10.09.2021) =
+* Fix issue with Polylang - do not modify admin language when editing a post.
+
 = 5.2.4 (07.09.2021) =
 * Fix issue with not showing WooCommerce variable product attributes.
 * Fix issue with Elementor and WPML, endless loop.
