@@ -968,6 +968,10 @@ abstract class SettingsBase {
 	 * @return bool
 	 */
 	protected function is_options_screen() {
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return false;
+		}
+
 		$current_screen = get_current_screen();
 
 		$screen_id = $this->screen_id();

@@ -1660,4 +1660,20 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 			'Plugin screen, main menu page' => [ (object) [ 'id' => 'toplevel_page_cyr-to-lat' ], true, true ],
 		];
 	}
+
+	/**
+	 * Test is_options_screen() when get_current_screen() does not exist.
+	 */
+	public function test_is_options_screen_when_get_current_screen_does_not_exist() {
+		FunctionMocker::replace(
+			'function_exists',
+			static function ( $function ) {
+				return 'get_current_screen' !== $function;
+			}
+		);
+
+		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+
+		self::assertFalse( $subject->is_options_screen() );
+	}
 }

@@ -345,6 +345,9 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_setup_sections() {
 		$tab_option_page = 'cyr-to-lat';
+		$current_screen  = (object) [ 'id' => 'settings_page_cyr-to-lat' ];
+
+		WP_Mock::userFunction( 'get_current_screen' )->with()->once()->andReturn( $current_screen );
 
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'option_page' )->andReturn( $tab_option_page );
@@ -363,6 +366,17 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 				)
 				->once();
 		}
+
+		$subject->setup_sections();
+	}
+
+	/**
+	 * Test setup_sections() not on own screen.
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_setup_sections_not_on_own_screen() {
+		$subject = Mockery::mock( Tables::class )->makePartial();
 
 		$subject->setup_sections();
 	}

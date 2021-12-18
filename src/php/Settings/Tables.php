@@ -264,6 +264,10 @@ class Tables extends PluginSettingsBase {
 	 * Setup settings sections.
 	 */
 	public function setup_sections() {
+		if ( ! $this->is_options_screen() ) {
+			return;
+		}
+
 		foreach ( $this->form_fields as $form_field ) {
 			add_settings_section(
 				$form_field['section'],
