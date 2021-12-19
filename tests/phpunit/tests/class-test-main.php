@@ -982,10 +982,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_pll_locale_filter_on_frontend() {
 		$locale = 'en_US';
 
-		$request = Mockery::mock( Request::class );
-
 		$subject = Mockery::mock( Main::class )->makePartial();
-		$this->set_protected_property( $subject, 'request', $request );
 
 		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( false );
 
@@ -1006,7 +1003,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
 
-		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( false );
+		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
 
 		self::assertSame( $locale, $subject->pll_locale_filter( $locale ) );
 	}
