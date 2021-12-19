@@ -19,6 +19,10 @@
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       cyr2lat
  * Domain Path:       /languages/
+ *
+ *
+ * WC requires at least: 3.0
+ * WC tested up to:      6.0
  */
 
 namespace Cyr_To_Lat;
