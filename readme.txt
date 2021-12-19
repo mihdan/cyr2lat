@@ -188,9 +188,10 @@ Yes you can!
 
 == Changelog ==
 
-= 5.2.5 (18.12.2021) =
+= 5.2.5 (19.12.2021) =
 * Fix issue with Polylang - do not modify admin language when editing a post.
 * Fix issue with JetPack - fatal error on synchronisation.
+* Fix 404 on archives created with wpml before activation of cyr2lat.
 
 = 5.2.4 (07.09.2021) =
 * Fix issue with not showing WooCommerce variable product attributes.
