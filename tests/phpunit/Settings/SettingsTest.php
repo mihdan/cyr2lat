@@ -89,7 +89,7 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 
 		$tables = Mockery::mock( Tables::class );
 		$tables->shouldReceive( 'get' )->andReturnUsing(
-			function( $key, $empty_value ) use ( $tables_key, $tables_value ) {
+			function( $key, $empty_value ) use ( $tables_key, &$tables_value ) {
 				if ( $key === $tables_key ) {
 					return $tables_value;
 				}
@@ -133,6 +133,10 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 
 		$empty_value = 'empty value';
 		self::assertSame( $empty_value, $subject->get( 'non-existent key', $empty_value ) );
+
+		$tables_value = '';
+		$empty_value  = '';
+		self::assertSame( $empty_value, $subject->get( $tables_key, $empty_value ) );
 	}
 
 	/**

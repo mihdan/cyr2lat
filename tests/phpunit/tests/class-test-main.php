@@ -59,12 +59,18 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_constructor() {
 		$classname = Main::class;
+		$frontend  = false;
 
 		// Test when requirements are met.
 		$requirements_met = true;
 
 		$request = Mockery::mock( 'overload:' . Request::class );
 		$request->shouldReceive( 'is_cli' )->with()->andReturn( true );
+		$request->shouldReceive( 'is_frontend' )->with()->andReturnUsing(
+			function () use ( &$frontend ) {
+				return $frontend;
+			}
+		);
 
 		Mockery::mock( 'overload:' . Settings::class );
 		Mockery::mock( 'overload:' . Admin_Notices::class );
@@ -98,6 +104,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		self::assertInstanceOf( Converter::class, $this->get_protected_property( $mock, 'converter' ) );
 		self::assertInstanceOf( WP_CLI::class, $this->get_protected_property( $mock, 'cli' ) );
 		self::assertInstanceOf( ACF::class, $this->get_protected_property( $mock, 'acf' ) );
+		self::assertSame( $frontend, $this->get_protected_property( $mock, 'is_frontend' ) );
 
 		// Test when requirements are not met.
 		$requirements_met = false;
@@ -118,6 +125,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		self::assertNull( $this->get_protected_property( $mock, 'converter' ) );
 		self::assertNull( $this->get_protected_property( $mock, 'cli' ) );
 		self::assertNull( $this->get_protected_property( $mock, 'acf' ) );
+		self::assertNull( $this->get_protected_property( $mock, 'is_frontend' ) );
 	}
 
 	/**
@@ -198,12 +206,9 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_init_hooks( $polylang, $sitepress, $frontend ) {
 		$wpml_locale = 'en_US';
 
-		$request = Mockery::mock( Request::class );
-
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$request->shouldReceive( 'is_frontend' )->andReturn( $frontend );
 
-		$this->set_protected_property( $subject, 'request', $request );
+		$this->set_protected_property( $subject, 'is_frontend', $frontend );
 
 		WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
 		WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ], 10, 2 );
@@ -491,6 +496,20 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			[ 'title', 'term', [ 'taxonomy1', 'taxonomy2' ], "'taxonomy1', 'taxonomy2'", 'term' ],
 			[ 'title', 'term', [], '', 'term' ],
 		];
+	}
+
+	/**
+	 * Test sanitize_title() for frontend.
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_sanitize_title_for_frontend() {
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'is_frontend', true );
+
+		$title = 'some title';
+
+		self::assertSame( $title, $subject->sanitize_title( $title ) );
 	}
 
 	/**
@@ -956,19 +975,35 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test pll_locale_filter() on allowed request.
+	 * Test pll_locale_filter() on frontend.
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pll_locale_filter_on_frontend() {
 		$locale = 'en_US';
 
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( false );
+
+		self::assertSame( $locale, $subject->pll_locale_filter( $locale ) );
+	}
+
+	/**
+	 * Test pll_locale_filter() on backend GET.
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_pll_locale_filter_on_backend_get() {
+		$locale = 'en_US';
+
 		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_post' )->andReturn( false );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
 
-		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( false );
+		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( true );
 
 		self::assertSame( $locale, $subject->pll_locale_filter( $locale ) );
 	}
@@ -984,7 +1019,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$post_id    = 23;
 
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_rest' )->andReturn( false );
+		$request->shouldReceive( 'is_post' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -1028,7 +1063,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$post_id    = 23;
 
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_rest' )->andReturn( false );
+		$request->shouldReceive( 'is_post' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -1072,7 +1107,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$post_id    = 23;
 
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_rest' )->andReturn( false );
+		$request->shouldReceive( 'is_post' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -1117,7 +1152,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$term_lang_choice = 92;
 
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_rest' )->andReturn( false );
+		$request->shouldReceive( 'is_post' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );

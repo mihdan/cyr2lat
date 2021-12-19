@@ -88,4 +88,18 @@ class Request {
 
 		return $is_rest ? substr( $current_path, strlen( $rest_path ) ) : '';
 	}
+
+	/**
+	 * If current request is POST.
+	 *
+	 * @return bool
+	 */
+	public function is_post() {
+		$request_method = filter_var(
+			isset( $_SERVER['REQUEST_METHOD'] ) ? wp_unslash( $_SERVER['REQUEST_METHOD'] ) : '',
+			FILTER_SANITIZE_STRING
+		);
+
+		return 'POST' === $request_method;
+	}
 }

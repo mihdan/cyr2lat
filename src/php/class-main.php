@@ -116,6 +116,13 @@ class Main {
 	protected $wpml_languages;
 
 	/**
+	 * Current request is frontend.
+	 *
+	 * @var bool|null
+	 */
+	protected $is_frontend;
+
+	/**
 	 * Main constructor.
 	 */
 	public function __construct() {
@@ -142,7 +149,8 @@ class Main {
 			$this->cli = new WP_CLI( $this->converter );
 		}
 
-		$this->acf = new ACF( $this->settings );
+		$this->acf         = new ACF( $this->settings );
+		$this->is_frontend = $this->request->is_frontend();
 	}
 
 	/**
@@ -176,7 +184,7 @@ class Main {
 		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 2 );
 		add_filter( 'pre_insert_term', [ $this, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
 
-		if ( ! $this->request->is_frontend() ) {
+		if ( ! $this->is_frontend ) {
 			add_filter( 'get_terms_args', [ $this, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
 		}
 
@@ -247,12 +255,14 @@ class Main {
 		}
 
 		if ( ! empty( $term ) ) {
-			$title = $term;
-		} else {
-			$title = $this->is_wc_attribute_taxonomy( $title ) ? $title : $this->transliterate( $title );
+			return $term;
 		}
 
-		return $title;
+		if ( $this->is_frontend || $this->is_wc_attribute_taxonomy( $title ) ) {
+			return $title;
+		}
+
+		return $this->transliterate( $title );
 	}
 
 	/**
@@ -506,6 +516,10 @@ class Main {
 		}
 
 		if ( ! is_admin() ) {
+			return $locale;
+		}
+
+		if ( ! $this->request->is_post() ) {
 			return $locale;
 		}
 
