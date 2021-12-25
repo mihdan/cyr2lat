@@ -159,7 +159,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		$add_command = FunctionMocker::replace(
 			'\WP_CLI::add_command',
-			function () {
+			static function () {
 				throw new Exception();
 			}
 		);
@@ -217,7 +217,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'class_exists',
-			function ( $class ) use ( $polylang, $sitepress ) {
+			static function ( $class ) use ( $polylang, $sitepress ) {
 				if ( 'Polylang' === $class ) {
 					return $polylang;
 				}
@@ -230,10 +230,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		if ( $frontend ) {
-			WP_Mock::expectFilterNotAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ] );
-		} else {
+		if ( ! $frontend || $sitepress ) {
 			WP_Mock::expectFilterAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
+		} else {
+			WP_Mock::expectFilterNotAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ] );
 		}
 
 		if ( $polylang ) {
@@ -507,6 +507,14 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'is_frontend', true );
 
+		FunctionMocker::replace(
+			'class_exists',
+			static function ( $class ) {
+				return 'SitePress' === $class;
+			}
+		);
+
+		$subject->pre_insert_term_filter( 'some term', 'category' );
 		$title = 'some title';
 
 		self::assertSame( $title, $subject->sanitize_title( $title ) );
@@ -528,7 +536,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	) {
 		FunctionMocker::replace(
 			'function_exists',
-			function ( $function_name ) use ( $is_wc ) {
+			static function ( $function_name ) use ( $is_wc ) {
 				if ( 'wc_get_attribute_taxonomies' === $function_name ) {
 					return $is_wc;
 				}
@@ -717,7 +725,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'function_exists',
-			function ( $arg ) {
+			static function ( $arg ) {
 				return 'mb_strtolower' === $arg;
 			}
 		);
@@ -726,7 +734,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'function_exists',
-			function ( $arg ) {
+			static function ( $arg ) {
 				return 'mb_strtolower' !== $arg;
 			}
 		);
@@ -942,14 +950,14 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'defined',
-			function ( $constant_name ) {
+			static function ( $constant_name ) {
 				return 'REST_REQUEST' === $constant_name;
 			}
 		);
 
 		FunctionMocker::replace(
 			'constant',
-			function ( $name ) {
+			static function ( $name ) {
 				return 'REST_REQUEST' === $name;
 			}
 		);
@@ -959,7 +967,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'WP_REST_Server::get_raw_data',
-			function () use ( &$data ) {
+			static function () use ( &$data ) {
 				return $data;
 			}
 		);
@@ -1032,7 +1040,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'filter_input',
-			function ( $type, $var_name, $filter ) use ( $post_id ) {
+			static function ( $type, $var_name, $filter ) use ( $post_id ) {
 				if ( INPUT_POST === $type && 'post_ID' === $var_name && FILTER_SANITIZE_STRING === $filter ) {
 					return $post_id;
 				}
@@ -1076,7 +1084,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'filter_input',
-			function ( $type, $var_name, $filter ) use ( $post_id ) {
+			static function ( $type, $var_name, $filter ) use ( $post_id ) {
 				if ( INPUT_POST === $type && 'pll_post_id' === $var_name && FILTER_SANITIZE_STRING === $filter ) {
 					return $post_id;
 				}
@@ -1120,7 +1128,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'filter_input',
-			function ( $type, $var_name, $filter ) use ( $post_id ) {
+			static function ( $type, $var_name, $filter ) use ( $post_id ) {
 				if ( INPUT_GET === $type && 'post' === $var_name && FILTER_SANITIZE_STRING === $filter ) {
 					return $post_id;
 				}
@@ -1174,7 +1182,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'filter_input',
-			function ( $type, $var_name, $filter ) use ( $term_lang_choice ) {
+			static function ( $type, $var_name, $filter ) use ( $term_lang_choice ) {
 				if ( INPUT_POST === $type && 'term_lang_choice' === $var_name && FILTER_SANITIZE_STRING === $filter ) {
 					return $term_lang_choice;
 				}
