@@ -184,7 +184,7 @@ class Main {
 		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 2 );
 		add_filter( 'pre_insert_term', [ $this, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
 
-		if ( ! $this->is_frontend ) {
+		if ( ! $this->is_frontend || class_exists( SitePress::class ) ) {
 			add_filter( 'get_terms_args', [ $this, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
 		}
 
@@ -232,8 +232,15 @@ class Main {
 			return $pre;
 		}
 
-		$term = '';
 		if ( $this->is_term ) {
+			// Make sure we search in the db only once being called from wp_insert_term().
+			$this->is_term = false;
+
+			// Fix case when showing previously created categories in cyrillic with WPML.
+			if ( $this->is_frontend && class_exists( SitePress::class ) ) {
+				return $title;
+			}
+
 			$sql = $wpdb->prepare(
 				"SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
@@ -250,19 +257,12 @@ class Main {
 			$term = $wpdb->get_var( $sql );
 			// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
 
-			// Make sure we search in the db only once being called from wp_insert_term().
-			$this->is_term = false;
+			if ( ! empty( $term ) ) {
+				return $term;
+			}
 		}
 
-		if ( ! empty( $term ) ) {
-			return $term;
-		}
-
-		if ( $this->is_frontend || $this->is_wc_attribute_taxonomy( $title ) ) {
-			return $title;
-		}
-
-		return $this->transliterate( $title );
+		return $this->is_wc_attribute_taxonomy( $title ) ? $title : $this->transliterate( $title );
 	}
 
 	/**
