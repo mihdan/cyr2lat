@@ -1,7 +1,7 @@
 {
   "name": "mihdan/cyr2lat",
   "description": "Cyr-To-Lat",
-  "license": "GPL-2.0",
+  "license": "GPL-2.0-or-later",
   "keywords": [
     "cyrillic",
     "latin",
@@ -10,7 +10,8 @@
     "rustolat",
     "slugs",
     "translations",
-    "transliteration"
+    "transliteration",
+    "cyr2lat"
   ],
   "homepage": "https://wordpress.org/plugins/cyr2lat/",
   "type": "wordpress-plugin",
