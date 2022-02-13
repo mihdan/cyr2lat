@@ -56,7 +56,7 @@ class Request {
 		}
 
 		// Case #2.
-		if ( filter_input( INPUT_GET, 'rest_route', FILTER_SANITIZE_STRING ) ) {
+		if ( filter_input( INPUT_GET, 'rest_route', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ) {
 			return true;
 		}
 
@@ -97,7 +97,7 @@ class Request {
 	public function is_post() {
 		$request_method = filter_var(
 			isset( $_SERVER['REQUEST_METHOD'] ) ? wp_unslash( $_SERVER['REQUEST_METHOD'] ) : '',
-			FILTER_SANITIZE_STRING
+			FILTER_SANITIZE_FULL_SPECIAL_CHARS
 		);
 
 		return 'POST' === $request_method;

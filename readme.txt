@@ -5,6 +5,8 @@ Requires at least: 5.1
 Tested up to: 5.9
 Stable tag: 5.2.6
 Requires PHP: 5.6.20
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Convert Non-Latin characters in post, page and term slugs to Latin characters.
 
@@ -187,6 +189,10 @@ Yes you can!
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 5.2.7 =
+* Tested with WooCommerce 6.2.
+* Added PHP 8.1 support.
 
 = 5.2.6 (25.12.2021) =
 * Revert fix made in 5.2.5 for 404 with WPML, as it created several issues on the frontend.

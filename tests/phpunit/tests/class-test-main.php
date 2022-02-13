@@ -1041,7 +1041,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		FunctionMocker::replace(
 			'filter_input',
 			static function ( $type, $var_name, $filter ) use ( $post_id ) {
-				if ( INPUT_POST === $type && 'post_ID' === $var_name && FILTER_SANITIZE_STRING === $filter ) {
+				if ( INPUT_POST === $type && 'post_ID' === $var_name && FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter ) {
 					return $post_id;
 				}
 
@@ -1085,7 +1085,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		FunctionMocker::replace(
 			'filter_input',
 			static function ( $type, $var_name, $filter ) use ( $post_id ) {
-				if ( INPUT_POST === $type && 'pll_post_id' === $var_name && FILTER_SANITIZE_STRING === $filter ) {
+				if ( INPUT_POST === $type && 'pll_post_id' === $var_name && FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter ) {
 					return $post_id;
 				}
 
@@ -1129,7 +1129,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		FunctionMocker::replace(
 			'filter_input',
 			static function ( $type, $var_name, $filter ) use ( $post_id ) {
-				if ( INPUT_GET === $type && 'post' === $var_name && FILTER_SANITIZE_STRING === $filter ) {
+				if ( INPUT_GET === $type && 'post' === $var_name && FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter ) {
 					return $post_id;
 				}
 
@@ -1183,7 +1183,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		FunctionMocker::replace(
 			'filter_input',
 			static function ( $type, $var_name, $filter ) use ( $term_lang_choice ) {
-				if ( INPUT_POST === $type && 'term_lang_choice' === $var_name && FILTER_SANITIZE_STRING === $filter ) {
+				if ( INPUT_POST === $type && 'term_lang_choice' === $var_name && FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter ) {
 					return $term_lang_choice;
 				}
 
