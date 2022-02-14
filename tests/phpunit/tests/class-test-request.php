@@ -162,7 +162,7 @@ class Test_Request extends Cyr_To_Lat_TestCase {
 				return (
 					INPUT_GET === $type &&
 					'rest_route' === $var_name &&
-					FILTER_SANITIZE_STRING === $filter
+					FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter
 				);
 			}
 		);

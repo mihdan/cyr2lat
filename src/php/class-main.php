@@ -575,19 +575,19 @@ class Main {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_POST['post_ID'] ) ) {
 			$pll_get_post_language = pll_get_post_language(
-				(int) filter_input( INPUT_POST, 'post_ID', FILTER_SANITIZE_STRING ),
+				(int) filter_input( INPUT_POST, 'post_ID', FILTER_SANITIZE_FULL_SPECIAL_CHARS ),
 				'locale'
 			);
 		}
 		if ( isset( $_POST['pll_post_id'] ) ) {
 			$pll_get_post_language = pll_get_post_language(
-				(int) filter_input( INPUT_POST, 'pll_post_id', FILTER_SANITIZE_STRING ),
+				(int) filter_input( INPUT_POST, 'pll_post_id', FILTER_SANITIZE_FULL_SPECIAL_CHARS ),
 				'locale'
 			);
 		}
 		if ( isset( $_GET['post'] ) ) {
 			$pll_get_post_language = pll_get_post_language(
-				(int) filter_input( INPUT_GET, 'post', FILTER_SANITIZE_STRING ),
+				(int) filter_input( INPUT_GET, 'post', FILTER_SANITIZE_FULL_SPECIAL_CHARS ),
 				'locale'
 			);
 		}
@@ -612,7 +612,7 @@ class Main {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( isset( $_POST['term_lang_choice'] ) ) {
 			$pll_get_language = PLL()->model->get_language(
-				filter_input( INPUT_POST, 'term_lang_choice', FILTER_SANITIZE_STRING )
+				filter_input( INPUT_POST, 'term_lang_choice', FILTER_SANITIZE_FULL_SPECIAL_CHARS )
 			);
 
 			if ( $pll_get_language ) {

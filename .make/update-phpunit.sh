@@ -50,7 +50,7 @@ if [[ $PHP_VERSION == '7.2' ]]; then
   PHP_UNIT='8.5'
 fi
 
-if [[ $PHP_VERSION == '7.3' || $PHP_VERSION == '7.4' || $PHP_VERSION == '8.0' ]]; then
+if [[ $PHP_VERSION == '7.3' || $PHP_VERSION == '7.4' || $PHP_VERSION == '8.0' || $PHP_VERSION == '8.1' ]]; then
   PHP_UNIT='9.5'
 fi
 

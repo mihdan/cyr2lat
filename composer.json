@@ -64,7 +64,7 @@
     "phpcompatibility/php-compatibility": "^9.3",
     "phpcompatibility/phpcompatibility-wp": "^2.1",
     "wp-coding-standards/wpcs": "^2.3",
-    "php-coveralls/php-coveralls": "^v2.4"
+    "php-coveralls/php-coveralls": "^v2.5"
   },
   "autoload": {
     "classmap": [

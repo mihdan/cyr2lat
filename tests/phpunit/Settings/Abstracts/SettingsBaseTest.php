@@ -619,7 +619,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 				if (
 					INPUT_GET === $type &&
 					'tab' === $name &&
-					FILTER_SANITIZE_STRING === $filter
+					FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter
 				) {
 					return $input;
 				}
