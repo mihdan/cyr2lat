@@ -1,4 +1,4 @@
-# Tutorial: http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/
+# Tutorial: https://cs.colby.edu/maxwell/courses/tutorials/maketutor/
 # Docs: https://www.gnu.org/software/make/
 
 empty:=
