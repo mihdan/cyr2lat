@@ -190,6 +190,9 @@ Yes you can!
 
 == Changelog ==
 
+= 5.3.0 (23.05.2022) =
+* Tested with WordPress 6.0 and WooCommerce 6.5.
+
 = 5.2.7 (14.02.2022) =
 * Tested with WooCommerce 6.2.
 * Added PHP 8.1 support.
