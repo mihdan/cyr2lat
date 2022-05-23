@@ -10,7 +10,7 @@
  * Plugin Name:       Cyr-To-Lat
  * Plugin URI:        https://wordpress.org/plugins/cyr2lat/
  * Description:       Convert Non-Latin characters in post and term slugs to Latin characters. Useful for creating human-readable URLs. Based on the original plugin by Anton Skorobogatov.
- * Version:           5.2.7
+ * Version:           5.3.0
  * Requires at least: 5.1
  * Requires PHP:      5.6.20
  * Author:            Sergey Biryukov, Mikhail Kobzarev, Igor Gergel
@@ -22,7 +22,7 @@
  *
  *
  * WC requires at least: 3.0
- * WC tested up to:      6.2
+ * WC tested up to:      6.5
  */
 
 namespace Cyr_To_Lat;
@@ -40,7 +40,7 @@ if ( defined( 'CYR_TO_LAT_VERSION' ) ) {
 /**
  * Plugin version.
  */
-define( 'CYR_TO_LAT_VERSION', '5.2.7' );
+define( 'CYR_TO_LAT_VERSION', '5.3.0' );
 
 /**
  * Path to the plugin dir.

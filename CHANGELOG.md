@@ -1,3 +1,46 @@
+## 5.3.0 (23.05.2022)
+* Tested with WordPress 6.0 and WooCommerce 6.5.
+
+## 5.2.7 (14.02.2022)
+* Tested with WooCommerce 6.2.
+* Added PHP 8.1 support.
+
+## 5.2.6 (25.12.2021)
+* Revert fix made in 5.2.5 for 404 with WPML, as it created several issues on the frontend.
+* Fix again 404 on archives created with WPML before activation of cyr2lat.
+
+## 5.2.5 (19.12.2021)
+* Tested up to WordPress 5.9 and WooCommerce 6.0.
+* Fix issue with Polylang - do not modify admin language when editing a post.
+* Fix issue with JetPack - fatal error on synchronisation.
+* Fix 404 on archives created with WPML before activation of cyr2lat.
+
+## 5.2.4 (07.09.2021)
+* Fix issue with not showing WooCommerce variable product attributes.
+* Fix issue with Elementor and WPML, endless loop.
+
+## 5.2.3 (07.09.2021)
+* Fix issue with WP Foro plugin - transliterate topic slug when created on frontend.
+* Fix bug with Polylang on REST request.
+
+## 5.2.2 (06.09.2021)
+* Fix issue caused by the bug in Jetpack sync.
+* Optimize code related to WPML locale filtering.
+* Fix endless loading of a taxonomy page with WPML.
+* Fix 'nothing found' on a taxonomy page with WPML.
+
+## 5.2.1 (29.07.2021)
+* Determine WPML language only once to improve performance.
+* Avoid notice on bad SQL request when taxonomies are empty.
+
+## 5.2.0 (27.07.2021)
+* Add support for categories and tags in other languages with wpml.
+
+## 5.1.0 (19.07.2021)
+* Fix issue-95 - 404 on localized terms created before plugin install.
+* Add cache flushing after batch conversion.
+* Tested with WordPress 5.8
+
 ## 5.0.4 (17.04.2021)
 * Fix bug in converter without saved options
 
