@@ -27,6 +27,8 @@ Converts Cyrillic characters in post, page and term slugs to Latin characters. U
 
 Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
 
+Sponsored by [Blackfire](https://www.blackfire.io/).
+
 == Screenshots ==
 
 1. Tables settings page

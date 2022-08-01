@@ -75,3 +75,5 @@ A copy of the license is included in the root of the plugin’s directory. The f
 The current version of the Cyr-To-Lat was developed by Sergey Biryukov, Mikhail Kobzarev, and Igor Gergel.
 
 Contributors: [SergeyBiryukov](https://github.com/SergeyBiryukov), [mihdan](https://github.com/mihdan), [karevn](https://github.com/karevn), [webvitaly](https://github.com/webvitaly), [kagg-design](https://github.com/kagg-design).
+
+Sponsor: [Blackfire](https://www.blackfire.io/)
