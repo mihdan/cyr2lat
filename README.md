@@ -77,4 +77,5 @@ The current version of the Cyr-To-Lat was developed by Sergey Biryukov, Mikhail 
 Contributors: [SergeyBiryukov](https://github.com/SergeyBiryukov), [mihdan](https://github.com/mihdan), [karevn](https://github.com/karevn), [webvitaly](https://github.com/webvitaly), [kagg-design](https://github.com/kagg-design).
 
 Sponsor: [Blackfire](https://www.blackfire.io/)
-![Blackfire Logo](./.wordpress-org/blackfire-io_secondary_horizontal_transparent.png)
+
+![Blackfire Logo](./.wordpress-org/blackfire-io_secondary_horizontal_transparent-250x62.png)

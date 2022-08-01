@@ -29,6 +29,8 @@ Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
 
 Sponsored by [Blackfire](https://www.blackfire.io/).
 
+![Blackfire Logo](./.wordpress-org/blackfire-io_secondary_horizontal_transparent-250x62.png)
+
 == Screenshots ==
 
 1. Tables settings page
