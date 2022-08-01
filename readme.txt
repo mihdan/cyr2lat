@@ -29,7 +29,7 @@ Based on the original Rus-To-Lat plugin by Anton Skorobogatov.
 
 Sponsored by [Blackfire](https://www.blackfire.io/).
 
-https://ps.w.org/cyr2lat/assets/blackfire-io_secondary_horizontal_transparent-250x62.png
+<img src="https://ps.w.org/cyr2lat/assets/blackfire-io_secondary_horizontal_transparent-250x62.png" alt="Blackfire Logo" />
 
 == Screenshots ==
 
