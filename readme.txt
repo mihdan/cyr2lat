@@ -194,6 +194,10 @@ Yes you can!
 
 == Changelog ==
 
+= 5.4.0 (15.12.2022) =
+* Tested with WordPress 6.1 and WooCommerce 7.2.
+* Added compatibility with WC High-Performance order storage (COT) feature.
+
 = 5.3.0 (23.05.2022) =
 * Tested with WordPress 6.0 and WooCommerce 6.5.
 

@@ -256,6 +256,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			WP_Mock::expectFilterNotAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ] );
 		}
 
+		WP_Mock::expectActionAdded( 'before_woocommerce_init', [ $subject, 'declare_wc_compatibility' ] );
+
 		$subject->init_hooks();
 
 		if ( $sitepress ) {
@@ -1390,6 +1392,63 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			'Existing language code'     => [ 'ru', 'ru_RU' ],
 			'Not existing language code' => [ 'some', null ],
 			'Null language code'         => [ null, null ],
+		];
+	}
+
+	/**
+	 * Test declare_wc_compatibility().
+	 *
+	 * @param boolean $feature_util FeaturesUtil class exists.
+	 *
+	 * @dataProvider dp_test_declare_wc_compatibility
+	 */
+	public function test_declare_wc_compatibility( $feature_util ) {
+		FunctionMocker::replace(
+			'constant',
+			static function ( $name ) {
+				if ( 'CYR_TO_LAT_FILE' === $name ) {
+					return PLUGIN_MAIN_FILE;
+				}
+
+				return null;
+			}
+		);
+
+		FunctionMocker::replace(
+			'class_exists',
+			static function ( $class ) use ( $feature_util ) {
+				if ( 'Automattic\WooCommerce\Utilities\FeaturesUtil' === $class ) {
+					return $feature_util;
+				}
+
+				return null;
+			}
+		);
+
+		$declare_compatibility = FunctionMocker::replace(
+			'Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility',
+			null
+		);
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$subject->declare_wc_compatibility();
+
+		if ( $feature_util ) {
+			$declare_compatibility->wasCalledWithOnce( [ 'custom_order_tables', PLUGIN_MAIN_FILE, true ] );
+		} else {
+			$declare_compatibility->wasNotCalled();
+		}
+	}
+
+	/**
+	 * Data provider for test_declare_wc_compatibility().
+	 *
+	 * @return array
+	 */
+	public function dp_test_declare_wc_compatibility() {
+		return [
+			[ false ],
+			[ true ],
 		];
 	}
 
