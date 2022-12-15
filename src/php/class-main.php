@@ -6,11 +6,13 @@
  */
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUndefinedNamespaceInspection */
 /** @noinspection PhpUndefinedClassInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 namespace Cyr_To_Lat;
 
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
 use Polylang;
 use SitePress;
 use WP_Error;
@@ -201,6 +203,8 @@ class Main {
 
 			add_action( 'wpml_language_has_switched', [ $this, 'wpml_language_has_switched' ], 10, 3 );
 		}
+
+		add_action( 'before_woocommerce_init', [ $this, 'declare_wc_compatibility' ] );
 	}
 
 	/**
@@ -672,6 +676,21 @@ class Main {
 			isset( $this->wpml_languages[ $language_code ] ) ?
 				$this->wpml_languages[ $language_code ]['default_locale'] :
 				null;
+	}
+
+	/**
+	 * Declare compatibility with custom order tables for WooCommerce.
+	 *
+	 * @return void
+	 */
+	public function declare_wc_compatibility() {
+		if ( class_exists( FeaturesUtil::class ) ) {
+			FeaturesUtil::declare_compatibility(
+				'custom_order_tables',
+				constant( 'CYR_TO_LAT_FILE' ),
+				true
+			);
+		}
 	}
 
 	/**

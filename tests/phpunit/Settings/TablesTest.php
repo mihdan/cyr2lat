@@ -234,7 +234,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 					Your Appreciation				</h2>
 				<a
 					target="_blank"
-					href="https://wordpress.org/support/view/plugin-reviews/cyr2lat?rate=5#postform">
+					href="https://wordpress.org/support/view/plugin-reviews/cyr2lat?rate=5#new-post">
 					Leave a ★★★★★ plugin review on WordPress.org				</a>
 			</div>
 		</div>

@@ -24,7 +24,7 @@ class Tables extends PluginSettingsBase {
 	/**
 	 * Script localization object.
 	 */
-	const OBJECT = ' Cyr2LatTablesObject';
+	const OBJECT = 'Cyr2LatTablesObject';
 
 	/**
 	 * Served locales.
@@ -207,7 +207,7 @@ class Tables extends PluginSettingsBase {
 				</h2>
 				<a
 					target="_blank"
-					href="https://wordpress.org/support/view/plugin-reviews/cyr2lat?rate=5#postform">
+					href="https://wordpress.org/support/view/plugin-reviews/cyr2lat?rate=5#new-post">
 					<?php echo esc_html( __( 'Leave a ★★★★★ plugin review on WordPress.org', 'cyr2lat' ) ); ?>
 				</a>
 			</div>
