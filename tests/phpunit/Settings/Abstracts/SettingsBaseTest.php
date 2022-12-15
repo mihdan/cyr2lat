@@ -472,6 +472,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$tab->shouldReceive( 'option_page' )->andReturn( $tab_option_page );
 
 		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'is_options_screen' )->andReturn( true );
 		$subject->shouldReceive( 'get_active_tab' )->once()->andReturn( $tab );
 
 		$form_fields = $this->get_test_form_fields();
@@ -509,17 +510,22 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
-	 * Test setup_tabs_section() without add_settings_section().
+	 * Test setup_sections() not on options screen.
 	 */
-	public function test_setup_tabs_section_without_add_settings_section() {
-		FunctionMocker::replace(
-			'function_exists',
-			static function ( $function ) {
-				return 'add_settings_section' !== $function;
-			}
-		);
-
+	public function test_setup_sections_not_on_options_screen() {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'is_options_screen' )->andReturn( false );
+		$subject->setup_sections();
+	}
+
+	/**
+	 * Test setup_tabs_section() not on options screen.
+	 */
+	public function test_setup_tabs_section_not_on_options_screen() {
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'is_options_screen' )->andReturn( false );
 
 		$subject->setup_tabs_section();
 	}
@@ -533,7 +539,9 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$tab = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$tab->shouldReceive( 'option_page' )->andReturn( $tab_option_page );
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'is_options_screen' )->once()->andReturn( true );
 		$subject->shouldReceive( 'get_active_tab' )->once()->andReturn( $tab );
 
 		WP_Mock::userFunction( 'add_settings_section' )
