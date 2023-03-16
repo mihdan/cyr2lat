@@ -1199,8 +1199,8 @@ class Conversion_Tables {
 	}
 
 	/**
-	 * Get fix table for MacOS.
-	 * On MacOS, files containing characters in the table, are sometimes encoded improperly.
+	 * Get fix table for macOS.
+	 * On macOS, files containing characters in the table, are sometimes encoded improperly.
 	 *
 	 * @return array
 	 */

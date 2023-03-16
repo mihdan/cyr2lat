@@ -220,7 +220,7 @@ abstract class SettingsBase {
 	 */
 	protected function is_main_menu_page() {
 		// Main menu page should have empty string as parent slug.
-		return ! (bool) $this->parent_slug();
+		return ! $this->parent_slug();
 	}
 
 	/**

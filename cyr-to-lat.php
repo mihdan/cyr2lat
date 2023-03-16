@@ -25,6 +25,9 @@
  * WC tested up to:      7.5
  */
 
+// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpParamsInspection */
+
 namespace Cyr_To_Lat;
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -6,8 +6,11 @@
  * @link    https://github.com/mihdan/wp-rocket-cli/blob/master/command.php
  */
 
-// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUndefinedNamespaceInspection */
 /** @noinspection PhpUndefinedClassInspection */
+/** @noinspection PhpUndefinedFunctionInspection */
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
 
 namespace Cyr_To_Lat;
 

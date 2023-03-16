@@ -275,6 +275,7 @@ class Main {
 	 * @param string $title Title.
 	 *
 	 * @return bool
+	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	protected function is_wc_attribute_taxonomy( $title ) {
 		if ( ! function_exists( 'wc_get_attribute_taxonomies' ) ) {
@@ -563,6 +564,11 @@ class Main {
 			return null;
 		}
 
+		/**
+		 * REST Server.
+		 *
+		 * @var WP_REST_Server $rest_server
+		 */
 		$rest_server = rest_get_server();
 		$data        = json_decode( $rest_server::get_raw_data(), false );
 		if ( isset( $data->lang ) ) {
@@ -576,6 +582,7 @@ class Main {
 	 * Locale filter for Polylang with classic editor.
 	 *
 	 * @return bool|string
+	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	private function pll_locale_filter_with_classic_editor() {
 		if ( ! function_exists( 'pll_get_post_language' ) ) {
@@ -614,6 +621,7 @@ class Main {
 	 * Locale filter for Polylang with term.
 	 *
 	 * @return false|string
+	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	private function pll_locale_filter_with_term() {
 		if ( ! function_exists( 'PLL' ) ) {
@@ -657,6 +665,7 @@ class Main {
 	 * Get wpml locale.
 	 *
 	 * @return string|null
+	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	protected function get_wpml_locale() {
 		$language_code        = wpml_get_current_language();
