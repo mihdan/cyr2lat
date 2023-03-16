@@ -11,10 +11,12 @@
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 // phpcs:disable WordPress.WP.AlternativeFunctions.json_encode_json_encode
+// phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
 namespace Cyr_To_Lat\Tests\Settings\Abstracts;
 
 use Cyr_To_Lat\Cyr_To_Lat_TestCase;
+use Cyr_To_Lat\Main;
 use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
 use Mockery;
 use PHPUnit\Runner\Version;
@@ -30,6 +32,17 @@ use WP_Mock;
  * @group settings-base
  */
 class SettingsBaseTest extends Cyr_To_Lat_TestCase {
+
+	/**
+	 * Tear down.
+	 *
+	 * @noinspection PhpLanguageLevelInspection
+	 * @noinspection PhpUndefinedClassInspection
+	 */
+	public function tearDown(): void {
+		unset( $GLOBALS['cyr_to_lat_plugin'] );
+		parent::tearDown();
+	}
 
 	/**
 	 * Test constructor.
@@ -436,6 +449,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	public function test_base_admin_enqueue_scripts() {
 		$plugin_url     = 'http://test.test/wp-content/plugins/cyr2lat';
 		$plugin_version = '1.0.0';
+
+		$main = Mockery::mock( Main::class );
+		$main->shouldReceive( 'min_suffix' )->andReturn( '' );
+		$GLOBALS['cyr_to_lat_plugin'] = $main;
 
 		$page = Mockery::mock( SettingsBase::class );
 		$page->shouldReceive( 'admin_enqueue_scripts' )->with()->once();

@@ -1,7 +1,8 @@
 .idea/
 .yarn/
-assets/js/tables/
-assets/js/converter/
+assets/css/*.min.css
+assets/js/apps/
+assets/js/*.min.js
 coverage/
 node_modules/
 tests/**/*.cache

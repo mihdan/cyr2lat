@@ -364,11 +364,15 @@ abstract class SettingsBase {
 	 * Invoke relevant admin_enqueue_scripts() basing on tabs.
 	 */
 	public function base_admin_enqueue_scripts() {
+		global $cyr_to_lat_plugin;
+
+		$min = $cyr_to_lat_plugin->min_suffix();
+
 		$this->get_active_tab()->admin_enqueue_scripts();
 
 		wp_enqueue_style(
 			self::HANDLE,
-			$this->plugin_url() . '/assets/css/settings-base.css',
+			$this->plugin_url() . "/assets/css/settings-base$min.css",
 			[],
 			$this->plugin_version()
 		);

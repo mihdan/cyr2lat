@@ -10,8 +10,11 @@
 /** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
+// phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
+
 namespace Cyr_To_Lat\Tests\Settings;
 
+use Cyr_To_Lat\Main;
 use Cyr_To_Lat\Settings\Tables;
 use Cyr_To_Lat\Cyr_To_Lat_TestCase;
 use Mockery;
@@ -26,6 +29,17 @@ use WP_Mock;
  * @group settings-tables
  */
 class TablesTest extends Cyr_To_Lat_TestCase {
+
+	/**
+	 * Tear down.
+	 *
+	 * @noinspection PhpLanguageLevelInspection
+	 * @noinspection PhpUndefinedClassInspection
+	 */
+	public function tearDown(): void {
+		unset( $GLOBALS['cyr_to_lat_plugin'] );
+		parent::tearDown();
+	}
 
 	/**
 	 * Test screen_id().
@@ -274,6 +288,10 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 		$plugin_url     = 'http://test.test/wp-content/plugins/cyr-to-lat';
 		$plugin_version = '1.0.0';
 
+		$main = Mockery::mock( Main::class );
+		$main->shouldReceive( 'min_suffix' )->andReturn( '' );
+		$GLOBALS['cyr_to_lat_plugin'] = $main;
+
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->with()->andReturn( true );
 
@@ -294,7 +312,7 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 		WP_Mock::userFunction( 'wp_enqueue_script' )
 			->with(
 				Tables::HANDLE,
-				$plugin_url . '/assets/js/tables/app.js',
+				$plugin_url . '/assets/js/apps/tables.js',
 				[],
 				$plugin_version,
 				true

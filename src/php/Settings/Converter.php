@@ -309,13 +309,17 @@ class Converter extends PluginSettingsBase {
 	 * Enqueue class scripts.
 	 */
 	public function admin_enqueue_scripts() {
+		global $cyr_to_lat_plugin;
+
 		if ( ! $this->is_options_screen() ) {
 			return;
 		}
 
+		$min = $cyr_to_lat_plugin->min_suffix();
+
 		wp_enqueue_script(
 			self::HANDLE,
-			constant( 'CYR_TO_LAT_URL' ) . '/assets/js/converter/app.js',
+			constant( 'CYR_TO_LAT_URL' ) . '/assets/js/apps/converter.js',
 			[],
 			constant( 'CYR_TO_LAT_VERSION' ),
 			true
@@ -323,7 +327,7 @@ class Converter extends PluginSettingsBase {
 
 		wp_enqueue_style(
 			self::HANDLE,
-			constant( 'CYR_TO_LAT_URL' ) . '/assets/css/converter.css',
+			constant( 'CYR_TO_LAT_URL' ) . "/assets/css/converter$min.css",
 			[],
 			constant( 'CYR_TO_LAT_VERSION' )
 		);

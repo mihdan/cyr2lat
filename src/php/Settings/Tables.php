@@ -231,13 +231,17 @@ class Tables extends PluginSettingsBase {
 	 * Enqueue class scripts.
 	 */
 	public function admin_enqueue_scripts() {
+		global $cyr_to_lat_plugin;
+
 		if ( ! $this->is_options_screen() ) {
 			return;
 		}
 
+		$min = $cyr_to_lat_plugin->min_suffix();
+
 		wp_enqueue_script(
 			self::HANDLE,
-			constant( 'CYR_TO_LAT_URL' ) . '/assets/js/tables/app.js',
+			constant( 'CYR_TO_LAT_URL' ) . '/assets/js/apps/tables.js',
 			[],
 			constant( 'CYR_TO_LAT_VERSION' ),
 			true
@@ -254,7 +258,7 @@ class Tables extends PluginSettingsBase {
 
 		wp_enqueue_style(
 			self::HANDLE,
-			constant( 'CYR_TO_LAT_URL' ) . '/assets/css/tables.css',
+			constant( 'CYR_TO_LAT_URL' ) . "/assets/css/tables$min.css",
 			[],
 			constant( 'CYR_TO_LAT_VERSION' )
 		);

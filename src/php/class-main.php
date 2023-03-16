@@ -318,6 +318,15 @@ class Main {
 	}
 
 	/**
+	 * Get min suffix.
+	 *
+	 * @return string
+	 */
+	public function min_suffix() {
+		return defined( 'SCRIPT_DEBUG' ) && constant( 'SCRIPT_DEBUG' ) ? '' : '.min';
+	}
+
+	/**
 	 * Fix string encoding on macOS.
 	 *
 	 * @param string $string String.

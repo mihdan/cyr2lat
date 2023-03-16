@@ -5,6 +5,8 @@
  * @package cyr-to-lat
  */
 
+// phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
+
 namespace Cyr_To_Lat;
 
 use Cyr_To_Lat\Settings\Settings;
@@ -19,6 +21,17 @@ use WP_Mock;
  * @group acf
  */
 class Test_ACF extends Cyr_To_Lat_TestCase {
+
+	/**
+	 * Tear down.
+	 *
+	 * @noinspection PhpLanguageLevelInspection
+	 * @noinspection PhpUndefinedClassInspection
+	 */
+	public function tearDown(): void {
+		unset( $GLOBALS['cyr_to_lat_plugin'] );
+		parent::tearDown();
+	}
 
 	/**
 	 * Test constructor
@@ -64,6 +77,10 @@ class Test_ACF extends Cyr_To_Lat_TestCase {
 	public function test_enqueue_script() {
 		$table  = [ 'я' => 'ya' ];
 		$object = [ 'table' => $table ];
+
+		$main = Mockery::mock( Main::class );
+		$main->shouldReceive( 'min_suffix' )->andReturn( '' );
+		$GLOBALS['cyr_to_lat_plugin'] = $main;
 
 		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'get_table' )->andReturn( $table );

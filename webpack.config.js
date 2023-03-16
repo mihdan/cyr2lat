@@ -1,5 +1,9 @@
+const glob = require('glob');
 const path = require('path');
+const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const WebpackRemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 
 const webPackModule = (production = true) => {
 	return {
@@ -34,48 +38,71 @@ const webPackModule = (production = true) => {
 	};
 };
 
-const tables = (env) => {
+const lookup = (lookupPath) => {
+	const ext = path.extname(lookupPath);
+	const entries = {};
+
+	glob.sync(lookupPath).map((filePath) => {
+		if (filePath.includes('.min' + ext)) {
+			return filePath;
+		}
+
+		let filename = path.basename(filePath, ext);
+
+		if ('app' === filename) {
+			filename = 'apps/' + path.basename(path.dirname(filePath));
+		}
+
+		entries[filename] = path.resolve(filePath);
+
+		return filePath;
+	});
+
+	return entries;
+};
+
+const cyr2lat = (env) => {
 	/**
 	 * @param  env.production
 	 */
 	const production = env.production ? env.production : false;
+	const cssEntries = lookup('./assets/css/*.css');
+	const jsEntries = lookup('./assets/js/*.js');
+	const appEntries = lookup('./src/js/**/app.js');
+
+	const entries = {
+		...cssEntries,
+		...jsEntries,
+		...appEntries,
+	};
 
 	return {
 		devtool: production ? false : 'eval-source-map',
-		entry: ['./src/js/tables/app.js'],
+		entry: entries,
 		module: webPackModule(production),
 		output: {
-			path: path.join(__dirname, 'assets', 'js'),
-			filename: path.join('tables', 'app.js'),
+			path: path.join(__dirname, 'assets'),
+			filename: (pathData) => {
+				return pathData.chunk.name.includes('apps/')
+					? 'js/[name].js'
+					: 'js/[name].min.js';
+			},
 		},
 		plugins: [
+			new WebpackRemoveEmptyScriptsPlugin(),
 			new MiniCssExtractPlugin({
 				filename: 'css/[name].min.css',
 			}),
 		],
-	};
-};
-
-const converter = (env) => {
-	/**
-	 * @param  env.production
-	 */
-	const production = env.production ? env.production : false;
-
-	return {
-		devtool: production ? false : 'eval-source-map',
-		entry: ['./src/js/converter/app.js'],
-		module: webPackModule(production),
-		output: {
-			path: path.join(__dirname, 'assets', 'js'),
-			filename: path.join('converter', 'app.js'),
+		optimization: {
+			minimizer: [
+				new TerserPlugin({
+					extractComments: false,
+				}),
+				new CssMinimizerWebpackPlugin(),
+			],
 		},
-		plugins: [
-			new MiniCssExtractPlugin({
-				filename: 'css/[name].min.css',
-			}),
-		],
 	};
 };
 
-module.exports = [tables, converter];
+module.exports = [cyr2lat];
