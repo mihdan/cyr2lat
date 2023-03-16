@@ -1,73 +1,81 @@
-const path = require( 'path' );
-const ExtractTextPlugin = require( 'extract-text-webpack-plugin' );
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const webPackModule = ( production = true ) => {
+const webPackModule = (production = true) => {
 	return {
 		rules: [
 			{
-				loader: 'babel-loader',
 				test: /\.js$/,
 				exclude: /node_modules/,
+				loader: 'babel-loader',
 				options: {
-					presets: [ 'env' ],
+					presets: ['@babel/preset-env'],
 				},
 			},
 			{
 				test: /\.s?css$/,
-				use: ExtractTextPlugin.extract( {
-					fallback: 'style-loader',
-					use: [
-						{
-							loader: 'css-loader',
-							options: {
-								sourceMap: ! production,
-								minimize: production,
-							},
+				use: [
+					{
+						loader: MiniCssExtractPlugin.loader,
+						options: {
+							publicPath: path.join(__dirname, 'assets'),
 						},
-						{
-							loader: 'sass-loader',
-							options: {
-								sourceMap: ! production,
-							},
+					},
+					{
+						loader: 'css-loader',
+						options: {
+							sourceMap: !production,
+							url: false,
 						},
-						{
-							loader: 'postcss-loader',
-						},
-					],
-				} ),
+					},
+				],
 			},
 		],
 	};
 };
 
-const tables = ( env ) => {
-	const isProduction = 'production' === env;
+const tables = (env) => {
+	/**
+	 * @param  env.production
+	 */
+	const production = env.production ? env.production : false;
 
 	return {
-		entry: [ 'cross-fetch', './src/js/tables/app.js' ],
+		devtool: production ? false : 'eval-source-map',
+		entry: ['./src/js/tables/app.js'],
+		module: webPackModule(production),
 		output: {
-			path: path.join( __dirname, 'assets', 'js' ),
-			filename: path.join( 'tables', 'app.js' ),
+			path: path.join(__dirname, 'assets', 'js'),
+			filename: path.join('tables', 'app.js'),
 		},
-		module: webPackModule( ! isProduction ),
-		plugins: [ new ExtractTextPlugin( path.join( 'css', 'sample.css' ) ) ],
-		devtool: isProduction ? '' : 'inline-source-map',
+		plugins: [
+			new MiniCssExtractPlugin({
+				filename: 'css/[name].min.css',
+			}),
+		],
 	};
 };
 
-const converter = ( env ) => {
-	const isProduction = 'production' === env;
+const converter = (env) => {
+	/**
+	 * @param  env.production
+	 */
+	const production = env.production ? env.production : false;
 
 	return {
-		entry: [ 'cross-fetch', './src/js/converter/app.js' ],
+		devtool: production ? false : 'eval-source-map',
+		entry: ['./src/js/converter/app.js'],
+		module: webPackModule(production),
 		output: {
-			path: path.join( __dirname, 'assets', 'js' ),
-			filename: path.join( 'converter', 'app.js' ),
+			path: path.join(__dirname, 'assets', 'js'),
+			filename: path.join('converter', 'app.js'),
 		},
-		module: webPackModule( ! isProduction ),
-		plugins: [ new ExtractTextPlugin( path.join( 'css', 'sample.css' ) ) ],
-		devtool: isProduction ? '' : 'inline-source-map',
+		plugins: [
+			new MiniCssExtractPlugin({
+				filename: 'css/[name].min.css',
+			}),
+		],
 	};
 };
 
-module.exports = [ tables, converter ];
+module.exports = [tables, converter];

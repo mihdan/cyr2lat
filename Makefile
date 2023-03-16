@@ -49,11 +49,11 @@ composer-install-prod:
 
 yarn-install:
 	$(info Installing Yarn dependencies)
-	@yarn; yarn run build:dev
+	@yarn; yarn run dev
 
 yarn-install-prod:
 	$(info Installing Yarn dependencies)
-	@yarn; yarn run build:prod
+	@yarn; yarn run prod
 
 
 # Scope

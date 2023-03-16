@@ -71,5 +71,5 @@ jobs:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
           yarn
-          yarn run build:dev
+          yarn run dev
           yarn run coveralls
