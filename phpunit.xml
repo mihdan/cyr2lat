@@ -14,9 +14,12 @@
 		<exclude>
 			<directory>.github</directory>
 			<directory>.make</directory>
+			<directory>.wordpress-org</directory>
+			<directory>.yarn</directory>
 			<directory>assets</directory>
 			<directory>languages</directory>
 			<directory>lib</directory>
+			<directory>node_modules</directory>
 			<directory>src/js</directory>
 			<directory>tests</directory>
 			<directory>vendor</directory>
