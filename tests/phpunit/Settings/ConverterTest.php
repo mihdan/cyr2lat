@@ -52,79 +52,119 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test option_group().
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_option_group() {
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$method  = 'option_group';
 
-		self::assertSame( 'cyr_to_lat_group', $subject->option_group() );
+		$this->set_method_accessibility( $subject, $method );
+
+		self::assertSame( 'cyr_to_lat_group', $subject->$method() );
 	}
 
 	/**
 	 * Test option_page().
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_option_page() {
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$method  = 'option_page';
 
-		self::assertSame( 'cyr-to-lat', $subject->option_page() );
+		$this->set_method_accessibility( $subject, $method );
+
+		self::assertSame( 'cyr-to-lat', $subject->$method() );
 	}
 
 	/**
 	 * Test option_name().
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_option_name() {
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$method  = 'option_name';
 
-		self::assertSame( 'cyr_to_lat_settings', $subject->option_name() );
+		$this->set_method_accessibility( $subject, $method );
+
+		self::assertSame( 'cyr_to_lat_settings', $subject->$method() );
 	}
 
 	/**
 	 * Test page_title().
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_page_title() {
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$method  = 'page_title';
 
-		self::assertSame( 'Converter', $subject->page_title() );
+		$this->set_method_accessibility( $subject, $method );
+
+		self::assertSame( 'Converter', $subject->$method() );
 	}
 
 	/**
 	 * Test menu_title().
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_menu_title() {
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$method  = 'menu_title';
 
-		self::assertSame( 'Cyr To Lat', $subject->menu_title() );
+		$this->set_method_accessibility( $subject, $method );
+
+		self::assertSame( 'Cyr To Lat', $subject->$method() );
 	}
 
 	/**
 	 * Test section_title().
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_section_title() {
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$method  = 'section_title';
 
-		self::assertSame( '', $subject->section_title() );
+		$this->set_method_accessibility( $subject, $method );
+
+		self::assertSame( '', $subject->$method() );
 	}
 
 	/**
 	 * Test parent_slug().
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_parent_slug() {
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$method  = 'parent_slug';
 
-		self::assertSame( 'options-general.php', $subject->parent_slug() );
+		$this->set_method_accessibility( $subject, $method );
+
+		self::assertSame( 'options-general.php', $subject->$method() );
 	}
 
 	/**
 	 * Test init_hooks()
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_hooks() {
-		$mock = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$mock   = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$method = 'init_hooks';
+
+		$this->set_method_accessibility( $mock, $method );
 		$mock->shouldReceive( 'plugin_basename' )->with()->andReturn( 'cyr2lat/cyr-to-lat.php' );
 		$mock->shouldReceive( 'option_name' )->with()->andReturn( 'cyr_to_lat_settings' );
 
 		WP_Mock::expectActionAdded( 'in_admin_header', [ $mock, 'in_admin_header' ] );
 		WP_Mock::expectActionAdded( 'init', [ $mock, 'delayed_init_settings' ], PHP_INT_MAX );
 
-		$mock->init_hooks();
+		$mock->$method();
 	}
 
 	/**
@@ -200,7 +240,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
-		self::assertSame( $expected, $subject->get_convertible_post_types() );
+		self::assertSame( $expected, $subject::get_convertible_post_types() );
 	}
 
 	/**
@@ -286,8 +326,6 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test settings_page()
-	 *
-	 * @noinspection PhpUndefinedClassConstantInspection
 	 */
 	public function test_settings_page() {
 		$admin_url    = 'http://test.test/wp-admin/options.php';
@@ -425,7 +463,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'constant',
-			function ( $name ) use ( $plugin_url, $plugin_version ) {
+			static function ( $name ) use ( $plugin_url, $plugin_version ) {
 				if ( 'CYR_TO_LAT_URL' === $name ) {
 					return $plugin_url;
 				}

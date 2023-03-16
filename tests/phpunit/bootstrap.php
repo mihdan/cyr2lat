@@ -5,8 +5,10 @@
  * @package cyr-to-lat
  */
 
-// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
 /** @noinspection RealpathInStreamContextInspection */
+/** @noinspection PhpParamsInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 use tad\FunctionMocker\FunctionMocker;
 

@@ -8,6 +8,8 @@
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
 /** @noinspection PhpUndefinedMethodInspection */
 /** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
+/** @noinspection PhpUndefinedNamespaceInspection */
+/** @noinspection PhpUndefinedClassInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 // phpcs:disable WordPress.WP.AlternativeFunctions.json_encode_json_encode
@@ -119,12 +121,15 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test init_hooks().
+	 *
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_init_hooks() {
 		$plugin_base_name = 'cyr2lat/cyr-to-lat.php';
 		$option_name      = 'cyr_to_lat_settings';
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'plugin_basename' )->andReturn( $plugin_base_name );
 		$subject->shouldReceive( 'option_name' )->andReturn( $option_name );
 
@@ -158,9 +163,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_parent_slug() {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$method  = 'parent_slug';
 
-		$this->set_method_accessibility( $subject, 'parent_slug' );
-		self::assertSame( 'options-general.php', $subject->parent_slug() );
+		$this->set_method_accessibility( $subject, $method );
+		self::assertSame( 'options-general.php', $subject->$method() );
 	}
 
 	/**
@@ -173,11 +179,13 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_is_main_menu_page( $parent_slug, $expected ) {
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'parent_slug' )->once()->andReturn( $parent_slug );
+		$method = 'is_main_menu_page';
 
-		$this->set_method_accessibility( $subject, 'is_main_menu_page' );
-		self::assertSame( $expected, $subject->is_main_menu_page() );
+		$this->set_method_accessibility( $subject, $method );
+		self::assertSame( $expected, $subject->$method() );
 	}
 
 	/**
@@ -203,9 +211,11 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'get_class_name' )->with()->once()->andReturn( $class_name );
 
-		$this->set_method_accessibility( $subject, 'tab_name' );
+		$method = 'tab_name';
 
-		self::assertSame( $class_name, $subject->tab_name() );
+		$this->set_method_accessibility( $subject, $method );
+
+		self::assertSame( $class_name, $subject->$method() );
 	}
 
 	/**
@@ -216,8 +226,9 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_get_class_name() {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$method  = 'get_class_name';
 
-		$this->set_method_accessibility( $subject, 'get_class_name' );
+		$this->set_method_accessibility( $subject, $method );
 
 		if (
 			class_exists( Version::class ) &&
@@ -225,12 +236,12 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		) {
 			self::assertStringContainsString(
 				'Cyr_To_Lat_Settings_Abstracts_SettingsBase',
-				$subject->get_class_name()
+				$subject->$method()
 			);
 		} else {
 			self::assertContains(
 				'Cyr_To_Lat_Settings_Abstracts_SettingsBase',
-				$subject->get_class_name()
+				$subject->$method()
 			);
 		}
 	}
@@ -242,12 +253,13 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_is_tab() {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$method  = 'is_tab';
 
-		$this->set_method_accessibility( $subject, 'is_tab' );
-		self::assertTrue( $subject->is_tab() );
+		$this->set_method_accessibility( $subject, $method );
+		self::assertTrue( $subject->$method() );
 
 		$this->set_protected_property( $subject, 'tabs', [ 'some_array' ] );
-		self::assertFalse( $subject->is_tab() );
+		self::assertFalse( $subject->$method() );
 	}
 
 	/**
@@ -303,7 +315,12 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 			->andReturn( $form_fields_pluck );
 
 		$this->set_protected_property( $subject, 'settings', null );
-		$subject->init_settings();
+
+		$method = 'init_settings';
+
+		$this->set_method_accessibility( $subject, $method );
+
+		$subject->$method();
 
 		$expected = array_merge( array_fill_keys( array_keys( $form_fields ), '' ), $form_fields_pluck );
 		if ( is_array( $settings ) ) {
@@ -336,7 +353,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_form_fields( $form_fields, $expected ) {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$method  = 'form_fields';
+
 		$this->set_protected_property( $subject, 'form_fields', $form_fields );
+		$this->set_method_accessibility( $subject, $method );
 
 		if ( empty( $form_fields ) ) {
 			$subject->shouldReceive( 'init_form_fields' )->andReturnUsing(
@@ -346,7 +366,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 			)->once();
 		}
 
-		self::assertSame( $expected, $subject->form_fields() );
+		self::assertSame( $expected, $subject->$method() );
 	}
 
 	/**
@@ -637,10 +657,11 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$tab->shouldReceive( 'get_class_name' )->with()->andReturn( $class_name );
 
 		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$method  = 'is_tab_active';
 
 		FunctionMocker::replace(
 			'filter_input',
-			function ( $type, $name, $filter ) use ( $input ) {
+			static function ( $type, $name, $filter ) use ( $input ) {
 				if (
 					INPUT_GET === $type &&
 					'tab' === $name &&
@@ -653,7 +674,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		self::assertSame( $expected, $subject->is_tab_active( $tab ) );
+		self::assertSame( $expected, $subject->$method( $tab ) );
 	}
 
 	/**
@@ -694,15 +715,18 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$tab = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$method  = 'get_active_tab';
+
 		$subject->shouldReceive( 'is_tab_active' )->with( $tab )->andReturn( true );
+		$this->set_method_accessibility( $subject, $method );
 
 		$this->set_protected_property( $subject, 'tabs', [] );
-		self::assertSame( $subject, $subject->get_active_tab() );
+		self::assertSame( $subject, $subject->$method() );
 
 		$this->set_protected_property( $subject, 'tabs', [ $tab ] );
 		self::assertSame(
 			json_encode( $tab ),
-			json_encode( $subject->get_active_tab() )
+			json_encode( $subject->$method() )
 		);
 	}
 
@@ -1417,11 +1441,15 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 * @param string $expected Expected result.
 	 *
 	 * @dataProvider dp_test_field_default
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_field_default( array $field, $expected ) {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$method  = 'field_default';
 
-		self::assertSame( $expected, $subject->field_default( $field ) );
+		$this->set_method_accessibility( $subject, $method );
+
+		self::assertSame( $expected, $subject->$method( $field ) );
 	}
 
 	/**
@@ -1652,13 +1680,17 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 * @param boolean $expected          Expected result.
 	 *
 	 * @dataProvider dp_test_is_options_screen
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_is_options_screen( $current_screen, $is_main_menu_page, $expected ) {
 		$screen_id      = 'settings_page_cyr-to-lat';
 		$main_screen_id = 'toplevel_page_cyr-to-lat';
 
 		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$method  = 'is_options_screen';
+
 		$subject->shouldReceive( 'is_main_menu_page' )->once()->andReturn( $is_main_menu_page );
+		$this->set_method_accessibility( $subject, $method );
 
 		if ( $is_main_menu_page ) {
 			$subject->shouldReceive( 'screen_id' )->andReturn( $main_screen_id );
@@ -1668,7 +1700,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 
 		WP_Mock::userFunction( 'get_current_screen' )->with()->once()->andReturn( $current_screen );
 
-		self::assertSame( $expected, $subject->is_options_screen() );
+		self::assertSame( $expected, $subject->$method() );
 	}
 
 	/**
@@ -1688,6 +1720,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test is_options_screen() when get_current_screen() does not exist.
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_is_options_screen_when_get_current_screen_does_not_exist() {
 		FunctionMocker::replace(
@@ -1698,7 +1732,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		);
 
 		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$method  = 'is_options_screen';
 
-		self::assertFalse( $subject->is_options_screen() );
+		$this->set_method_accessibility( $subject, $method );
+
+		self::assertFalse( $subject->$method() );
 	}
 }
