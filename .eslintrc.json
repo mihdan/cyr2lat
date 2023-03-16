@@ -11,7 +11,7 @@
     "sourceType": "module"
   },
   "ignorePatterns": [
-    "assets/js/**/app.js",
+    "assets/js/apps/*.js",
     "assets/js/*.min.js"
   ]
 }
