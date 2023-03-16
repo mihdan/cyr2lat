@@ -12,6 +12,5 @@ vendor/
 .phpcs.cache
 .phpunit.result.cache
 .pnp.*
-.yarnrc.yml
 Thumbs.db
 coverage.*
