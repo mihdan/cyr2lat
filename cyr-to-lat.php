@@ -22,7 +22,7 @@
  *
  *
  * WC requires at least: 3.0
- * WC tested up to:      7.2
+ * WC tested up to:      7.5
  */
 
 namespace Cyr_To_Lat;
