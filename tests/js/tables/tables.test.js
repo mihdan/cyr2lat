@@ -249,6 +249,9 @@ describe( 'Tables', () => {
 
 		jest.useFakeTimers();
 
+		const setTimeout = jest.spyOn( global, 'setTimeout' );
+		const clearTimeout = jest.spyOn( global, 'clearTimeout' );
+
 		expect( successMessage.innerHTML ).toBe( '' );
 		expect( successMessage.classList.contains( 'active' ) ).toBe( false );
 
@@ -263,16 +266,16 @@ describe( 'Tables', () => {
 		expect( errorMessage.innerHTML ).toBe( 'Error.' );
 		expect( errorMessage.classList.contains( 'active' ) ).toBe( true );
 
+		jest.runAllTimers();
+
+		expect( successMessage.innerHTML ).toBe( '' );
+		expect( errorMessage.innerHTML ).toBe( '' );
+
 		expect( setTimeout ).toHaveBeenCalledTimes( 2 );
 		expect( setTimeout ).toHaveBeenCalledWith(
 			expect.any( Function ),
 			5000
 		);
-
-		jest.runAllTimers();
-
-		expect( successMessage.innerHTML ).toBe( '' );
-		expect( errorMessage.innerHTML ).toBe( '' );
 
 		expect( clearTimeout ).toHaveBeenCalledTimes( 1 );
 		expect( clearTimeout ).toHaveBeenCalledWith( tables.msgTimer );

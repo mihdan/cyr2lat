@@ -11,7 +11,10 @@
   "jest": {
     "automock": false,
     "verbose": true,
-    "testURL": "http://domain.tld/",
+    "testEnvironment": "jsdom",
+    "testEnvironmentOptions": {
+      "url": "http://domain.tld/"
+    },
     "setupFiles": [
       "<rootDir>/tests/js/setupTests.js"
     ],
@@ -24,7 +27,7 @@
         {
           "presets": [
             [
-              "babel-preset-env",
+              "@babel/preset-env",
               {
                 "targets": {
                   "node": 10
@@ -54,6 +57,7 @@
     "eslint": "^8.36.0",
     "glob": "^9.3.0",
     "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
     "jest-fetch-mock": "^3.0.3",
     "mini-css-extract-plugin": "^2.7.3",
     "terser-webpack-plugin": "^5.3.7",
