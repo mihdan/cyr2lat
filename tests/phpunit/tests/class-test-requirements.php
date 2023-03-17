@@ -60,7 +60,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'function_exists',
-			function ( $arg ) {
+			static function ( $arg ) {
 				return 'WP_Filesystem' === $arg;
 			}
 		);
@@ -112,7 +112,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'function_exists',
-			function ( $arg ) {
+			static function ( $arg ) {
 				return 'WP_Filesystem' === $arg;
 			}
 		);
@@ -145,7 +145,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'function_exists',
-			function ( $arg ) {
+			static function ( $arg ) {
 				return 'WP_Filesystem' === $arg;
 			}
 		);
@@ -190,7 +190,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'function_exists',
-			function ( $arg ) {
+			static function ( $arg ) {
 				return 'WP_Filesystem' === $arg;
 			}
 		);
@@ -292,21 +292,21 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'function_exists',
-			function ( $arg ) {
+			static function ( $arg ) {
 				return 'WP_Filesystem' === $arg;
 			}
 		);
 
 		FunctionMocker::replace(
 			'realpath',
-			function ( $arg ) {
+			static function ( $arg ) {
 				return $arg;
 			}
 		);
 
 		FunctionMocker::replace(
 			'time',
-			function () use ( $time ) {
+			static function () use ( $time ) {
 				return $time;
 			}
 		);
@@ -320,7 +320,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'ini_get',
-			function ( $arg ) use ( $max_input_vars, $user_ini_filename, $ini_ttl ) {
+			static function ( $arg ) use ( $max_input_vars, $user_ini_filename, $ini_ttl ) {
 				switch ( $arg ) {
 					case 'max_input_vars':
 						return $max_input_vars;
@@ -394,7 +394,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'function_exists',
-			function ( $arg ) {
+			static function ( $arg ) {
 				return 'WP_Filesystem' === $arg;
 			}
 		);
@@ -408,7 +408,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'ini_get',
-			function ( $arg ) use ( $max_input_vars, $user_ini_filename, $ini_ttl ) {
+			static function ( $arg ) use ( $max_input_vars, $user_ini_filename, $ini_ttl ) {
 				switch ( $arg ) {
 					case 'max_input_vars':
 						return $max_input_vars;
@@ -459,7 +459,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'function_exists',
-			function ( $arg ) {
+			static function ( $arg ) {
 				return 'WP_Filesystem' === $arg;
 			}
 		);
@@ -491,7 +491,7 @@ class Test_Requirements extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'function_exists',
-			function ( $arg ) {
+			static function ( $arg ) {
 				return 'WP_Filesystem' === $arg;
 			}
 		);

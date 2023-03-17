@@ -53,7 +53,7 @@ class Test_Cyr_To_Lat_Plugin_File extends Cyr_To_Lat_TestCase {
 
 		$defined = FunctionMocker::replace(
 			'defined',
-			function ( $name ) {
+			static function ( $name ) {
 				static $version_defined = false;
 
 				if ( 'ABSPATH' === $name ) {
@@ -78,7 +78,7 @@ class Test_Cyr_To_Lat_Plugin_File extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'constant',
-			function ( $name ) {
+			static function ( $name ) {
 				if ( 'CYR_TO_LAT_FILE' === $name ) {
 					return PLUGIN_MAIN_FILE;
 				}

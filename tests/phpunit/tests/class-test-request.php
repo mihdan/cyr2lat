@@ -10,6 +10,7 @@
 namespace Cyr_To_Lat;
 
 use Mockery;
+use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
 
@@ -43,7 +44,6 @@ class Test_Request extends Cyr_To_Lat_TestCase {
 	 * @param bool $expected Expected.
 	 *
 	 * @dataProvider dp_test_is_frontend
-	 * @noinspection PhpUndefinedMethodInspection
 	 */
 	public function test_is_frontend( $ajax, $admin, $cli, $rest, $expected ) {
 		WP_Mock::userFunction( 'wp_doing_ajax' )->with()->andReturn( $ajax );
@@ -133,14 +133,14 @@ class Test_Request extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'defined',
-			function ( $constant_name ) {
+			static function ( $constant_name ) {
 				return 'REST_REQUEST' === $constant_name;
 			}
 		);
 
 		FunctionMocker::replace(
 			'constant',
-			function ( $name ) {
+			static function ( $name ) {
 				return 'REST_REQUEST' === $name;
 			}
 		);
@@ -158,7 +158,7 @@ class Test_Request extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'filter_input',
-			function ( $type, $var_name, $filter ) {
+			static function ( $type, $var_name, $filter ) {
 				return (
 					INPUT_GET === $type &&
 					'rest_route' === $var_name &&
@@ -172,8 +172,6 @@ class Test_Request extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test is_rest(), case 3 and 4.
-	 *
-	 * @noinspection PhpUndefinedMethodInspection
 	 */
 	public function test_is_rest_case_3_and_4() {
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -204,7 +202,8 @@ class Test_Request extends Cyr_To_Lat_TestCase {
 	 * @param string $expected     Expected.
 	 *
 	 * @dataProvider dp_test_get_rest_route
-	 * @noinspection PhpUndefinedMethodInspection
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_get_rest_route( $current_path, $expected ) {
 		$current_url = 'https://test.test' . $current_path;
@@ -224,8 +223,11 @@ class Test_Request extends Cyr_To_Lat_TestCase {
 		WP_Mock::userFunction( 'wp_parse_url' )->with( $rest_url, PHP_URL_PATH )->andReturn( $rest_path );
 
 		$subject = Mockery::mock( Request::class )->makePartial();
+		$method  = 'get_rest_route';
 
-		self::assertSame( $expected, $subject->get_rest_route() );
+		$this->set_method_accessibility( $subject, $method );
+
+		self::assertSame( $expected, $subject->$method() );
 	}
 
 	/**

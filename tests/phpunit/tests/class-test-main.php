@@ -6,6 +6,7 @@
  */
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUndefinedNamespaceInspection */
 /** @noinspection PhpUndefinedClassInspection */
 /** @noinspection PhpUndefinedMethodInspection */
 /** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
@@ -148,6 +149,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Test init() with CLI when CLI throws an Exception
 	 *
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection ThrowRawExceptionInspection
 	 */
 	public function test_init_with_cli_error() {
 		$request = Mockery::mock( Request::class );
@@ -202,6 +204,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 *
 	 * @dataProvider dp_test_init_hooks
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_init_hooks( $polylang, $sitepress, $frontend ) {
 		$wpml_locale = 'en_US';
@@ -648,7 +651,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @param string $expected Expected result.
 	 *
 	 * @throws ReflectionException ReflectionException.
-	 *
 	 * @dataProvider dp_test_split_chinese_string
 	 */
 	public function test_split_chinese_string( $string, $expected ) {
@@ -660,9 +662,12 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
+		$method  = 'split_chinese_string';
+
+		$this->set_method_accessibility( $subject, $method );
 		$this->set_protected_property( $subject, 'settings', $settings );
 
-		self::assertSame( $expected, $subject->split_chinese_string( $string, $table ) );
+		self::assertSame( $expected, $subject->$method( $string, $table ) );
 	}
 
 	/**
@@ -986,8 +991,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test pll_locale_filter() on frontend.
-	 *
-	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pll_locale_filter_on_frontend() {
 		$locale = 'en_US';
@@ -1154,7 +1157,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Test pll_locale_filter() with term.
 	 *
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection PhpUndefinedFieldInspection
+	 * @noinspection PhpDynamicFieldDeclarationInspection
 	 */
 	public function test_pll_locale_filter_with_term() {
 		$locale           = 'en_US';
@@ -1223,14 +1226,13 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test get_wpml_locale().
 	 *
-	 * @param string $locale        Current locale.
 	 * @param string $language_code Current language code.
 	 * @param string $expected      Expected.
 	 *
 	 * @dataProvider dp_test_wpml_locale_filter
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_get_wpml_locale( $locale, $language_code, $expected ) {
+	public function test_get_wpml_locale( $language_code, $expected ) {
 		$languages = [
 			'be' =>
 				[
@@ -1290,10 +1292,13 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		WP_Mock::onFilter( 'wpml_active_languages' )->with( [] )->reply( $languages );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
+		$method  = 'get_wpml_locale';
+
+		$this->set_method_accessibility( $subject, $method );
 
 		self::assertNull( $this->get_protected_property( $subject, 'wpml_languages' ) );
 
-		self::assertSame( $expected, $subject->get_wpml_locale( $locale ) );
+		self::assertSame( $expected, $subject->$method() );
 
 		self::assertSame( $languages, $this->get_protected_property( $subject, 'wpml_languages' ) );
 	}
@@ -1305,8 +1310,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_wpml_locale_filter() {
 		return [
-			'Existing language code, return from wpml' => [ 'en_US', 'ru', 'ru_RU' ],
-			'Not existing language code, return null'  => [ 'en_US', 'some', null ],
+			'Existing language code, return from wpml' => [ 'ru', 'ru_RU' ],
+			'Not existing language code, return null'  => [ 'some', null ],
 		];
 	}
 

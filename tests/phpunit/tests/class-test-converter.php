@@ -106,8 +106,6 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$process_all_terms = Mockery::mock( Term_Conversion_Process::class )->shouldAllowMockingProtectedMethods();
 		$admin_notices     = Mockery::mock( Admin_Notices::class );
 
-		// phpcs:disable Generic.Commenting.DocComment.MissingShort
-		/** @noinspection PhpParamsInspection */
 		$subject = new Converter(
 			$main,
 			$settings,
@@ -412,15 +410,18 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 	 * @param boolean $debug Is WP_DEBUG_LOG on.
 	 *
 	 * @dataProvider        dp_test_log
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_log( $debug ) {
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
-
 		$message = 'Test message';
+		$method  = 'log';
+
+		$this->set_method_accessibility( $subject, $method );
 
 		FunctionMocker::replace(
 			'defined',
-			function ( $name ) use ( $debug ) {
+			static function ( $name ) use ( $debug ) {
 				if ( 'WP_DEBUG_LOG' === $name ) {
 					return $debug;
 				}
@@ -431,7 +432,7 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'constant',
-			function ( $name ) use ( $debug ) {
+			static function ( $name ) use ( $debug ) {
 				if ( 'WP_DEBUG_LOG' === $name ) {
 					return $debug;
 				}
@@ -443,12 +444,12 @@ class Test_Converter extends Cyr_To_Lat_TestCase {
 		$log = [];
 		FunctionMocker::replace(
 			'error_log',
-			function ( $message ) use ( &$log ) {
+			static function ( $message ) use ( &$log ) {
 				$log[] = $message;
 			}
 		);
 
-		$subject->log( $message );
+		$subject->$method( $message );
 		if ( $debug ) {
 			self::assertSame( [ 'Cyr To Lat: ' . $message ], $log );
 		} else {

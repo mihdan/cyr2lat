@@ -43,6 +43,8 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 	 * @param string $transliterated_slug Sanitized term slug.
 	 *
 	 * @dataProvider dp_test_task
+	 * @throws ReflectionException ReflectionException.
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_task( $term_slug, $transliterated_slug ) {
 		global $wpdb;
@@ -73,6 +75,10 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( Term_Conversion_Process::class, [ $main ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();
 
+		$method = 'task';
+
+		$this->set_method_accessibility( $subject, $method );
+
 		WP_Mock::expectFilterAdded(
 			'locale',
 			[ $subject, 'filter_term_locale' ]
@@ -91,7 +97,7 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 				->with( 'Term slug converted: ' . $term->slug . ' => ' . $transliterated_slug )->once();
 		}
 
-		self::assertFalse( $subject->task( $term ) );
+		self::assertFalse( $subject->$method( $term ) );
 	}
 
 	/**
@@ -106,10 +112,16 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test complete()
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_complete() {
 		$subject = Mockery::mock( Term_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'log' )->with( 'Term slugs conversion completed.' )->once();
+
+		$method = 'complete';
+
+		$this->set_method_accessibility( $subject, $method );
 
 		WP_Mock::userFunction(
 			'wp_cache_flush',
@@ -134,7 +146,7 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		$subject->complete();
+		$subject->$method();
 	}
 
 	/**
@@ -162,7 +174,7 @@ class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'class_exists',
-			function ( $class ) {
+			static function ( $class ) {
 				return 'Polylang' === $class;
 			}
 		);

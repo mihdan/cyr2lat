@@ -45,6 +45,8 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 	 * @param string $transliterated_name Sanitized post name.
 	 *
 	 * @dataProvider dp_test_task
+	 * @throws ReflectionException ReflectionException.
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_task( $post_name, $transliterated_name ) {
 		global $wpdb;
@@ -82,6 +84,9 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();
+		$method  = 'task';
+
+		$this->set_method_accessibility( $subject, $method );
 
 		WP_Mock::expectFilterAdded(
 			'locale',
@@ -103,7 +108,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 				->once();
 		}
 
-		self::assertFalse( $subject->task( $post ) );
+		self::assertFalse( $subject->$method( $post ) );
 	}
 
 	/**
@@ -124,6 +129,8 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 	 * @param string $transliterated_name Sanitized post name.
 	 *
 	 * @dataProvider dp_test_task_for_attachment
+	 * @throws ReflectionException ReflectionException.
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_task_for_attachment( $post_name, $transliterated_name ) {
 		global $wpdb;
@@ -139,6 +146,9 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();
+		$method  = 'task';
+
+		$this->set_method_accessibility( $subject, $method );
 
 		if ( $transliterated_name !== $post->post_name ) {
 			WP_Mock::userFunction(
@@ -189,7 +199,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 				->once();
 		}
 
-		self::assertFalse( $subject->task( $post ) );
+		self::assertFalse( $subject->$method( $post ) );
 	}
 
 	/**
@@ -204,6 +214,8 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test rename_attachment() when no attachment file exists
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_rename_attachment_when_no_file() {
 		$post_id = 5;
@@ -215,8 +227,11 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 			->shouldReceive( 'log' )
 			->with( 'Cannot convert attachment file for attachment id: ' . $post_id )
 			->once();
+		$method = 'rename_attachment';
 
-		$subject->rename_attachment( $post_id );
+		$this->set_method_accessibility( $subject, $method );
+
+		$subject->$method( $post_id );
 	}
 
 	/**
@@ -226,6 +241,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 	 * @param bool $updated Result of update_attached_file().
 	 *
 	 * @dataProvider dp_test_rename_attachment
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_rename_attachment( $rename, $updated ) {
 		$post_id             = 5;
@@ -237,6 +253,10 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'get_transliterated_file' )->with( $file )->once()->andReturn( $transliterated_file );
 		$subject->shouldReceive( 'rename_file' )->with( $file, $transliterated_file )->once()->andReturn( $rename );
+
+		$method = 'rename_attachment';
+
+		$this->set_method_accessibility( $subject, $method );
 
 		if ( $rename ) {
 			WP_Mock::userFunction( 'update_attached_file' )->with( $post_id, $transliterated_file )
@@ -251,7 +271,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 				->with( 'Attachment file converted: ' . $file . ' => ' . $transliterated_file )->once();
 		}
 
-		$subject->rename_attachment( $post_id );
+		$subject->$method( $post_id );
 	}
 
 	/**
@@ -269,6 +289,8 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test rename_thumbnails()
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_rename_thumbnails() {
 		$post_id = 5;
@@ -305,7 +327,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 		FunctionMocker::replace(
 			'constant',
-			function ( $name ) use ( $abspath ) {
+			static function ( $name ) use ( $abspath ) {
 				if ( 'ABSPATH' === $name ) {
 					return $abspath;
 				}
@@ -349,11 +371,17 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 		$subject->shouldReceive( 'log' )
 			->with( 'Cannot rename thumbnail file: ' . $large_file )->once();
 
-		$subject->rename_thumbnails( $post_id );
+		$method = 'rename_thumbnails';
+
+		$this->set_method_accessibility( $subject, $method );
+
+		$subject->$method( $post_id );
 	}
 
 	/**
 	 * Test update_attachment_metadata()
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_update_attachment_metadata() {
 		$attachment_id       = 5;
@@ -391,15 +419,20 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();
+		$method  = 'update_attachment_metadata';
+
+		$this->set_method_accessibility( $subject, $method );
 
 		WP_Mock::userFunction( 'wp_get_attachment_metadata' )->with( $attachment_id )->once()->andReturn( $meta );
 		WP_Mock::userFunction( 'wp_update_attachment_metadata' )->with( $attachment_id, $transliterated_meta )->once();
 
-		$subject->update_attachment_metadata( $attachment_id );
+		$subject->$method( $attachment_id );
 	}
 
 	/**
 	 * Test get_transliterated_file()
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_get_transliterated_file() {
 		$file                = '/var/www/test/wp-content/uploads/2020/05/Скамейка.jpg';
@@ -410,12 +443,17 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();
+		$method  = 'get_transliterated_file';
 
-		self::assertSame( $transliterated_file, $subject->get_transliterated_file( $file ) );
+		$this->set_method_accessibility( $subject, $method );
+
+		self::assertSame( $transliterated_file, $subject->$method( $file ) );
 	}
 
 	/**
 	 * Test rename_file()
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_rename_file() {
 		$file     = '/var/www/test/wp-content/uploads/2020/05/Скамейка.jpg';
@@ -423,24 +461,33 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 
 		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()
 			->shouldAllowMockingProtectedMethods();
+		$method  = 'rename_file';
+
+		$this->set_method_accessibility( $subject, $method );
 
 		FunctionMocker::replace(
 			'rename',
-			function ( $oldname, $newname ) use ( $file, $new_file ) {
-				return $oldname === $file && $newname === $new_file;
+			static function ( $old_name, $new_name ) use ( $file, $new_file ) {
+				return $old_name === $file && $new_name === $new_file;
 			}
 		);
 
-		self::assertNull( $subject->rename_file( $file, $file ) );
-		self::assertTrue( $subject->rename_file( $file, $new_file ) );
+		self::assertNull( $subject->$method( $file, $file ) );
+		self::assertTrue( $subject->$method( $file, $new_file ) );
 	}
 
 	/**
 	 * Test complete()
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_complete() {
 		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'log' )->with( 'Post slugs conversion completed.' )->once();
+
+		$method = 'complete';
+
+		$this->set_method_accessibility( $subject, $method );
 
 		WP_Mock::userFunction(
 			'wp_cache_flush',
@@ -465,7 +512,7 @@ class Test_Post_Conversion_Process extends Cyr_To_Lat_TestCase {
 			]
 		);
 
-		$subject->complete();
+		$subject->$method();
 	}
 
 	/**

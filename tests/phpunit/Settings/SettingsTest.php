@@ -6,6 +6,8 @@
  */
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUndefinedNamespaceInspection */
+/** @noinspection PhpUndefinedClassInspection */
 /** @noinspection PhpUndefinedMethodInspection */
 /** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
@@ -58,6 +60,9 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_init_and_screen_ids() {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$method  = 'init';
+
+		$this->set_method_accessibility( $subject, $method );
 
 		$tables    = Mockery::mock( 'overload:' . Tables::class );
 		$converter = Mockery::mock( 'overload:' . Converter::class )->makePartial();
@@ -66,7 +71,7 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 
 		$expected = [ $tables ];
 
-		$subject->init();
+		$subject->$method();
 		$menu_pages = $this->get_protected_property( $subject, 'menu_pages' );
 		self::assertSame(
 			json_encode( $expected ),
@@ -210,13 +215,17 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 	 * @param array  $table             Conversion table.
 	 * @param array  $expected          Expected result.
 	 *
+	 * @throws ReflectionException ReflectionException.
 	 * @dataProvider dp_test_transpose_chinese_table
 	 */
 	public function test_transpose_chinese_table( $is_chinese_locale, $table, $expected ) {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_chinese_locale' )->andReturn( $is_chinese_locale );
+		$method = 'transpose_chinese_table';
 
-		self::assertSame( $expected, $subject->transpose_chinese_table( $table ) );
+		$this->set_method_accessibility( $subject, $method );
+
+		self::assertSame( $expected, $subject->$method( $table ) );
 	}
 
 	/**
