@@ -788,6 +788,58 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
+	 * Test min_suffix().
+	 *
+	 * @param bool   $defined      Constant defined.
+	 * @param bool   $script_debug Constant value.
+	 * @param string $expected     Expected.
+	 *
+	 * @return void
+	 * @dataProvider dp_test_min_suffix
+	 */
+	public function test_min_suffix( $defined, $script_debug, $expected ) {
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		FunctionMocker::replace(
+			'defined',
+			static function( $constant_name ) use ( $defined ) {
+				if ( 'SCRIPT_DEBUG' === $constant_name ) {
+					return $defined;
+				}
+
+				return false;
+			}
+		);
+
+		FunctionMocker::replace(
+			'constant',
+			static function( $name ) use ( $script_debug ) {
+				if ( 'SCRIPT_DEBUG' === $name ) {
+					return $script_debug;
+				}
+
+				return false;
+			}
+		);
+
+		self::assertSame( $expected, $subject->min_suffix() );
+	}
+
+	/**
+	 * Data provider for test_min_suffix().
+	 *
+	 * @return array[]
+	 */
+	public function dp_test_min_suffix() {
+		return [
+			[ false, false, '.min' ],
+			[ false, true, '.min' ],
+			[ true, false, '.min' ],
+			[ true, true, '' ],
+		];
+	}
+
+	/**
 	 * Test that sanitize_post_name() does nothing if no Block/Gutenberg editor is active
 	 */
 	public function test_sanitize_post_name_without_gutenberg() {
