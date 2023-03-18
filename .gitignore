@@ -9,6 +9,7 @@ tests/**/*.cache
 vendor/
 
 *.lock
+!yarn.lock
 .DS_Store
 .phpcs.cache
 .phpunit.result.cache
