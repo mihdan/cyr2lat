@@ -13,6 +13,7 @@ use Mockery;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
+use function PHPUnit\Framework\assertSame;
 
 /**
  * Class Test_Request
@@ -32,6 +33,44 @@ class Test_Request extends Cyr_To_Lat_TestCase {
 		unset( $_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], $GLOBALS['wp_rewrite'] );
 
 		parent::tearDown();
+	}
+
+	/**
+	 * Test is_allowed().
+	 *
+	 * @param bool $frontend Is frontend.
+	 * @param bool $post     Is POST.
+	 * @param bool $cli      Is CLI.
+	 * @param bool $expected Expected value.
+	 *
+	 * @return void
+	 * @dataProvider dp_test_is_allowed
+	 */
+	public function test_is_allowed( $frontend, $post, $cli, $expected ) {
+		$subject = Mockery::mock( Request::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'is_frontend' )->with()->andReturn( $frontend );
+		$subject->shouldReceive( 'is_post' )->with()->andReturn( $post );
+		$subject->shouldReceive( 'is_cli' )->with()->andReturn( $cli );
+
+		self::assertSame( $expected, $subject->is_allowed() );
+	}
+
+	/**
+	 * Data provider for test_is_allowed().
+	 *
+	 * @return array
+	 */
+	public function dp_test_is_allowed() {
+		return [
+			[ false, false, false, true ],
+			[ false, false, true, true ],
+			[ false, true, false, true ],
+			[ false, true, true, true ],
+			[ true, false, false, false ],
+			[ true, false, true, true ],
+			[ true, true, false, true ],
+			[ true, true, true, true ],
+		];
 	}
 
 	/**
