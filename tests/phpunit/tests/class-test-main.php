@@ -132,6 +132,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test init()
 	 *
+	 * @param bool $allowed Plugin is allowed to work.
+	 *
 	 * @dataProvider dp_test_init
 	 * @throws ReflectionException ReflectionException.
 	 */
