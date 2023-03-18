@@ -131,7 +131,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 
 		$this->set_method_accessibility( $subject, $method );
 
-		self::assertSame( '', $subject->$method() );
+		self::assertSame( 'converter', $subject->$method() );
 	}
 
 	/**
@@ -348,7 +348,11 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 			<h1>
 				Cyr To Lat Plugin Options			</h1>
 
-			<form id="ctl-options" action="' . $admin_url . '" method="post">
+			<form
+				id="ctl-options"
+				class="ctl-converter"
+				action="http://test.test/wp-admin/options.php"
+				method="post">
 							</form>
 
 			<form id="ctl-convert-existing-slugs" action="" method="post">
