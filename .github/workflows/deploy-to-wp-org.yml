@@ -29,7 +29,10 @@ jobs:
       - name: Install dependencies in prod version
         run: |
           composer config github-oauth.github.com ${{ secrets.GITHUB_TOKEN }}
-          make install-prod
+          composer install --no-dev
+          yarn set version stable
+          yarn
+          yarn run prod
         env:
           COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

@@ -15,6 +15,19 @@ use WP_Rewrite;
 class Request {
 
 	/**
+	 * Is allowed request for plugin to work.
+	 *
+	 * @return bool
+	 */
+	public function is_allowed() {
+		return (
+			! $this->is_frontend() ||
+			( $this->is_frontend() && $this->is_post() ) ||
+			$this->is_cli()
+		);
+	}
+
+	/**
 	 * Is frontend.
 	 *
 	 * @return bool

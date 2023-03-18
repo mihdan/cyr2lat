@@ -59,7 +59,7 @@ class Tables {
 	/**
 	 * Get active header.
 	 *
-	 * @return {Element} Active header.
+	 * @return {HTMLBaseElement} Active header.
 	 */
 	getActiveHeader() {
 		return document.querySelector(
@@ -385,7 +385,7 @@ class Tables {
 
 		this.getHeaders().map( ( header, index ) => {
 			header.classList.add( 'nav-tab' );
-			header.dataset.index = index;
+			header.dataset.index = index.toString();
 
 			this.wrapper.appendChild( header );
 			if ( index === currentIndex ) {
@@ -412,6 +412,7 @@ class Tables {
 					return false;
 				}
 
+				// noinspection JSIgnoredPromiseFromCall
 				this.saveActiveTable();
 
 				headers.map( ( aHeader ) => {
@@ -479,6 +480,7 @@ class Tables {
 
 		this.submitButton.onclick = ( event ) => {
 			event.preventDefault();
+			// noinspection JSIgnoredPromiseFromCall
 			this.saveActiveTable();
 			return false;
 		};
@@ -561,8 +563,8 @@ class Tables {
 	/**
 	 * Replace input name according to the new label value.
 	 *
-	 * @param {Element} input Input
-	 * @param {string} newValue New label value
+	 * @param {Element} input    Input
+	 * @param {string}  newValue New label value
 	 */
 	replaceName( input, newValue ) {
 		// noinspection JSUnresolvedVariable
@@ -594,8 +596,8 @@ class Tables {
 	/**
 	 * Show message.
 	 *
-	 * @param {HTMLDivElement} el Element.
-	 * @param {string} message Message.
+	 * @param {HTMLDivElement} el      Element.
+	 * @param {string}         message Message.
 	 */
 	showMessage( el, message ) {
 		el.innerHTML = message;

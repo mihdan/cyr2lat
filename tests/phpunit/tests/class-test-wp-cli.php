@@ -31,7 +31,6 @@ class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 	 * @param array $convert_params Params for conversion of existing slugs.
 	 *
 	 * @dataProvider        dp_test_regenerate
-	 * @noinspection        PhpUndefinedMethodInspection
 	 * @noinspection        PhpRedundantOptionalArgumentInspection
 	 */
 	public function test_regenerate( $args, $assoc_args, $convert_params ) {
@@ -87,8 +86,6 @@ class Test_WP_CLI extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test make_progress_bar()
-	 *
-	 * @noinspection PhpUndefinedMethodInspection
 	 */
 	public function test_make_progress_bar() {
 		$converter = Mockery::mock( Converter::class );

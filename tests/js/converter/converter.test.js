@@ -1,3 +1,5 @@
+// noinspection JSUnresolvedFunction,JSUnresolvedVariable
+
 import Converter from '../../../src/js/converter/converter.js';
 
 function getConverter() {

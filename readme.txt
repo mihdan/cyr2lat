@@ -2,8 +2,8 @@
 Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
-Tested up to: 6.1
-Stable tag: 5.4.0
+Tested up to: 6.2
+Stable tag: 5.5.0
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -15,7 +15,7 @@ Convert Non-Latin characters in post, page and term slugs to Latin characters.
 Converts Cyrillic characters in post, page and term slugs to Latin characters. Useful for creating human-readable URLs.
 
 = Features =
-* The only plugin with fully editable transliteration table. Allows add/remove and edit pairs like 'Я' => 'Ya', or even 'Пиво' => 'Beer'
+* The only plugin with fully editable transliteration table. Allows to add/remove and edit pairs like 'Я' => 'Ya', or even 'Пиво' => 'Beer'
 * Converts any number of existing post, page and term slugs in background processes
 * Saves existing post and page permalinks integrity
 * Performs transliteration of attachment file names
@@ -194,6 +194,13 @@ Yes you can!
 
 == Changelog ==
 
+= 5.5.0 (18.03.2023) =
+* Tested with WordPress 6.2.
+* Tested with WooCommerce 7.5.
+* Improved performance of Tables settings page.
+* Fixed showing posts by tags on the frontend.
+* Fixed showing non-transliterated cyrillic tags on the backend.
+
 = 5.4.0 (15.12.2022) =
 * Tested with WordPress 6.1 and WooCommerce 7.2.
 * Added compatibility with WC High-Performance order storage (COT) feature.
@@ -323,7 +330,7 @@ Yes you can!
 * Tables sorted by local alphabets
 
 = 4.3.2 (29.12.2019) =
-* Fixed problems with setting of max_input_vars on some hostings
+* Fixed problems with setting of max_input_vars on some hosting
 
 = 4.3.1 (27.12.2019) =
 * Added requirement to have max_input_vars >= 5000

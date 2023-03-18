@@ -161,6 +161,10 @@ class Main {
 	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function init() {
+		if ( ! $this->request->is_allowed() ) {
+			return;
+		}
+
 		if ( $this->request->is_cli() ) {
 			try {
 				/**
@@ -220,12 +224,12 @@ class Main {
 	public function sanitize_title( $title, $raw_title = '', $context = '' ) {
 		global $wpdb;
 
-		if ( ! $title ) {
-			return $title;
-		}
-
-		// Fixed bug with `_wp_old_slug` redirect.
-		if ( 'query' === $context ) {
+		if (
+			! $title ||
+			// Fixed bug with `_wp_old_slug` redirect.
+			'query' === $context ||
+			doing_filter( 'pre_term_slug' )
+		) {
 			return $title;
 		}
 
@@ -248,8 +252,8 @@ class Main {
 			$sql = $wpdb->prepare(
 				"SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.name = %s",
-				$title
+							WHERE t.slug = %s",
+				rawurlencode( $title )
 			);
 
 			if ( $this->taxonomies ) {
@@ -275,6 +279,7 @@ class Main {
 	 * @param string $title Title.
 	 *
 	 * @return bool
+	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	protected function is_wc_attribute_taxonomy( $title ) {
 		if ( ! function_exists( 'wc_get_attribute_taxonomies' ) ) {
@@ -315,6 +320,15 @@ class Main {
 		}
 
 		return $this->transliterate( $filename );
+	}
+
+	/**
+	 * Get min suffix.
+	 *
+	 * @return string
+	 */
+	public function min_suffix() {
+		return defined( 'SCRIPT_DEBUG' ) && constant( 'SCRIPT_DEBUG' ) ? '' : '.min';
 	}
 
 	/**
@@ -554,6 +568,11 @@ class Main {
 			return null;
 		}
 
+		/**
+		 * REST Server.
+		 *
+		 * @var WP_REST_Server $rest_server
+		 */
 		$rest_server = rest_get_server();
 		$data        = json_decode( $rest_server::get_raw_data(), false );
 		if ( isset( $data->lang ) ) {
@@ -567,6 +586,7 @@ class Main {
 	 * Locale filter for Polylang with classic editor.
 	 *
 	 * @return bool|string
+	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	private function pll_locale_filter_with_classic_editor() {
 		if ( ! function_exists( 'pll_get_post_language' ) ) {
@@ -605,6 +625,7 @@ class Main {
 	 * Locale filter for Polylang with term.
 	 *
 	 * @return false|string
+	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	private function pll_locale_filter_with_term() {
 		if ( ! function_exists( 'PLL' ) ) {
@@ -648,6 +669,7 @@ class Main {
 	 * Get wpml locale.
 	 *
 	 * @return string|null
+	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	protected function get_wpml_locale() {
 		$language_code        = wpml_get_current_language();

@@ -93,7 +93,7 @@ class Tables extends PluginSettingsBase {
 	 * @return string
 	 */
 	protected function section_title() {
-		return '';
+		return 'tables';
 	}
 
 	/**
@@ -193,7 +193,11 @@ class Tables extends PluginSettingsBase {
 				?>
 			</h1>
 
-			<form id="ctl-options" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
+			<form
+				id="ctl-options"
+				class="ctl-<?php echo esc_attr( $this->section_title() ); ?>"
+				action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>"
+				method="post">
 				<?php
 				do_settings_sections( $this->option_page() ); // Sections with options.
 				settings_fields( $this->option_group() ); // Hidden protection fields.
@@ -231,13 +235,17 @@ class Tables extends PluginSettingsBase {
 	 * Enqueue class scripts.
 	 */
 	public function admin_enqueue_scripts() {
+		global $cyr_to_lat_plugin;
+
 		if ( ! $this->is_options_screen() ) {
 			return;
 		}
 
+		$min = $cyr_to_lat_plugin->min_suffix();
+
 		wp_enqueue_script(
 			self::HANDLE,
-			constant( 'CYR_TO_LAT_URL' ) . '/assets/js/tables/app.js',
+			constant( 'CYR_TO_LAT_URL' ) . '/assets/js/apps/tables.js',
 			[],
 			constant( 'CYR_TO_LAT_VERSION' ),
 			true
@@ -254,7 +262,7 @@ class Tables extends PluginSettingsBase {
 
 		wp_enqueue_style(
 			self::HANDLE,
-			constant( 'CYR_TO_LAT_URL' ) . '/assets/css/tables.css',
+			constant( 'CYR_TO_LAT_URL' ) . "/assets/css/tables$min.css",
 			[],
 			constant( 'CYR_TO_LAT_VERSION' )
 		);

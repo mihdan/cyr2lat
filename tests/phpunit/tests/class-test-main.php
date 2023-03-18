@@ -6,6 +6,7 @@
  */
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUndefinedNamespaceInspection */
 /** @noinspection PhpUndefinedClassInspection */
 /** @noinspection PhpUndefinedMethodInspection */
 /** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
@@ -131,27 +132,50 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test init()
 	 *
+	 * @param bool $allowed Plugin is allowed to work.
+	 *
+	 * @dataProvider dp_test_init
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init() {
+	public function test_init( $allowed ) {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_cli' )->andReturn( false );
+		$request->shouldReceive( 'is_allowed' )->andReturn( $allowed );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
-		$subject->shouldReceive( 'init_hooks' )->once();
+
+		if ( $allowed ) {
+			$subject->shouldReceive( 'init_hooks' )->once();
+		} else {
+			$subject->shouldReceive( 'init_hooks' )->never();
+		}
 
 		$subject->init();
+	}
+
+	/**
+	 * Data provider for test_init().
+	 *
+	 * @return array
+	 */
+	public function dp_test_init() {
+		return [
+			[ false ],
+			[ true ],
+		];
 	}
 
 	/**
 	 * Test init() with CLI when CLI throws an Exception
 	 *
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection ThrowRawExceptionInspection
 	 */
 	public function test_init_with_cli_error() {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
+		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -178,6 +202,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_init_with_cli() {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
+		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -302,10 +327,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_sanitize_title_filter_set() {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
-		$title = 'some title';
-
+		$title          = 'some title';
 		$filtered_title = 'filtered title';
 
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( $filtered_title );
 
 		self::assertSame( $filtered_title, $subject->sanitize_title( $title ) );
@@ -323,6 +348,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_sanitize_title( $title, $expected ) {
 		$subject = $this->get_subject();
 
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 		self::assertSame( $expected, $subject->sanitize_title( $title ) );
 	}
@@ -389,6 +415,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		$times = $term ? 1 : 0;
 
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
+
 		if ( is_object( $term ) ) {
 			WP_Mock::userFunction( 'is_wp_error' )->with( $term )->andReturn( true );
 			$times = 0;
@@ -406,15 +434,15 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.name = %s";
+							WHERE t.slug = %s";
 		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.name = " . $title;
+							WHERE t.slug = " . $title;
 		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
 
 		$wpdb->shouldReceive( 'prepare' )->times( $times )->with(
 			$request,
-			$title
+			rawurlencode( $title )
 		)->andReturn( $prepared_request );
 		$wpdb->shouldReceive( 'get_var' )->times( $times )->with( $sql )->andReturn( $term );
 
@@ -466,10 +494,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.name = %s";
+							WHERE t.slug = %s";
 		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.name = " . $title;
+							WHERE t.slug = " . $title;
 
 		$sql = $prepared_request;
 
@@ -479,7 +507,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		$wpdb->shouldReceive( 'prepare' )->once()->with(
 			$request,
-			$title
+			rawurlencode( $title )
 		)->andReturn( $prepared_request );
 		$wpdb->shouldReceive( 'get_var' )->once()->with( $sql )->andReturn( $term );
 
@@ -648,7 +676,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * @param string $expected Expected result.
 	 *
 	 * @throws ReflectionException ReflectionException.
-	 *
 	 * @dataProvider dp_test_split_chinese_string
 	 */
 	public function test_split_chinese_string( $string, $expected ) {
@@ -660,9 +687,12 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
+		$method  = 'split_chinese_string';
+
+		$this->set_method_accessibility( $subject, $method );
 		$this->set_protected_property( $subject, 'settings', $settings );
 
-		self::assertSame( $expected, $subject->split_chinese_string( $string, $table ) );
+		self::assertSame( $expected, $subject->$method( $string, $table ) );
 	}
 
 	/**
@@ -779,6 +809,58 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 				'-ABC---XYZ-',
 				'-abc---xyz-',
 			],
+		];
+	}
+
+	/**
+	 * Test min_suffix().
+	 *
+	 * @param bool   $defined      Constant defined.
+	 * @param bool   $script_debug Constant value.
+	 * @param string $expected     Expected.
+	 *
+	 * @return void
+	 * @dataProvider dp_test_min_suffix
+	 */
+	public function test_min_suffix( $defined, $script_debug, $expected ) {
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		FunctionMocker::replace(
+			'defined',
+			static function( $constant_name ) use ( $defined ) {
+				if ( 'SCRIPT_DEBUG' === $constant_name ) {
+					return $defined;
+				}
+
+				return false;
+			}
+		);
+
+		FunctionMocker::replace(
+			'constant',
+			static function( $name ) use ( $script_debug ) {
+				if ( 'SCRIPT_DEBUG' === $name ) {
+					return $script_debug;
+				}
+
+				return false;
+			}
+		);
+
+		self::assertSame( $expected, $subject->min_suffix() );
+	}
+
+	/**
+	 * Data provider for test_min_suffix().
+	 *
+	 * @return array[]
+	 */
+	public function dp_test_min_suffix() {
+		return [
+			[ false, false, '.min' ],
+			[ false, true, '.min' ],
+			[ true, false, '.min' ],
+			[ true, true, '' ],
 		];
 	}
 
@@ -986,8 +1068,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test pll_locale_filter() on frontend.
-	 *
-	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pll_locale_filter_on_frontend() {
 		$locale = 'en_US';
@@ -1154,7 +1234,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 * Test pll_locale_filter() with term.
 	 *
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection PhpUndefinedFieldInspection
+	 * @noinspection PhpDynamicFieldDeclarationInspection
 	 */
 	public function test_pll_locale_filter_with_term() {
 		$locale           = 'en_US';
@@ -1223,14 +1303,13 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test get_wpml_locale().
 	 *
-	 * @param string $locale        Current locale.
 	 * @param string $language_code Current language code.
 	 * @param string $expected      Expected.
 	 *
 	 * @dataProvider dp_test_wpml_locale_filter
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_get_wpml_locale( $locale, $language_code, $expected ) {
+	public function test_get_wpml_locale( $language_code, $expected ) {
 		$languages = [
 			'be' =>
 				[
@@ -1290,10 +1369,13 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		WP_Mock::onFilter( 'wpml_active_languages' )->with( [] )->reply( $languages );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
+		$method  = 'get_wpml_locale';
+
+		$this->set_method_accessibility( $subject, $method );
 
 		self::assertNull( $this->get_protected_property( $subject, 'wpml_languages' ) );
 
-		self::assertSame( $expected, $subject->get_wpml_locale( $locale ) );
+		self::assertSame( $expected, $subject->$method() );
 
 		self::assertSame( $languages, $this->get_protected_property( $subject, 'wpml_languages' ) );
 	}
@@ -1305,8 +1387,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_wpml_locale_filter() {
 		return [
-			'Existing language code, return from wpml' => [ 'en_US', 'ru', 'ru_RU' ],
-			'Not existing language code, return null'  => [ 'en_US', 'some', null ],
+			'Existing language code, return from wpml' => [ 'ru', 'ru_RU' ],
+			'Not existing language code, return null'  => [ 'some', null ],
 		];
 	}
 

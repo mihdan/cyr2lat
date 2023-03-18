@@ -1,3 +1,5 @@
+// noinspection JSUnresolvedFunction,JSUnresolvedVariable
+
 import Tables from '../../../src/js/tables/tables.js';
 
 function getTables() {
@@ -195,8 +197,8 @@ describe( 'Tables', () => {
 				return null;
 			} );
 
-			const tables = [ ...document.querySelectorAll( '.ctl-table' ) ];
-			tables.map( ( table, index ) => {
+			const tableElements = [ ...document.querySelectorAll( '.ctl-table' ) ];
+			tableElements.map( ( table, index ) => {
 				expect( table.classList.contains( 'active' ) ).toBe(
 					i === index
 				);
@@ -249,6 +251,9 @@ describe( 'Tables', () => {
 
 		jest.useFakeTimers();
 
+		const setTimeout = jest.spyOn( global, 'setTimeout' );
+		const clearTimeout = jest.spyOn( global, 'clearTimeout' );
+
 		expect( successMessage.innerHTML ).toBe( '' );
 		expect( successMessage.classList.contains( 'active' ) ).toBe( false );
 
@@ -263,16 +268,16 @@ describe( 'Tables', () => {
 		expect( errorMessage.innerHTML ).toBe( 'Error.' );
 		expect( errorMessage.classList.contains( 'active' ) ).toBe( true );
 
+		jest.runAllTimers();
+
+		expect( successMessage.innerHTML ).toBe( '' );
+		expect( errorMessage.innerHTML ).toBe( '' );
+
 		expect( setTimeout ).toHaveBeenCalledTimes( 2 );
 		expect( setTimeout ).toHaveBeenCalledWith(
 			expect.any( Function ),
 			5000
 		);
-
-		jest.runAllTimers();
-
-		expect( successMessage.innerHTML ).toBe( '' );
-		expect( errorMessage.innerHTML ).toBe( '' );
 
 		expect( clearTimeout ).toHaveBeenCalledTimes( 1 );
 		expect( clearTimeout ).toHaveBeenCalledWith( tables.msgTimer );
@@ -457,8 +462,8 @@ describe( 'Tables', () => {
 
 		const tables = new Tables();
 
-		const spyeditLabel = jest.spyOn( tables, 'editLabel' );
-		const spybindEvents = jest.spyOn( tables, 'bindEvents' );
+		const spyEditLabel = jest.spyOn( tables, 'editLabel' );
+		const spyBindEvents = jest.spyOn( tables, 'bindEvents' );
 
 		const labels = [
 			...document.querySelectorAll(
@@ -484,11 +489,11 @@ describe( 'Tables', () => {
 		);
 		expect( lastCell.querySelector( 'input' ).value ).toBe( '' );
 
-		expect( spybindEvents ).toHaveBeenCalledTimes( 1 );
-		expect( spybindEvents ).toHaveBeenCalledWith();
+		expect( spyBindEvents ).toHaveBeenCalledTimes( 1 );
+		expect( spyBindEvents ).toHaveBeenCalledWith();
 
-		expect( spyeditLabel ).toHaveBeenCalledTimes( 1 );
-		expect( spyeditLabel ).toHaveBeenCalledWith(
+		expect( spyEditLabel ).toHaveBeenCalledTimes( 1 );
+		expect( spyEditLabel ).toHaveBeenCalledWith(
 			lastCell.querySelector( 'label' )
 		);
 	} );

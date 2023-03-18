@@ -43,11 +43,14 @@ class ACF {
 	 * Enqueue script in ACF field group page.
 	 */
 	public function enqueue_script() {
+		global $cyr_to_lat_plugin;
+
+		$min   = $cyr_to_lat_plugin->min_suffix();
 		$table = $this->settings->get_table();
 
 		wp_enqueue_script(
 			'cyr-to-lat-acf-field-group',
-			constant( 'CYR_TO_LAT_URL' ) . '/assets/js/acf-field-group.js',
+			constant( 'CYR_TO_LAT_URL' ) . "/assets/js/acf-field-group$min.js",
 			[],
 			constant( 'CYR_TO_LAT_VERSION' ),
 			true

@@ -5,8 +5,10 @@
  * @package cyr-to-lat
  */
 
-// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
 /** @noinspection RealpathInStreamContextInspection */
+/** @noinspection PhpParamsInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 use tad\FunctionMocker\FunctionMocker;
 
@@ -37,7 +39,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin version.
  */
-const CYR_TO_LAT_TEST_VERSION = '5.4.0';
+const CYR_TO_LAT_TEST_VERSION = '5.5.0';
 
 /**
  * Path to the plugin dir.
