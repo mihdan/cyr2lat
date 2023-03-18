@@ -197,6 +197,8 @@ Yes you can!
 = 5.5.0 (XX.XX.2023) =
 * Tested with WordPress 6.2.
 * Tested with WooCommerce 7.5.
+* Fixed showing posts by tags on the frontend.
+* Fixed showing non-transliterated cyrillic tags on the backend.
 
 = 5.4.0 (15.12.2022) =
 * Tested with WordPress 6.1 and WooCommerce 7.2.
