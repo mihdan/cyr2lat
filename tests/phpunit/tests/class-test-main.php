@@ -132,17 +132,36 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test init()
 	 *
+	 * @dataProvider dp_test_init
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init() {
+	public function test_init( $allowed ) {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_cli' )->andReturn( false );
+		$request->shouldReceive( 'is_allowed' )->andReturn( $allowed );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
-		$subject->shouldReceive( 'init_hooks' )->once();
+
+		if ( $allowed ) {
+			$subject->shouldReceive( 'init_hooks' )->once();
+		} else {
+			$subject->shouldReceive( 'init_hooks' )->never();
+		}
 
 		$subject->init();
+	}
+
+	/**
+	 * Data provider for test_init().
+	 *
+	 * @return array
+	 */
+	public function dp_test_init() {
+		return [
+			[ false ],
+			[ true ],
+		];
 	}
 
 	/**
@@ -154,6 +173,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_init_with_cli_error() {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
+		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -180,6 +200,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_init_with_cli() {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
+		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -204,7 +225,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	 *
 	 * @dataProvider dp_test_init_hooks
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection PhpParamsInspection
 	 */
 	public function test_init_hooks( $polylang, $sitepress, $frontend ) {
 		$wpml_locale = 'en_US';
@@ -305,10 +325,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_sanitize_title_filter_set() {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
-		$title = 'some title';
-
+		$title          = 'some title';
 		$filtered_title = 'filtered title';
 
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( $filtered_title );
 
 		self::assertSame( $filtered_title, $subject->sanitize_title( $title ) );
@@ -326,6 +346,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_sanitize_title( $title, $expected ) {
 		$subject = $this->get_subject();
 
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 		self::assertSame( $expected, $subject->sanitize_title( $title ) );
 	}
@@ -392,6 +413,8 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		$times = $term ? 1 : 0;
 
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
+
 		if ( is_object( $term ) ) {
 			WP_Mock::userFunction( 'is_wp_error' )->with( $term )->andReturn( true );
 			$times = 0;
@@ -409,15 +432,15 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.name = %s";
+							WHERE t.slug = %s";
 		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.name = " . $title;
+							WHERE t.slug = " . $title;
 		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
 
 		$wpdb->shouldReceive( 'prepare' )->times( $times )->with(
 			$request,
-			$title
+			rawurlencode( $title )
 		)->andReturn( $prepared_request );
 		$wpdb->shouldReceive( 'get_var' )->times( $times )->with( $sql )->andReturn( $term );
 
@@ -469,10 +492,10 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.name = %s";
+							WHERE t.slug = %s";
 		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.name = " . $title;
+							WHERE t.slug = " . $title;
 
 		$sql = $prepared_request;
 
@@ -482,7 +505,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 
 		$wpdb->shouldReceive( 'prepare' )->once()->with(
 			$request,
-			$title
+			rawurlencode( $title )
 		)->andReturn( $prepared_request );
 		$wpdb->shouldReceive( 'get_var' )->once()->with( $sql )->andReturn( $term );
 

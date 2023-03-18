@@ -161,6 +161,10 @@ class Main {
 	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function init() {
+		if ( ! $this->request->is_allowed() ) {
+			return;
+		}
+
 		if ( $this->request->is_cli() ) {
 			try {
 				/**
@@ -172,10 +176,6 @@ class Main {
 			} catch ( Exception $ex ) {
 				return;
 			}
-		}
-
-		if ( ! $this->request->is_allowed() ) {
-			return;
 		}
 
 		$this->init_hooks();

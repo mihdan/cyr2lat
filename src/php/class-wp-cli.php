@@ -57,6 +57,7 @@ class WP_CLI extends WP_CLI_Command {
 	 * @param array $assoc_args Arguments in associative array.
 	 *
 	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection PhpUndefinedMethodInspection
 	 */
 	public function regenerate( $args = [], $assoc_args = [] ) {
 

@@ -20,7 +20,11 @@ class Request {
 	 * @return bool
 	 */
 	public function is_allowed() {
-		return ! $this->is_frontend() || ( $this->is_frontend() && $this->is_post() );
+		return (
+			! $this->is_frontend() ||
+			( $this->is_frontend() && $this->is_post() ) ||
+			$this->is_cli()
+		);
 	}
 
 	/**
