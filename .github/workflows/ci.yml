@@ -70,6 +70,9 @@ jobs:
           COVERALLS_RUN_LOCALLY: true
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
+          yarn -v
+          yarn set version stable
+          yarn -v
           yarn
           yarn run dev
           yarn run coveralls
