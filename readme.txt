@@ -197,6 +197,7 @@ Yes you can!
 = 5.5.0 (18.03.2023) =
 * Tested with WordPress 6.2.
 * Tested with WooCommerce 7.5.
+* Improved performance of Tables settings page.
 * Fixed showing posts by tags on the frontend.
 * Fixed showing non-transliterated cyrillic tags on the backend.
 
