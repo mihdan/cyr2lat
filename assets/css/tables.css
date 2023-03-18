@@ -1,3 +1,13 @@
+#ctl-options.ctl-tables h2,
+#ctl-options.ctl-tables table {
+	display: none;
+}
+
+#ctl-options.ctl-tables h2.nav-tab,
+#ctl-options.ctl-tables table.active {
+	display: block;
+}
+
 #ctl-options .form-table th {
 	display: none;
 }

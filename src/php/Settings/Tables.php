@@ -93,7 +93,7 @@ class Tables extends PluginSettingsBase {
 	 * @return string
 	 */
 	protected function section_title() {
-		return '';
+		return 'tables';
 	}
 
 	/**
@@ -193,7 +193,11 @@ class Tables extends PluginSettingsBase {
 				?>
 			</h1>
 
-			<form id="ctl-options" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>" method="post">
+			<form
+				id="ctl-options"
+				class="ctl-<?php echo esc_attr( $this->section_title() ); ?>"
+				action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>"
+				method="post">
 				<?php
 				do_settings_sections( $this->option_page() ); // Sections with options.
 				settings_fields( $this->option_group() ); // Hidden protection fields.
