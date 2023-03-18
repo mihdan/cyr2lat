@@ -174,6 +174,10 @@ class Main {
 			}
 		}
 
+		if ( ! $this->request->is_allowed() ) {
+			return;
+		}
+
 		$this->init_hooks();
 	}
 
@@ -220,12 +224,12 @@ class Main {
 	public function sanitize_title( $title, $raw_title = '', $context = '' ) {
 		global $wpdb;
 
-		if ( ! $title ) {
-			return $title;
-		}
-
-		// Fixed bug with `_wp_old_slug` redirect.
-		if ( 'query' === $context ) {
+		if (
+			! $title ||
+			// Fixed bug with `_wp_old_slug` redirect.
+			'query' === $context ||
+			doing_filter( 'pre_term_slug' )
+		) {
 			return $title;
 		}
 
@@ -248,8 +252,8 @@ class Main {
 			$sql = $wpdb->prepare(
 				"SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.name = %s",
-				$title
+							WHERE t.slug = %s",
+				rawurlencode( $title )
 			);
 
 			if ( $this->taxonomies ) {
