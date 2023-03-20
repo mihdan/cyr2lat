@@ -161,10 +161,6 @@ class Main {
 	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function init() {
-		if ( ! $this->request->is_allowed() ) {
-			return;
-		}
-
 		if ( $this->request->is_cli() ) {
 			try {
 				/**
@@ -185,6 +181,25 @@ class Main {
 	 * Init class hooks.
 	 */
 	public function init_hooks() {
+		if ( $this->is_frontend ) {
+			add_action(
+				'woocommerce_before_template_part',
+				function () {
+					add_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9, 3 );
+				}
+			);
+			add_action(
+				'woocommerce_after_template_part',
+				function () {
+					remove_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9 );
+				}
+			);
+		}
+
+		if ( ! $this->request->is_allowed() ) {
+			return;
+		}
+
 		add_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9, 3 );
 		add_filter( 'sanitize_file_name', [ $this, 'sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 2 );
