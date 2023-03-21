@@ -182,18 +182,8 @@ class Main {
 	 */
 	public function init_hooks() {
 		if ( $this->is_frontend ) {
-			add_action(
-				'woocommerce_before_template_part',
-				function () {
-					add_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9, 3 );
-				}
-			);
-			add_action(
-				'woocommerce_after_template_part',
-				function () {
-					remove_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9 );
-				}
-			);
+			add_action( 'woocommerce_before_template_part', [ $this, 'woocommerce_before_template_part_filter' ] );
+			add_action( 'woocommerce_after_template_part', [ $this, 'woocommerce_after_template_part_filter' ] );
 		}
 
 		if ( ! $this->request->is_allowed() ) {
@@ -286,6 +276,26 @@ class Main {
 		}
 
 		return $this->is_wc_attribute_taxonomy( $title ) ? $title : $this->transliterate( $title );
+	}
+
+	/**
+	 * WC before template part filter.
+	 * Add sanitize_title filter to support transliteration of WC attributes on frontend.
+	 *
+	 * @return void
+	 */
+	public function woocommerce_before_template_part_filter () {
+		add_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9, 3 );
+	}
+
+	/**
+	 * WC after template part filter.
+	 * Remove sanitize_title filter after supporting transliteration of WC attributes on frontend.
+	 *
+	 * @return void
+	 */
+	public function woocommerce_after_template_part_filter () {
+		remove_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9 );
 	}
 
 	/**
