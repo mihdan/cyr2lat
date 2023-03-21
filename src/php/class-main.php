@@ -161,10 +161,6 @@ class Main {
 	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function init() {
-		if ( ! $this->request->is_allowed() ) {
-			return;
-		}
-
 		if ( $this->request->is_cli() ) {
 			try {
 				/**
@@ -185,6 +181,15 @@ class Main {
 	 * Init class hooks.
 	 */
 	public function init_hooks() {
+		if ( $this->is_frontend ) {
+			add_action( 'woocommerce_before_template_part', [ $this, 'woocommerce_before_template_part_filter' ] );
+			add_action( 'woocommerce_after_template_part', [ $this, 'woocommerce_after_template_part_filter' ] );
+		}
+
+		if ( ! $this->request->is_allowed() ) {
+			return;
+		}
+
 		add_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9, 3 );
 		add_filter( 'sanitize_file_name', [ $this, 'sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 2 );
@@ -271,6 +276,26 @@ class Main {
 		}
 
 		return $this->is_wc_attribute_taxonomy( $title ) ? $title : $this->transliterate( $title );
+	}
+
+	/**
+	 * WC before template part filter.
+	 * Add sanitize_title filter to support transliteration of WC attributes on frontend.
+	 *
+	 * @return void
+	 */
+	public function woocommerce_before_template_part_filter() {
+		add_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9, 3 );
+	}
+
+	/**
+	 * WC after template part filter.
+	 * Remove sanitize_title filter after supporting transliteration of WC attributes on frontend.
+	 *
+	 * @return void
+	 */
+	public function woocommerce_after_template_part_filter() {
+		remove_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9 );
 	}
 
 	/**
