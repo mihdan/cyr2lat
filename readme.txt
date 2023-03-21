@@ -195,7 +195,7 @@ Yes you can!
 == Changelog ==
 
 = 5.5.1 (21.03.2023) =
-* Transliterate attributes on WC frontend.
+* Fixed transliteration of attributes on WC frontend.
 
 = 5.5.0 (18.03.2023) =
 * Tested with WordPress 6.2.
