@@ -284,7 +284,7 @@ class Main {
 	 *
 	 * @return void
 	 */
-	public function woocommerce_before_template_part_filter () {
+	public function woocommerce_before_template_part_filter() {
 		add_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9, 3 );
 	}
 
@@ -294,7 +294,7 @@ class Main {
 	 *
 	 * @return void
 	 */
-	public function woocommerce_after_template_part_filter () {
+	public function woocommerce_after_template_part_filter() {
 		remove_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9 );
 	}
 

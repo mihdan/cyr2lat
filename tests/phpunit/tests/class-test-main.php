@@ -132,38 +132,18 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test init()
 	 *
-	 * @param bool $allowed Plugin is allowed to work.
-	 *
-	 * @dataProvider dp_test_init
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init( $allowed ) {
+	public function test_init() {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_cli' )->andReturn( false );
-		$request->shouldReceive( 'is_allowed' )->andReturn( $allowed );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
 
-		if ( $allowed ) {
-			$subject->shouldReceive( 'init_hooks' )->once();
-		} else {
-			$subject->shouldReceive( 'init_hooks' )->never();
-		}
+		$subject->shouldReceive( 'init_hooks' )->once();
 
 		$subject->init();
-	}
-
-	/**
-	 * Data provider for test_init().
-	 *
-	 * @return array
-	 */
-	public function dp_test_init() {
-		return [
-			[ false ],
-			[ true ],
-		];
 	}
 
 	/**
@@ -175,7 +155,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_init_with_cli_error() {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
-		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -202,7 +181,6 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_init_with_cli() {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
-		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -231,7 +209,11 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	public function test_init_hooks( $polylang, $sitepress, $frontend ) {
 		$wpml_locale = 'en_US';
 
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_allowed' )->andReturn( true );
+
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		$this->set_protected_property( $subject, 'is_frontend', $frontend );
 
@@ -279,6 +261,7 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			);
 		} else {
 			WP_Mock::expectFilterNotAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ] );
+			WP_Mock::expectActionNotAdded( 'wpml_language_has_switched', [ $subject, 'wpml_language_has_switched' ] );
 		}
 
 		WP_Mock::expectActionAdded( 'before_woocommerce_init', [ $subject, 'declare_wc_compatibility' ] );
@@ -306,6 +289,35 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			[ true, true, false ],
 			[ true, true, true ],
 		];
+	}
+
+	/**
+	 * Test init_hooks()
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_init_hooks_when_not_allowed() {
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_allowed' )->andReturn( false );
+
+		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$this->set_protected_property( $subject, 'request', $request );
+
+		$this->set_protected_property( $subject, 'is_frontend', false );
+
+		WP_Mock::expectFilterNotAdded( 'woocommerce_before_template_part', [ $subject, 'woocommerce_before_template_part_filter' ] );
+		WP_Mock::expectFilterNotAdded( 'woocommerce_after_template_part', [ $subject, 'woocommerce_after_template_part_filter' ] );
+		WP_Mock::expectFilterNotAdded( 'sanitize_title', [ $subject, 'sanitize_title' ] );
+		WP_Mock::expectFilterNotAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ] );
+		WP_Mock::expectFilterNotAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ] );
+		WP_Mock::expectFilterNotAdded( 'pre_insert_term', [ $subject, 'pre_insert_term_filter' ] );
+		WP_Mock::expectFilterNotAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ] );
+		WP_Mock::expectFilterNotAdded( 'locale', [ $subject, 'pll_locale_filter' ] );
+		WP_Mock::expectFilterNotAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ] );
+		WP_Mock::expectActionNotAdded( 'wpml_language_has_switched', [ $subject, 'wpml_language_has_switched' ] );
+		WP_Mock::expectActionNotAdded( 'before_woocommerce_init', [ $subject, 'declare_wc_compatibility' ] );
+
+		$subject->init_hooks();
 	}
 
 	/**
@@ -618,6 +630,33 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 			'in attr taxes'          => [ 'цвет', true, $attribute_taxonomies, 0 ],
 			'in attr taxes with pa_' => [ 'pa_цвет', true, $attribute_taxonomies, 0 ],
 		];
+	}
+
+	/**
+	 * Test woocommerce_before_template_part_filter().
+	 *
+	 * @return void
+	 */
+	public function test_woocommerce_before_template_part_filter() {
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
+
+		$subject->woocommerce_before_template_part_filter();
+	}
+
+	/**
+	 * Test woocommerce_after_template_part_filter().
+	 *
+	 * @return void
+	 */
+	public function test_woocommerce_after_template_part_filter() {
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		WP_Mock::userFunction( 'remove_filter' )
+			->with( 'sanitize_title', [ $subject, 'sanitize_title' ], 9 )->once();
+
+		$subject->woocommerce_after_template_part_filter();
 	}
 
 	/**
