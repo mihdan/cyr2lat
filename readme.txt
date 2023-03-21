@@ -194,6 +194,9 @@ Yes you can!
 
 == Changelog ==
 
+= 5.5.1 (21.03.2023) =
+* Transliterate attributes on WC frontend.
+
 = 5.5.0 (18.03.2023) =
 * Tested with WordPress 6.2.
 * Tested with WooCommerce 7.5.
