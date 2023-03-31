@@ -321,6 +321,17 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
+	 * Test that sanitize_title() does nothing when title is empty.
+	 */
+	public function test_sanitize_title_empty_title() {
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		$title = '';
+
+		self::assertSame( $title, $subject->sanitize_title( $title ) );
+	}
+
+	/**
 	 * Test that sanitize_title() does nothing when context is 'query'
 	 */
 	public function test_sanitize_title_query_context() {
@@ -331,6 +342,33 @@ class Test_Main extends Cyr_To_Lat_TestCase {
 		$context   = 'query';
 
 		self::assertSame( $title, $subject->sanitize_title( $title, $raw_title, $context ) );
+	}
+
+	/**
+	 * Test that sanitize_title() does nothing on pre_term_slug filter with Polylang or SitePress.
+	 */
+	public function test_sanitize_title_pre_term_slug() {
+		$subject = Mockery::mock( Main::class )->makePartial();
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( true );
+
+		FunctionMocker::replace(
+			'class_exists',
+			static function ( $class ) {
+				if ( 'Polylang' === $class ) {
+					return false;
+				}
+
+				if ( 'SitePress' === $class ) {
+					return false;
+				}
+
+				return null;
+			}
+		);
+
+		$title = 'some title';
+
+		self::assertSame( $title, $subject->sanitize_title( $title ) );
 	}
 
 	/**
