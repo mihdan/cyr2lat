@@ -233,7 +233,11 @@ class Main {
 			! $title ||
 			// Fixed bug with `_wp_old_slug` redirect.
 			'query' === $context ||
-			doing_filter( 'pre_term_slug' )
+			// Transliterate on pre_term_slug with Polylang and WPML only.
+			(
+				doing_filter( 'pre_term_slug' ) &&
+				! ( class_exists( 'Polylang' ) || class_exists( 'SitePress' ) )
+			)
 		) {
 			return $title;
 		}

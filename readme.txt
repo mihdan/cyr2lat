@@ -194,6 +194,9 @@ Yes you can!
 
 == Changelog ==
 
+= 5.5.2 (31.03.2023) =
+* Fixed transliteration of tags with Polylang and WPML.
+
 = 5.5.1 (21.03.2023) =
 * Fixed transliteration of attributes on WC frontend.
 
