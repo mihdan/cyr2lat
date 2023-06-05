@@ -251,7 +251,7 @@ class Test_Request extends Cyr_To_Lat_TestCase {
 		$rest_url  = 'https://test.test' . $rest_path . '/';
 
 		WP_Mock::userFunction( 'add_query_arg' )->with( [] )->andReturn( $current_url );
-		WP_Mock::userFunction( 'wp_parse_url' )->with( $current_url, PHP_URL_PATH )->andReturn( $current_path );
+		WP_Mock::userFunction( 'wp_parse_url' )->with( $current_url . '/', PHP_URL_PATH )->andReturn( $current_path );
 
 		WP_Mock::userFunction( 'rest_url' )->andReturn( $rest_url );
 		WP_Mock::userFunction( 'trailingslashit' )->andReturnUsing(
