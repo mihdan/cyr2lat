@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
 Tested up to: 6.2
-Stable tag: 5.5.2
+Stable tag: 5.5.3
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -194,7 +194,8 @@ Yes you can!
 
 == Changelog ==
 
-= 5.5.3 (15.07.2023)
+= 5.5.3 (15.07.2023) =
+* Tested with WooCommerce 7.8.
 * Fixed deprecation error "strpos(): Passing null to parameter" appeared in debug.log.
 
 = 5.5.2 (31.03.2023) =
