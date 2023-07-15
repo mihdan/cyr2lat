@@ -94,8 +94,8 @@ class Request {
 	 * @return string
 	 */
 	protected function get_rest_route() {
-		$current_path = wp_parse_url( add_query_arg( [] ), PHP_URL_PATH );
-		$rest_path    = wp_parse_url( trailingslashit( rest_url() ), PHP_URL_PATH );
+		$current_path = (string) wp_parse_url( trailingslashit( add_query_arg( [] ) ), PHP_URL_PATH );
+		$rest_path    = (string) wp_parse_url( trailingslashit( rest_url() ), PHP_URL_PATH );
 
 		$is_rest = 0 === strpos( $current_path, $rest_path );
 
