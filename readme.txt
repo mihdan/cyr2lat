@@ -195,6 +195,7 @@ Yes you can!
 == Changelog ==
 
 = 5.5.3 (15.07.2023)
+* Tested with WooCommerce 7.8.
 * Fixed deprecation error "strpos(): Passing null to parameter" appeared in debug.log.
 
 = 5.5.2 (31.03.2023) =
