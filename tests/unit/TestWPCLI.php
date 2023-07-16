@@ -7,12 +7,14 @@
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
 /** @noinspection PhpUndefinedClassInspection */
+/** @noinspection PhpUndefinedNamespaceInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
-namespace Cyr_To_Lat;
+namespace CyrToLat\Tests\Unit;
 
 use cli\progress\Bar;
-use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use Cyr_To_Lat\Converter;
+use Cyr_To_Lat\WP_CLI;
 use Mockery;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
@@ -22,7 +24,7 @@ use WP_Mock;
  *
  * @group wp-cli
  */
-class Test_WP_CLI extends CyrToLatTestCase {
+class TestWPCLI extends CyrToLatTestCase {
 
 	/**
 	 * Test regenerate()
