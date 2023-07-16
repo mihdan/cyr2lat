@@ -7,6 +7,8 @@
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
 /** @noinspection PhpUndefinedClassInspection */
+/** @noinspection PhpIllegalPsrClassPathInspection */
+/** @noinspection AutoloadingIssuesInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 /**

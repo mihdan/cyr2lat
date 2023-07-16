@@ -1,27 +1,28 @@
 <?php
 /**
- * Test_ACF class file
+ * TestACF class file
  *
  * @package cyr-to-lat
  */
 
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
-namespace Cyr_To_Lat;
+namespace CyrToLat\Tests\Unit;
 
+use Cyr_To_Lat\ACF;
+use Cyr_To_Lat\Main;
 use Cyr_To_Lat\Settings\Settings;
-use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
 use WP_Mock;
 
 /**
- * Class Test_ACF
+ * Class TestACF
  *
  * @group acf
  */
-class Test_ACF extends CyrToLatTestCase {
+class TestACF extends CyrToLatTestCase {
 
 	/**
 	 * Tear down.
@@ -38,7 +39,6 @@ class Test_ACF extends CyrToLatTestCase {
 	 * Test constructor
 	 *
 	 * @throws ReflectionException Reflection Exception.
-	 * @noinspection NullPointerExceptionInspection
 	 */
 	public function test_constructor() {
 		$classname = ACF::class;

@@ -80,8 +80,7 @@
   },
   "autoload-dev": {
     "classmap": [
-      "src/php",
-      "tests/unit/stubs"
+      "src/php"
     ],
     "psr-4": {
       "CyrToLat\\": "src/php",
