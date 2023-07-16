@@ -53,6 +53,15 @@ class Tables extends PluginSettingsBase {
 	}
 
 	/**
+	 * Get locales.
+	 *
+	 * @return array
+	 */
+	public function get_locales() {
+		return $this->locales;
+	}
+
+	/**
 	 * Init locales.
 	 */
 	protected function init_locales() {

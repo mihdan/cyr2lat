@@ -14,6 +14,7 @@ namespace Cyr_To_Lat;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 use Cyr_To_Lat\Settings\Converter as SettingsConverter;
+use Cyr_To_Lat\Settings\SystemInfo as SettingsSystemInfo;
 use Cyr_To_Lat\Settings\Tables as SettingsTables;
 use Polylang;
 use SitePress;
@@ -136,6 +137,7 @@ class Main {
 				'Cyr To Lat' => [
 					SettingsTables::class,
 					SettingsConverter::class,
+					SettingsSystemInfo::class,
 				],
 			]
 		);
@@ -224,6 +226,15 @@ class Main {
 		}
 
 		add_action( 'before_woocommerce_init', [ $this, 'declare_wc_compatibility' ] );
+	}
+
+	/**
+	 * Get Settings instance.
+	 *
+	 * @return Settings
+	 */
+	public function settings() {
+		return $this->settings;
 	}
 
 	/**
