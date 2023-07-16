@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 bootstrap="tests/phpunit/bootstrap.php"
+		 bootstrap="tests/unit/bootstrap.php"
 		 colors="true"
 		 convertErrorsToExceptions="true"
 		 convertNoticesToExceptions="true"
@@ -27,7 +27,7 @@
 	</coverage>
 	<testsuites>
 		<testsuite name="cyr2lat-tests">
-			<directory suffix=".php">tests/phpunit</directory>
+			<directory suffix=".php">tests/unit</directory>
 		</testsuite>
 	</testsuites>
 </phpunit>

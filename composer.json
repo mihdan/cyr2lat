@@ -81,8 +81,8 @@
   "autoload-dev": {
     "classmap": [
       "src/php",
-      "tests/phpunit/classes",
-      "tests/phpunit/stubs"
+      "tests/unit/classes",
+      "tests/unit/stubs"
     ]
   }
 }
