@@ -19,6 +19,7 @@ class WP_REST_Server {
 	 * Retrieves the current REST server instance.
 	 *
 	 * Instantiates a new instance if none exists already.
+	 *
 	 * @noinspection PhpUnused
 	 */
 	public static function get_raw_data() {}
