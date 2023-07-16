@@ -15,6 +15,7 @@
 namespace Cyr_To_Lat\Tests\Settings;
 
 use Cyr_To_Lat\Main;
+use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
 use Cyr_To_Lat\Settings\Converter;
 use Cyr_To_Lat\Cyr_To_Lat_TestCase;
 use Mockery;
@@ -29,17 +30,6 @@ use WP_Mock;
  * @group settings-converter
  */
 class ConverterTest extends Cyr_To_Lat_TestCase {
-
-	/**
-	 * Tear down.
-	 *
-	 * @noinspection PhpLanguageLevelInspection
-	 * @noinspection PhpUndefinedClassInspection
-	 */
-	public function tearDown(): void {
-		unset( $GLOBALS['cyr_to_lat_plugin'] );
-		parent::tearDown();
-	}
 
 	/**
 	 * Test screen_id().
@@ -177,7 +167,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 			'background_post_types'    =>
 				[
 					'label'        => 'Post Types',
-					'section'      => 'background_section',
+					'section'      => 'types-statuses',
 					'type'         => 'checkbox',
 					'placeholder'  => '',
 					'helper'       => 'Post types included in the conversion.',
@@ -195,7 +185,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 			'background_post_statuses' =>
 				[
 					'label'        => 'Post Statuses',
-					'section'      => 'background_section',
+					'section'      => 'types-statuses',
 					'type'         => 'checkbox',
 					'placeholder'  => '',
 					'helper'       => 'Post statuses included in the conversion.',
@@ -258,7 +248,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 			'background_post_types'    =>
 				[
 					'label'        => 'Post Types',
-					'section'      => 'background_section',
+					'section'      => 'types-statuses',
 					'type'         => 'checkbox',
 					'placeholder'  => '',
 					'helper'       => 'Post types included in the conversion.',
@@ -277,7 +267,7 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 			'background_post_statuses' =>
 				[
 					'label'        => 'Post Statuses',
-					'section'      => 'background_section',
+					'section'      => 'types-statuses',
 					'type'         => 'checkbox',
 					'placeholder'  => '',
 					'helper'       => 'Post statuses included in the conversion.',
@@ -311,11 +301,15 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 		$option_name   = 'cyr_to_lat_settings';
 		$form_fields   = $this->get_test_form_fields();
 		$test_settings = $this->get_test_settings();
+		$network_wide  = false;
 
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'delayed_init_form_fields' )->with()->once();
-		$subject->shouldReceive( 'option_name' )->with()->once()->andReturn( $option_name );
+		$subject->shouldReceive( 'option_name' )->with()->twice()->andReturn( $option_name );
 		$subject->shouldReceive( 'form_fields' )->with()->once()->andReturn( $form_fields );
+
+		WP_Mock::userFunction( 'get_site_option' )->with( $option_name . '_network_wide', [] )->once()
+			->andReturn( $network_wide );
 
 		WP_Mock::userFunction( 'get_option' )->with( $option_name, null )->once()->andReturn( $test_settings );
 		WP_Mock::userFunction( 'wp_list_pluck' )->with( $form_fields, 'default' )->once()
@@ -332,7 +326,8 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 		$option_page  = 'cyr-to-lat';
 		$option_group = 'cyr_to_lat_group';
 
-		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Converter::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'option_page' )->with()->andReturn( $option_page );
 		$subject->shouldReceive( 'option_group' )->with()->andReturn( $option_group );
 
@@ -340,25 +335,27 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 		WP_Mock::userFunction( 'do_settings_sections' )->with( $option_page )->once();
 		WP_Mock::userFunction( 'settings_fields' )->with( $option_group )->once();
 		WP_Mock::userFunction( 'wp_nonce_field' )->with( $subject::NONCE )->once();
-		WP_Mock::userFunction( 'submit_button' )->with()->once();
+		WP_Mock::userFunction( 'submit_button' )->with()->never();
 		WP_Mock::userFunction( 'submit_button' )
 			->with( 'Convert Existing Slugs', 'secondary', 'ctl-convert-button' )->once();
 
-		$expected = '		<div class="wrap">
-			<h1>
-				Cyr To Lat Plugin Options			</h1>
+		$expected = '		<h1 class="ctl-settings-header">
+			<img
+					src="https://site.org/wp-content/plugins/cyr2lat/assets/images/logo.svg"
+					alt="Cyr To Lat Logo"
+					class="ctl-logo"
+			/>
+			Cyr To Lat		</h1>
 
-			<form
+		<form
 				id="ctl-options"
 				class="ctl-converter"
 				action="http://test.test/wp-admin/options.php"
 				method="post">
-							</form>
-
-			<form id="ctl-convert-existing-slugs" action="" method="post">
-				<input type="hidden" name="ctl-convert" />
-							</form>
-		</div>
+					</form>
+				<form id="ctl-convert-existing-slugs" action="" method="post">
+			<input type="hidden" name="ctl-convert"/>
+					</form>
 		';
 		ob_start();
 		$subject->settings_page();
@@ -392,12 +389,13 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 		return [
 			'Non-existing id'    => [ '', '' ],
 			'Background section' => [
-				'background_section',
+				'types-statuses',
 				'			<h2 class="title">
 				Existing Slugs Conversion Settings			</h2>
 			<p>
 				Existing <strong>product attribute</strong> slugs will <strong>NOT</strong> be converted.			</p>
-			',
+					<h3 class="ctl-section-types-statuses">Post Types and Statuses</h3>
+		',
 			],
 		];
 	}
@@ -457,13 +455,11 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 	public function test_admin_enqueue_scripts() {
 		$plugin_url     = 'http://test.test/wp-content/plugins/cyr-to-lat';
 		$plugin_version = '1.0.0';
-
-		$main = Mockery::mock( Main::class );
-		$main->shouldReceive( 'min_suffix' )->andReturn( '' );
-		$GLOBALS['cyr_to_lat_plugin'] = $main;
+		$min            = '.min';
 
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->with()->andReturn( true );
+		$this->set_protected_property( $subject, 'min_prefix', $min );
 
 		FunctionMocker::replace(
 			'constant',
@@ -492,24 +488,11 @@ class ConverterTest extends Cyr_To_Lat_TestCase {
 		WP_Mock::userFunction( 'wp_enqueue_style' )
 			->with(
 				Converter::HANDLE,
-				$plugin_url . '/assets/css/converter.css',
-				[],
+				$plugin_url . "/assets/css/converter$min.css",
+				[ SettingsBase::HANDLE ],
 				$plugin_version
 			)
 			->once();
-
-		$subject->admin_enqueue_scripts();
-	}
-
-	/**
-	 * Test admin_enqueue_scripts() not on own screen.
-	 */
-	public function test_admin_enqueue_scripts_not_on_own_screen() {
-		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'is_options_screen' )->with()->andReturn( false );
-
-		WP_Mock::userFunction( 'wp_enqueue_script' )->never();
-		WP_Mock::userFunction( 'wp_enqueue_style' )->never();
 
 		$subject->admin_enqueue_scripts();
 	}

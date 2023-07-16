@@ -57,7 +57,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	public function test_constructor( $is_tab ) {
 		$classname = SettingsBase::class;
 
-		$subject = Mockery::mock( $classname )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( $classname )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_tab' )->once()->andReturn( $is_tab );
 
 		if ( $is_tab ) {
@@ -88,13 +89,16 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test init().
 	 *
-	 * @param bool $is_active Is this an active tab.
+	 * @param bool $is_active    Is this an active tab.
+	 * @param bool $script_debug Is script debug active.
 	 *
 	 * @dataProvider dp_test_init
+	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init( $is_active ) {
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'init_form_fields' )->once();
+	public function test_init( $is_active, $script_debug ) {
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'form_fields' )->once();
 		$subject->shouldReceive( 'init_settings' )->once();
 		$subject->shouldReceive( 'is_tab_active' )->once()->with( $subject )->andReturn( $is_active );
 
@@ -104,7 +108,32 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 			$subject->shouldReceive( 'init_hooks' )->never();
 		}
 
+		FunctionMocker::replace(
+			'defined',
+			static function ( $constant_name ) use ( $script_debug ) {
+				if ( 'SCRIPT_DEBUG' === $constant_name ) {
+					return $script_debug;
+				}
+
+				return false;
+			}
+		);
+
+		FunctionMocker::replace(
+			'constant',
+			static function ( $name ) use ( $script_debug ) {
+				if ( 'SCRIPT_DEBUG' === $name ) {
+					return $script_debug;
+				}
+
+				return false;
+			}
+		);
+
 		$subject->init();
+
+		$min_prefix = $script_debug ? '' : '.min';
+		self::assertSame( $min_prefix, $this->get_protected_property( $subject, 'min_prefix' ) );
 	}
 
 	/**
@@ -114,15 +143,15 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_init() {
 		return [
-			'Active tab'     => [ true ],
-			'Not active tab' => [ false ],
+			'Active tab, script_debug'        => [ true, true ],
+			'Active tab, no script debug'     => [ true, false ],
+			'Not active tab, script debug'    => [ false, true ],
+			'Not active tab, no script debug' => [ false, false ],
 		];
 	}
 
 	/**
 	 * Test init_hooks().
-	 *
-	 * @noinspection PhpParamsInspection
 	 */
 	public function test_init_hooks() {
 		$plugin_base_name = 'cyr2lat/cyr-to-lat.php';
@@ -141,11 +170,17 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		);
 
 		WP_Mock::expectActionAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
-		WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_sections' ] );
 		WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_fields' ] );
+		WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_sections' ], 11 );
 
 		WP_Mock::expectFilterAdded(
 			'pre_update_option_' . $option_name,
+			[ $subject, 'pre_update_option_filter' ],
+			10,
+			2
+		);
+		WP_Mock::expectFilterAdded(
+			'pre_update_site_option_option_' . $option_name,
 			[ $subject, 'pre_update_option_filter' ],
 			10,
 			2
@@ -163,8 +198,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_parent_slug() {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
-		$method  = 'parent_slug';
 
+		$method = 'parent_slug';
 		$this->set_method_accessibility( $subject, $method );
 		self::assertSame( 'options-general.php', $subject->$method() );
 	}
@@ -208,9 +243,9 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	public function test_tab_name() {
 		$class_name = 'SomeClassName';
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'get_class_name' )->with()->once()->andReturn( $class_name );
-
 		$method = 'tab_name';
 
 		$this->set_method_accessibility( $subject, $method );
@@ -226,8 +261,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_get_class_name() {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
-		$method  = 'get_class_name';
 
+		$method = 'get_class_name';
 		$this->set_method_accessibility( $subject, $method );
 
 		if (
@@ -253,8 +288,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_is_tab() {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
-		$method  = 'is_tab';
 
+		$method = 'is_tab';
 		$this->set_method_accessibility( $subject, $method );
 		self::assertTrue( $subject->$method() );
 
@@ -270,7 +305,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$settings_link_label = 'Cyr To Lat Settings';
 		$settings_link_text  = 'Settings';
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'option_page' )->andReturn( $option_page );
 		$subject->shouldReceive( 'settings_link_label' )->andReturn( $settings_link_label );
 		$subject->shouldReceive( 'settings_link_text' )->andReturn( $settings_link_text );
@@ -289,40 +325,50 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test init_settings().
 	 *
-	 * @param mixed $settings Settings.
+	 * @param mixed $settings     Settings.
+	 * @param bool  $network_wide Settings.
 	 *
 	 * @dataProvider dp_test_init_settings
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_settings( $settings ) {
+	public function test_init_settings( $settings, $network_wide ) {
 		$option_name = 'cyr_to_lat_settings';
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'option_name' )->andReturn( $option_name );
+		$method = 'init_settings';
+		$this->set_method_accessibility( $subject, $method );
 
-		WP_Mock::userFunction( 'get_option' )->with( $option_name, null )->once()->andReturn( $settings );
+		if ( $settings ) {
+			$settings['_network_wide'] = $network_wide;
+		}
 
-		$form_fields = $this->get_test_settings();
+		WP_Mock::userFunction( 'get_site_option' )->with( $option_name . '_network_wide', [] )->once()
+			->andReturn( $network_wide );
+
+		if ( empty( $network_wide ) ) {
+			WP_Mock::userFunction( 'get_option' )->with( $option_name, null )->once()->andReturn( $settings );
+		} else {
+			WP_Mock::userFunction( 'get_site_option' )->with( $option_name, null )->once()->andReturn( $settings );
+		}
+
+		$form_fields = $this->get_test_form_fields();
 		$subject->shouldReceive( 'form_fields' )->andReturn( $form_fields );
 
-		$form_fields_pluck = [
-			'pageTitle' => 'Table Viewer',
-			'pageSlug'  => 'am-table-viewer',
-			'cacheTime' => 3600,
-		];
+		$form_fields_pluck = $this->wp_list_pluck( $form_fields, 'default' );
 
 		WP_Mock::userFunction( 'wp_list_pluck' )->with( $form_fields, 'default' )->once()
 			->andReturn( $form_fields_pluck );
 
 		$this->set_protected_property( $subject, 'settings', null );
-
-		$method = 'init_settings';
-
-		$this->set_method_accessibility( $subject, $method );
-
 		$subject->$method();
 
-		$expected = array_merge( array_fill_keys( array_keys( $form_fields ), '' ), $form_fields_pluck );
+		$expected = array_merge(
+			array_fill_keys( array_keys( $form_fields ), '' ),
+			$form_fields_pluck
+		);
+
 		if ( is_array( $settings ) ) {
 			$expected = array_merge( $form_fields_pluck, $settings );
 		}
@@ -337,8 +383,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_init_settings() {
 		return [
-			'No settings in option'   => [ false ],
-			'Some settings in option' => [ $this->get_test_settings() ],
+			'No settings in option, no network-wide'   => [ false, false ],
+			'No settings in option, network-wide'      => [ false, true ],
+			'Some settings in option, no network-wide' => [ $this->get_test_settings(), false ],
+			'Some settings in option, network-wide'    => [ $this->get_test_settings(), true ],
 		];
 	}
 
@@ -352,11 +400,11 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_form_fields( $form_fields, $expected ) {
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$method  = 'form_fields';
-
-		$this->set_protected_property( $subject, 'form_fields', $form_fields );
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
+		$method = 'form_fields';
 		$this->set_method_accessibility( $subject, $method );
+		$this->set_protected_property( $subject, 'form_fields', $form_fields );
 
 		if ( empty( $form_fields ) ) {
 			$subject->shouldReceive( 'init_form_fields' )->andReturnUsing(
@@ -365,6 +413,12 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 				}
 			)->once();
 		}
+
+		WP_Mock::userFunction( 'wp_parse_args' )->andReturnUsing(
+			static function ( $args, $defaults ) {
+				return array_merge( $defaults, $args );
+			}
+		);
 
 		self::assertSame( $expected, $subject->$method() );
 	}
@@ -379,29 +433,6 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 			[ null, $this->get_test_form_fields() ],
 			[ [], $this->get_test_form_fields() ],
 			[ $this->get_test_form_fields(), $this->get_test_form_fields() ],
-			[
-				[
-					'iso9' => [
-						'label'        => 'ISO9 Table',
-						'section'      => 'iso9_section',
-						'type'         => 'table',
-						'placeholder'  => '',
-						'helper'       => '',
-						'supplemental' => '',
-					],
-				],
-				[
-					'iso9' => [
-						'label'        => 'ISO9 Table',
-						'section'      => 'iso9_section',
-						'type'         => 'table',
-						'placeholder'  => '',
-						'helper'       => '',
-						'supplemental' => '',
-						'default'      => '',
-					],
-				],
-			],
 		];
 	}
 
@@ -419,7 +450,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$capability  = 'manage_options';
 		$slug        = 'cyr-to-lat';
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_main_menu_page' )->andReturn( $is_main_menu_page );
 		$subject->shouldReceive( 'page_title' )->andReturn( $page_title );
 		$subject->shouldReceive( 'menu_title' )->andReturn( $menu_title );
@@ -457,7 +489,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$page = Mockery::mock( SettingsBase::class );
 		$page->shouldReceive( 'settings_page' )->with()->once();
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'get_active_tab' )->once()->andReturn( $page );
 
 		$subject->settings_base_page();
@@ -470,17 +503,15 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$plugin_url     = 'http://test.test/wp-content/plugins/cyr2lat';
 		$plugin_version = '1.0.0';
 
-		$main = Mockery::mock( Main::class );
-		$main->shouldReceive( 'min_suffix' )->andReturn( '' );
-		$GLOBALS['cyr_to_lat_plugin'] = $main;
-
 		$page = Mockery::mock( SettingsBase::class );
 		$page->shouldReceive( 'admin_enqueue_scripts' )->with()->once();
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'get_active_tab' )->once()->andReturn( $page );
 		$subject->shouldReceive( 'plugin_url' )->once()->andReturn( $plugin_url );
 		$subject->shouldReceive( 'plugin_version' )->once()->andReturn( $plugin_version );
+		$subject->shouldReceive( 'is_options_screen' )->andReturn( true );
 
 		WP_Mock::userFunction( 'wp_enqueue_style' )
 			->with(
@@ -505,10 +536,12 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	public function test_setup_sections( $tabs ) {
 		$tab_option_page = 'cyr-to-lat';
 
-		$tab = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$tab = Mockery::mock( SettingsBase::class )->makePartial();
+		$tab->shouldAllowMockingProtectedMethods();
 		$tab->shouldReceive( 'option_page' )->andReturn( $tab_option_page );
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->andReturn( true );
 		$subject->shouldReceive( 'get_active_tab' )->once()->andReturn( $tab );
 
@@ -573,7 +606,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	public function test_setup_tabs_section() {
 		$tab_option_page = 'cyr-to-lat';
 
-		$tab = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$tab = Mockery::mock( SettingsBase::class )->makePartial();
+		$tab->shouldAllowMockingProtectedMethods();
 		$tab->shouldReceive( 'option_page' )->andReturn( $tab_option_page );
 
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
@@ -608,11 +642,13 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$subject_url_arg    = 'http://test.test/wp-admin/admin.php?page=cyr-to-lat';
 		$tab_url_arg        = 'http://test.test/wp-admin/admin.php?page=cyr-to-lat&tab=converter';
 
-		$tab = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$tab = Mockery::mock( SettingsBase::class )->makePartial();
+		$tab->shouldAllowMockingProtectedMethods();
 		$tab->shouldReceive( 'get_class_name' )->with()->andReturn( $tab_class_name );
 		$tab->shouldReceive( 'page_title' )->with()->andReturn( $tab_page_title );
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'option_page' )->with()->twice()->andReturn( $option_page );
 		$subject->shouldReceive( 'get_class_name' )->with()->andReturn( $subject_class_name );
 		$subject->shouldReceive( 'page_title' )->with()->andReturn( $subject_page_title );
@@ -644,20 +680,23 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	/**
 	 * Test is_tab_active().
 	 *
-	 * @param string|null $input      $_GET['tab'].
-	 * @param bool        $is_tab     Is tab.
-	 * @param string      $class_name Class name.
-	 * @param bool        $expected   Expected.
+	 * @param string|null $input       $_GET['tab'].
+	 * @param string|null $referer_tab Tab name from referer.
+	 * @param bool        $is_tab      Is tab.
+	 * @param string      $class_name  Class name.
+	 * @param bool        $expected    Expected.
 	 *
 	 * @dataProvider dp_test_is_tab_active
 	 */
-	public function test_is_tab_active( $input, $is_tab, $class_name, $expected ) {
-		$tab = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+	public function test_is_tab_active( $input, $referer_tab, $is_tab, $class_name, $expected ) {
+		$tab = Mockery::mock( SettingsBase::class )->makePartial();
+		$tab->shouldAllowMockingProtectedMethods();
 		$tab->shouldReceive( 'is_tab' )->with()->andReturn( $is_tab );
 		$tab->shouldReceive( 'get_class_name' )->with()->andReturn( $class_name );
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$method  = 'is_tab_active';
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'get_tab_name_from_referer' )->andReturn( $referer_tab );
 
 		FunctionMocker::replace(
 			'filter_input',
@@ -674,7 +713,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		self::assertSame( $expected, $subject->$method( $tab ) );
+		self::assertSame( $expected, $subject->is_tab_active( $tab ) );
 	}
 
 	/**
@@ -684,12 +723,99 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function dp_test_is_tab_active() {
 		return [
-			'No input, not a tab'     => [ null, false, 'any_class_name', true ],
-			'No input, tab'           => [ null, true, 'any_class_name', false ],
-			'Wrong input, not a tab'  => [ 'wrong', false, 'General', false ],
-			'Wrong input, tab'        => [ 'wrong', true, 'General', false ],
-			'Proper input, not a tab' => [ 'general', false, 'General', true ],
-			'Proper input, tab'       => [ 'general', true, 'General', true ],
+			'No input, not a tab'     => [ null, null, false, 'any_class_name', true ],
+			'No input, tab'           => [ null, 'integrations', true, 'any_class_name', false ],
+			'Wrong input, not a tab'  => [ 'wrong', null, false, 'General', false ],
+			'Wrong input, tab'        => [ 'wrong', 'integrations', true, 'General', false ],
+			'Proper input, not a tab' => [ 'general', null, false, 'General', true ],
+			'Proper input, tab'       => [ 'general', 'integrations', true, 'General', true ],
+		];
+	}
+
+	/**
+	 * Test get_tab_name_from_referer().
+	 *
+	 * @param bool        $doing_ajax Whether we are in the ajax request.
+	 * @param string      $referer    Referer.
+	 * @param string|null $expected   Expected result.
+	 *
+	 * @return void
+	 * @dataProvider dp_test_get_tab_name_from_referer
+	 */
+	public function test_get_tab_name_from_referer( $doing_ajax, $referer, $expected ) {
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'wp_parse_str' )->andReturnUsing(
+			static function ( $input_string ) {
+				parse_str( (string) $input_string, $result );
+
+				return $result;
+			}
+		);
+
+		WP_Mock::userFunction( 'wp_doing_ajax' )->with()->once()->andReturn( $doing_ajax );
+
+		if ( $doing_ajax ) {
+			WP_Mock::userFunction( 'wp_get_referer' )->with()->once()->andReturn( $referer );
+		} else {
+			WP_Mock::userFunction( 'wp_get_referer' )->never();
+		}
+
+		FunctionMocker::replace(
+			'filter_input',
+			static function ( $type, $name, $filter ) use ( $referer ) {
+				if (
+					INPUT_POST === $type &&
+					'_wp_http_referer' === $name &&
+					FILTER_SANITIZE_URL === $filter
+				) {
+					return $referer;
+				}
+
+				return null;
+			}
+		);
+
+		self::assertSame( $expected, $subject->get_tab_name_from_referer() );
+	}
+
+	/**
+	 * Data provider for test_get_tab_name_from_referer().
+	 *
+	 * @return array
+	 */
+	public function dp_test_get_tab_name_from_referer() {
+		return [
+			'Not ajax, not a tab'  => [
+				false,
+				'https://test.test/wp-admin/options-general.php?page=cyr-to-lat',
+				null,
+			],
+			'Not ajax, tab'        => [
+				false,
+				'https://test.test/wp-admin/options-general.php?page=cyr-to-lat&tab=converter',
+				'converter',
+			],
+			'Not ajax, no referer' => [
+				false,
+				null,
+				null,
+			],
+			'Ajax, not a tab'      => [
+				true,
+				'https://test.test/wp-admin/options-general.php?page=cyr-to-lat',
+				null,
+			],
+			'Ajax, tab'            => [
+				true,
+				'https://test.test/wp-admin/options-general.php?page=cyr-to-lat&tab=converter',
+				'converter',
+			],
+			'Ajax, no referer'     => [
+				true,
+				null,
+				null,
+			],
 		];
 	}
 
@@ -699,9 +825,13 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_get_tabs() {
-		$tab     = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$tabs    = [ $tab ];
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$tab = Mockery::mock( SettingsBase::class )->makePartial();
+		$tab->shouldAllowMockingProtectedMethods();
+
+		$tabs = [ $tab ];
+
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$this->set_protected_property( $subject, 'tabs', $tabs );
 		self::assertSame( $tabs, $subject->get_tabs() );
 	}
@@ -712,12 +842,13 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_get_active_tab() {
-		$tab = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$tab = Mockery::mock( SettingsBase::class )->makePartial();
+		$tab->shouldAllowMockingProtectedMethods();
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$method  = 'get_active_tab';
-
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_tab_active' )->with( $tab )->andReturn( true );
+		$method = 'get_active_tab';
 		$this->set_method_accessibility( $subject, $method );
 
 		$this->set_protected_property( $subject, 'tabs', [] );
@@ -740,7 +871,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$option_name  = 'cyr_to_lat_settings';
 		$option_page  = 'cyr-to-lat';
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->andReturn( true );
 		$subject->shouldReceive( 'option_group' )->andReturn( $option_group );
 		$subject->shouldReceive( 'option_name' )->andReturn( $option_name );
@@ -780,7 +912,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$option_group = 'cyr_to_lat_group';
 		$option_name  = 'cyr_to_lat_settings';
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->andReturn( true );
 		$subject->shouldReceive( 'option_group' )->andReturn( $option_group );
 		$subject->shouldReceive( 'option_name' )->andReturn( $option_name );
@@ -800,7 +933,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 * Test setup_fields() not on options screen.
 	 */
 	public function test_setup_fields_not_on_options_screen() {
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->andReturn( false );
 
 		WP_Mock::userFunction( 'register_setting' )->never();
@@ -822,7 +956,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	public function test_field_callback( $arguments, $expected ) {
 		$option_name = 'cyr_to_lat_settings';
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'option_name' )->andReturn( $option_name );
 		$subject->shouldReceive( 'get' )->with( $arguments['field_id'] )->andReturn( $arguments['default'] );
 
@@ -843,11 +978,30 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		WP_Mock::userFunction( 'selected' )->andReturnUsing(
 			function ( $checked, $current, $echo ) {
 				$result = '';
+
 				if ( (string) $checked === (string) $current ) {
 					$result = 'selected="selected"';
 				}
 
 				return $result;
+			}
+		);
+
+		WP_Mock::userFunction( 'disabled' )->andReturnUsing(
+			function ( $disabled, $current, $display ) {
+				$result = '';
+
+				if ( (string) $disabled === (string) $current ) {
+					$result = 'disabled="disabled"';
+				}
+
+				return $result;
+			}
+		);
+
+		WP_Mock::userFunction( 'wp_parse_args' )->andReturnUsing(
+			static function ( $args, $defaults ) {
+				return array_merge( $defaults, $args );
 			}
 		);
 
@@ -916,9 +1070,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'supplemental' => '',
 					'default'      => 'some text',
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
-				'<input name="cyr_to_lat_settings[some_id]"' .
-				' id="some_id" type="text" placeholder="" value="some text" class="regular-text" />',
+				'<input  name="cyr_to_lat_settings[some_id]"' .
+				' id="some_id" type="text" placeholder="" value="some text" autocomplete="" data-lpignore="false" class="regular-text" />',
 			],
 			'Text with helper'       => [
 				[
@@ -930,10 +1085,11 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'supplemental' => '',
 					'default'      => 'some text',
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
-				'<span class="helper"><span class="helper-content">This is helper</span></span>' .
-				'<input name="cyr_to_lat_settings[some_id]"' .
-				' id="some_id" type="text" placeholder="" value="some text" class="regular-text" />',
+				'<input  name="cyr_to_lat_settings[some_id]"' .
+				' id="some_id" type="text" placeholder="" value="some text" autocomplete="" data-lpignore="false" class="regular-text" />' .
+				'<span class="helper"><span class="helper-content">This is helper</span></span>',
 			],
 			'Text with supplemental' => [
 				[
@@ -945,9 +1101,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'supplemental' => 'This is supplemental',
 					'default'      => 'some text',
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
-				'<input name="cyr_to_lat_settings[some_id]"' .
-				' id="some_id" type="text" placeholder="" value="some text" class="regular-text" />' .
+				'<input  name="cyr_to_lat_settings[some_id]"' .
+				' id="some_id" type="text" placeholder="" value="some text" autocomplete="" data-lpignore="false" class="regular-text" />' .
 				'<p class="description">This is supplemental</p>',
 			],
 		];
@@ -970,9 +1127,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'supplemental' => '',
 					'default'      => 'some password',
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
-				'<input name="cyr_to_lat_settings[some_id]"' .
-				' id="some_id" type="password" placeholder="" value="some password" class="regular-text" />',
+				'<input  name="cyr_to_lat_settings[some_id]"' .
+				' id="some_id" type="password" placeholder="" value="some password" autocomplete="new-password" data-lpignore="true" class="regular-text" />',
 			],
 		];
 	}
@@ -994,9 +1152,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'supplemental' => '',
 					'default'      => 15,
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
-				'<input name="cyr_to_lat_settings[some_id]"' .
-				' id="some_id" type="number" placeholder="" value="15" class="regular-text" min="" max="" />',
+				'<input  name="cyr_to_lat_settings[some_id]"' .
+				' id="some_id" type="number" placeholder="" value="15" class="regular-text" min="" max="" step="" />',
 			],
 		];
 	}
@@ -1018,8 +1177,9 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'supplemental' => '',
 					'default'      => '<p>This is some<br>textarea</p>',
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
-				'<textarea name="cyr_to_lat_settings[some_id]"' .
+				'<textarea  name="cyr_to_lat_settings[some_id]"' .
 				' id="some_id" placeholder="" rows="5" cols="50"><p>This is some<br>textarea</p></textarea>',
 			],
 		];
@@ -1042,9 +1202,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'supplemental' => '',
 					'default'      => '',
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
-				'<fieldset><label for="some_id_1"><input id="some_id_1"' .
-				' name="cyr_to_lat_settings[some_id][]" type="checkbox" value="yes"  />' .
+				'<fieldset ><label for="some_id_1"><input id="some_id_1"' .
+				' name="cyr_to_lat_settings[some_id][]" type="checkbox" value="on"   />' .
 				' </label><br/></fieldset>',
 			],
 			'Checkbox not checked'      => [
@@ -1057,9 +1218,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'supplemental' => '',
 					'default'      => 'no',
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
-				'<fieldset><label for="some_id_1"><input id="some_id_1"' .
-				' name="cyr_to_lat_settings[some_id][]" type="checkbox" value="yes"  />' .
+				'<fieldset ><label for="some_id_1"><input id="some_id_1"' .
+				' name="cyr_to_lat_settings[some_id][]" type="checkbox" value="on"   />' .
 				' </label><br/></fieldset>',
 			],
 			'Checkbox checked'          => [
@@ -1072,9 +1234,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'supplemental' => '',
 					'default'      => 'yes',
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
-				'<fieldset><label for="some_id_1"><input id="some_id_1"' .
-				' name="cyr_to_lat_settings[some_id][]" type="checkbox" value="yes" checked="checked" />' .
+				'<fieldset ><label for="some_id_1"><input id="some_id_1"' .
+				' name="cyr_to_lat_settings[some_id][]" type="checkbox" value="on"   />' .
 				' </label><br/></fieldset>',
 			],
 		];
@@ -1109,6 +1272,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'supplemental' => '',
 					'default'      => 1,
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
 				'',
 			],
@@ -1123,6 +1287,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'default'      => 1,
 					'options'      => 'green, yellow, red',
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
 				'',
 			],
@@ -1147,15 +1312,16 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'default'      => 1,
 					'options'      => [ 'green', 'yellow', 'red' ],
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
-				'<fieldset><label for="some_id_1"><input id="some_id_1"' .
-				' name="cyr_to_lat_settings[some_id]" type="radio" value="0"  />' .
+				'<fieldset ><label for="some_id_1"><input id="some_id_1"' .
+				' name="cyr_to_lat_settings[some_id]" type="radio" value="0"   />' .
 				' green</label><br/>' .
 				'<label for="some_id_2"><input id="some_id_2"' .
-				' name="cyr_to_lat_settings[some_id]" type="radio" value="1" checked="checked" />' .
+				' name="cyr_to_lat_settings[some_id]" type="radio" value="1" checked="checked"  />' .
 				' yellow</label><br/>' .
 				'<label for="some_id_3"><input id="some_id_3"' .
-				' name="cyr_to_lat_settings[some_id]" type="radio" value="2"  />' .
+				' name="cyr_to_lat_settings[some_id]" type="radio" value="2"   />' .
 				' red</label><br/></fieldset>',
 			],
 		];
@@ -1178,6 +1344,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'supplemental' => '',
 					'default'      => 1,
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
 				'',
 			],
@@ -1192,6 +1359,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'default'      => 1,
 					'options'      => 'green, yellow, red',
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
 				'',
 			],
@@ -1206,11 +1374,12 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'default'      => 1,
 					'options'      => [ 'green', 'yellow', 'red' ],
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
-				'<select name="cyr_to_lat_settings[some_id]">' .
-				'<option value="0" >green</option>' .
-				'<option value="1" selected="selected">yellow</option>' .
-				'<option value="2" >red</option>' .
+				'<select  name="cyr_to_lat_settings[some_id]">' .
+				'<option value="0"  >green</option>' .
+				'<option value="1" selected="selected" >yellow</option>' .
+				'<option value="2"  >red</option>' .
 				'</select>',
 			],
 		];
@@ -1245,6 +1414,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'supplemental' => '',
 					'default'      => 1,
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
 				'',
 			],
@@ -1259,6 +1429,7 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'default'      => 1,
 					'options'      => 'green, yellow, red',
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
 				'',
 			],
@@ -1283,11 +1454,12 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'default'      => 1,
 					'options'      => [ 'green', 'yellow', 'red' ],
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
-				'<select multiple="multiple" name="cyr_to_lat_settings[some_id][]">' .
-				'<option value="0" >green</option>' .
-				'<option value="1" >yellow</option>' .
-				'<option value="2" >red</option>' .
+				'<select  multiple="multiple" name="cyr_to_lat_settings[some_id][]">' .
+				'<option value="0"  >green</option>' .
+				'<option value="1"  >yellow</option>' .
+				'<option value="2"  >red</option>' .
 				'</select>',
 			],
 			'Multiple with multiple selection' => [
@@ -1301,11 +1473,12 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 					'default'      => [ 1, 2 ],
 					'options'      => [ 'green', 'yellow', 'red' ],
 					'field_id'     => 'some_id',
+					'disabled'     => false,
 				],
-				'<select multiple="multiple" name="cyr_to_lat_settings[some_id][]">' .
-				'<option value="0" >green</option>' .
-				'<option value="1" selected="selected">yellow</option>' .
-				'<option value="2" selected="selected">red</option>' .
+				'<select  multiple="multiple" name="cyr_to_lat_settings[some_id][]">' .
+				'<option value="0"  >green</option>' .
+				'<option value="1" selected="selected" >yellow</option>' .
+				'<option value="2" selected="selected" >red</option>' .
 				'</select>',
 			],
 		];
@@ -1344,7 +1517,9 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 						'я' => 'ya',
 					],
 					'field_id'     => 'iso9',
+					'disabled'     => false,
 				],
+				'<fieldset >' .
 				'<div class="ctl-table-cell">' .
 				'<label for="iso9-0">ю</label>' .
 				'<input name="cyr_to_lat_settings[iso9][ю]"' .
@@ -1354,7 +1529,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 				'<label for="iso9-1">я</label>' .
 				'<input name="cyr_to_lat_settings[iso9][я]"' .
 				' id="iso9-1" type="text" placeholder="" value="ya" class="regular-text" />' .
-				'</div>',
+				'</div>' .
+				'</fieldset>',
 			],
 		];
 	}
@@ -1384,10 +1560,15 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_get( array $settings, $key, $empty_value, $expected ) {
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$tab = Mockery::mock( SettingsBase::class )->makePartial();
+		$tab->shouldAllowMockingProtectedMethods();
+		$tab->shouldReceive( 'form_fields' )->andReturn( [] );
 
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'init_settings' )->never();
 		$this->set_protected_property( $subject, 'settings', $settings );
+		$this->set_protected_property( $subject, 'tabs', [ $tab ] );
 
 		if ( ! isset( $settings[ $key ] ) ) {
 			$subject->shouldReceive( 'form_fields' )->andReturn( $this->get_test_settings() )->once();
@@ -1424,7 +1605,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$key      = 'iso9';
 		$expected = $settings[ $key ];
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'init_settings' )->once()->andReturnUsing(
 			function () use ( $subject, $settings ) {
 				$this->set_protected_property( $subject, 'settings', $settings );
@@ -1446,7 +1628,6 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	public function test_field_default( array $field, $expected ) {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 		$method  = 'field_default';
-
 		$this->set_method_accessibility( $subject, $method );
 
 		self::assertSame( $expected, $subject->$method( $field ) );
@@ -1465,6 +1646,27 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	}
 
 	/**
+	 * Test set_field().
+	 *
+	 * @return void
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_set_field() {
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
+		$this->set_protected_property( $subject, 'form_fields', $this->get_test_form_fields() );
+
+		$field_key = 'title';
+		$value     = 'Some title';
+
+		self::assertFalse( $subject->set_field( 'non_existent_field', $field_key, $value ) );
+		self::assertTrue( $subject->set_field( 'iso9', $field_key, $value ) );
+
+		$form_fields = $this->get_protected_property( $subject, 'form_fields' );
+		self::assertSame( $value, $form_fields['iso9'][ $field_key ] );
+	}
+
+	/**
 	 * Test update_option().
 	 *
 	 * @param array  $settings Plugin options.
@@ -1478,7 +1680,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	public function test_update_option( $settings, $key, $value, $expected ) {
 		$option_name = 'cyr_to_lat_settings';
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'init_settings' )->never();
 		$subject->shouldReceive( 'option_name' )->once()->andReturn( $option_name );
 		$this->set_protected_property( $subject, 'settings', $settings );
@@ -1546,7 +1749,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$expected         = $settings;
 		$expected[ $key ] = $value;
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'init_settings' )->once()->andReturnUsing(
 			function () use ( $subject, $settings ) {
 				$this->set_protected_property( $subject, 'settings', $settings );
@@ -1572,8 +1776,19 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 	 * @dataProvider dp_test_pre_update_option_filter
 	 */
 	public function test_pre_update_option_filter( $form_fields, $value, $old_value, $expected ) {
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$option_name                   = 'hcaptcha_settings';
+		$network_wide                  = '_network_wide';
+		$merged_value                  = array_merge( $old_value, $value );
+		$merged_value[ $network_wide ] = array_key_exists( $network_wide, $merged_value ) ? $merged_value[ $network_wide ] : [];
+
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'form_fields' )->andReturn( $form_fields );
+		$subject->shouldReceive( 'option_name' )->andReturn( $option_name );
+
+		WP_Mock::userFunction( 'update_site_option' )
+			->with( $option_name . $network_wide, $merged_value[ $network_wide ] );
+		WP_Mock::userFunction( 'update_site_option' )->with( $option_name, $merged_value );
 
 		self::assertSame( $expected, $subject->pre_update_option_filter( $value, $old_value ) );
 	}
@@ -1601,8 +1816,22 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		];
 
 		return [
-			[ [], 'value', 'value', 'value' ],
-			[ [], 'value', 'old_value', 'value' ],
+			[
+				[],
+				[ 'value' ],
+				[ 'value' ],
+				[ 'value' ],
+			],
+			[
+				[],
+				[ 'a' => 'value' ],
+				[ 'b' => 'old_value' ],
+				[
+					'b'             => 'old_value',
+					'a'             => 'value',
+					'_network_wide' => [],
+				],
+			],
 			[
 				[
 					'no_checkbox' => [
@@ -1617,7 +1846,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 				],
 				[ 'no_checkbox' => '0' ],
 				[ 'no_checkbox' => '1' ],
-				[ 'no_checkbox' => '0' ],
+				[
+					'no_checkbox'   => '0',
+					'_network_wide' => [],
+				],
 			],
 			[
 				[
@@ -1633,7 +1865,10 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 				],
 				[ 'some_checkbox' => '0' ],
 				[ 'some_checkbox' => '1' ],
-				[ 'some_checkbox' => 'no' ],
+				[
+					'some_checkbox' => '0',
+					'_network_wide' => [],
+				],
 			],
 			[
 				[
@@ -1649,9 +1884,83 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 				],
 				[ 'some_checkbox' => '1' ],
 				[ 'some_checkbox' => '0' ],
-				[ 'some_checkbox' => 'yes' ],
+				[
+					'some_checkbox' => '1',
+					'_network_wide' => [],
+				],
 			],
-			[ [], $value, $old_value, $expected ],
+			[
+				[
+					'some_checkbox' => [
+						'label'        => 'some field',
+						'section'      => 'some_section',
+						'type'         => 'checkbox',
+						'placeholder'  => '',
+						'helper'       => '',
+						'supplemental' => '',
+						'default'      => [ '' ],
+						'disabled'     => true,
+					],
+				],
+				[ 'another_value' => '1' ],
+				[ 'some_checkbox' => '0' ],
+				[
+					'some_checkbox' => '0',
+					'another_value' => '1',
+					'_network_wide' => [],
+				],
+			],
+			[
+				[
+					'some_checkbox' => [
+						'label'        => 'some field',
+						'section'      => 'some_section',
+						'type'         => 'checkbox',
+						'placeholder'  => '',
+						'helper'       => '',
+						'supplemental' => '',
+						'default'      => [ '' ],
+						'disabled'     => false,
+					],
+				],
+				[ 'another_value' => '1' ],
+				[ 'some_checkbox' => '0' ],
+				[
+					'some_checkbox' => [],
+					'another_value' => '1',
+					'_network_wide' => [],
+				],
+			],
+			[
+				[],
+				[
+					'bel' => [ 'Б' => 'B1' ],
+				],
+				[
+					'iso9' => [ 'Б' => 'B' ],
+					'bel'  => [ 'Б' => 'B' ],
+				],
+				[
+					'iso9'          => [ 'Б' => 'B' ],
+					'bel'           => [ 'Б' => 'B1' ],
+					'_network_wide' => [],
+				],
+			],
+			[
+				[],
+				[
+					'bel'           => [ 'Б' => 'B1' ],
+					'_network_wide' => [ 'on' ],
+				],
+				[
+					'iso9' => [ 'Б' => 'B' ],
+					'bel'  => [ 'Б' => 'B' ],
+				],
+				[
+					'iso9' => [ 'Б' => 'B' ],
+					'bel'  => [ 'Б' => 'B' ],
+				],
+			],
 		];
 	}
 
@@ -1662,7 +1971,8 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$text_domain      = 'cyr2lat';
 		$plugin_base_name = 'cyr2lat/cyr-to-lat.php';
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'text_domain' )->andReturn( $text_domain );
 		$subject->shouldReceive( 'plugin_basename' )->andReturn( $plugin_base_name );
 
@@ -1686,11 +1996,9 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 		$screen_id      = 'settings_page_cyr-to-lat';
 		$main_screen_id = 'toplevel_page_cyr-to-lat';
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$method  = 'is_options_screen';
-
-		$subject->shouldReceive( 'is_main_menu_page' )->once()->andReturn( $is_main_menu_page );
-		$this->set_method_accessibility( $subject, $method );
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'is_main_menu_page' )->andReturn( $is_main_menu_page );
 
 		if ( $is_main_menu_page ) {
 			$subject->shouldReceive( 'screen_id' )->andReturn( $main_screen_id );
@@ -1698,9 +2006,9 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 			$subject->shouldReceive( 'screen_id' )->andReturn( $screen_id );
 		}
 
-		WP_Mock::userFunction( 'get_current_screen' )->with()->once()->andReturn( $current_screen );
+		WP_Mock::userFunction( 'get_current_screen' )->with()->andReturn( $current_screen );
 
-		self::assertSame( $expected, $subject->$method() );
+		self::assertSame( $expected, $subject->is_options_screen() );
 	}
 
 	/**
@@ -1720,8 +2028,6 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 
 	/**
 	 * Test is_options_screen() when get_current_screen() does not exist.
-	 *
-	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_is_options_screen_when_get_current_screen_does_not_exist() {
 		FunctionMocker::replace(
@@ -1731,11 +2037,9 @@ class SettingsBaseTest extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		$subject = Mockery::mock( SettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$method  = 'is_options_screen';
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 
-		$this->set_method_accessibility( $subject, $method );
-
-		self::assertFalse( $subject->$method() );
+		self::assertFalse( $subject->is_options_screen() );
 	}
 }

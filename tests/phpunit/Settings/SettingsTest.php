@@ -59,23 +59,29 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_and_screen_ids() {
-		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$method  = 'init';
-
-		$this->set_method_accessibility( $subject, $method );
-
-		$tables    = Mockery::mock( 'overload:' . Tables::class );
-		$converter = Mockery::mock( 'overload:' . Converter::class )->makePartial();
 		$screen_id = 'cyr-to-lat';
+
+		Mockery::mock( 'overload:' . Tables::class );
+
+		$converter = Mockery::mock( 'overload:' . Converter::class )->makePartial();
 		$converter->shouldReceive( 'screen_id' )->with()->andReturn( $screen_id );
 
-		$expected = [ $tables ];
+		$menu_pages_classes = [
+			'Cyr To Lat' => [
+				Tables::class,
+				Converter::class,
+			],
+		];
 
-		$subject->$method();
-		$menu_pages = $this->get_protected_property( $subject, 'menu_pages' );
+		$expected = $menu_pages_classes;
+
+		$subject = new Settings( $menu_pages_classes );
+
+		$subject_menu_pages_classes = $this->get_protected_property( $subject, 'menu_pages_classes' );
+
 		self::assertSame(
 			json_encode( $expected ),
-			json_encode( $menu_pages )
+			json_encode( $subject_menu_pages_classes )
 		);
 
 		self::assertSame( [ $screen_id ], $subject->screen_ids() );
@@ -122,15 +128,21 @@ class SettingsTest extends Cyr_To_Lat_TestCase {
 			}
 		);
 
-		$menu_pages = [ $tables ];
+		$tables->shouldReceive( 'get_tabs' )->andReturn( [ $converter ] );
+		$converter->shouldReceive( 'get_tabs' )->andReturn( null );
 
-		$tabs = [ $converter ];
-		$this->set_protected_property( $tables, 'tabs', $tabs );
+		$menu_pages_classes = [
+			'Cyr To Lat' => [
+				Tables::class,
+				Converter::class,
+			],
+		];
 
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$tables->shouldReceive( 'get_tabs' )->andReturn( [ $converter ] );
 
-		$this->set_protected_property( $subject, 'menu_pages', $menu_pages );
+		$tabs = [ $tables, $converter ];
+		$this->set_protected_property( $subject, 'tabs', $tabs );
+		$this->set_protected_property( $subject, 'menu_pages_classes', $menu_pages_classes );
 
 		self::assertSame( $tables_value, $subject->get( $tables_key ) );
 		self::assertSame( $converter_value, $subject->get( $converter_key ) );

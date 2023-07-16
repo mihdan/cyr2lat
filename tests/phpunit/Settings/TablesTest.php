@@ -15,6 +15,7 @@
 namespace Cyr_To_Lat\Tests\Settings;
 
 use Cyr_To_Lat\Main;
+use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
 use Cyr_To_Lat\Settings\Tables;
 use Cyr_To_Lat\Cyr_To_Lat_TestCase;
 use Mockery;
@@ -248,7 +249,164 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 
 		WP_Mock::userFunction( 'get_locale' )->with()->andReturn( 'iso9' );
 
-		$expected = $this->get_test_form_fields();
+		$expected = [
+			'iso9'  =>
+				[
+					'label'        => 'ISO9 Table<br>(current)',
+					'section'      => 'iso9_section',
+					'type'         => 'table',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      =>
+						[
+							0 => 'iso9',
+						],
+				],
+			'bel'   =>
+				[
+					'label'        => 'bel Table',
+					'section'      => 'bel_section',
+					'type'         => 'table',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      =>
+						[
+							0 => 'bel',
+						],
+				],
+			'uk'    =>
+				[
+					'label'        => 'uk Table',
+					'section'      => 'uk_section',
+					'type'         => 'table',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      =>
+						[
+							0 => 'uk',
+						],
+				],
+			'bg_BG' =>
+				[
+					'label'        => 'bg_BG Table',
+					'section'      => 'bg_BG_section',
+					'type'         => 'table',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      =>
+						[
+							0 => 'bg_BG',
+						],
+				],
+			'mk_MK' =>
+				[
+					'label'        => 'mk_MK Table',
+					'section'      => 'mk_MK_section',
+					'type'         => 'table',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      =>
+						[
+							0 => 'mk_MK',
+						],
+				],
+			'sr_RS' =>
+				[
+					'label'        => 'sr_RS Table',
+					'section'      => 'sr_RS_section',
+					'type'         => 'table',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      =>
+						[
+							0 => 'sr_RS',
+						],
+				],
+			'el'    =>
+				[
+					'label'        => 'el Table',
+					'section'      => 'el_section',
+					'type'         => 'table',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      =>
+						[
+							0 => 'el',
+						],
+				],
+			'hy'    =>
+				[
+					'label'        => 'hy Table',
+					'section'      => 'hy_section',
+					'type'         => 'table',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      =>
+						[
+							0 => 'hy',
+						],
+				],
+			'ka_GE' =>
+				[
+					'label'        => 'ka_GE Table',
+					'section'      => 'ka_GE_section',
+					'type'         => 'table',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      =>
+						[
+							0 => 'ka_GE',
+						],
+				],
+			'kk'    =>
+				[
+					'label'        => 'kk Table',
+					'section'      => 'kk_section',
+					'type'         => 'table',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      =>
+						[
+							0 => 'kk',
+						],
+				],
+			'he_IL' =>
+				[
+					'label'        => 'he_IL Table',
+					'section'      => 'he_IL_section',
+					'type'         => 'table',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      =>
+						[
+							0 => 'he_IL',
+						],
+				],
+			'zh_CN' =>
+				[
+					'label'        => 'zh_CN Table',
+					'section'      => 'zh_CN_section',
+					'type'         => 'table',
+					'placeholder'  => '',
+					'helper'       => '',
+					'supplemental' => '',
+					'default'      =>
+						[
+							0 => 'zh_CN',
+						],
+				],
+		];
 
 		$subject->init_form_fields();
 		self::assertSame( $expected, $this->get_protected_property( $subject, 'form_fields' ) );
@@ -269,28 +427,22 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 		WP_Mock::userFunction( 'admin_url' )->with( 'options.php' )->once()->andReturn( $admin_url );
 		WP_Mock::userFunction( 'do_settings_sections' )->with( $option_page )->once();
 		WP_Mock::userFunction( 'settings_fields' )->with( $option_group )->once();
-		WP_Mock::userFunction( 'submit_button' )->with()->once();
+		WP_Mock::userFunction( 'submit_button' )->with()->never();
 
-		$expected = '		<div class="wrap">
-			<h1>
-				Cyr To Lat Plugin Options			</h1>
+		$expected = '		<h1 class="ctl-settings-header">
+			<img
+					src="https://site.org/wp-content/plugins/cyr2lat/assets/images/logo.svg"
+					alt="Cyr To Lat Logo"
+					class="ctl-logo"
+			/>
+			Cyr To Lat		</h1>
 
-			<form
+		<form
 				id="ctl-options"
 				class="ctl-tables"
 				action="http://test.test/wp-admin/options.php"
 				method="post">
-							</form>
-
-			<div id="appreciation">
-				<h2>
-					Your Appreciation				</h2>
-				<a
-					target="_blank"
-					href="https://wordpress.org/support/view/plugin-reviews/cyr2lat?rate=5#new-post">
-					Leave a ★★★★★ plugin review on WordPress.org				</a>
-			</div>
-		</div>
+					</form>
 		';
 		ob_start();
 		$subject->settings_page();
@@ -373,24 +525,10 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 			->with(
 				Tables::HANDLE,
 				$plugin_url . '/assets/css/tables.css',
-				[],
+				[ SettingsBase::HANDLE ],
 				$plugin_version
 			)
 			->once();
-
-		$subject->admin_enqueue_scripts();
-	}
-
-	/**
-	 * Test admin_enqueue_scripts() not on own screen.
-	 */
-	public function test_admin_enqueue_scripts_not_on_own_screen() {
-		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'is_options_screen' )->with()->andReturn( false );
-
-		WP_Mock::userFunction( 'wp_enqueue_script' )->never();
-		WP_Mock::userFunction( 'wp_localize_script' )->never();
-		WP_Mock::userFunction( 'wp_enqueue_style' )->never();
 
 		$subject->admin_enqueue_scripts();
 	}
@@ -402,9 +540,6 @@ class TablesTest extends Cyr_To_Lat_TestCase {
 	 */
 	public function test_setup_sections() {
 		$tab_option_page = 'cyr-to-lat';
-		$current_screen  = (object) [ 'id' => 'settings_page_cyr-to-lat' ];
-
-		WP_Mock::userFunction( 'get_current_screen' )->with()->once()->andReturn( $current_screen );
 
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'option_page' )->andReturn( $tab_option_page );

@@ -149,7 +149,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 		?>
 		<h1 class="ctl-settings-header">
 			<img
-					src="<?php echo esc_url( CYR_TO_LAT_URL . '/assets/images/logo.svg' ); ?>"
+					src="<?php echo esc_url( constant( 'CYR_TO_LAT_URL' ) . '/assets/images/logo.svg' ); ?>"
 					alt="Cyr To Lat Logo"
 					class="ctl-logo"
 			/>
