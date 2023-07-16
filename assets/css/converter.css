@@ -76,6 +76,11 @@
 	z-index: 9999;
 }
 
+#ctl-convert-button {
+	color: #d63638;
+	border-color: #d63638;
+}
+
 #ctl-confirm-content {
 	display: block;
 	position: fixed;
@@ -83,21 +88,13 @@
 	top: 50%;
 	transform: translate(-50%, -50%);
 	background: #fff;
-	padding: 20px;
+	padding: 0 1.3em 1.3em 1.3em;
 }
 
-#ctl-convert-button {
-	color: #d63638;
-	border-color: #d63638;
+#ctl-confirm-buttons {
+	margin-top: 1.3em;
 }
 
-@media screen and (max-width: 782px) {
-	/*#ctl-options fieldset + .helper .helper-content {*/
-	/*	transform: translate(calc(100% + 0.4em), -4em);*/
-	/*}*/
-
-	/*#ctl-options .helper .helper-content::after {*/
-	/*	right: unset;*/
-	/*	left: 0;*/
-	/*}*/
+#ctl-confirm-cancel {
+	margin-left: 0.5em;
 }
