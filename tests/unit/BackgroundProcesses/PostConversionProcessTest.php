@@ -1,6 +1,6 @@
 <?php
 /**
- * Test_Post_Conversion_Process class file
+ * PostConversionProcessTest class file
  *
  * @package cyr-to-lat
  * @group   process
@@ -12,8 +12,10 @@
 
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
-namespace Cyr_To_Lat;
+namespace CyrToLat\Tests\Unit\BackgroundProcesses;
 
+use Cyr_To_Lat\Main;
+use Cyr_To_Lat\Post_Conversion_Process;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;
@@ -22,11 +24,11 @@ use WP_Mock;
 use wpdb;
 
 /**
- * Class Test_Post_Conversion_Process
+ * Class PostConversionProcessTest
  *
  * @group process
  */
-class Test_Post_Conversion_Process extends CyrToLatTestCase {
+class PostConversionProcessTest extends CyrToLatTestCase {
 
 	/**
 	 * End test

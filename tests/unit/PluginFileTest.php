@@ -1,25 +1,25 @@
 <?php
 /**
- * Test_Cyr_To_Lat_Plugin_File class file
+ * PluginFileTest class file
  *
  * @package cyr-to-lat
  */
 
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
-namespace Cyr_To_Lat;
+namespace CyrToLat\Tests\Unit;
 
-use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use Cyr_To_Lat\Main;
 use Mockery;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
 
 /**
- * Class Test_Cyr_To_Lat_Plugin_File
+ * Class PluginFileTest
  *
  * @group plugin-file
  */
-class Test_Cyr_To_Lat_Plugin_File extends CyrToLatTestCase {
+class PluginFileTest extends CyrToLatTestCase {
 
 	/**
 	 * Tear down.

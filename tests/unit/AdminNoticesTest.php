@@ -1,29 +1,28 @@
 <?php
 /**
- * Test_Admin_Notices class file
+ * AdminNoticesTest class file
  *
  * @package cyr-to-lat
  */
 
-namespace Cyr_To_Lat;
+namespace CyrToLat\Tests\Unit;
 
-use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use Cyr_To_Lat\Admin_Notices;
 use ReflectionClass;
 use ReflectionException;
 use WP_Mock;
 
 /**
- * Class Test_Admin_Notices
+ * Class AdminNoticesTest
  *
  * @group admin-notices
  */
-class Test_Admin_Notices extends CyrToLatTestCase {
+class AdminNoticesTest extends CyrToLatTestCase {
 
 	/**
 	 * Test constructor
 	 *
 	 * @throws ReflectionException Reflection Exception.
-	 * @noinspection NullPointerExceptionInspection
 	 */
 	public function test_constructor() {
 		$classname = Admin_Notices::class;

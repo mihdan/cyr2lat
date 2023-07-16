@@ -1,6 +1,6 @@
 <?php
 /**
- * Test_WP_CLI class file
+ * WPCLITest class file
  *
  * @package cyr-to-lat
  */
@@ -20,11 +20,11 @@ use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
 
 /**
- * Class Test_WP_CLI
+ * Class WPCLITest
  *
  * @group wp-cli
  */
-class TestWPCLI extends CyrToLatTestCase {
+class WPCLITest extends CyrToLatTestCase {
 
 	/**
 	 * Test regenerate()

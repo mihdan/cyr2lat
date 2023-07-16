@@ -1,6 +1,6 @@
 <?php
 /**
- * Test_Term_Conversion_Process class file
+ * TermConversionProcessTest class file
  *
  * @package cyr-to-lat
  */
@@ -11,8 +11,10 @@
 
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
-namespace Cyr_To_Lat;
+namespace CyrToLat\Tests\Unit\BackgroundProcesses;
 
+use Cyr_To_Lat\Main;
+use Cyr_To_Lat\Term_Conversion_Process;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;
@@ -21,11 +23,11 @@ use WP_Mock;
 use wpdb;
 
 /**
- * Class Test_Term_Conversion_Process
+ * Class TermConversionProcessTest
  *
  * @group process
  */
-class Test_Term_Conversion_Process extends CyrToLatTestCase {
+class TermConversionProcessTest extends CyrToLatTestCase {
 
 	/**
 	 * End test

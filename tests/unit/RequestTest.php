@@ -1,27 +1,26 @@
 <?php
 /**
- * Test_Request class file
+ * RequestTest class file
  *
  * @package cyr-to-lat
  */
 
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
-namespace Cyr_To_Lat;
+namespace CyrToLat\Tests\Unit;
 
-use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use Cyr_To_Lat\Request;
 use Mockery;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
-use function PHPUnit\Framework\assertSame;
 
 /**
- * Class Test_Request
+ * Class RequestTest
  *
  * @group request
  */
-class Test_Request extends CyrToLatTestCase {
+class RequestTest extends CyrToLatTestCase {
 
 	/**
 	 * Tear down the test.

@@ -1,20 +1,20 @@
 <?php
 /**
- * Test_Conversion_Tables class file
+ * ConversionTablesTest class file
  *
  * @package cyr-to-lat
  */
 
-namespace Cyr_To_Lat;
+namespace CyrToLat\Tests\Unit;
 
-use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use Cyr_To_Lat\Conversion_Tables;
 
 /**
- * Class Test_Conversion_Tables
+ * Class ConversionTablesTest
  *
  * @group conversion-tables
  */
-class Test_Conversion_Tables extends CyrToLatTestCase {
+class ConversionTablesTest extends CyrToLatTestCase {
 
 	/**
 	 * Test get()

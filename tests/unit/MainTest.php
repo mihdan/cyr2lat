@@ -1,6 +1,6 @@
 <?php
 /**
- * Test_Main class file
+ * MainTest class file
  *
  * @package cyr-to-lat
  */
@@ -14,28 +14,37 @@
 
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
-namespace Cyr_To_Lat;
+namespace CyrToLat\Tests\Unit;
 
+use Cyr_To_Lat\ACF;
+use Cyr_To_Lat\Admin_Notices;
+use Cyr_To_Lat\Converter;
+use Cyr_To_Lat\Main;
+use Cyr_To_Lat\Post_Conversion_Process;
+use Cyr_To_Lat\Request;
+use Cyr_To_Lat\Requirements;
 use Cyr_To_Lat\Settings\Settings;
 use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
-use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use Cyr_To_Lat\Term_Conversion_Process;
+use Cyr_To_Lat\WP_CLI;
 use Exception;
 use Mockery;
 use PHPUnit\Runner\Version;
 use ReflectionClass;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
+use WP_Filesystem_Direct;
 use WP_Mock;
 use WP_REST_Server;
 use WP_Screen;
 use wpdb;
 
 /**
- * Class Test_Main
+ * Class MainTest
  *
  * @group main
  */
-class Test_Main extends CyrToLatTestCase {
+class MainTest extends CyrToLatTestCase {
 
 	/**
 	 * End test
@@ -57,7 +66,6 @@ class Test_Main extends CyrToLatTestCase {
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
-	 * @noinspection        NullPointerExceptionInspection
 	 */
 	public function test_constructor() {
 		$classname = Main::class;
@@ -206,6 +214,7 @@ class Test_Main extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_init_hooks
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_init_hooks( $polylang, $sitepress, $frontend ) {
 		$wpml_locale = 'en_US';
@@ -675,6 +684,7 @@ class Test_Main extends CyrToLatTestCase {
 	 * Test woocommerce_before_template_part_filter().
 	 *
 	 * @return void
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_woocommerce_before_template_part_filter() {
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -1586,8 +1596,7 @@ class Test_Main extends CyrToLatTestCase {
 		);
 
 		$declare_compatibility = FunctionMocker::replace(
-			'Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility',
-			null
+			'Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility'
 		);
 
 		$subject = Mockery::mock( Main::class )->makePartial();

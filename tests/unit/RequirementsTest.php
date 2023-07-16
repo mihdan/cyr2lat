@@ -1,6 +1,6 @@
 <?php
 /**
- * Test_Requirements class file
+ * RequirementsTest class file
  *
  * @package cyr-to-lat
  */
@@ -12,10 +12,10 @@
 
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
-namespace Cyr_To_Lat;
+namespace CyrToLat\Tests\Unit;
 
+use Cyr_To_Lat\Requirements;
 use Cyr_To_Lat\Settings\Settings;
-use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
@@ -24,11 +24,11 @@ use WP_Filesystem_Direct;
 use WP_Mock;
 
 /**
- * Class Test_Requirements
+ * Class RequirementsTest
  *
  * @group requirements
  */
-class Test_Requirements extends CyrToLatTestCase {
+class RequirementsTest extends CyrToLatTestCase {
 
 	/**
 	 * Tear down.
@@ -46,7 +46,6 @@ class Test_Requirements extends CyrToLatTestCase {
 	 * Test constructor
 	 *
 	 * @throws ReflectionException Reflection Exception.
-	 * @noinspection NullPointerExceptionInspection
 	 */
 	public function test_constructor() {
 		$classname = Requirements::class;

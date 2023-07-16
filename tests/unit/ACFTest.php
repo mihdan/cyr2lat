@@ -22,7 +22,7 @@ use WP_Mock;
  *
  * @group acf
  */
-class TestACF extends CyrToLatTestCase {
+class ACFTest extends CyrToLatTestCase {
 
 	/**
 	 * Tear down.

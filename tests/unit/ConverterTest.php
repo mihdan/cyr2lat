@@ -1,6 +1,6 @@
 <?php
 /**
- * Test_Converter class file
+ * ConverterTest class file
  *
  * @package cyr-to-lat
  */
@@ -11,10 +11,14 @@
 
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
-namespace Cyr_To_Lat;
+namespace CyrToLat\Tests\Unit;
 
+use Cyr_To_Lat\Admin_Notices;
+use Cyr_To_Lat\Converter;
+use Cyr_To_Lat\Main;
+use Cyr_To_Lat\Post_Conversion_Process;
 use Cyr_To_Lat\Settings\Settings;
-use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use Cyr_To_Lat\Term_Conversion_Process;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
@@ -23,11 +27,11 @@ use WP_Mock;
 use wpdb;
 
 /**
- * Class Test_Converter
+ * Class ConverterTest
  *
  * @group converter
  */
-class Test_Converter extends CyrToLatTestCase {
+class ConverterTest extends CyrToLatTestCase {
 
 	/**
 	 * End test
@@ -47,7 +51,6 @@ class Test_Converter extends CyrToLatTestCase {
 	 * Test constructor
 	 *
 	 * @throws ReflectionException Reflection Exception.
-	 * @noinspection NullPointerExceptionInspection
 	 */
 	public function test_constructor() {
 		$classname = Converter::class;

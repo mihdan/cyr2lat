@@ -1,6 +1,6 @@
 <?php
 /**
- * Test_Conversion_Process class file
+ * ConversionProcessTest class file
  *
  * @package cyr-to-lat
  */
@@ -10,8 +10,10 @@
 /** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
-namespace Cyr_To_Lat;
+namespace CyrToLat\Tests\Unit\BackgroundProcesses;
 
+use Cyr_To_Lat\Conversion_Process;
+use Cyr_To_Lat\Main;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;
@@ -20,11 +22,11 @@ use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
 
 /**
- * Class Test_Conversion_Process
+ * Class ConversionProcessTest
  *
  * @group process
  */
-class Test_Conversion_Process extends CyrToLatTestCase {
+class ConversionProcessTest extends CyrToLatTestCase {
 
 	/**
 	 * Test task()
