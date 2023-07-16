@@ -7,6 +7,8 @@
 
 namespace Cyr_To_Lat\Settings;
 
+use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
+
 /**
  * Class Converter
  *
@@ -17,7 +19,7 @@ class Converter extends PluginSettingsBase {
 	/**
 	 * Admin script handle.
 	 */
-	const HANDLE = 'cyr-to-lat-settings';
+	const HANDLE = 'cyr-to-lat-converter';
 
 	/**
 	 * Converter nonce.
@@ -25,40 +27,9 @@ class Converter extends PluginSettingsBase {
 	const NONCE = 'cyr-to-lat-converter-nonce';
 
 	/**
-	 * Get screen id.
-	 *
-	 * @return string
+	 * Post types and statuses section id.
 	 */
-	public function screen_id() {
-		return 'settings_page_cyr-to-lat';
-	}
-
-	/**
-	 * Get option group.
-	 *
-	 * @return string
-	 */
-	protected function option_group() {
-		return 'cyr_to_lat_group';
-	}
-
-	/**
-	 * Get option page.
-	 *
-	 * @return string
-	 */
-	protected function option_page() {
-		return 'cyr-to-lat';
-	}
-
-	/**
-	 * Get option name.
-	 *
-	 * @return string
-	 */
-	protected function option_name() {
-		return 'cyr_to_lat_settings';
-	}
+	const SECTION_TYPES_STATUSES = 'types-statuses';
 
 	/**
 	 * Get page title.
@@ -67,15 +38,6 @@ class Converter extends PluginSettingsBase {
 	 */
 	protected function page_title() {
 		return __( 'Converter', 'cyr2lat' );
-	}
-
-	/**
-	 * Get menu title.
-	 *
-	 * @return string
-	 */
-	protected function menu_title() {
-		return __( 'Cyr To Lat', 'cyr2lat' );
 	}
 
 	/**
@@ -111,7 +73,7 @@ class Converter extends PluginSettingsBase {
 
 		$this->form_fields['background_post_types'] = [
 			'label'        => __( 'Post Types', 'cyr2lat' ),
-			'section'      => 'background_section',
+			'section'      => self::SECTION_TYPES_STATUSES,
 			'type'         => 'checkbox',
 			'placeholder'  => '',
 			'helper'       => __( 'Post types included in the conversion.', 'cyr2lat' ),
@@ -125,8 +87,7 @@ class Converter extends PluginSettingsBase {
 			$this->form_fields['background_post_types']['options'][ $post_type ] = $label;
 		}
 
-		$this->form_fields['background_post_types']['default'] = $default_post_types;
-		// @todo Mark as disabled.
+		$this->form_fields['background_post_types']['default']  = $default_post_types;
 		$this->form_fields['background_post_types']['disabled'] = array_diff( $default_post_types, $filtered_post_types );
 
 		$default_post_statuses = [ 'publish', 'future', 'private' ];
@@ -134,7 +95,7 @@ class Converter extends PluginSettingsBase {
 
 		$this->form_fields['background_post_statuses'] = [
 			'label'        => __( 'Post Statuses', 'cyr2lat' ),
-			'section'      => 'background_section',
+			'section'      => self::SECTION_TYPES_STATUSES,
 			'type'         => 'checkbox',
 			'placeholder'  => '',
 			'helper'       => __( 'Post statuses included in the conversion.', 'cyr2lat' ),
@@ -178,7 +139,6 @@ class Converter extends PluginSettingsBase {
 			$this->form_fields['background_post_types']['options'][ $post_type ] = $label;
 		}
 
-		// @todo Mark as disabled.
 		$this->form_fields['background_post_types']['disabled'] = array_diff(
 			$this->form_fields['background_post_types']['default'],
 			$filtered_post_types
@@ -199,34 +159,16 @@ class Converter extends PluginSettingsBase {
 	 * Show settings page.
 	 */
 	public function settings_page() {
+		parent::settings_page();
+
 		?>
-		<div class="wrap">
-			<h1>
-				<?php
-				esc_html_e( 'Cyr To Lat Plugin Options', 'cyr2lat' );
-				?>
-			</h1>
-
-			<form
-				id="ctl-options"
-				class="ctl-<?php echo esc_attr( $this->section_title() ); ?>"
-				action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>"
-				method="post">
-				<?php
-				do_settings_sections( $this->option_page() ); // Sections with options.
-				settings_fields( $this->option_group() ); // Hidden protection fields.
-				submit_button();
-				?>
-			</form>
-
-			<form id="ctl-convert-existing-slugs" action="" method="post">
-				<input type="hidden" name="ctl-convert" />
-				<?php
-				wp_nonce_field( self::NONCE );
-				submit_button( __( 'Convert Existing Slugs', 'cyr2lat' ), 'secondary', 'ctl-convert-button' );
-				?>
-			</form>
-		</div>
+		<form id="ctl-convert-existing-slugs" action="" method="post">
+			<input type="hidden" name="ctl-convert"/>
+			<?php
+			wp_nonce_field( self::NONCE );
+			submit_button( __( 'Convert Existing Slugs', 'cyr2lat' ), 'secondary', 'ctl-convert-button' );
+			?>
+		</form>
 		<?php
 	}
 
@@ -236,7 +178,7 @@ class Converter extends PluginSettingsBase {
 	 * @param array $arguments Section arguments.
 	 */
 	public function section_callback( $arguments ) {
-		if ( 'background_section' === $arguments['id'] ) {
+		if ( self::SECTION_TYPES_STATUSES === $arguments['id'] ) {
 			?>
 			<h2 class="title">
 				<?php
@@ -254,7 +196,22 @@ class Converter extends PluginSettingsBase {
 				?>
 			</p>
 			<?php
+			$this->print_section_header( $arguments['id'], __( 'Post Types and Statuses', 'cyr2lat' ) );
 		}
+	}
+
+	/**
+	 * Print section header.
+	 *
+	 * @param string $id    Section id.
+	 * @param string $title Section title.
+	 *
+	 * @return void
+	 */
+	private function print_section_header( $id, $title ) {
+		?>
+		<h3 class="ctl-section-<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $title ); ?></h3>
+		<?php
 	}
 
 	/**
@@ -313,14 +270,6 @@ class Converter extends PluginSettingsBase {
 	 * Enqueue class scripts.
 	 */
 	public function admin_enqueue_scripts() {
-		global $cyr_to_lat_plugin;
-
-		if ( ! $this->is_options_screen() ) {
-			return;
-		}
-
-		$min = $cyr_to_lat_plugin->min_suffix();
-
 		wp_enqueue_script(
 			self::HANDLE,
 			constant( 'CYR_TO_LAT_URL' ) . '/assets/js/apps/converter.js',
@@ -331,8 +280,8 @@ class Converter extends PluginSettingsBase {
 
 		wp_enqueue_style(
 			self::HANDLE,
-			constant( 'CYR_TO_LAT_URL' ) . "/assets/css/converter$min.css",
-			[],
+			constant( 'CYR_TO_LAT_URL' ) . "/assets/css/converter$this->min_prefix.css",
+			[ SettingsBase::HANDLE ],
 			constant( 'CYR_TO_LAT_VERSION' )
 		);
 	}

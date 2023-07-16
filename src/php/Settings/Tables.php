@@ -8,6 +8,7 @@
 namespace Cyr_To_Lat\Settings;
 
 use Cyr_To_Lat\Conversion_Tables;
+use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
 
 /**
  * Class Tables
@@ -34,57 +35,12 @@ class Tables extends PluginSettingsBase {
 	protected $locales = [];
 
 	/**
-	 * Get screen id.
-	 *
-	 * @return string
-	 */
-	public function screen_id() {
-		return 'settings_page_cyr-to-lat';
-	}
-
-	/**
-	 * Get option group.
-	 *
-	 * @return string
-	 */
-	protected function option_group() {
-		return 'cyr_to_lat_group';
-	}
-
-	/**
-	 * Get option page.
-	 *
-	 * @return string
-	 */
-	protected function option_page() {
-		return 'cyr-to-lat';
-	}
-
-	/**
-	 * Get option name.
-	 *
-	 * @return string
-	 */
-	protected function option_name() {
-		return 'cyr_to_lat_settings';
-	}
-
-	/**
 	 * Get page title.
 	 *
 	 * @return string
 	 */
 	protected function page_title() {
 		return __( 'Tables', 'cyr2lat' );
-	}
-
-	/**
-	 * Get menu title.
-	 *
-	 * @return string
-	 */
-	protected function menu_title() {
-		return __( 'Cyr To Lat', 'cyr2lat' );
 	}
 
 	/**
@@ -163,8 +119,6 @@ class Tables extends PluginSettingsBase {
 
 		$current_locale = $this->get_current_locale();
 
-		$this->form_fields = [];
-
 		foreach ( $this->locales as $locale => $info ) {
 			$current = ( $locale === $current_locale ) ? '<br>' . __( '(current)', 'cyr2lat' ) : '';
 
@@ -181,51 +135,13 @@ class Tables extends PluginSettingsBase {
 	}
 
 	/**
-	 * Show settings page.
-	 */
-	public function settings_page() {
-		?>
-		<div class="wrap">
-			<h1>
-				<?php
-				// Admin panel title.
-				esc_html_e( 'Cyr To Lat Plugin Options', 'cyr2lat' );
-				?>
-			</h1>
-
-			<form
-				id="ctl-options"
-				class="ctl-<?php echo esc_attr( $this->section_title() ); ?>"
-				action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>"
-				method="post">
-				<?php
-				do_settings_sections( $this->option_page() ); // Sections with options.
-				settings_fields( $this->option_group() ); // Hidden protection fields.
-				submit_button();
-				?>
-			</form>
-
-			<div id="appreciation">
-				<h2>
-					<?php echo esc_html( __( 'Your Appreciation', 'cyr2lat' ) ); ?>
-				</h2>
-				<a
-					target="_blank"
-					href="https://wordpress.org/support/view/plugin-reviews/cyr2lat?rate=5#new-post">
-					<?php echo esc_html( __( 'Leave a ★★★★★ plugin review on WordPress.org', 'cyr2lat' ) ); ?>
-				</a>
-			</div>
-		</div>
-		<?php
-	}
-
-	/**
 	 * Section callback.
 	 *
 	 * @param array $arguments Section arguments.
 	 */
 	public function section_callback( $arguments ) {
 		$locale = str_replace( '_section', '', $arguments['id'] );
+
 		if ( $this->get_current_locale() === $locale ) {
 			echo '<div id="ctl-current"></div>';
 		}
@@ -235,14 +151,6 @@ class Tables extends PluginSettingsBase {
 	 * Enqueue class scripts.
 	 */
 	public function admin_enqueue_scripts() {
-		global $cyr_to_lat_plugin;
-
-		if ( ! $this->is_options_screen() ) {
-			return;
-		}
-
-		$min = $cyr_to_lat_plugin->min_suffix();
-
 		wp_enqueue_script(
 			self::HANDLE,
 			constant( 'CYR_TO_LAT_URL' ) . '/assets/js/apps/tables.js',
@@ -262,8 +170,8 @@ class Tables extends PluginSettingsBase {
 
 		wp_enqueue_style(
 			self::HANDLE,
-			constant( 'CYR_TO_LAT_URL' ) . "/assets/css/tables$min.css",
-			[],
+			constant( 'CYR_TO_LAT_URL' ) . "/assets/css/tables$this->min_prefix.css",
+			[ SettingsBase::HANDLE ],
 			constant( 'CYR_TO_LAT_VERSION' )
 		);
 	}
@@ -272,10 +180,6 @@ class Tables extends PluginSettingsBase {
 	 * Setup settings sections.
 	 */
 	public function setup_sections() {
-		if ( ! $this->is_options_screen() ) {
-			return;
-		}
-
 		foreach ( $this->form_fields as $form_field ) {
 			add_settings_section(
 				$form_field['section'],

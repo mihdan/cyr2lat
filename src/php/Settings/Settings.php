@@ -14,23 +14,23 @@ use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
 /**
  * Class Settings
  *
- * Central point to get settings from.
+ * The central point to get settings from.
  */
 class Settings implements SettingsInterface {
 
 	/**
-	 * Menu pages classes.
-	 */
-	const MENU_PAGES = [
-		[ Tables::class, Converter::class ],
-	];
-
-	/**
-	 * Menu pages class instances.
+	 * Menu pages class names.
 	 *
 	 * @var array
 	 */
-	protected $menu_pages = [];
+	protected $menu_pages_classes;
+
+	/**
+	 * Menu pages and tabs in one flat array.
+	 *
+	 * @var array
+	 */
+	protected $tabs = [];
 
 	/**
 	 * Screen ids of pages and tabs.
@@ -41,23 +41,22 @@ class Settings implements SettingsInterface {
 
 	/**
 	 * Settings constructor.
+	 *
+	 * @param array $menu_pages_classes Menu pages.
 	 */
-	public function __construct() {
+	public function __construct( $menu_pages_classes = [] ) {
+		// Allow to specify $menu_pages_classes item as one class, not an array.
+		$this->menu_pages_classes = (array) $menu_pages_classes;
+
 		$this->init();
 	}
 
 	/**
 	 * Init class.
-	 *
-	 * @noinspection UnnecessaryCastingInspection
-	 * @noinspection PhpCastIsUnnecessaryInspection
 	 */
 	protected function init() {
-		// Allow to specify MENU_PAGES item as one class, not an array.
-		$menu_pages = (array) self::MENU_PAGES;
-
-		foreach ( $menu_pages as $menu_page ) {
-			$tab_classes = (array) $menu_page;
+		foreach ( $this->menu_pages_classes as $menu_page_classes ) {
+			$tab_classes = (array) $menu_page_classes;
 
 			// Allow to specify menu page as one class, without tabs.
 			$page_class  = $tab_classes[0];
@@ -80,8 +79,22 @@ class Settings implements SettingsInterface {
 			 *
 			 * @var PluginSettingsBase $page_class
 			 */
-			$this->menu_pages[] = new $page_class( $tabs );
+			$menu_page = new $page_class( $tabs );
+
+			$this->tabs[] = [ $menu_page ];
+			$this->tabs[] = $tabs;
 		}
+
+		$this->tabs = array_merge( [], ...$this->tabs );
+	}
+
+	/**
+	 * Get tabs.
+	 *
+	 * @return array
+	 */
+	public function get_tabs() {
+		return $this->tabs;
 	}
 
 	/**
@@ -95,29 +108,16 @@ class Settings implements SettingsInterface {
 	public function get( $key, $empty_value = null ) {
 		$value = '';
 
-		foreach ( $this->menu_pages as $menu_page ) {
+		foreach ( $this->tabs as $tab ) {
 			/**
-			 * Menu page.
+			 * Page / Tab.
 			 *
-			 * @var SettingsBase $menu_page
+			 * @var SettingsBase $tab
 			 */
-			$value = $menu_page->get( $key, $empty_value );
+			$value = $tab->get( $key, $empty_value );
+
 			if ( ! empty( $value ) ) {
 				break;
-			}
-
-			$tabs = $menu_page->get_tabs();
-
-			foreach ( $tabs as $tab ) {
-				/**
-				 * Tab.
-				 *
-				 * @var SettingsBase $tab
-				 */
-				$value = $tab->get( $key, $empty_value );
-				if ( ! empty( $value ) ) {
-					break 2;
-				}
 			}
 		}
 
@@ -126,6 +126,57 @@ class Settings implements SettingsInterface {
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Check whether option value equals to the compared.
+	 *
+	 * @param string $key     Setting name.
+	 * @param string $compare Compared value.
+	 *
+	 * @return bool
+	 */
+	public function is( $key, $compare ) {
+		$value = $this->get( $key );
+
+		if ( is_array( $value ) ) {
+			return in_array( $compare, $value, true );
+		}
+
+		return $value === $compare;
+	}
+
+	/**
+	 * Check whether option value is 'on' or just non-empty.
+	 *
+	 * @param string $key Setting name.
+	 *
+	 * @return bool
+	 */
+	public function is_on( $key ) {
+		return ! empty( $this->get( $key ) );
+	}
+
+	/**
+	 * Set field.
+	 *
+	 * @param string $key       Setting name.
+	 * @param string $field_key Field key.
+	 * @param mixed  $value     Value.
+	 *
+	 * @return void
+	 */
+	public function set_field( $key, $field_key, $value ) {
+		foreach ( $this->tabs as $tab ) {
+			/**
+			 * Page / Tab.
+			 *
+			 * @var SettingsBase $tab
+			 */
+			if ( $tab->set_field( $key, $field_key, $value ) ) {
+				break;
+			}
+		}
 	}
 
 	/**

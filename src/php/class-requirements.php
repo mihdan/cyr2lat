@@ -73,6 +73,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 			}
 
 			$this->wp_filesystem = $wp_filesystem;
+
 			if ( ! $this->wp_filesystem ) {
 				$this->wp_filesystem = new WP_Filesystem_Direct( null );
 			}

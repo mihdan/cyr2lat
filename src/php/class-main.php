@@ -13,6 +13,8 @@
 namespace Cyr_To_Lat;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
+use Cyr_To_Lat\Settings\Converter as SettingsConverter;
+use Cyr_To_Lat\Settings\Tables as SettingsTables;
 use Polylang;
 use SitePress;
 use WP_Error;
@@ -128,8 +130,16 @@ class Main {
 	 * Main constructor.
 	 */
 	public function __construct() {
-		$this->request       = new Request();
-		$this->settings      = new Settings();
+		$this->request  = new Request();
+		$this->settings = new Settings(
+			[
+				'Cyr To Lat' => [
+					SettingsTables::class,
+					SettingsConverter::class,
+				],
+			]
+		);
+
 		$this->admin_notices = new Admin_Notices();
 		$requirements        = new Requirements( $this->settings, $this->admin_notices );
 

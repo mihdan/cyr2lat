@@ -6,10 +6,16 @@
 #ctl-options.ctl-tables h2.nav-tab,
 #ctl-options.ctl-tables table.active {
 	display: block;
+	font-size: 14px;
 }
 
 #ctl-options .form-table th {
 	display: none;
+}
+
+#ctl-options table tbody tr td {
+	padding: 15px 10px;
+	display: table-cell;
 }
 
 .ctl-table {
@@ -81,7 +87,6 @@ body.js #ctl-options .ctl-table {
 }
 
 #ctl-options .nav-tab-current.nav-tab-active {
-	/*box-shadow: 0 0 5px 5px #2271b1;*/
 	background: #2271b1;
 	color: #fff;
 	border-color: #0a4b78;
@@ -97,16 +102,24 @@ body.js #ctl-options .ctl-table {
 	margin-bottom: 1em;
 }
 
-.ctl-table-cell label {
+td fieldset .ctl-table-cell label {
 	width: 2.4em;
 	display: inline-block;
 	text-align: right;
-	margin-right: 0.2em;
+	margin: 0 0.2em !important;
+	padding: 0 8px;
+	line-height: 2;
+	height: 30px;
+	border-radius: 4px;
+	border: 1px solid transparent;
+	vertical-align: middle;
+	box-sizing: border-box;
 }
 
 .ctl-table-cell input {
 	width: 3em !important;
 	display: inline-block;
+	vertical-align: middle;
 }
 
 .ctl-table-cell #ctl-edit-label {
@@ -114,7 +127,8 @@ body.js #ctl-options .ctl-table {
 	top: 0;
 	left: 0;
 	width: 2.4em !important;
-	padding: 0;
+	margin: 0 0.2em !important;
+	padding: 0 8px;
 	border: 1px solid #007cba;
 	box-shadow: 0 0 0 1px #007cba;
 	outline: 2px solid #0000;
@@ -145,11 +159,6 @@ body.js #ctl-options .ctl-table {
 
 .ctl-plus button:focus {
 	outline: none;
-}
-
-#appreciation {
-	clear: both;
-	padding-top: 10px;
 }
 
 @media screen and (max-width: 767px) {
