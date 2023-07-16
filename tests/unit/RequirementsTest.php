@@ -98,7 +98,6 @@ class RequirementsTest extends CyrToLatTestCase {
 	 * Test constructor when no WP_Filesystem is available
 	 *
 	 * @throws ReflectionException Reflection Exception.
-	 * @noinspection NullPointerExceptionInspection
 	 */
 	public function test_constructor_when_NO_wp_filesystem_is_available() {
 		$classname = Requirements::class;
@@ -135,6 +134,8 @@ class RequirementsTest extends CyrToLatTestCase {
 
 	/**
 	 * Test if are_requirements_met() returns true when requirements met.
+	 *
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_requirements_met() {
 		$settings = Mockery::mock( Settings::class );
@@ -180,6 +181,8 @@ class RequirementsTest extends CyrToLatTestCase {
 
 	/**
 	 * Test if are_requirements_met() returns false when php requirements not met.
+	 *
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_php_requirements_not_met() {
 		$settings = Mockery::mock( Settings::class );
@@ -247,6 +250,7 @@ class RequirementsTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_vars_requirements_not_met
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_vars_requirements_not_met( $within_timeout, $content, $expected ) {
 		$max_input_vars              = $this->cyr_to_lat_required_max_input_vars - 1;
@@ -380,6 +384,7 @@ class RequirementsTest extends CyrToLatTestCase {
 	 * Test are_requirements_met() when max_input_vars requirements not met and filesystem not available.
 	 *
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_vars_requirements_not_met_and_filesystem_not_available() {
 		$max_input_vars    = $this->cyr_to_lat_required_max_input_vars - 1;
@@ -443,7 +448,9 @@ class RequirementsTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test deactivate_plugin()
+	 * Test deactivate_plugin().
+	 *
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_deactivate_plugin() {
 		$settings = Mockery::mock( Settings::class );
@@ -481,6 +488,8 @@ class RequirementsTest extends CyrToLatTestCase {
 
 	/**
 	 * Test deactivate_plugin() when it is not active.
+	 *
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_deactivate_plugin_when_it_is_not_active() {
 		$settings = Mockery::mock( Settings::class );

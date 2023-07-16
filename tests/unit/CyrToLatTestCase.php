@@ -220,7 +220,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 */
 	protected function wp_list_pluck( $input_list, $field, $index_key = null ) {
 		if ( ! is_array( $input_list ) ) {
-			return array();
+			return [];
 		}
 
 		return $this->pluck( $input_list, $field, $index_key );

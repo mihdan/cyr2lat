@@ -33,7 +33,6 @@ use PHPUnit\Runner\Version;
 use ReflectionClass;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
-use WP_Filesystem_Direct;
 use WP_Mock;
 use WP_REST_Server;
 use WP_Screen;
@@ -1688,7 +1687,7 @@ class MainTest extends CyrToLatTestCase {
 
 		$process_all_posts = Mockery::mock( Post_Conversion_Process::class );
 		$process_all_terms = Mockery::mock( Term_Conversion_Process::class );
-		$admin_notices     = Mockery::mock( Admin_notices::class );
+		$admin_notices     = Mockery::mock( Admin_Notices::class );
 
 		$converter = Mockery::mock( Converter::class );
 		$cli       = Mockery::mock( WP_CLI::class );
