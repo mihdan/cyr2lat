@@ -300,7 +300,6 @@ class ConverterTest extends CyrToLatTestCase {
 		$option_name   = 'cyr_to_lat_settings';
 		$form_fields   = $this->get_test_form_fields();
 		$test_settings = $this->get_test_settings();
-		$network_wide  = false;
 
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'delayed_init_form_fields' )->with()->once();
@@ -308,7 +307,7 @@ class ConverterTest extends CyrToLatTestCase {
 		$subject->shouldReceive( 'form_fields' )->with()->once()->andReturn( $form_fields );
 
 		WP_Mock::userFunction( 'get_site_option' )->with( $option_name . '_network_wide', [] )->once()
-			->andReturn( $network_wide );
+			->andReturn( false );
 
 		WP_Mock::userFunction( 'get_option' )->with( $option_name, null )->once()->andReturn( $test_settings );
 		WP_Mock::userFunction( 'wp_list_pluck' )->with( $form_fields, 'default' )->once()
@@ -450,6 +449,8 @@ class ConverterTest extends CyrToLatTestCase {
 
 	/**
 	 * Test admin_enqueue_scripts().
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_admin_enqueue_scripts() {
 		$plugin_url     = 'http://test.test/wp-content/plugins/cyr-to-lat';

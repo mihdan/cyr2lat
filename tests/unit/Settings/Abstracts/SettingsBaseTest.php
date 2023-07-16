@@ -151,6 +151,8 @@ class SettingsBaseTest extends CyrToLatTestCase {
 
 	/**
 	 * Test init_hooks().
+	 *
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_init_hooks() {
 		$plugin_base_name = 'cyr2lat/cyr-to-lat.php';
@@ -256,7 +258,6 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * Test get_class_name().
 	 *
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection PhpParamsInspection
 	 */
 	public function test_get_class_name() {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
@@ -1798,22 +1799,6 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @return array
 	 */
 	public function dp_test_pre_update_option_filter() {
-		$old_value = [
-			'iso9' => [ 'Б' => 'B' ],
-			'bel'  => [ 'Б' => 'B' ],
-		];
-
-		$value = [
-			'bel' => [
-				'Б' => 'B1',
-			],
-		];
-
-		$expected = [
-			'iso9' => [ 'Б' => 'B' ],
-			'bel'  => [ 'Б' => 'B1' ],
-		];
-
 		return [
 			[
 				[],
@@ -1989,7 +1974,6 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @param boolean $expected          Expected result.
 	 *
 	 * @dataProvider dp_test_is_options_screen
-	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_is_options_screen( $current_screen, $is_main_menu_page, $expected ) {
 		$screen_id      = 'settings_page_cyr-to-lat';
