@@ -195,7 +195,7 @@ Yes you can!
 == Changelog ==
 
 = 5.6.0 (XX.XX.2023) =
-* Added System Info tab in the admin.
+* Added System Info tab.
 
 = 5.5.3 (15.07.2023) =
 * Tested with WooCommerce 7.8.
