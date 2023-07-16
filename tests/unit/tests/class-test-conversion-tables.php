@@ -7,12 +7,14 @@
 
 namespace Cyr_To_Lat;
 
+use CyrToLat\Tests\Unit\CyrToLatTestCase;
+
 /**
  * Class Test_Conversion_Tables
  *
  * @group conversion-tables
  */
-class Test_Conversion_Tables extends Cyr_To_Lat_TestCase {
+class Test_Conversion_Tables extends CyrToLatTestCase {
 
 	/**
 	 * Test get()

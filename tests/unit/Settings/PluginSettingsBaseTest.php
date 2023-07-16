@@ -10,10 +10,10 @@
 /** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
-namespace Cyr_To_Lat\Tests\Settings;
+namespace CyrToLat\Tests\Unit\Settings;
 
 use Cyr_To_Lat\Settings\PluginSettingsBase;
-use Cyr_To_Lat\Cyr_To_Lat_TestCase;
+use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
@@ -25,7 +25,7 @@ use WP_Mock;
  * @group settings
  * @group plugin-base
  */
-class PluginSettingsBaseTest extends Cyr_To_Lat_TestCase {
+class PluginSettingsBaseTest extends CyrToLatTestCase {
 
 	/**
 	 * Test plugin_basename().

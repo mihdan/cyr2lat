@@ -12,6 +12,7 @@
 
 namespace Cyr_To_Lat;
 
+use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;
 use stdClass;
@@ -23,7 +24,7 @@ use WP_Mock;
  *
  * @group process
  */
-class Test_Conversion_Process extends Cyr_To_Lat_TestCase {
+class Test_Conversion_Process extends CyrToLatTestCase {
 
 	/**
 	 * Test task()

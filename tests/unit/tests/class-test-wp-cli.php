@@ -12,6 +12,7 @@
 namespace Cyr_To_Lat;
 
 use cli\progress\Bar;
+use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
@@ -21,7 +22,7 @@ use WP_Mock;
  *
  * @group wp-cli
  */
-class Test_WP_CLI extends Cyr_To_Lat_TestCase {
+class Test_WP_CLI extends CyrToLatTestCase {
 
 	/**
 	 * Test regenerate()

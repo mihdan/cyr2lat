@@ -9,6 +9,7 @@
 
 namespace Cyr_To_Lat;
 
+use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
@@ -20,7 +21,7 @@ use function PHPUnit\Framework\assertSame;
  *
  * @group request
  */
-class Test_Request extends Cyr_To_Lat_TestCase {
+class Test_Request extends CyrToLatTestCase {
 
 	/**
 	 * Tear down the test.

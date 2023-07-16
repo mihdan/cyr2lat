@@ -13,6 +13,7 @@
 
 namespace Cyr_To_Lat;
 
+use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
@@ -24,7 +25,7 @@ use wpdb;
  *
  * @group process
  */
-class Test_Term_Conversion_Process extends Cyr_To_Lat_TestCase {
+class Test_Term_Conversion_Process extends CyrToLatTestCase {
 
 	/**
 	 * End test

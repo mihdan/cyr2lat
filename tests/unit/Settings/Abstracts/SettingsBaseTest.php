@@ -15,11 +15,10 @@
 // phpcs:disable WordPress.WP.AlternativeFunctions.json_encode_json_encode
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
-namespace Cyr_To_Lat\Tests\Settings\Abstracts;
+namespace CyrToLat\Tests\Unit\Settings\Abstracts;
 
-use Cyr_To_Lat\Cyr_To_Lat_TestCase;
-use Cyr_To_Lat\Main;
 use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
+use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use PHPUnit\Runner\Version;
 use ReflectionClass;
@@ -33,7 +32,7 @@ use WP_Mock;
  * @group settings
  * @group settings-base
  */
-class SettingsBaseTest extends Cyr_To_Lat_TestCase {
+class SettingsBaseTest extends CyrToLatTestCase {
 
 	/**
 	 * Tear down.

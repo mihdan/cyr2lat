@@ -1,13 +1,13 @@
 <?php
 /**
- * Cyr_To_Lat_TestCase class file.
+ * CyrToLatTestCase class file.
  *
  * @package cyr-to-lat
  */
 
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
-namespace Cyr_To_Lat;
+namespace CyrToLat\Tests\Unit;
 
 use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
 use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
@@ -20,9 +20,9 @@ use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
 
 /**
- * Class Cyr_To_Lat_TestCase
+ * Class CyrToLatTestCase
  */
-abstract class Cyr_To_Lat_TestCase extends TestCase {
+abstract class CyrToLatTestCase extends TestCase {
 
 	/**
 	 * Cyr-To-Lat version.

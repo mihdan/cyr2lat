@@ -10,6 +10,7 @@
 namespace Cyr_To_Lat;
 
 use Cyr_To_Lat\Settings\Settings;
+use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
@@ -20,7 +21,7 @@ use WP_Mock;
  *
  * @group acf
  */
-class Test_ACF extends Cyr_To_Lat_TestCase {
+class Test_ACF extends CyrToLatTestCase {
 
 	/**
 	 * Tear down.

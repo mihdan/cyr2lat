@@ -81,8 +81,11 @@
   "autoload-dev": {
     "classmap": [
       "src/php",
-      "tests/unit/classes",
       "tests/unit/stubs"
-    ]
+    ],
+    "psr-4": {
+      "CyrToLat\\": "src/php",
+      "CyrToLat\\Tests\\Unit\\": "tests/unit"
+    }
   }
 }

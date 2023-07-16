@@ -12,12 +12,12 @@
 
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
-namespace Cyr_To_Lat\Tests\Settings;
+namespace CyrToLat\Tests\Unit\Settings;
 
 use Cyr_To_Lat\Main;
 use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
 use Cyr_To_Lat\Settings\Tables;
-use Cyr_To_Lat\Cyr_To_Lat_TestCase;
+use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
@@ -29,7 +29,7 @@ use WP_Mock;
  * @group settings
  * @group settings-tables
  */
-class TablesTest extends Cyr_To_Lat_TestCase {
+class TablesTest extends CyrToLatTestCase {
 
 	/**
 	 * Tear down.

@@ -14,12 +14,12 @@
 
 // phpcs:disable WordPress.WP.AlternativeFunctions.json_encode_json_encode
 
-namespace Cyr_To_Lat\Tests\Settings;
+namespace CyrToLat\Tests\Unit\Settings;
 
-use Cyr_To_Lat\Settings\Tables;
 use Cyr_To_Lat\Settings\Converter;
 use Cyr_To_Lat\Settings\Settings;
-use Cyr_To_Lat\Cyr_To_Lat_TestCase;
+use Cyr_To_Lat\Settings\Tables;
+use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use PHPUnit\Runner\Version;
 use ReflectionClass;
@@ -32,7 +32,7 @@ use WP_Mock;
  * @group settings
  * @group settings-main
  */
-class SettingsTest extends Cyr_To_Lat_TestCase {
+class SettingsTest extends CyrToLatTestCase {
 
 	/**
 	 * Test constructor.

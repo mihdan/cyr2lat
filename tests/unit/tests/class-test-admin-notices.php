@@ -7,6 +7,7 @@
 
 namespace Cyr_To_Lat;
 
+use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use ReflectionClass;
 use ReflectionException;
 use WP_Mock;
@@ -16,7 +17,7 @@ use WP_Mock;
  *
  * @group admin-notices
  */
-class Test_Admin_Notices extends Cyr_To_Lat_TestCase {
+class Test_Admin_Notices extends CyrToLatTestCase {
 
 	/**
 	 * Test constructor

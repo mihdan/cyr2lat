@@ -9,6 +9,7 @@
 
 namespace Cyr_To_Lat;
 
+use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
@@ -18,7 +19,7 @@ use WP_Mock;
  *
  * @group plugin-file
  */
-class Test_Cyr_To_Lat_Plugin_File extends Cyr_To_Lat_TestCase {
+class Test_Cyr_To_Lat_Plugin_File extends CyrToLatTestCase {
 
 	/**
 	 * Tear down.

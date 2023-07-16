@@ -14,6 +14,7 @@
 namespace Cyr_To_Lat;
 
 use Cyr_To_Lat\Settings\Settings;
+use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
@@ -26,7 +27,7 @@ use wpdb;
  *
  * @group converter
  */
-class Test_Converter extends Cyr_To_Lat_TestCase {
+class Test_Converter extends CyrToLatTestCase {
 
 	/**
 	 * End test

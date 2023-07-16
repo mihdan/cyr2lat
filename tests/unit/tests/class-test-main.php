@@ -18,6 +18,7 @@ namespace Cyr_To_Lat;
 
 use Cyr_To_Lat\Settings\Settings;
 use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
+use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Exception;
 use Mockery;
 use PHPUnit\Runner\Version;
@@ -34,7 +35,7 @@ use wpdb;
  *
  * @group main
  */
-class Test_Main extends Cyr_To_Lat_TestCase {
+class Test_Main extends CyrToLatTestCase {
 
 	/**
 	 * End test
