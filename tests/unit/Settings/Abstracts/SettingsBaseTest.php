@@ -35,17 +35,6 @@ use WP_Mock;
 class SettingsBaseTest extends CyrToLatTestCase {
 
 	/**
-	 * Tear down.
-	 *
-	 * @noinspection PhpLanguageLevelInspection
-	 * @noinspection PhpUndefinedClassInspection
-	 */
-	public function tearDown(): void {
-		unset( $GLOBALS['cyr_to_lat_plugin'] );
-		parent::tearDown();
-	}
-
-	/**
 	 * Test constructor.
 	 *
 	 * @param bool $is_tab Is this a tab.
@@ -62,8 +51,10 @@ class SettingsBaseTest extends CyrToLatTestCase {
 
 		if ( $is_tab ) {
 			WP_Mock::expectActionNotAdded( 'current_screen', [ $subject, 'setup_tabs_section' ] );
+			WP_Mock::expectActionNotAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
 		} else {
 			WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_tabs_section' ], 9 );
+			WP_Mock::expectActionAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
 		}
 
 		$subject->shouldReceive( 'init' )->once()->with();
@@ -170,7 +161,6 @@ class SettingsBaseTest extends CyrToLatTestCase {
 			[ $subject, 'add_settings_link' ]
 		);
 
-		WP_Mock::expectActionAdded( 'admin_menu', [ $subject, 'add_settings_page' ] );
 		WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_fields' ] );
 		WP_Mock::expectActionAdded( 'current_screen', [ $subject, 'setup_sections' ], 11 );
 
@@ -258,6 +248,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * Test get_class_name().
 	 *
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection PhpParamsInspection
 	 */
 	public function test_get_class_name() {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
@@ -684,7 +675,8 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	/**
 	 * Test is_tab_active().
 	 *
-	 * @param string|null $input       $_GET['tab'].
+	 * @param string|null $on_page     $_GET['page'] === own option page.
+	 * @param string|null $input_tab   $_GET['tab'].
 	 * @param string|null $referer_tab Tab name from referer.
 	 * @param bool        $is_tab      Is tab.
 	 * @param string      $class_name  Class name.
@@ -692,7 +684,10 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_is_tab_active
 	 */
-	public function test_is_tab_active( $input, $referer_tab, $is_tab, $class_name, $expected ) {
+	public function test_is_tab_active( $on_page, $input_tab, $referer_tab, $is_tab, $class_name, $expected ) {
+		$option_page = 'own-option-page';
+		$input_page  = $on_page ? $option_page : 'some-page';
+
 		$tab = Mockery::mock( SettingsBase::class )->makePartial();
 		$tab->shouldAllowMockingProtectedMethods();
 		$tab->shouldReceive( 'is_tab' )->with()->andReturn( $is_tab );
@@ -701,16 +696,25 @@ class SettingsBaseTest extends CyrToLatTestCase {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'get_tab_name_from_referer' )->andReturn( $referer_tab );
+		$subject->shouldReceive( 'option_page' )->andReturn( $option_page );
 
 		FunctionMocker::replace(
 			'filter_input',
-			static function ( $type, $name, $filter ) use ( $input ) {
+			static function ( $type, $name, $filter ) use ( $input_page, $input_tab ) {
+				if (
+					INPUT_GET === $type &&
+					'page' === $name &&
+					FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter
+				) {
+					return $input_page;
+				}
+
 				if (
 					INPUT_GET === $type &&
 					'tab' === $name &&
 					FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter
 				) {
-					return $input;
+					return $input_tab;
 				}
 
 				return null;
@@ -727,12 +731,13 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 */
 	public function dp_test_is_tab_active() {
 		return [
-			'No input, not a tab'     => [ null, null, false, 'any_class_name', true ],
-			'No input, tab'           => [ null, 'integrations', true, 'any_class_name', false ],
-			'Wrong input, not a tab'  => [ 'wrong', null, false, 'General', false ],
-			'Wrong input, tab'        => [ 'wrong', 'integrations', true, 'General', false ],
-			'Proper input, not a tab' => [ 'general', null, false, 'General', true ],
-			'Proper input, tab'       => [ 'general', 'integrations', true, 'General', true ],
+			'No input, not on page'   => [ false, null, null, false, 'any_class_name', false ],
+			'No input, not a tab'     => [ true, null, null, false, 'any_class_name', true ],
+			'No input, tab'           => [ true, null, 'integrations', true, 'any_class_name', false ],
+			'Wrong input, not a tab'  => [ true, 'wrong', null, false, 'General', false ],
+			'Wrong input, tab'        => [ true, 'wrong', 'integrations', true, 'General', false ],
+			'Proper input, not a tab' => [ true, 'general', null, false, 'General', true ],
+			'Proper input, tab'       => [ true, 'general', 'integrations', true, 'General', true ],
 		];
 	}
 
