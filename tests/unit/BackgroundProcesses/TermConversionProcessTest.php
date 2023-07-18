@@ -106,7 +106,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_task()
 	 */
-	public function dp_test_task() {
+	public static function dp_test_task() {
 		return [
 			[ 'slug', 'slug' ],
 			[ 'slug', 'transliterated_slug' ],
@@ -196,7 +196,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_filter_term_locale_with_polylang() {
+	public static function dp_test_filter_term_locale_with_polylang() {
 		return [
 			[ false, 'en_US', 'en_US' ],
 			[ 'ru', 'en_US', 'ru' ],
@@ -248,7 +248,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_filter_term_locale_with_wpml() {
+	public static function dp_test_filter_term_locale_with_wpml() {
 		return [
 			[ null, null, 'ru_RU', 'ru_RU' ],
 			[ (object) [], null, 'ru_RU', 'ru_RU' ],

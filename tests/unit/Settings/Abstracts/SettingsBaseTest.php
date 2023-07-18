@@ -69,7 +69,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_constructor() {
+	public static function dp_test_constructor() {
 		return [
 			'Tab'       => [ true ],
 			'Not a tab' => [ false ],
@@ -131,7 +131,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_init() {
+	public static function dp_test_init() {
 		return [
 			'Active tab, script_debug'        => [ true, true ],
 			'Active tab, no script debug'     => [ true, false ],
@@ -219,7 +219,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_is_main_menu_page() {
+	public static function dp_test_is_main_menu_page() {
 		return [
 			'Empty slug' => [ '', true ],
 			'Some slug'  => [ 'options-general.php', false ],
@@ -258,7 +258,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 
 		if (
 			class_exists( Version::class ) &&
-			version_compare( substr( Version::id(), 0, 1 ), '7', '>=' )
+			version_compare( Version::id(), '7', '>=' )
 		) {
 			self::assertStringContainsString(
 				'Cyr_To_Lat_Settings_Abstracts_SettingsBase',
@@ -344,7 +344,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 			WP_Mock::userFunction( 'get_site_option' )->with( $option_name, null )->once()->andReturn( $settings );
 		}
 
-		$form_fields = $this->get_test_form_fields();
+		$form_fields = self::get_test_form_fields();
 		$subject->shouldReceive( 'form_fields' )->andReturn( $form_fields );
 
 		$form_fields_pluck = $this->wp_list_pluck( $form_fields, 'default' );
@@ -372,12 +372,12 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_init_settings() {
+	public static function dp_test_init_settings() {
 		return [
 			'No settings in option, no network-wide'   => [ false, false ],
 			'No settings in option, network-wide'      => [ false, true ],
-			'Some settings in option, no network-wide' => [ $this->get_test_settings(), false ],
-			'Some settings in option, network-wide'    => [ $this->get_test_settings(), true ],
+			'Some settings in option, no network-wide' => [ self::get_test_settings(), false ],
+			'Some settings in option, network-wide'    => [ self::get_test_settings(), true ],
 		];
 	}
 
@@ -400,7 +400,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 		if ( empty( $form_fields ) ) {
 			$subject->shouldReceive( 'init_form_fields' )->andReturnUsing(
 				function () use ( $subject ) {
-					$this->set_protected_property( $subject, 'form_fields', $this->get_test_form_fields() );
+					$this->set_protected_property( $subject, 'form_fields', self::get_test_form_fields() );
 				}
 			)->once();
 		}
@@ -419,11 +419,11 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_form_fields() {
+	public static function dp_test_form_fields() {
 		return [
-			[ null, $this->get_test_form_fields() ],
-			[ [], $this->get_test_form_fields() ],
-			[ $this->get_test_form_fields(), $this->get_test_form_fields() ],
+			[ null, self::get_test_form_fields() ],
+			[ [], self::get_test_form_fields() ],
+			[ self::get_test_form_fields(), self::get_test_form_fields() ],
 		];
 	}
 
@@ -466,7 +466,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_add_settings_page() {
+	public static function dp_test_add_settings_page() {
 		return [
 			'Main menu page' => [ true ],
 			'Submenu page'   => [ false ],
@@ -540,7 +540,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 		$subject->shouldReceive( 'is_options_screen' )->andReturn( true );
 		$subject->shouldReceive( 'get_active_tab' )->once()->andReturn( $tab );
 
-		$form_fields = $this->get_test_form_fields();
+		$form_fields = self::get_test_form_fields();
 
 		$form_fields['iso9']['title'] = 'Some Section Title';
 
@@ -567,7 +567,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_setup_sections() {
+	public static function dp_test_setup_sections() {
 		return [
 			'No tabs'   => [ [] ],
 			'Some tabs' => [ [ 'some tab' ] ],
@@ -729,7 +729,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_is_tab_active() {
+	public static function dp_test_is_tab_active() {
 		return [
 			'No input, not on page'   => [
 				false,
@@ -871,7 +871,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_get_tab_name_from_referer() {
+	public static function dp_test_get_tab_name_from_referer() {
 		return [
 			'Not ajax, not a tab'  => [
 				false,
@@ -983,7 +983,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 		$subject->shouldReceive( 'option_name' )->andReturn( $option_name );
 		$subject->shouldReceive( 'option_page' )->andReturn( $option_page );
 
-		$form_fields_test_data = $this->get_test_form_fields();
+		$form_fields_test_data = self::get_test_form_fields();
 		$this->set_protected_property( $subject, 'form_fields', $form_fields_test_data );
 
 		WP_Mock::userFunction( 'register_setting' )
@@ -1120,18 +1120,18 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_field_callback() {
+	public static function dp_test_field_callback() {
 		return array_merge(
-			$this->dp_wrong_field_callback(),
-			$this->dp_text_field_callback(),
-			$this->dp_password_field_callback(),
-			$this->dp_number_field_callback(),
-			$this->dp_text_area_field_callback(),
-			$this->dp_check_box_field_callback(),
-			$this->dp_radio_field_callback(),
-			$this->dp_select_field_callback(),
-			$this->dp_multiple_field_callback(),
-			$this->dp_table_field_callback()
+			self::dp_wrong_field_callback(),
+			self::dp_text_field_callback(),
+			self::dp_password_field_callback(),
+			self::dp_number_field_callback(),
+			self::dp_text_area_field_callback(),
+			self::dp_check_box_field_callback(),
+			self::dp_radio_field_callback(),
+			self::dp_select_field_callback(),
+			self::dp_multiple_field_callback(),
+			self::dp_table_field_callback()
 		);
 	}
 
@@ -1140,7 +1140,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	private function dp_wrong_field_callback() {
+	private static function dp_wrong_field_callback() {
 		return [
 			'Wrong type' => [
 				[
@@ -1163,7 +1163,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	private function dp_text_field_callback() {
+	private static function dp_text_field_callback() {
 		return [
 			'Text'                   => [
 				[
@@ -1220,7 +1220,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	private function dp_password_field_callback() {
+	private static function dp_password_field_callback() {
 		return [
 			'Password' => [
 				[
@@ -1245,7 +1245,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	private function dp_number_field_callback() {
+	private static function dp_number_field_callback() {
 		return [
 			'Number' => [
 				[
@@ -1270,7 +1270,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	private function dp_text_area_field_callback() {
+	private static function dp_text_area_field_callback() {
 		return [
 			'Textarea' => [
 				[
@@ -1295,7 +1295,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	private function dp_check_box_field_callback() {
+	private static function dp_check_box_field_callback() {
 		return [
 			'Checkbox with empty value' => [
 				[
@@ -1353,10 +1353,10 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	private function dp_radio_field_callback() {
+	private static function dp_radio_field_callback() {
 		return array_merge(
-			$this->dp_empty_radio_field_callback(),
-			$this->dp_not_empty_radio_field_callback()
+			self::dp_empty_radio_field_callback(),
+			self::dp_not_empty_radio_field_callback()
 		);
 	}
 
@@ -1365,7 +1365,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	private function dp_empty_radio_field_callback() {
+	private static function dp_empty_radio_field_callback() {
 		return [
 			'Radio buttons empty options' => [
 				[
@@ -1404,7 +1404,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	private function dp_not_empty_radio_field_callback() {
+	private static function dp_not_empty_radio_field_callback() {
 		return [
 			'Radio buttons' => [
 				[
@@ -1437,7 +1437,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	private function dp_select_field_callback() {
+	private static function dp_select_field_callback() {
 		return [
 			'Select with empty options'        => [
 				[
@@ -1495,10 +1495,10 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	private function dp_multiple_field_callback() {
+	private static function dp_multiple_field_callback() {
 		return array_merge(
-			$this->dp_empty_multiple_field_callback(),
-			$this->dp_not_empty_multiple_field_callback()
+			self::dp_empty_multiple_field_callback(),
+			self::dp_not_empty_multiple_field_callback()
 		);
 	}
 
@@ -1507,7 +1507,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	private function dp_empty_multiple_field_callback() {
+	private static function dp_empty_multiple_field_callback() {
 		return [
 			'Multiple with empty options'        => [
 				[
@@ -1546,7 +1546,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	private function dp_not_empty_multiple_field_callback() {
+	private static function dp_not_empty_multiple_field_callback() {
 		return [
 			'Multiple'                         => [
 				[
@@ -1594,7 +1594,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	private function dp_table_field_callback() {
+	private static function dp_table_field_callback() {
 		return [
 			'Table with non-array value' => [
 				[
@@ -1687,14 +1687,14 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_get() {
-		$test_data = $this->get_test_settings();
+	public static function dp_test_get() {
+		$test_data = self::get_test_settings();
 
 		return [
-			'Empty key'        => [ $this->get_test_settings(), '', null, '' ],
-			'Some key'         => [ $this->get_test_settings(), 'iso9', null, $test_data['iso9'] ],
+			'Empty key'        => [ self::get_test_settings(), '', null, '' ],
+			'Some key'         => [ self::get_test_settings(), 'iso9', null, $test_data['iso9'] ],
 			'Non-existent key' => [
-				$this->get_test_settings(),
+				self::get_test_settings(),
 				'non-existent-key',
 				[ 'default-value' ],
 				[ 'default-value' ],
@@ -1743,7 +1743,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_field_default() {
+	public static function dp_test_field_default() {
 		return [
 			'Empty field'        => [ [], '' ],
 			'With default value' => [ [ 'default' => 'default_value' ], 'default_value' ],
@@ -1759,7 +1759,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	public function test_set_field() {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
-		$this->set_protected_property( $subject, 'form_fields', $this->get_test_form_fields() );
+		$this->set_protected_property( $subject, 'form_fields', self::get_test_form_fields() );
 
 		$field_key = 'title';
 		$value     = 'Some title';
@@ -1803,31 +1803,31 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_update_option() {
+	public static function dp_test_update_option() {
 		return [
 			'Empty key'         => [
-				$this->get_test_settings(),
+				self::get_test_settings(),
 				'',
 				null,
-				array_merge( $this->get_test_settings(), [ '' => null ] ),
+				array_merge( self::get_test_settings(), [ '' => null ] ),
 			],
 			'Key without value' => [
-				$this->get_test_settings(),
+				self::get_test_settings(),
 				'pageTitle',
 				null,
-				array_merge( $this->get_test_settings(), [ 'pageTitle' => null ] ),
+				array_merge( self::get_test_settings(), [ 'pageTitle' => null ] ),
 			],
 			'Key with value'    => [
-				$this->get_test_settings(),
+				self::get_test_settings(),
 				'pageTitle',
 				[ 'New Page Title' ],
-				array_merge( $this->get_test_settings(), [ 'pageTitle' => [ 'New Page Title' ] ] ),
+				array_merge( self::get_test_settings(), [ 'pageTitle' => [ 'New Page Title' ] ] ),
 			],
 			'Non-existent key'  => [
-				$this->get_test_settings(),
+				self::get_test_settings(),
 				'non-existent-key',
 				[ 'some value' ],
-				array_merge( $this->get_test_settings(), [ 'non-existent-key' => [ 'some value' ] ] ),
+				array_merge( self::get_test_settings(), [ 'non-existent-key' => [ 'some value' ] ] ),
 			],
 		];
 	}
@@ -1903,7 +1903,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_pre_update_option_filter() {
+	public static function dp_test_pre_update_option_filter() {
 		return [
 			[
 				[],
@@ -2104,7 +2104,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_is_options_screen() {
+	public static function dp_test_is_options_screen() {
 		return [
 			'Current screen not set'        => [ null, false, false ],
 			'Wrong screen'                  => [ (object) [ 'id' => 'something' ], false, false ],

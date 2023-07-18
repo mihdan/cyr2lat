@@ -554,7 +554,7 @@ class TablesTest extends CyrToLatTestCase {
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'option_page' )->andReturn( $tab_option_page );
 
-		$form_fields = $this->get_test_form_fields();
+		$form_fields = self::get_test_form_fields();
 
 		$this->set_protected_property( $subject, 'form_fields', $form_fields );
 

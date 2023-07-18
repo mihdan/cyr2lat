@@ -287,7 +287,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_init_hooks() {
+	public static function dp_test_init_hooks() {
 		return [
 			[ false, false, false ],
 			[ false, false, true ],
@@ -417,7 +417,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_sanitize_title() {
+	public static function dp_test_sanitize_title() {
 		return [
 			'empty string'               => [
 				'',
@@ -514,7 +514,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_sanitize_title_for_insert_term()
 	 */
-	public function dp_test_sanitize_title_for_insert_term() {
+	public static function dp_test_sanitize_title_for_insert_term() {
 		return [
 			[ 'title', 'term', 'term' ],
 			[ 'title', '', 'title' ],
@@ -579,7 +579,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_sanitize_title_for_get_terms()
 	 */
-	public function dp_test_sanitize_title_for_get_terms() {
+	public static function dp_test_sanitize_title_for_get_terms() {
 		return [
 			[ 'title', 'term', [ 'taxonomy' ], "'taxonomy'", 'term' ],
 			[ 'title', 'term', [ 'taxonomy1', 'taxonomy2' ], "'taxonomy1', 'taxonomy2'", 'term' ],
@@ -650,7 +650,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_sanitize_title_for_wc_attribute_taxonomy() {
+	public static function dp_test_sanitize_title_for_wc_attribute_taxonomy() {
 		$attribute_taxonomies = [
 			'id:3' => (object) [
 				'attribute_id'      => '3',
@@ -736,7 +736,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_transliterate() {
+	public static function dp_test_transliterate() {
 		$bad_multibyte_content = pack( 'C*', ...array_slice( unpack( 'C*', 'я' ), 1 ) );
 
 		return [
@@ -787,7 +787,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_split_chinese_string() {
+	public static function dp_test_split_chinese_string() {
 		return [
 			'general'     => [
 				'我是俄罗斯人',
@@ -866,7 +866,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_sanitize_filename() {
+	public static function dp_test_sanitize_filename() {
 		return [
 			'empty string'               => [
 				'',
@@ -942,7 +942,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array[]
 	 */
-	public function dp_test_min_suffix() {
+	public static function dp_test_min_suffix() {
 		return [
 			[ false, false, '.min' ],
 			[ false, true, '.min' ],
@@ -1080,7 +1080,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_sanitize_post_name()
 	 */
-	public function dp_test_sanitize_post_name() {
+	public static function dp_test_sanitize_post_name() {
 		return [
 			[
 				'post name set' => [
@@ -1472,7 +1472,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_wpml_locale_filter() {
+	public static function dp_test_wpml_locale_filter() {
 		return [
 			'Existing language code, return from wpml' => [ 'ru', 'ru_RU' ],
 			'Not existing language code, return null'  => [ 'some', null ],
@@ -1556,7 +1556,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_wpml_language_has_switched() {
+	public static function dp_test_wpml_language_has_switched() {
 		return [
 			'Existing language code'     => [ 'ru', 'ru_RU' ],
 			'Not existing language code' => [ 'some', null ],
@@ -1613,7 +1613,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_declare_wc_compatibility() {
+	public static function dp_test_declare_wc_compatibility() {
 		return [
 			[ false ],
 			[ true ],
@@ -1658,7 +1658,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_prepare_in()
 	 */
-	public function dp_test_prepare_in() {
+	public static function dp_test_prepare_in() {
 		return [
 			[ null, null, '' ],
 			[ '', null, '' ],

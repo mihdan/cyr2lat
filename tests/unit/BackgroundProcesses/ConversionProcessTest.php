@@ -196,7 +196,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_is_process_running()
 	 */
-	public function dp_test_is_process_running() {
+	public static function dp_test_is_process_running() {
 		return [
 			[ true, true ],
 			[ false, false ],
@@ -208,7 +208,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_log() {
+	public static function dp_test_log() {
 		return [
 			[ false ],
 			[ true ],

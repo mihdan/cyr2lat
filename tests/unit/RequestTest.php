@@ -60,7 +60,7 @@ class RequestTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_is_allowed() {
+	public static function dp_test_is_allowed() {
 		return [
 			[ false, false, false, true ],
 			[ false, false, true, true ],
@@ -100,7 +100,7 @@ class RequestTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_is_frontend() {
+	public static function dp_test_is_frontend() {
 		return [
 			[ false, false, false, false, true ],
 			[ false, false, false, true, false ],
@@ -145,7 +145,7 @@ class RequestTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_is_cli() {
+	public static function dp_test_is_cli() {
 		return [
 			[ false, null, false ],
 			[ true, false, false ],
@@ -274,7 +274,7 @@ class RequestTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_get_rest_route() {
+	public static function dp_test_get_rest_route() {
 		return [
 			'rest request' => [ '/wp-json/wp/v2/posts', '/wp/v2/posts' ],
 			'some request' => [ '/some-request', '' ],

@@ -210,7 +210,7 @@ class SettingsTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_is_chinese_locale() {
+	public static function dp_test_is_chinese_locale() {
 		return [
 			[ 'zh_CN', true ],
 			[ 'zh_HK', true ],
@@ -245,7 +245,7 @@ class SettingsTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_transpose_chinese_table() {
+	public static function dp_test_transpose_chinese_table() {
 		return [
 			[
 				false,

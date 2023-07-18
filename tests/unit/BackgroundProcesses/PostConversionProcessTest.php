@@ -117,7 +117,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_task()
 	 */
-	public function dp_test_task() {
+	public static function dp_test_task() {
 		return [
 			[ 'post_name', 'post_name' ],
 			[ 'post_name', 'transliterated_name' ],
@@ -208,7 +208,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_task_for_attachment()
 	 */
-	public function dp_test_task_for_attachment() {
+	public static function dp_test_task_for_attachment() {
 		return [
 			[ 'post_name', 'post_name' ],
 			[ 'post_name', 'transliterated_name' ],
@@ -282,7 +282,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_rename_attachment() {
+	public static function dp_test_rename_attachment() {
 		return [
 			[ false, false ],
 			[ true, false ],
@@ -554,7 +554,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_filter_post_locale() {
+	public static function dp_test_filter_post_locale() {
 		return [
 			[ null, 'ru_RU', 'ru_RU' ],
 			[ [], 'ru_RU', 'ru_RU' ],

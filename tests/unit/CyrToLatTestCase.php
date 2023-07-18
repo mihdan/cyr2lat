@@ -1073,7 +1073,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @return array
 	 */
-	protected function get_test_form_fields( $locale = 'iso9' ) {
+	protected static function get_test_form_fields( $locale = 'iso9' ) {
 		$form_fields = [
 			'iso9'  => [
 				'label'        => 'ISO9 Table',
@@ -1189,7 +1189,7 @@ abstract class CyrToLatTestCase extends TestCase {
 
 		$form_fields[ $locale ]['label'] .= '<br>(current)';
 
-		array_walk( $form_fields, [ $this, 'set_defaults' ] );
+		array_walk( $form_fields, 'self::set_defaults' );
 
 		$is_multisite = function_exists( 'is_multisite' ) && is_multisite();
 
@@ -1209,7 +1209,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	protected function set_defaults( &$field, $id ) {
+	protected static function set_defaults( &$field, $id ) {
 		$field = array_merge(
 			[
 				'default'  => '',
@@ -1228,7 +1228,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @return array
 	 */
-	protected function get_test_settings() {
+	protected static function get_test_settings() {
 		return [
 			'iso9'  => [ 'iso9' ],
 			'bel'   => [ 'bel' ],

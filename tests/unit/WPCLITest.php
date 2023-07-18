@@ -59,7 +59,7 @@ class WPCLITest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_regenerate()
 	 */
-	public function dp_test_regenerate() {
+	public static function dp_test_regenerate() {
 		return [
 			[ [], [], [] ],
 			[

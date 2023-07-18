@@ -351,7 +351,7 @@ class RequirementsTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_vars_requirements_not_met() {
+	public static function dp_test_vars_requirements_not_met() {
 		$expected_line = 'max_input_vars = ' . 1000;
 
 		return [

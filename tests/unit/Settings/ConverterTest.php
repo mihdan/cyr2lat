@@ -298,7 +298,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 */
 	public function test_delayed_init_settings() {
 		$option_name   = 'cyr_to_lat_settings';
-		$form_fields   = $this->get_test_form_fields();
+		$form_fields   = self::get_test_form_fields();
 		$test_settings = $this->get_test_settings();
 
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
@@ -383,7 +383,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_section_callback() {
+	public static function dp_test_section_callback() {
 		return [
 			'Non-existing id'    => [ '', '' ],
 			'Background section' => [

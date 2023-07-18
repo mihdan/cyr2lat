@@ -164,7 +164,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_conversion_notices() {
+	public static function dp_test_conversion_notices() {
 		return [
 			[ false, false, false, false ],
 			[ true, false, false, false ],
@@ -212,7 +212,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_start_conversion() {
+	public static function dp_test_start_conversion() {
 		return [
 			[ false ],
 			[ true ],
@@ -262,7 +262,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_process_handler() {
+	public static function dp_test_process_handler() {
 		return [
 			[ '', '', false ],
 			[ Converter::QUERY_ARG, '', false ],
@@ -399,7 +399,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_convert_existing_slugs() {
+	public static function dp_test_convert_existing_slugs() {
 		return [
 			'no posts, no terms, no attachments' => [ null, null, false ],
 			'no posts, no terms, attachments'    => [ null, null, true ],
@@ -466,7 +466,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_log() {
+	public static function dp_test_log() {
 		return [
 			[ false ],
 			[ true ],
