@@ -196,6 +196,7 @@ Yes you can!
 
 = 5.6.0 (XX.XX.2023) =
 * Added System Info tab.
+* Fixed console error when saving table data.
 
 = 5.5.3 (15.07.2023) =
 * Tested with WooCommerce 7.8.

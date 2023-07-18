@@ -28,6 +28,11 @@ class Tables extends PluginSettingsBase {
 	const OBJECT = 'Cyr2LatTablesObject';
 
 	/**
+	 * Save table ajax action.
+	 */
+	const SAVE_TABLE_ACTION = 'cyr-to-lat-save-table';
+
+	/**
 	 * Served locales.
 	 *
 	 * @var array
@@ -50,6 +55,15 @@ class Tables extends PluginSettingsBase {
 	 */
 	protected function section_title() {
 		return 'tables';
+	}
+
+	/**
+	 * Init class hooks.
+	 */
+	protected function init_hooks() {
+		parent::init_hooks();
+
+		add_action( 'wp_ajax_' . self::SAVE_TABLE_ACTION, [ $this, 'save_table' ] );
 	}
 
 	/**
@@ -172,8 +186,9 @@ class Tables extends PluginSettingsBase {
 			self::HANDLE,
 			self::OBJECT,
 			[
-				'optionsSaveSuccessMessage' => __( 'Options saved.', 'cyr2lat' ),
-				'optionsSaveErrorMessage'   => __( 'Error saving options.', 'cyr2lat' ),
+				'ajaxUrl'                   => admin_url( 'admin-ajax.php' ),
+				'action'                    => self::SAVE_TABLE_ACTION,
+				'nonce'                     => wp_create_nonce( self::SAVE_TABLE_ACTION ),
 			]
 		);
 
@@ -197,5 +212,41 @@ class Tables extends PluginSettingsBase {
 				$this->option_page()
 			);
 		}
+	}
+
+	/**
+	 * Save table.
+	 *
+	 * @return void
+	 */
+	public function save_table() {
+		// Run a security check.
+		if ( ! check_ajax_referer( self::SAVE_TABLE_ACTION, 'nonce', false ) ) {
+			wp_send_json_error( esc_html__( 'Your session has expired. Please reload the page.', 'cyr2lat' ) );
+		}
+
+		// Check for permissions.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to perform this action.', 'cyr2lat' ) );
+		}
+
+		$new_settings = isset( $_POST['cyr_to_lat_settings'] ) ?
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			wp_unslash( $_POST['cyr_to_lat_settings'] ) :
+			[];
+
+		// We have only one table returned, so this is loop is executed once.
+		foreach ( $new_settings as $new_key => $new_value ) {
+			$key   = sanitize_text_field( $new_key );
+			$value = [];
+
+			foreach ( $new_value as $k => $v ) {
+				$value[ sanitize_text_field( $k ) ] = sanitize_text_field( $v );
+			}
+
+			$this->update_option( $key, $value );
+		}
+
+		wp_send_json_success( esc_html__( 'Options saved.', 'cyr2lat' ) );
 	}
 }
