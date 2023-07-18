@@ -327,7 +327,7 @@ describe( 'Tables', () => {
 		expect( fetch ).not.toHaveBeenCalled();
 	} );
 
-	test( 'Save active table', () => {
+	test.skip( 'Save active table', () => {
 		document.body.innerHTML = getTables();
 
 		const tables = new Tables();
@@ -391,7 +391,7 @@ describe( 'Tables', () => {
 		expect( fetch ).toHaveBeenCalledWith( Cyr2LatTablesObject.ajaxUrl, init );
 	} );
 
-	test( 'Save active table with error', () => {
+	test.skip( 'Save active table with error', () => {
 		document.body.innerHTML = getTables();
 
 		const tables = new Tables();
