@@ -510,7 +510,7 @@ class Tables {
 	 * @param {Element} label Label to edit.
 	 */
 	editLabel( label ) {
-		label.parentNode.appendChild( this.editLabelInput );
+		label.parentNode.insertBefore( this.editLabelInput, label.nextSibling );
 		this.editLabelInput.value = label.innerHTML;
 
 		this.editLabelInput.classList.remove( this.EDIT_LABEL_ERROR_CLASS );
@@ -568,7 +568,7 @@ class Tables {
 			return;
 		}
 
-		const input = this.editLabelInput.parentNode.querySelector( 'input' );
+		const input = this.editLabelInput.nextElementSibling;
 
 		this.hideEditLabelInput();
 
