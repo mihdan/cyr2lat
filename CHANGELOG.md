@@ -1,3 +1,31 @@
+## 5.6.0 (XX.XX.2023) ##
+* Tested with WordPress 6.3.
+* Tested with WooCommerce 7.9.
+* Dropped support of PHP 5.6. Minimum required PHP version is 7.0 now.
+* Added System Info tab.
+* Fixed console error when saving table data.
+
+## 5.5.3 (15.07.2023) ##
+* Tested with WooCommerce 7.8.
+* Fixed deprecation error "strpos(): Passing null to parameter" appeared in debug.log.
+
+## 5.5.2 (31.03.2023) ##
+* Fixed transliteration of tags with Polylang and WPML.
+
+## 5.5.1 (21.03.2023) ##
+* Fixed transliteration of attributes on WC frontend.
+
+## 5.5.0 (18.03.2023) ##
+* Tested with WordPress 6.2.
+* Tested with WooCommerce 7.5.
+* Improved performance of Tables settings page.
+* Fixed showing posts by tags on the frontend.
+* Fixed showing non-transliterated cyrillic tags on the backend.
+
+## 5.4.0 (15.12.2022) ##
+* Tested with WordPress 6.1 and WooCommerce 7.2.
+* Added compatibility with WC High-Performance order storage (COT) feature.
+
 ## 5.3.0 (23.05.2022)
 * Tested with WordPress 6.0 and WooCommerce 6.5.
 

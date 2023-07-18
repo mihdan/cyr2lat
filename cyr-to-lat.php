@@ -12,7 +12,7 @@
  * Description:       Convert Non-Latin characters in post and term slugs to Latin characters. Useful for creating human-readable URLs. Based on the original plugin by Anton Skorobogatov.
  * Version:           5.5.3
  * Requires at least: 5.1
- * Requires PHP:      5.6.20
+ * Requires PHP:      7.0.0
  * Author:            Sergey Biryukov, Mikhail Kobzarev, Igor Gergel
  * Author URI:        https://profiles.wordpress.org/sergeybiryukov/
  * License:           GPL v2 or later
@@ -22,7 +22,7 @@
  *
  *
  * WC requires at least: 3.0
- * WC tested up to:      7.8
+ * WC tested up to:      7.9
  */
 
 // phpcs:ignore Generic.Commenting.DocComment.MissingShort

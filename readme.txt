@@ -2,9 +2,9 @@
 Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
-Tested up to: 6.2
+Tested up to: 6.3
 Stable tag: 5.5.3
-Requires PHP: 5.6.20
+Requires PHP: 7.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -195,6 +195,9 @@ Yes you can!
 == Changelog ==
 
 = 5.6.0 (XX.XX.2023) =
+* Tested with WordPress 6.3.
+* Tested with WooCommerce 7.9.
+* Dropped support of PHP 5.6. Minimum required PHP version is 7.0 now.
 * Added System Info tab.
 * Fixed console error when saving table data.
 

@@ -7,10 +7,6 @@
 if [[ $1 == '' ]]; then
   PHP_VERSION=$(php -v | tac | tail -n 1 | cut -d " " -f 2 | cut -c 1-3)
 
-  if grep -qE 'version.+5\.7' 'vendor/phpunit/phpunit/src/Runner/Version.php'; then
-    CURRENT_PHP_UNIT='5.7'
-  fi
-
   if grep -qE 'version.+6\.5' 'vendor/phpunit/phpunit/src/Runner/Version.php'; then
     CURRENT_PHP_UNIT='6.5'
   fi
@@ -27,16 +23,16 @@ if [[ $1 == '' ]]; then
     CURRENT_PHP_UNIT='9.5'
   fi
 
+  if grep -qE 'version.+10\.2' 'vendor/phpunit/phpunit/src/Runner/Version.php'; then
+    CURRENT_PHP_UNIT='10.2'
+  fi
+
   echo "CURRENT_PHP_UNIT: $CURRENT_PHP_UNIT"
 else
   PHP_VERSION=$1
 fi
 
 echo "PHP_VERSION: $PHP_VERSION"
-
-if [[ $PHP_VERSION == '5.6' ]]; then
-  PHP_UNIT='5.7'
-fi
 
 if [[ $PHP_VERSION == '7.0' ]]; then
   PHP_UNIT='6.5'
@@ -50,8 +46,12 @@ if [[ $PHP_VERSION == '7.2' ]]; then
   PHP_UNIT='8.5'
 fi
 
-if [[ $PHP_VERSION == '7.3' || $PHP_VERSION == '7.4' || $PHP_VERSION == '8.0' || $PHP_VERSION == '8.1' || $PHP_VERSION == '8.2' ]]; then
+if [[ $PHP_VERSION == '7.3' || $PHP_VERSION == '7.4' || $PHP_VERSION == '8.0' ]]; then
   PHP_UNIT='9.5'
+fi
+
+if [[ $PHP_VERSION == '8.1' || $PHP_VERSION == '8.2' ]]; then
+  PHP_UNIT='10.2'
 fi
 
 if [[ $PHP_UNIT == '' ]]; then
@@ -62,7 +62,7 @@ fi
 # Restore test files to the current branch version.
 git checkout -- tests
 
-if [[ $PHP_UNIT == '5.7' || $PHP_UNIT == '6.5' || $PHP_UNIT == '7.5' ]]; then
+if [[ $PHP_UNIT == '6.5' || $PHP_UNIT == '7.5' ]]; then
   find tests -type f -exec sed -i "s/: void / /g" {} \;
 fi
 
@@ -73,12 +73,6 @@ if [[ $CURRENT_PHP_UNIT == "$PHP_UNIT" ]]; then
 fi
 
 echo "Building with phpunit-$PHP_UNIT"
-
-if [[ $PHP_UNIT == '5.7' ]]; then
-  composer config platform.php 5.6
-  composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock
-  composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock
-fi
 
 if [[ $PHP_UNIT == '6.5' ]]; then
   composer config platform.php 7.0
@@ -100,6 +94,12 @@ fi
 
 if [[ $PHP_UNIT == '9.5' ]]; then
   composer config platform.php 7.3
+  composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock
+  composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock
+fi
+
+if [[ $PHP_UNIT == '10.2' ]]; then
+  composer config platform.php 8.1
   composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock
   composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock
 fi
