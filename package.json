@@ -41,8 +41,9 @@
     },
     "globals": {
       "Cyr2LatTablesObject": {
-        "optionsSaveSuccessMessage": "Options saved.",
-        "optionsSaveErrorMessage": "Error saving options."
+        "ajaxUrl": "http://test.test/wp-admin/admin-ajax.php",
+        "action": "cyr-to-lat-save-table",
+        "nonce": "some-nonce"
       }
     }
   },
