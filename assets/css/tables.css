@@ -48,7 +48,7 @@
 }
 
 #ctl-options .nav-tab-wrapper {
-	width: 125px;
+	width: 120px;
 	float: left;
 	padding-top: 22px;
 	border-bottom: none;
@@ -56,7 +56,7 @@
 }
 
 body.js #ctl-options .ctl-table {
-	width: calc(100% - 125px);
+	width: calc(100% - 120px);
 	float: left;
 	clear: none;
 }
@@ -100,19 +100,19 @@ body.js #ctl-options .ctl-table {
 .ctl-table-cell {
 	float: left;
 	position: relative;
-	margin-bottom: 1em;
+	margin: 0 0.2em 1em 0.2em;
 	width: 6.2em;
 	display: flex;
 	justify-content: space-between;
 }
 
 td fieldset .ctl-table-cell label {
-	width: 2.4em;
+	width: 3em;
 	display: inline-block;
 	text-align: right;
-	margin: 0 0.2em !important;
+	margin: 0 !important;
 	padding: 0 8px;
-	line-height: 2;
+	line-height: 30px;
 	height: 30px;
 	border-radius: 4px;
 	border: 1px solid transparent;
@@ -171,16 +171,22 @@ td fieldset .ctl-table-cell label {
 	outline: none;
 }
 
-@media screen and (max-width: 767px) {
-	.ctl-table-cell label {
-		width: 2.2em;
+@media screen and (max-width: 782px) {
+	.ctl-table-cell {
+		width: 100px;
 	}
 
-	.ctl-table-cell input {
-		width: 2.8em !important;
+	td fieldset .ctl-table-cell label {
+		height: 40px;
+		line-height: 40px;
+		width: 48px;
 	}
 
-	#ctl-options .submit {
-		padding-top: 20px;
+	.ctl-table-cell #ctl-edit-label {
+		height: 40px;
+	}
+
+	#ctl-options table tbody tr td {
+		padding: 15px 1px;
 	}
 }
