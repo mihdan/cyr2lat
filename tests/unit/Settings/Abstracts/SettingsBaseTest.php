@@ -785,7 +785,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 			}
 		);
 
-		self::assertSame( $expected, $subject->get_tab_name_from_referer() );
+		self::assertSame( $expected, $subject->get_names_from_referer() );
 	}
 
 	/**

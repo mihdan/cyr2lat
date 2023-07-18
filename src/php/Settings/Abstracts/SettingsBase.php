@@ -536,18 +536,18 @@ abstract class SettingsBase {
 	 */
 	protected function is_tab_active( $tab ) {
 		$current_page_name = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-
-		if ( $current_page_name !== $this->option_page() ) {
-			return false;
-		}
-
 		$current_tab_name  = filter_input( INPUT_GET, 'tab', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
-		if ( null === $current_tab_name ) {
-			$current_tab_name = $this->get_tab_name_from_referer();
+		if ( null === $current_page_name || null === $current_tab_name ) {
+			$names             = $this->get_names_from_referer();
+			$current_page_name = $names['page'];
+			$current_tab_name  = $names['tab'];
 		}
 
-		if ( null === $current_tab_name && ! $tab->is_tab() ) {
+		if (
+			( $current_page_name !== $this->option_page() || null === $current_tab_name ) &&
+			! $tab->is_tab()
+		) {
 			return true;
 		}
 
@@ -555,11 +555,11 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Get tab name from referer.
+	 * Get page and tab names from referer.
 	 *
-	 * @return string|null
+	 * @return array
 	 */
-	protected function get_tab_name_from_referer() {
+	protected function get_names_from_referer() {
 		if ( wp_doing_ajax() ) {
 			$query = wp_get_referer();
 		} else {
@@ -569,7 +569,10 @@ abstract class SettingsBase {
 		$query = $query ?: '';
 		$args  = $this->wp_parse_str( $query );
 
-		return isset( $args['tab'] ) ? $args['tab'] : null;
+		return [
+			'page' => isset( $args['page'] ) ? $args['page'] : null,
+			'tab'  => isset( $args['tab'] ) ? $args['tab'] : null,
+		];
 	}
 
 	// @codeCoverageIgnoreStart
