@@ -3,13 +3,7 @@
          bootstrap="tests/unit/bootstrap.php"
          colors="true"
          beStrictAboutTestsThatDoNotTestAnything="false"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.2/phpunit.xsd"
-         cacheDirectory=".phpunit.cache">
-    <testsuites>
-        <testsuite name="cyr2lat-tests">
-            <directory>tests/unit</directory>
-        </testsuite>
-    </testsuites>
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.2/phpunit.xsd">
     <coverage>
         <include>
             <directory suffix=".php">.</directory>
@@ -28,4 +22,9 @@
             <directory>vendor</directory>
         </exclude>
     </coverage>
+    <testsuites>
+        <testsuite name="cyr2lat-tests">
+            <directory suffix=".php">tests/unit</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>
