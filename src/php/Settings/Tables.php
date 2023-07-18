@@ -186,9 +186,9 @@ class Tables extends PluginSettingsBase {
 			self::HANDLE,
 			self::OBJECT,
 			[
-				'ajaxUrl'                   => admin_url( 'admin-ajax.php' ),
-				'action'                    => self::SAVE_TABLE_ACTION,
-				'nonce'                     => wp_create_nonce( self::SAVE_TABLE_ACTION ),
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'action'  => self::SAVE_TABLE_ACTION,
+				'nonce'   => wp_create_nonce( self::SAVE_TABLE_ACTION ),
 			]
 		);
 

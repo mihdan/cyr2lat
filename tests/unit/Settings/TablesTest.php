@@ -478,6 +478,8 @@ class TablesTest extends CyrToLatTestCase {
 	public function test_admin_enqueue_scripts() {
 		$plugin_url     = 'http://test.test/wp-content/plugins/cyr-to-lat';
 		$plugin_version = '1.0.0';
+		$admin_url      = 'http://test.test/wp-admin/options.php';
+		$nonce          = 'some-nonce';
 
 		$main = Mockery::mock( Main::class );
 		$main->shouldReceive( 'min_suffix' )->andReturn( '' );
@@ -510,13 +512,21 @@ class TablesTest extends CyrToLatTestCase {
 			)
 			->once();
 
+		WP_Mock::userFunction( 'admin_url' )->with( 'admin-ajax.php' )->once()->andReturn( $admin_url );
+
+		WP_Mock::userFunction( 'wp_create_nonce' )
+			->with( Tables::SAVE_TABLE_ACTION )
+			->once()
+			->andReturn( $nonce );
+
 		WP_Mock::userFunction( 'wp_localize_script' )
 			->with(
 				Tables::HANDLE,
 				Tables::OBJECT,
 				[
-					'optionsSaveSuccessMessage' => 'Options saved.',
-					'optionsSaveErrorMessage'   => 'Error saving options.',
+					'ajaxUrl' => $admin_url,
+					'action'  => Tables::SAVE_TABLE_ACTION,
+					'nonce'   => $nonce,
 				]
 			)
 			->once();
