@@ -108,7 +108,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_is_process_completed()
 	 */
-	public function dp_test_is_process_completed() {
+	public static function dp_test_is_process_completed() {
 		return [
 			[ true, true ],
 			[ false, false ],

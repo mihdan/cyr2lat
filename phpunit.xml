@@ -1,33 +1,31 @@
 <?xml version="1.0"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 bootstrap="tests/unit/bootstrap.php"
-		 colors="true"
-		 convertErrorsToExceptions="true"
-		 convertNoticesToExceptions="true"
-		 convertWarningsToExceptions="true"
-		 beStrictAboutTestsThatDoNotTestAnything="false"
-		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd">
-	<coverage>
-		<include>
-			<directory suffix=".php">.</directory>
-		</include>
-		<exclude>
-			<directory>.github</directory>
-			<directory>.make</directory>
-			<directory>.wordpress-org</directory>
-			<directory>.yarn</directory>
-			<directory>assets</directory>
-			<directory>languages</directory>
-			<directory>lib</directory>
-			<directory>node_modules</directory>
-			<directory>src/js</directory>
-			<directory>tests</directory>
-			<directory>vendor</directory>
-		</exclude>
-	</coverage>
-	<testsuites>
-		<testsuite name="cyr2lat-tests">
-			<directory suffix=".php">tests/unit</directory>
-		</testsuite>
-	</testsuites>
+         bootstrap="tests/unit/bootstrap.php"
+         colors="true"
+         beStrictAboutTestsThatDoNotTestAnything="false"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.2/phpunit.xsd"
+         cacheDirectory=".phpunit.cache">
+    <testsuites>
+        <testsuite name="cyr2lat-tests">
+            <directory suffix=".php">tests/unit</directory>
+        </testsuite>
+    </testsuites>
+    <coverage>
+        <include>
+            <directory suffix=".php">.</directory>
+        </include>
+        <exclude>
+            <directory>.github</directory>
+            <directory>.make</directory>
+            <directory>.wordpress-org</directory>
+            <directory>.yarn</directory>
+            <directory>assets</directory>
+            <directory>languages</directory>
+            <directory>lib</directory>
+            <directory>node_modules</directory>
+            <directory>src/js</directory>
+            <directory>tests</directory>
+            <directory>vendor</directory>
+        </exclude>
+    </coverage>
 </phpunit>

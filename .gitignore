@@ -1,4 +1,5 @@
 .idea/
+.phpunit.cache/
 .yarn/
 assets/css/*.min.css
 assets/js/apps/
