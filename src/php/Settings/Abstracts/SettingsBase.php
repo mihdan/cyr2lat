@@ -566,7 +566,7 @@ abstract class SettingsBase {
 			$query = filter_input( INPUT_POST, '_wp_http_referer', FILTER_SANITIZE_URL );
 		}
 
-		$query = $query ?: '';
+		$query = wp_parse_url( $query, PHP_URL_QUERY ) ?: '';
 		$args  = $this->wp_parse_str( $query );
 
 		return [
