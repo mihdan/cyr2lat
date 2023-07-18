@@ -78,7 +78,7 @@ define( 'CYR_TO_LAT_TERM_CONVERSION_ACTION', 'term_conversion_action' );
 /**
  * Minimum required php version.
  */
-define( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', '5.6' );
+define( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', '7.0' );
 
 /**
  * Minimum required max_input_vars value.

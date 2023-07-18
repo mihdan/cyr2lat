@@ -74,7 +74,7 @@ const CYR_TO_LAT_TEST_TERM_CONVERSION_ACTION = 'term_conversion_action';
 /**
  * Minimum required php version.
  */
-const CYR_TO_LAT_TEST_MINIMUM_PHP_REQUIRED_VERSION = '5.6';
+const CYR_TO_LAT_TEST_MINIMUM_PHP_REQUIRED_VERSION = '7.0';
 
 /**
  * Minimum required max_input_vars value.
