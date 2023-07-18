@@ -7,6 +7,7 @@
 #ctl-options.ctl-tables table.active {
 	display: block;
 	font-size: 14px;
+	border-radius: 4px;
 }
 
 #ctl-options .form-table th {
@@ -100,6 +101,9 @@ body.js #ctl-options .ctl-table {
 	float: left;
 	position: relative;
 	margin-bottom: 1em;
+	width: 6.2em;
+	display: flex;
+	justify-content: space-between;
 }
 
 td fieldset .ctl-table-cell label {
@@ -120,20 +124,26 @@ td fieldset .ctl-table-cell label {
 	width: 3em !important;
 	display: inline-block;
 	vertical-align: middle;
+	margin: 0;
+	border-width: 1px;
 }
 
 .ctl-table-cell #ctl-edit-label {
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 2.4em !important;
-	margin: 0 0.2em !important;
+	width: 3em !important;
+	margin: 0;
 	padding: 0 8px;
-	border: 1px solid #007cba;
+	border: 1px solid #007cba !important;
 	box-shadow: 0 0 0 1px #007cba;
-	outline: 2px solid #0000;
+	outline: none;
 	border-radius: 4px;
-	line-height: 2;
+	height: 30px;
+}
+
+.ctl-table-cell #ctl-edit-label:focus-visible {
+	outline: none;
 }
 
 .ctl-edit-label-error {
