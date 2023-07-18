@@ -7,7 +7,7 @@
          cacheDirectory=".phpunit.cache">
     <testsuites>
         <testsuite name="cyr2lat-tests">
-            <directory suffix=".php">tests/unit</directory>
+            <directory>tests/unit</directory>
         </testsuite>
     </testsuites>
     <coverage>
