@@ -695,7 +695,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'get_tab_name_from_referer' )->andReturn( $referer_tab );
+		$subject->shouldReceive( 'get_names_from_referer' )->andReturn( $referer_tab );
 		$subject->shouldReceive( 'option_page' )->andReturn( $option_page );
 
 		FunctionMocker::replace(
@@ -731,13 +731,83 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 */
 	public function dp_test_is_tab_active() {
 		return [
-			'No input, not on page'   => [ false, null, null, false, 'any_class_name', false ],
-			'No input, not a tab'     => [ true, null, null, false, 'any_class_name', true ],
-			'No input, tab'           => [ true, null, 'integrations', true, 'any_class_name', false ],
-			'Wrong input, not a tab'  => [ true, 'wrong', null, false, 'General', false ],
-			'Wrong input, tab'        => [ true, 'wrong', 'integrations', true, 'General', false ],
-			'Proper input, not a tab' => [ true, 'general', null, false, 'General', true ],
-			'Proper input, tab'       => [ true, 'general', 'integrations', true, 'General', true ],
+			'No input, not on page'   => [
+				false,
+				null,
+				[
+					'page' => null,
+					'tab'  => null,
+				],
+				false,
+				'any_class_name',
+				true,
+			],
+			'No input, not a tab'     => [
+				true,
+				null,
+				[
+					'page' => null,
+					'tab'  => null,
+				],
+				false,
+				'any_class_name',
+				true,
+			],
+			'No input, tab'           => [
+				true,
+				null,
+				[
+					'page' => 'cyr-to-lat',
+					'tab'  => 'converter',
+				],
+				true,
+				'any_class_name',
+				false,
+			],
+			'Wrong input, not a tab'  => [
+				true,
+				'wrong',
+				[
+					'page' => null,
+					'tab'  => null,
+				],
+				false,
+				'General',
+				false,
+			],
+			'Wrong input, tab'        => [
+				true,
+				'wrong',
+				[
+					'page' => 'cyr-to-lat',
+					'tab'  => 'converter',
+				],
+				true,
+				'General',
+				false,
+			],
+			'Proper input, not a tab' => [
+				true,
+				'general',
+				[
+					'page' => null,
+					'tab'  => null,
+				],
+				false,
+				'General',
+				true,
+			],
+			'Proper input, tab'       => [
+				true,
+				'general',
+				[
+					'page' => 'cyr-to-lat',
+					'tab'  => 'converter',
+				],
+				true,
+				'General',
+				true,
+			],
 		];
 	}
 
@@ -754,6 +824,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	public function test_get_tab_name_from_referer( $doing_ajax, $referer, $expected ) {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
+
 		$subject->shouldReceive( 'wp_parse_str' )->andReturnUsing(
 			static function ( $input_string ) {
 				parse_str( (string) $input_string, $result );
@@ -785,6 +856,12 @@ class SettingsBaseTest extends CyrToLatTestCase {
 			}
 		);
 
+		WP_Mock::userFunction( 'wp_parse_url' )->andReturnUsing(
+			static function ( $url, $component ) {
+				return parse_url( $url, $component );
+			}
+		);
+
 		self::assertSame( $expected, $subject->get_names_from_referer() );
 	}
 
@@ -797,33 +874,51 @@ class SettingsBaseTest extends CyrToLatTestCase {
 		return [
 			'Not ajax, not a tab'  => [
 				false,
-				'https://test.test/wp-admin/options-general.php?page=cyr-to-lat',
-				null,
+				'/wp-admin/options-general.php?page=cyr-to-lat',
+				[
+					'page' => 'cyr-to-lat',
+					'tab'  => null,
+				],
 			],
 			'Not ajax, tab'        => [
 				false,
-				'https://test.test/wp-admin/options-general.php?page=cyr-to-lat&tab=converter',
-				'converter',
+				'/wp-admin/options-general.php?page=cyr-to-lat&tab=converter',
+				[
+					'page' => 'cyr-to-lat',
+					'tab'  => 'converter',
+				],
 			],
 			'Not ajax, no referer' => [
 				false,
 				null,
-				null,
+				[
+					'page' => null,
+					'tab'  => null,
+				],
 			],
 			'Ajax, not a tab'      => [
 				true,
-				'https://test.test/wp-admin/options-general.php?page=cyr-to-lat',
-				null,
+				'/wp-admin/options-general.php?page=cyr-to-lat',
+				[
+					'page' => 'cyr-to-lat',
+					'tab'  => null,
+				],
 			],
 			'Ajax, tab'            => [
 				true,
-				'https://test.test/wp-admin/options-general.php?page=cyr-to-lat&tab=converter',
-				'converter',
+				'/wp-admin/options-general.php?page=cyr-to-lat&tab=converter',
+				[
+					'page' => 'cyr-to-lat',
+					'tab'  => 'converter',
+				],
 			],
 			'Ajax, no referer'     => [
 				true,
 				null,
-				null,
+				[
+					'page' => null,
+					'tab'  => null,
+				],
 			],
 		];
 	}
@@ -1785,7 +1880,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_pre_update_option_filter
 	 */
 	public function test_pre_update_option_filter( $form_fields, $value, $old_value, $expected ) {
-		$option_name                   = 'hcaptcha_settings';
+		$option_name                   = 'cyr_to_lat_settings';
 		$network_wide                  = '_network_wide';
 		$merged_value                  = array_merge( $old_value, $value );
 		$merged_value[ $network_wide ] = array_key_exists( $network_wide, $merged_value ) ? $merged_value[ $network_wide ] : [];
