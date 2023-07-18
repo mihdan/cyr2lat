@@ -378,7 +378,7 @@ class Tables {
 			const plus = document.createElement( 'div' );
 			plus.classList.add( this.PLUS_CLASS );
 			plus.innerHTML = this.plusButton;
-			table.querySelector( 'td' ).appendChild( plus );
+			table.querySelector( 'td fieldset' ).appendChild( plus );
 
 			return null;
 		} );
