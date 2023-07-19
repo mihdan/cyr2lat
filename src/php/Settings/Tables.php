@@ -44,7 +44,7 @@ class Tables extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function page_title() {
+	protected function page_title(): string {
 		return __( 'Tables', 'cyr2lat' );
 	}
 
@@ -53,7 +53,7 @@ class Tables extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function section_title() {
+	protected function section_title(): string {
 		return 'tables';
 	}
 
@@ -71,7 +71,7 @@ class Tables extends PluginSettingsBase {
 	 *
 	 * @return array
 	 */
-	public function get_locales() {
+	public function get_locales(): array {
 		return $this->locales;
 	}
 
@@ -128,7 +128,7 @@ class Tables extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	private function get_current_locale() {
+	private function get_current_locale(): string {
 		$current_locale = get_locale();
 
 		return array_key_exists( $current_locale, $this->locales ) ? $current_locale : 'iso9';
@@ -162,7 +162,7 @@ class Tables extends PluginSettingsBase {
 	 *
 	 * @param array $arguments Section arguments.
 	 */
-	public function section_callback( $arguments ) {
+	public function section_callback( array $arguments ) {
 		$locale = str_replace( '_section', '', $arguments['id'] );
 
 		if ( $this->get_current_locale() === $locale ) {

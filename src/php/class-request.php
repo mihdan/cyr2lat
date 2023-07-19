@@ -19,7 +19,7 @@ class Request {
 	 *
 	 * @return bool
 	 */
-	public function is_allowed() {
+	public function is_allowed(): bool {
 		return (
 			! $this->is_frontend() ||
 			( $this->is_frontend() && $this->is_post() ) ||
@@ -32,7 +32,7 @@ class Request {
 	 *
 	 * @return bool
 	 */
-	public function is_frontend() {
+	public function is_frontend(): bool {
 		return ! ( wp_doing_ajax() || is_admin() || $this->is_cli() || $this->is_rest() );
 	}
 
@@ -41,7 +41,7 @@ class Request {
 	 *
 	 * @return bool
 	 */
-	public function is_cli() {
+	public function is_cli(): bool {
 		return defined( 'WP_CLI' ) && constant( 'WP_CLI' );
 	}
 
@@ -58,7 +58,7 @@ class Request {
 	 * @return bool
 	 * @author matzeeable
 	 */
-	public function is_rest() {
+	public function is_rest(): bool {
 		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
 			return false;
 		}
@@ -93,7 +93,7 @@ class Request {
 	 *
 	 * @return string
 	 */
-	protected function get_rest_route() {
+	protected function get_rest_route(): string {
 		$current_path = (string) wp_parse_url( trailingslashit( add_query_arg( [] ) ), PHP_URL_PATH );
 		$rest_path    = (string) wp_parse_url( trailingslashit( rest_url() ), PHP_URL_PATH );
 
@@ -107,7 +107,7 @@ class Request {
 	 *
 	 * @return bool
 	 */
-	public function is_post() {
+	public function is_post(): bool {
 		$request_method = filter_var(
 			isset( $_SERVER['REQUEST_METHOD'] ) ? wp_unslash( $_SERVER['REQUEST_METHOD'] ) : '',
 			FILTER_SANITIZE_FULL_SPECIAL_CHARS

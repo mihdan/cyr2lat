@@ -44,9 +44,9 @@ class Settings implements SettingsInterface {
 	 *
 	 * @param array $menu_pages_classes Menu pages.
 	 */
-	public function __construct( $menu_pages_classes = [] ) {
+	public function __construct( array $menu_pages_classes = [] ) {
 		// Allow to specify $menu_pages_classes item as one class, not an array.
-		$this->menu_pages_classes = (array) $menu_pages_classes;
+		$this->menu_pages_classes = $menu_pages_classes;
 
 		$this->init();
 	}
@@ -93,7 +93,7 @@ class Settings implements SettingsInterface {
 	 *
 	 * @return array
 	 */
-	public function get_tabs() {
+	public function get_tabs(): array {
 		return $this->tabs;
 	}
 
@@ -105,7 +105,7 @@ class Settings implements SettingsInterface {
 	 *
 	 * @return string|array The value specified for the option or a default value for the option.
 	 */
-	public function get( $key, $empty_value = null ) {
+	public function get( string $key, $empty_value = null ) {
 		$value = '';
 
 		foreach ( $this->tabs as $tab ) {
@@ -136,7 +136,7 @@ class Settings implements SettingsInterface {
 	 *
 	 * @return bool
 	 */
-	public function is( $key, $compare ) {
+	public function is( string $key, string $compare ): bool {
 		$value = $this->get( $key );
 
 		if ( is_array( $value ) ) {
@@ -152,8 +152,9 @@ class Settings implements SettingsInterface {
 	 * @param string $key Setting name.
 	 *
 	 * @return bool
+	 * @noinspection PhpUnused
 	 */
-	public function is_on( $key ) {
+	public function is_on( string $key ): bool {
 		return ! empty( $this->get( $key ) );
 	}
 
@@ -165,8 +166,9 @@ class Settings implements SettingsInterface {
 	 * @param mixed  $value     Value.
 	 *
 	 * @return void
+	 * @noinspection PhpUnused
 	 */
-	public function set_field( $key, $field_key, $value ) {
+	public function set_field( string $key, string $field_key, $value ) {
 		foreach ( $this->tabs as $tab ) {
 			/**
 			 * Page / Tab.
@@ -184,7 +186,7 @@ class Settings implements SettingsInterface {
 	 *
 	 * @return array
 	 */
-	public function screen_ids() {
+	public function screen_ids(): array {
 		return $this->screen_ids;
 	}
 
@@ -193,7 +195,7 @@ class Settings implements SettingsInterface {
 	 *
 	 * @return array
 	 */
-	public function get_table() {
+	public function get_table(): array {
 		// List of locales: https://make.wordpress.org/polyglots/teams/.
 		$locale = (string) apply_filters( 'ctl_locale', get_locale() );
 		$table  = $this->get( $locale );
@@ -209,7 +211,7 @@ class Settings implements SettingsInterface {
 	 *
 	 * @return bool
 	 */
-	public function is_chinese_locale() {
+	public function is_chinese_locale(): bool {
 		$chinese_locales = [ 'zh_CN', 'zh_HK', 'zh_SG', 'zh_TW' ];
 
 		return in_array( get_locale(), $chinese_locales, true );
@@ -224,7 +226,7 @@ class Settings implements SettingsInterface {
 	 *
 	 * @return array
 	 */
-	protected function transpose_chinese_table( $table ) {
+	protected function transpose_chinese_table( array $table ): array {
 		if ( ! $this->is_chinese_locale() ) {
 			return $table;
 		}

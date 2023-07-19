@@ -26,7 +26,7 @@ class ACF {
 	 *
 	 * @param Settings $settings Plugin settings.
 	 */
-	public function __construct( $settings ) {
+	public function __construct( Settings $settings ) {
 		$this->settings = $settings;
 
 		$this->init_hooks();

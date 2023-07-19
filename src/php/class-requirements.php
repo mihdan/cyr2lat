@@ -52,11 +52,11 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		/**
 		 * Requirements constructor.
 		 *
-		 * @param Settings             $settings      Settings.
-		 * @param Admin_Notices        $admin_notices Admin notices.
-		 * @param WP_Filesystem_Direct $wp_filesystem File system.
+		 * @param Settings                  $settings      Settings.
+		 * @param Admin_Notices             $admin_notices Admin notices.
+		 * @param WP_Filesystem_Direct|null $wp_filesystem File system.
 		 */
-		public function __construct( $settings, $admin_notices, $wp_filesystem = null ) {
+		public function __construct( Settings $settings, Admin_Notices $admin_notices, WP_Filesystem_Direct $wp_filesystem = null ) {
 			$this->settings   = $settings;
 			$this->screen_ids = [ 'screen_ids' => $this->settings->screen_ids() ];
 
@@ -84,7 +84,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 *
 		 * @return bool
 		 */
-		public function are_requirements_met() {
+		public function are_requirements_met(): bool {
 			$is_php_version_required    = $this->is_php_version_required();
 			$is_max_input_vars_required = $this->is_max_input_vars_required();
 
@@ -120,7 +120,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 * @return bool
 		 * @noinspection ConstantCanBeUsedInspection
 		 */
-		private function is_php_version_required() {
+		private function is_php_version_required(): bool {
 			if ( version_compare( constant( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION' ), phpversion(), '>' ) ) {
 				/* translators: 1: Current PHP version number, 2: Cyr To Lat version, 3: Minimum required PHP version number */
 				$message = sprintf( __( 'Your server is running PHP version %1$s but Cyr To Lat %2$s requires at least %3$s.', 'cyr2lat' ), phpversion(), constant( 'CYR_TO_LAT_VERSION' ), constant( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION' ) );
@@ -138,7 +138,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 *
 		 * @return bool
 		 */
-		private function is_max_input_vars_required() {
+		private function is_max_input_vars_required(): bool {
 			if ( constant( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS' ) > ini_get( 'max_input_vars' ) ) {
 				if ( $this->wp_filesystem ) {
 					$this->try_to_fix_max_input_vars();
@@ -225,7 +225,7 @@ if ( ! class_exists( __NAMESPACE__ . '\Requirements' ) ) {
 		 *
 		 * @return string
 		 */
-		private function get_user_ini_filename() {
+		private function get_user_ini_filename(): string {
 			return ABSPATH . 'wp-admin/' . ini_get( 'user_ini.filename' );
 		}
 

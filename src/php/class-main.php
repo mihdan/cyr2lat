@@ -233,7 +233,7 @@ class Main {
 	 *
 	 * @return Settings
 	 */
-	public function settings() {
+	public function settings(): Settings {
 		return $this->settings;
 	}
 
@@ -247,7 +247,7 @@ class Main {
 	 * @return string
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function sanitize_title( $title, $raw_title = '', $context = '' ) {
+	public function sanitize_title( string $title, string $raw_title = '', string $context = '' ): string {
 		global $wpdb;
 
 		if (
@@ -331,7 +331,7 @@ class Main {
 	 * @return bool
 	 * @noinspection PhpUndefinedFunctionInspection
 	 */
-	protected function is_wc_attribute_taxonomy( $title ) {
+	protected function is_wc_attribute_taxonomy( string $title ): bool {
 		if ( ! function_exists( 'wc_get_attribute_taxonomies' ) ) {
 			return false;
 		}
@@ -358,7 +358,7 @@ class Main {
 	 * @return string
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function sanitize_filename( $filename, $filename_raw ) {
+	public function sanitize_filename( string $filename, string $filename_raw ): string {
 		$pre = apply_filters( 'ctl_pre_sanitize_filename', false, $filename );
 
 		if ( false !== $pre ) {
@@ -377,7 +377,7 @@ class Main {
 	 *
 	 * @return string
 	 */
-	public function min_suffix() {
+	public function min_suffix(): string {
 		return defined( 'SCRIPT_DEBUG' ) && constant( 'SCRIPT_DEBUG' ) ? '' : '.min';
 	}
 
@@ -389,7 +389,7 @@ class Main {
 	 *
 	 * @return string
 	 */
-	private function fix_mac_string( $string, $table ) {
+	private function fix_mac_string( string $string, array $table ): string {
 		$fix_table = Conversion_Tables::get_fix_table_for_mac();
 
 		$fix = [];
@@ -410,7 +410,7 @@ class Main {
 	 *
 	 * @return string
 	 */
-	protected function split_chinese_string( $string, $table ) {
+	protected function split_chinese_string( string $string, array $table ): string {
 		if ( ! $this->settings->is_chinese_locale() || mb_strlen( $string ) < 4 ) {
 			return $string;
 		}
@@ -436,7 +436,7 @@ class Main {
 	 *
 	 * @return string
 	 */
-	public function transliterate( $string ) {
+	public function transliterate( string $string ): string {
 		$table = (array) apply_filters( 'ctl_table', $this->settings->get_table() );
 
 		$string = $this->fix_mac_string( $string, $table );
@@ -452,7 +452,7 @@ class Main {
 	 *
 	 * @return bool
 	 */
-	private function is_classic_editor_plugin_active() {
+	private function is_classic_editor_plugin_active(): bool {
 		// @codeCoverageIgnoreStart
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -471,7 +471,7 @@ class Main {
 	 *
 	 * @return bool
 	 */
-	private function is_gutenberg_editor_active() {
+	private function is_gutenberg_editor_active(): bool {
 
 		// Gutenberg plugin is installed and activated.
 		$gutenberg = ! ( false === has_filter( 'replace_editor', 'gutenberg_init' ) );
@@ -502,7 +502,7 @@ class Main {
 	 * @return array
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function sanitize_post_name( $data, $postarr = [] ) {
+	public function sanitize_post_name( array $data, array $postarr = [] ): array {
 		global $current_screen;
 
 		if ( ! $this->is_gutenberg_editor_active() ) {
@@ -532,7 +532,7 @@ class Main {
 	 *
 	 * @return string|int
 	 */
-	public function pre_insert_term_filter( $term, $taxonomy ) {
+	public function pre_insert_term_filter( $term, string $taxonomy ) {
 		if (
 			0 === $term ||
 			is_wp_error( $term ) ||
@@ -553,7 +553,7 @@ class Main {
 	 * @param array    $args       An array of get_terms() arguments.
 	 * @param string[] $taxonomies An array of taxonomy names.
 	 */
-	public function get_terms_args_filter( $args, $taxonomies ) {
+	public function get_terms_args_filter( array $args, array $taxonomies ): array {
 		$this->is_term    = true;
 		$this->taxonomies = $taxonomies;
 
@@ -567,7 +567,7 @@ class Main {
 	 *
 	 * @return string
 	 */
-	public function pll_locale_filter( $locale ) {
+	public function pll_locale_filter( string $locale ) {
 		if ( $this->pll_locale ) {
 			return $this->pll_locale;
 		}
@@ -625,11 +625,8 @@ class Main {
 		 */
 		$rest_server = rest_get_server();
 		$data        = json_decode( $rest_server::get_raw_data(), false );
-		if ( isset( $data->lang ) ) {
-			return $data->lang;
-		}
 
-		return false;
+		return $data->lang ?? false;
 	}
 
 	/**
@@ -707,7 +704,7 @@ class Main {
 	 *
 	 * @return string
 	 */
-	public function wpml_locale_filter( $locale ) {
+	public function wpml_locale_filter( string $locale ): string {
 		if ( $this->wpml_locale ) {
 			return $this->wpml_locale;
 		}
@@ -740,8 +737,9 @@ class Main {
 	 * @param string      $original_language Original language.
 	 *
 	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function wpml_language_has_switched( $language_code, $cookie_lang, $original_language ) {
+	public function wpml_language_has_switched( $language_code, $cookie_lang, string $original_language ) {
 		$language_code = (string) $language_code;
 
 		$this->wpml_locale =
@@ -759,8 +757,7 @@ class Main {
 		if ( class_exists( FeaturesUtil::class ) ) {
 			FeaturesUtil::declare_compatibility(
 				'custom_order_tables',
-				constant( 'CYR_TO_LAT_FILE' ),
-				true
+				constant( 'CYR_TO_LAT_FILE' )
 			);
 		}
 	}
@@ -776,7 +773,7 @@ class Main {
 	 *
 	 * @return string Items separated by comma and sql-escaped
 	 */
-	public function prepare_in( $items, $format = '%s' ) {
+	public function prepare_in( $items, $format = '%s' ): string {
 		global $wpdb;
 
 		$prepared_in = '';

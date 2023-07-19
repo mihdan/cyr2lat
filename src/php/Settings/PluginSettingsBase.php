@@ -21,7 +21,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @param array $tabs Tabs of this settings page.
 	 */
-	public function __construct( $tabs = [] ) {
+	public function __construct( array $tabs = [] ) {
 		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
 		add_filter( 'update_footer', [ $this, 'update_footer' ], PHP_INT_MAX );
 
@@ -33,7 +33,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function menu_title() {
+	protected function menu_title(): string {
 		return __( 'Cyr To Lat', 'cyr2lat' );
 	}
 
@@ -42,7 +42,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @return string
 	 */
-	public function screen_id() {
+	public function screen_id(): string {
 		return 'settings_page_cyr-to-lat';
 	}
 
@@ -51,7 +51,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function option_group() {
+	protected function option_group(): string {
 		return 'cyr_to_lat_group';
 	}
 
@@ -60,7 +60,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function option_page() {
+	protected function option_page(): string {
 		return 'cyr-to-lat';
 	}
 
@@ -69,7 +69,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function option_name() {
+	protected function option_name(): string {
 		return 'cyr_to_lat_settings';
 	}
 
@@ -78,7 +78,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function plugin_basename() {
+	protected function plugin_basename(): string {
 		return plugin_basename( constant( 'CYR_TO_LAT_FILE' ) );
 	}
 
@@ -87,7 +87,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function plugin_url() {
+	protected function plugin_url(): string {
 		return constant( 'CYR_TO_LAT_URL' );
 	}
 
@@ -96,7 +96,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function plugin_version() {
+	protected function plugin_version(): string {
 		return constant( 'CYR_TO_LAT_VERSION' );
 	}
 
@@ -105,7 +105,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function settings_link_label() {
+	protected function settings_link_label(): string {
 		return __( 'View Cyr To Lat settings', 'cyr2lat' );
 	}
 
@@ -114,7 +114,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function settings_link_text() {
+	protected function settings_link_text(): string {
 		return __( 'Settings', 'cyr2lat' );
 	}
 
@@ -123,7 +123,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function text_domain() {
+	protected function text_domain(): string {
 		return 'cyr2lat';
 	}
 
@@ -183,7 +183,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @return string
 	 */
-	public function admin_footer_text( $text ) {
+	public function admin_footer_text( string $text ): string {
 		if ( ! $this->is_options_screen() ) {
 			return $text;
 		}
@@ -221,7 +221,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 *
 	 * @return string
 	 */
-	public function update_footer( $content ) {
+	public function update_footer( string $content ): string {
 		if ( ! $this->is_options_screen() ) {
 			return $content;
 		}

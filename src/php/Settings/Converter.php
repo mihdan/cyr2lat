@@ -36,7 +36,7 @@ class Converter extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function page_title() {
+	protected function page_title(): string {
 		return __( 'Converter', 'cyr2lat' );
 	}
 
@@ -45,7 +45,7 @@ class Converter extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function section_title() {
+	protected function section_title(): string {
 		return 'converter';
 	}
 
@@ -117,7 +117,7 @@ class Converter extends PluginSettingsBase {
 	 *
 	 * @return array
 	 */
-	public static function get_convertible_post_types() {
+	public static function get_convertible_post_types(): array {
 		$post_types = get_post_types( [ 'public' => true ] );
 
 		return array_merge( $post_types, [ 'nav_menu_item' => 'nav_menu_item' ] );
@@ -177,7 +177,7 @@ class Converter extends PluginSettingsBase {
 	 *
 	 * @param array $arguments Section arguments.
 	 */
-	public function section_callback( $arguments ) {
+	public function section_callback( array $arguments ) {
 		if ( self::SECTION_TYPES_STATUSES === $arguments['id'] ) {
 			?>
 			<h2 class="title">
@@ -208,7 +208,7 @@ class Converter extends PluginSettingsBase {
 	 *
 	 * @return void
 	 */
-	private function print_section_header( $id, $title ) {
+	private function print_section_header( string $id, string $title ) {
 		?>
 		<h3 class="ctl-section-<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $title ); ?></h3>
 		<?php

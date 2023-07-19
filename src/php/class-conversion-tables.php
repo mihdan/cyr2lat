@@ -25,7 +25,7 @@ class Conversion_Tables {
 	 *
 	 * @return array
 	 */
-	public static function get( $locale = '' ) {
+	public static function get( string $locale = '' ): array {
 		switch ( $locale ) {
 			// Belorussian.
 			case 'bel':
@@ -1204,7 +1204,7 @@ class Conversion_Tables {
 	 *
 	 * @return array
 	 */
-	public static function get_fix_table_for_mac() {
+	public static function get_fix_table_for_mac(): array {
 		/**
 		 * Keys in the table are standard ISO9 characters.
 		 *

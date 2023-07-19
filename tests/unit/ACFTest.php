@@ -54,7 +54,7 @@ class ACFTest extends CyrToLatTestCase {
 		// Now call the constructor.
 		$reflected_class = new ReflectionClass( $classname );
 		$constructor     = $reflected_class->getConstructor();
-		$constructor->invoke( $mock, [ $settings ] );
+		$constructor->invoke( $mock, $settings );
 	}
 
 	/**

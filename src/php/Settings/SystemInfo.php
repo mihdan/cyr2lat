@@ -37,7 +37,7 @@ class SystemInfo extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function page_title() {
+	protected function page_title(): string {
 		return __( 'System Info', 'cyr2lat' );
 	}
 
@@ -46,7 +46,7 @@ class SystemInfo extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function section_title() {
+	protected function section_title(): string {
 		return 'system-info';
 	}
 
@@ -83,7 +83,7 @@ class SystemInfo extends PluginSettingsBase {
 	 *
 	 * @param array $arguments Section arguments.
 	 */
-	public function section_callback( $arguments ) {
+	public function section_callback( array $arguments ) {
 		?>
 		<h2>
 			<?php echo esc_html__( 'System Information', 'cyr2lat' ); ?>
@@ -109,7 +109,7 @@ class SystemInfo extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	public function get_system_info() {
+	public function get_system_info(): string {
 		$data = $this->header( '### Begin System Info ###' );
 
 		$data .= $this->cyr_to_lat_info();
@@ -129,7 +129,7 @@ class SystemInfo extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	private function cyr_to_lat_info() {
+	private function cyr_to_lat_info(): string {
 		global $cyr_to_lat_plugin;
 
 		$data = $this->header( '-- Cyr To Lat Info --' );
@@ -184,7 +184,7 @@ class SystemInfo extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	private function site_info() {
+	private function site_info(): string {
 		$data = $this->header( '-- Site Info --' );
 
 		$data .= $this->data( 'Site URL', site_url() );
@@ -200,7 +200,7 @@ class SystemInfo extends PluginSettingsBase {
 	 * @return string
 	 * @noinspection NestedTernaryOperatorInspection
 	 */
-	private function wp_info() {
+	private function wp_info(): string {
 		global $wpdb;
 
 		$theme_data = wp_get_theme();
@@ -242,7 +242,7 @@ class SystemInfo extends PluginSettingsBase {
 	 * @return string
 	 * @noinspection NestedTernaryOperatorInspection
 	 */
-	private function uploads_info() {
+	private function uploads_info(): string {
 		$data = $this->header( '-- WordPress Uploads/Constants --' );
 
 		$data .= $this->data( 'WP_CONTENT_DIR', defined( 'WP_CONTENT_DIR' ) ? WP_CONTENT_DIR ?: 'Disabled' : 'Not set' );
@@ -264,7 +264,7 @@ class SystemInfo extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	private function plugins_info() {
+	private function plugins_info(): string {
 		// Get plugins that have an update.
 		$data = $this->mu_plugins();
 
@@ -279,7 +279,7 @@ class SystemInfo extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	private function mu_plugins() {
+	private function mu_plugins(): string {
 		$data = '';
 
 		// Must-use plugins.
@@ -304,7 +304,7 @@ class SystemInfo extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	private function installed_plugins() {
+	private function installed_plugins(): string {
 		$updates = get_plugin_updates();
 
 		// WordPress active plugins.
@@ -346,7 +346,7 @@ class SystemInfo extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	private function multisite_plugins() {
+	private function multisite_plugins(): string {
 		$data = '';
 
 		if ( ! is_multisite() ) {
@@ -382,7 +382,7 @@ class SystemInfo extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	private function server_info() {
+	private function server_info(): string {
 		global $wpdb;
 
 		// Server configuration (really just versions).
@@ -432,7 +432,7 @@ class SystemInfo extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	private function header( $header ) {
+	private function header( string $header ): string {
 		return "\n" . $header . "\n\n";
 	}
 
@@ -445,7 +445,7 @@ class SystemInfo extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	private function data( $key, $value, $max_key_length = 0 ) {
+	private function data( string $key, string $value, int $max_key_length = 0 ): string {
 		$length = $max_key_length ? max( $max_key_length, self::DATA_KEY_LENGTH ) : self::DATA_KEY_LENGTH;
 
 		$length += 2;
@@ -461,7 +461,7 @@ class SystemInfo extends PluginSettingsBase {
 	 *
 	 * @return int
 	 */
-	private function get_max_key_length( $array, $key ) {
+	private function get_max_key_length( array $array, string $key ): int {
 		return array_reduce(
 			$array,
 			static function ( $carry, $item ) use ( $key ) {
@@ -483,7 +483,7 @@ class SystemInfo extends PluginSettingsBase {
 	 * @return string
 	 * @noinspection PhpSameParameterValueInspection
 	 */
-	private function mb_str_pad( $string, $length, $pad_string = ' ' ) {
+	private function mb_str_pad( string $string, int $length, string $pad_string = ' ' ): string {
 		$pad_string = mb_substr( $pad_string, 0, 1 );
 		$times      = max( 0, $length - mb_strlen( $string ) );
 

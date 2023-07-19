@@ -75,7 +75,7 @@ class Converter {
 	 * @param Term_Conversion_Process $process_all_terms Term conversion process.
 	 * @param Admin_Notices           $admin_notices     Admin notices.
 	 */
-	public function __construct( $main, $settings, $process_all_posts, $process_all_terms, $admin_notices ) {
+	public function __construct( Main $main, Settings $settings, Post_Conversion_Process $process_all_posts, Term_Conversion_Process $process_all_terms, Admin_Notices $admin_notices ) {
 		$this->main              = $main;
 		$this->settings          = $settings;
 		$this->process_all_posts = $process_all_posts;
@@ -164,7 +164,7 @@ class Converter {
 	 *
 	 * @param array $args Arguments for query.
 	 */
-	public function convert_existing_slugs( $args = [] ) {
+	public function convert_existing_slugs( array $args = [] ) {
 		$this->convert_existing_post_slugs( $args );
 		$this->convert_existing_term_slugs();
 	}
@@ -174,7 +174,7 @@ class Converter {
 	 *
 	 * @param array $args Arguments for query.
 	 */
-	protected function convert_existing_post_slugs( $args = [] ) {
+	protected function convert_existing_post_slugs( array $args = [] ) {
 		global $wpdb;
 
 		$post_types    = array_intersect(
@@ -278,7 +278,7 @@ class Converter {
 	 *
 	 * @noinspection ForgottenDebugOutputInspection
 	 */
-	protected function log( $message ) {
+	protected function log( string $message ) {
 		if ( defined( 'WP_DEBUG_LOG' ) && constant( 'WP_DEBUG_LOG' ) ) {
 			// @phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( 'Cyr To Lat: ' . $message );

@@ -16,6 +16,7 @@ namespace CyrToLat\Tests\Unit;
 
 use Cyr_To_Lat\Requirements;
 use Cyr_To_Lat\Settings\Settings;
+use Cyr_To_Lat\Admin_Notices;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
@@ -134,8 +135,6 @@ class RequirementsTest extends CyrToLatTestCase {
 
 	/**
 	 * Test if are_requirements_met() returns true when requirements met.
-	 *
-	 * @noinspection PhpParamsInspection
 	 */
 	public function test_requirements_met() {
 		$settings = Mockery::mock( Settings::class );
@@ -181,8 +180,6 @@ class RequirementsTest extends CyrToLatTestCase {
 
 	/**
 	 * Test if are_requirements_met() returns false when php requirements not met.
-	 *
-	 * @noinspection PhpParamsInspection
 	 */
 	public function test_php_requirements_not_met() {
 		$settings = Mockery::mock( Settings::class );
@@ -250,9 +247,8 @@ class RequirementsTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_vars_requirements_not_met
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection PhpParamsInspection
 	 */
-	public function test_vars_requirements_not_met( $within_timeout, $content, $expected ) {
+	public function test_vars_requirements_not_met( bool $within_timeout, string $content, string $expected ) {
 		$max_input_vars              = $this->cyr_to_lat_required_max_input_vars - 1;
 		$user_ini_filename           = '.user.ini';
 		$user_ini_filename_with_path = ABSPATH . 'wp-admin/' . $user_ini_filename;
@@ -351,7 +347,7 @@ class RequirementsTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_vars_requirements_not_met() {
+	public static function dp_test_vars_requirements_not_met(): array {
 		$expected_line = 'max_input_vars = ' . 1000;
 
 		return [
@@ -384,7 +380,6 @@ class RequirementsTest extends CyrToLatTestCase {
 	 * Test are_requirements_met() when max_input_vars requirements not met and filesystem not available.
 	 *
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection PhpParamsInspection
 	 */
 	public function test_vars_requirements_not_met_and_filesystem_not_available() {
 		$max_input_vars    = $this->cyr_to_lat_required_max_input_vars - 1;
@@ -449,8 +444,6 @@ class RequirementsTest extends CyrToLatTestCase {
 
 	/**
 	 * Test deactivate_plugin().
-	 *
-	 * @noinspection PhpParamsInspection
 	 */
 	public function test_deactivate_plugin() {
 		$settings = Mockery::mock( Settings::class );
@@ -488,8 +481,6 @@ class RequirementsTest extends CyrToLatTestCase {
 
 	/**
 	 * Test deactivate_plugin() when it is not active.
-	 *
-	 * @noinspection PhpParamsInspection
 	 */
 	public function test_deactivate_plugin_when_it_is_not_active() {
 		$settings = Mockery::mock( Settings::class );

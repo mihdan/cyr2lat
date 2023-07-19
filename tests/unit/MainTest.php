@@ -1602,7 +1602,7 @@ class MainTest extends CyrToLatTestCase {
 		$subject->declare_wc_compatibility();
 
 		if ( $feature_util ) {
-			$declare_compatibility->wasCalledWithOnce( [ 'custom_order_tables', PLUGIN_MAIN_FILE, true ] );
+			$declare_compatibility->wasCalledWithOnce( [ 'custom_order_tables', PLUGIN_MAIN_FILE ] );
 		} else {
 			$declare_compatibility->wasNotCalled();
 		}
