@@ -46,12 +46,8 @@ if [[ $PHP_VERSION == '7.2' ]]; then
   PHP_UNIT='8.5'
 fi
 
-if [[ $PHP_VERSION == '7.3' || $PHP_VERSION == '7.4' || $PHP_VERSION == '8.0' ]]; then
+if [[ $PHP_VERSION == '7.3' || $PHP_VERSION == '7.4' || $PHP_VERSION == '8.0' || $PHP_VERSION == '8.1' || $PHP_VERSION == '8.2' ]]; then
   PHP_UNIT='9.5'
-fi
-
-if [[ $PHP_VERSION == '8.1' || $PHP_VERSION == '8.2' ]]; then
-  PHP_UNIT='10.2'
 fi
 
 if [[ $PHP_UNIT == '' ]]; then
@@ -94,12 +90,6 @@ fi
 
 if [[ $PHP_UNIT == '9.5' ]]; then
   composer config platform.php 7.3
-  composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock
-  composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock
-fi
-
-if [[ $PHP_UNIT == '10.2' ]]; then
-  composer config platform.php 8.1
   composer remove --dev --with-all-dependencies lucatume/function-mocker phpunit/phpunit 10up/wp_mock
   composer require --dev lucatume/function-mocker phpunit/phpunit 10up/wp_mock
 fi
