@@ -160,9 +160,11 @@ abstract class SettingsBase {
 	/**
 	 * SettingsBase constructor.
 	 *
-	 * @param array $tabs Tabs of this settings page.
+	 * @param array|null $tabs Tabs of this settings page.
+	 *
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function __construct( array $tabs = [] ) {
+	public function __construct( $tabs = [] ) {
 		$this->tabs = $tabs;
 
 		if ( ! $this->is_tab() ) {

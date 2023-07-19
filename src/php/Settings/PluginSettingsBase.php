@@ -19,9 +19,9 @@ abstract class PluginSettingsBase extends SettingsBase {
 	/**
 	 * Constructor.
 	 *
-	 * @param array $tabs Tabs of this settings page.
+	 * @param array|null $tabs Tabs of this settings page.
 	 */
-	public function __construct( array $tabs = [] ) {
+	public function __construct( $tabs = [] ) {
 		add_filter( 'admin_footer_text', [ $this, 'admin_footer_text' ] );
 		add_filter( 'update_footer', [ $this, 'update_footer' ], PHP_INT_MAX );
 
