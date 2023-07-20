@@ -34,24 +34,13 @@
   "support": {
     "issues": "https://wordpress.org/support/plugin/cyr2lat"
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/kagg-design/polyfill-mbstring.git"
-    },
-    {
-      "type": "vcs",
-      "url": "https://github.com/kagg-design/wp-background-processing.git"
-    },
-    {
-      "type": "vcs",
-      "url": "https://github.com/humbug/php-scoper.git"
-    }
-  ],
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "ext-json": "*"
+    "ext-json": "*",
+    "deliciousbrains/wp-background-processing": "^1.2",
+    "symfony/polyfill-mbstring": "^1.13",
+    "humbug/php-scoper": "^0.17.5"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
@@ -67,10 +56,10 @@
   "autoload": {
     "classmap": [
       "src/php",
-      "lib"
+      "libs"
     ],
     "files": [
-      "lib/polyfill-mbstring/bootstrap.php"
+      "libs/polyfill-mbstring/bootstrap.php"
     ]
   },
   "autoload-dev": {
@@ -81,5 +70,17 @@
       "CyrToLat\\": "src/php",
       "CyrToLat\\Tests\\Unit\\": "tests/unit"
     }
+  },
+  "bin": [
+    "bin/update-tests"
+  ],
+  "scripts": {
+    "pre-update-cmd": "update-tests",
+    "update-tests": "update-tests",
+    "revert-tests": "update-tests revert",
+    "phpcs": "vendor/bin/phpcs --colors --standard=phpcs.xml",
+    "acceptance": "codecept run acceptance -c .codeception.yml",
+    "integration": "codecept run integration -c .codeception.yml",
+    "unit": "codecept run unit -c .codeception.yml"
   }
 }
