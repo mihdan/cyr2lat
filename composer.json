@@ -37,10 +37,7 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "ext-json": "*",
-    "deliciousbrains/wp-background-processing": "^1.2",
-    "symfony/polyfill-mbstring": "^1.13",
-    "humbug/php-scoper": "^0.17.5"
+    "ext-json": "*"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
