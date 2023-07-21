@@ -18,7 +18,6 @@ help:
 	$(info  $(indent) Run `make yarn-install-prod` to only install Yarn dependencies in production mode)
 	$(info :: Deployment)
 	$(info  $(indent) Run `make scope` to scope external libraries)
-	$(info  $(indent) Run `make update-phpunit [PHP="x.x"]` to install the phpunit library according to php version. If PHP is omitted, update will be done for current PHP version)
 	$(info  $(indent) Run `make dist` to prepare plugin for distribution)
 
 
@@ -61,15 +60,17 @@ yarn-install-prod:
 
 scope:
 	$(info Scoping external libraries)
-	@.make/scoper.sh
-
-
-# Update phpunit
-.PHONY: update-phpunit
-
-update-phpunit:
-	$(info Updating phpunit library)
-	@.make/update-phpunit.sh ${PHP}
+	@rm -f composer.lock
+	@composer config repositories.wp-background-processing vcs https://github.com/kagg-design/wp-background-processing.git
+	@composer config repositories.polyfill-mbstring vcs https://github.com/kagg-design/polyfill-mbstring.git
+	@composer config repositories.php-scoper vcs https://github.com/humbug/php-scoper.git
+	@composer config platform.php 7.4
+	@composer require --no-scripts deliciousbrains/wp-background-processing symfony/polyfill-mbstring humbug/php-scoper
+	@bin/scoper Cyr_To_Lat\\WP_Background_Processing wp-background-processing
+	@bin/scoper Cyr_To_Lat polyfill-mbstring
+	# Restore main composer files to the current branch version.
+	@git checkout -- composer.json
+	@composer update --no-scripts
 
 
 # Prepare for distribution

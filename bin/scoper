@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# This script runs the php-scoper, and overwrites the embedded library inside of the plugin.
+
+if [[ -z $1 ]]; then
+	echo Usage: scoper scoper_prefix package_name [plugin_path = ..]
+	exit 0
+else
+  SCOPER_PREFIX=$1
+fi
+
+if [[ -z $2 ]]; then
+  echo "Package name not specified."
+  exit 1
+else
+  PACKAGE_NAME="$2"
+fi
+
+if [[ $3 == '' ]]; then
+  SCRIPT_DIR="$(dirname "$0")"
+  PLUGIN_PATH="$SCRIPT_DIR/.."
+else
+  PLUGIN_PATH=$3
+fi
+
+PLUGIN_PATH=$(realpath "$PLUGIN_PATH")
+
+cd "${PLUGIN_PATH}" || exit 1
+
+PACKAGE_PATH="libs/$PACKAGE_NAME"
+
+rm -rf "${PACKAGE_PATH:?}"/*
+rm -rd "${PACKAGE_PATH:?}"
+
+vendor/humbug/php-scoper/bin/php-scoper add-prefix --prefix="$SCOPER_PREFIX" --output-dir="$PACKAGE_PATH" --config=bin/"$PACKAGE_NAME".scoper.php
+
+exit $?

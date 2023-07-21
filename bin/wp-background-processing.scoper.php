@@ -5,6 +5,11 @@
  * @package cyr-to-lat
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUndefinedClassInspection */
+/** @noinspection PhpUndefinedNamespaceInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 declare( strict_types=1 );
 
 use Symfony\Component\Finder\Finder;
@@ -12,13 +17,14 @@ use Symfony\Component\Finder\Finder;
 /**
  * Dir to scope
  */
-const WP_BACKGROUND_PROCESSING_BASE_DIR = __DIR__ . '/../vendor/a5hleyrich/wp-background-processing';
+const WP_BACKGROUND_PROCESSING_BASE_DIR = __DIR__ . '/../vendor/deliciousbrains/wp-background-processing';
 
 return [
-	'finders'  => [
+	'finders'           => [
 		Finder::create()->files()->in( WP_BACKGROUND_PROCESSING_BASE_DIR . '/classes' ),
 	],
-	'patchers' => [
+	'exclude-constants' => [ 'MINUTE_IN_SECONDS', '/regex/' ],
+	'patchers'          => [
 		/**
 		 * Patcher to remove prefix from global classes.
 		 */
@@ -31,20 +37,12 @@ return [
 			);
 
 			// No blank line before file comment.
-			$contents = str_replace(
-				"<?php\n\n/**",
-				"<?php\n/**",
-				$contents
-			);
-
 			// Blank line after file comment.
-			$contents = str_replace(
-				" */\nnamespace",
-				" */\n\nnamespace",
+			return str_replace(
+				[ "<?php\n\n/**", " */\nnamespace" ],
+				[ "<?php\n/**", " */\n\nnamespace" ],
 				$contents
 			);
-
-			return $contents;
 		},
 	],
 ];
