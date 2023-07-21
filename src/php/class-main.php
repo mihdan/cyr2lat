@@ -773,7 +773,7 @@ class Main {
 	 *
 	 * @return string Items separated by comma and sql-escaped
 	 */
-	public function prepare_in( $items, $format = '%s' ): string {
+	public function prepare_in( $items, string $format = '%s' ): string {
 		global $wpdb;
 
 		$prepared_in = '';

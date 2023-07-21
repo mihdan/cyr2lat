@@ -40,7 +40,7 @@ class Post_Conversion_Process extends Conversion_Process {
 	 *
 	 * @param Main $main Plugin main class.
 	 */
-	public function __construct( $main ) {
+	public function __construct( Main $main ) {
 		$this->action = constant( 'CYR_TO_LAT_POST_CONVERSION_ACTION' );
 		$this->locale = get_locale();
 
@@ -55,7 +55,7 @@ class Post_Conversion_Process extends Conversion_Process {
 	 * @return boolean
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function task( $post ) {
+	protected function task( $post ): bool {
 		global $wpdb;
 
 		$this->post        = $post;
@@ -87,7 +87,7 @@ class Post_Conversion_Process extends Conversion_Process {
 	 *
 	 * @param int $post_id Post ID.
 	 */
-	protected function rename_attachment( $post_id ) {
+	protected function rename_attachment( int $post_id ) {
 		$file = get_attached_file( $post_id );
 
 		if ( $file ) {
@@ -113,7 +113,7 @@ class Post_Conversion_Process extends Conversion_Process {
 	 *
 	 * @param int $post_id Post ID.
 	 */
-	protected function rename_thumbnails( $post_id ) {
+	protected function rename_thumbnails( int $post_id ) {
 		$sizes = get_intermediate_image_sizes();
 
 		foreach ( $sizes as $size ) {
@@ -136,7 +136,7 @@ class Post_Conversion_Process extends Conversion_Process {
 	 *
 	 * @param int $attachment_id Attachment ID.
 	 */
-	protected function update_attachment_metadata( $attachment_id ) {
+	protected function update_attachment_metadata( int $attachment_id ) {
 		$meta = wp_get_attachment_metadata( $attachment_id );
 
 		if ( isset( $meta['file'] ) ) {
@@ -159,7 +159,7 @@ class Post_Conversion_Process extends Conversion_Process {
 	 *
 	 * @return string
 	 */
-	protected function get_transliterated_file( $file ) {
+	protected function get_transliterated_file( string $file ): string {
 		$path                    = pathinfo( $file );
 		$transliterated_filename = $this->main->transliterate( $path['filename'] );
 
@@ -175,7 +175,7 @@ class Post_Conversion_Process extends Conversion_Process {
 	 *
 	 * @return bool|null
 	 */
-	protected function rename_file( $file, $new_file ) {
+	protected function rename_file( string $file, string $new_file ) {
 		$path     = pathinfo( $file );
 		$new_path = pathinfo( $new_file );
 
@@ -205,10 +205,10 @@ class Post_Conversion_Process extends Conversion_Process {
 	 *
 	 * @return string
 	 */
-	public function filter_post_locale() {
+	public function filter_post_locale(): string {
 		// This is common filter for WPML and Polylang, since Polylang supports wpml_post_language_details filter.
 		$wpml_post_language_details = apply_filters( 'wpml_post_language_details', false, $this->post->ID );
 
-		return isset( $wpml_post_language_details['locale'] ) ? $wpml_post_language_details['locale'] : $this->locale;
+		return $wpml_post_language_details['locale'] ?? $this->locale;
 	}
 }

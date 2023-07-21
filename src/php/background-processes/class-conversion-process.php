@@ -33,7 +33,7 @@ class Conversion_Process extends WP_Background_Process {
 	 *
 	 * @param Main $main Plugin main class.
 	 */
-	public function __construct( $main ) {
+	public function __construct( Main $main ) {
 		$this->main   = $main;
 		$this->prefix = constant( 'CYR_TO_LAT_PREFIX' );
 
@@ -46,6 +46,8 @@ class Conversion_Process extends WP_Background_Process {
 	 * @param mixed $item Queue item to iterate over.
 	 *
 	 * @return boolean
+	 * @noinspection PhpMissingReturnTypeInspection
+	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
 	protected function task( $item ) {
 		return false;
@@ -64,7 +66,7 @@ class Conversion_Process extends WP_Background_Process {
 	 * Check if process is completed.
 	 * Delete relevant transient.
 	 */
-	public function is_process_completed() {
+	public function is_process_completed(): bool {
 		if ( get_site_transient( $this->identifier . '_process_completed' ) ) {
 			// Process is marked as completed.
 			// Delete relevant site transient.
@@ -76,26 +78,14 @@ class Conversion_Process extends WP_Background_Process {
 		return false;
 	}
 
-	// phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod.Found
 	/**
-	 * Is process running
-	 *
-	 * Check whether the current process is already running
-	 * in a background process.
-	 */
-	public function is_process_running() {
-		return parent::is_process_running();
-	}
-	// phpcs:enable Generic.CodeAnalysis.UselessOverridingMethod.Found
-
-	/**
-	 * Log
+	 * Write log
 	 *
 	 * @param string $message Message to log.
 	 *
 	 * @noinspection ForgottenDebugOutputInspection
 	 */
-	protected function log( $message ) {
+	protected function log( string $message ) {
 		if ( defined( 'WP_DEBUG_LOG' ) && constant( 'WP_DEBUG_LOG' ) ) {
 			// @phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( 'Cyr To Lat: ' . $message );

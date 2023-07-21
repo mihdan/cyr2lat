@@ -40,7 +40,7 @@ class Term_Conversion_Process extends Conversion_Process {
 	 *
 	 * @param Main $main Plugin main class.
 	 */
-	public function __construct( $main ) {
+	public function __construct( Main $main ) {
 		$this->action = constant( 'CYR_TO_LAT_TERM_CONVERSION_ACTION' );
 		$this->locale = get_locale();
 
@@ -54,6 +54,8 @@ class Term_Conversion_Process extends Conversion_Process {
 	 *
 	 * @return boolean
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @noinspection PhpMissingReturnTypeInspection
+	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
 	protected function task( $term ) {
 		global $wpdb;
@@ -92,7 +94,7 @@ class Term_Conversion_Process extends Conversion_Process {
 	 * @return string
 	 * @noinspection PhpUndefinedFunctionInspection
 	 */
-	public function filter_term_locale() {
+	public function filter_term_locale(): string {
 		// Polylang filter.
 		if ( class_exists( 'Polylang' ) ) {
 			$pll_pll_get_term_language = pll_get_term_language( $this->term->term_taxonomy_id );
@@ -119,7 +121,6 @@ class Term_Conversion_Process extends Conversion_Process {
 
 		$wpml_active_languages = apply_filters( 'wpml_active_languages', false, [] );
 
-		return isset( $wpml_active_languages[ $language_code ]['default_locale'] ) ?
-			$wpml_active_languages[ $language_code ]['default_locale'] : $this->locale;
+		return $wpml_active_languages[ $language_code ]['default_locale'] ?? $this->locale;
 	}
 }

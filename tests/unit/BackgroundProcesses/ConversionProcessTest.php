@@ -138,7 +138,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 			]
 		);
 
-		self::assertSame( $expected, $subject->is_process_running() );
+		self::assertSame( $expected, $subject->is_processing() );
 	}
 
 	/**

@@ -118,8 +118,8 @@ class ConverterTest extends CyrToLatTestCase {
 			$admin_notices
 		);
 
-		$process_all_posts->shouldReceive( 'is_process_running' )->andReturn( $posts_process_running );
-		$process_all_terms->shouldReceive( 'is_process_running' )->andReturn( $terms_process_running );
+		$process_all_posts->shouldReceive( 'is_processing' )->andReturn( $posts_process_running );
+		$process_all_terms->shouldReceive( 'is_processing' )->andReturn( $terms_process_running );
 
 		$process_all_posts->shouldReceive( 'is_process_completed' )->andReturn( $posts_process_completed );
 		$process_all_terms->shouldReceive( 'is_process_completed' )->andReturn( $terms_process_completed );

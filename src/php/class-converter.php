@@ -97,8 +97,8 @@ class Converter {
 	 * Show conversion notices.
 	 */
 	public function conversion_notices() {
-		$posts_process_running = $this->process_all_posts->is_process_running();
-		$terms_process_running = $this->process_all_terms->is_process_running();
+		$posts_process_running = $this->process_all_posts->is_processing();
+		$terms_process_running = $this->process_all_terms->is_processing();
 
 		if ( ! $posts_process_running && ! $terms_process_running ) {
 			add_action( 'admin_init', [ $this, 'start_conversion' ], 20 );
