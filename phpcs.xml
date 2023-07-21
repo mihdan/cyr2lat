@@ -10,7 +10,7 @@
 	<exclude-pattern>*/\.yarn/*</exclude-pattern>
 	<exclude-pattern>*/assets/*</exclude-pattern>
 	<exclude-pattern>*/languages/*</exclude-pattern>
-	<exclude-pattern>*/lib/*</exclude-pattern>
+	<exclude-pattern>*/libs/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/src/js/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
