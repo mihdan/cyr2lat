@@ -48,21 +48,23 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_complete() {
-		$subject = Mockery::mock( Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$method  = 'complete';
+		$subject = Mockery::mock( Conversion_Process::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'clear_scheduled_event' )->once();
+
+		$method = 'complete';
 
 		$this->set_method_accessibility( $subject, $method );
 
 		WP_Mock::userFunction(
-			'wp_next_scheduled',
+			'set_site_transient',
 			[
-				'return' => null,
-				'times'  => 1,
+				'times' => 1,
 			]
 		);
 
 		WP_Mock::userFunction(
-			'set_site_transient',
+			'delete_site_option',
 			[
 				'times' => 1,
 			]
