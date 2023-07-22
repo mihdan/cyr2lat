@@ -16,7 +16,7 @@ namespace CyrToLat\Tests\Unit;
 
 use CyrToLat\Requirements;
 use CyrToLat\Settings\Settings;
-use CyrToLat\Admin_Notices;
+use CyrToLat\AdminNotices;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
@@ -56,7 +56,7 @@ class RequirementsTest extends CyrToLatTestCase {
 		$settings->shouldReceive( 'screen_ids' )->with()->andReturn( $ids );
 		$screen_ids = [ 'screen_ids' => $ids ];
 
-		$admin_notices = Mockery::mock( Admin_Notices::class );
+		$admin_notices = Mockery::mock( AdminNotices::class );
 		$wp_filesystem = Mockery::mock( WP_Filesystem_Direct::class );
 
 		FunctionMocker::replace(
@@ -108,7 +108,7 @@ class RequirementsTest extends CyrToLatTestCase {
 		$settings->shouldReceive( 'screen_ids' )->with()->andReturn( $ids );
 		$screen_ids = [ 'screen_ids' => $ids ];
 
-		$admin_notices = Mockery::mock( Admin_Notices::class );
+		$admin_notices = Mockery::mock( AdminNotices::class );
 
 		FunctionMocker::replace(
 			'function_exists',
@@ -140,7 +140,7 @@ class RequirementsTest extends CyrToLatTestCase {
 		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'screen_ids' )->with()->andReturn( [ 'settings_page_cyr-to-lat' ] );
 
-		$admin_notices = Mockery::mock( Admin_Notices::class );
+		$admin_notices = Mockery::mock( AdminNotices::class );
 		$wp_filesystem = Mockery::mock( WP_Filesystem_Direct::class );
 
 		FunctionMocker::replace(
@@ -185,7 +185,7 @@ class RequirementsTest extends CyrToLatTestCase {
 		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'screen_ids' )->with()->andReturn( [ 'settings_page_cyr-to-lat' ] );
 
-		$admin_notices = Mockery::mock( Admin_Notices::class );
+		$admin_notices = Mockery::mock( AdminNotices::class );
 		$wp_filesystem = Mockery::mock( WP_Filesystem_Direct::class );
 
 		FunctionMocker::replace(
@@ -265,7 +265,7 @@ class RequirementsTest extends CyrToLatTestCase {
 		$ids      = [ 'settings_page_cyr-to-lat' ];
 		$settings->shouldReceive( 'screen_ids' )->with()->andReturn( $ids );
 
-		$admin_notices = Mockery::mock( Admin_Notices::class );
+		$admin_notices = Mockery::mock( AdminNotices::class );
 
 		$screen_ids = [ 'screen_ids' => $ids ];
 
@@ -390,7 +390,7 @@ class RequirementsTest extends CyrToLatTestCase {
 		$ids      = [ 'settings_page_cyr-to-lat' ];
 		$settings->shouldReceive( 'screen_ids' )->with()->andReturn( $ids );
 
-		$admin_notices = Mockery::mock( Admin_Notices::class );
+		$admin_notices = Mockery::mock( AdminNotices::class );
 
 		FunctionMocker::replace(
 			'function_exists',
@@ -450,7 +450,7 @@ class RequirementsTest extends CyrToLatTestCase {
 		$ids      = [ 'settings_page_cyr-to-lat' ];
 		$settings->shouldReceive( 'screen_ids' )->with()->andReturn( $ids );
 
-		$admin_notices = Mockery::mock( Admin_Notices::class );
+		$admin_notices = Mockery::mock( AdminNotices::class );
 		$admin_notices
 			->shouldReceive( 'add_notice' )
 			->with( 'Cyr To Lat plugin has been deactivated.', 'notice notice-info is-dismissible' );
@@ -486,7 +486,7 @@ class RequirementsTest extends CyrToLatTestCase {
 		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'screen_ids' )->with()->andReturn( [ 'settings_page_cyr-to-lat' ] );
 
-		$admin_notices = Mockery::mock( Admin_Notices::class );
+		$admin_notices = Mockery::mock( AdminNotices::class );
 		$wp_filesystem = Mockery::mock( WP_Filesystem_Direct::class );
 
 		FunctionMocker::replace(

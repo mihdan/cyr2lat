@@ -7,7 +7,7 @@
 
 namespace CyrToLat\Tests\Unit;
 
-use CyrToLat\Admin_Notices;
+use CyrToLat\AdminNotices;
 use ReflectionClass;
 use ReflectionException;
 use WP_Mock;
@@ -25,7 +25,7 @@ class AdminNoticesTest extends CyrToLatTestCase {
 	 * @throws ReflectionException Reflection Exception.
 	 */
 	public function test_constructor() {
-		$classname = Admin_Notices::class;
+		$classname = AdminNotices::class;
 
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
@@ -57,7 +57,7 @@ class AdminNoticesTest extends CyrToLatTestCase {
 			</div>
 			';
 
-		$subject = new Admin_Notices();
+		$subject = new AdminNotices();
 
 		WP_Mock::passthruFunction( 'wp_kses_post' );
 
@@ -84,7 +84,7 @@ class AdminNoticesTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction( 'get_current_screen' )->andReturn( null );
 
-		$subject = new Admin_Notices();
+		$subject = new AdminNotices();
 
 		$subject->add_notice( 'Message', 'notice', [ 'screen_ids' => $page_slug ] );
 
@@ -112,7 +112,7 @@ class AdminNoticesTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction( 'get_current_screen' )->andReturn( $current_screen );
 
-		$subject = new Admin_Notices();
+		$subject = new AdminNotices();
 
 		WP_Mock::passthruFunction( 'wp_kses_post' );
 

@@ -46,7 +46,7 @@ class RequestTest extends CyrToLatTestCase {
 	 * @return void
 	 * @dataProvider dp_test_is_allowed
 	 */
-	public function test_is_allowed( $frontend, $post, $cli, $expected ) {
+	public function test_is_allowed( bool $frontend, bool $post, bool $cli, bool $expected ) {
 		$subject = Mockery::mock( Request::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_frontend' )->with()->andReturn( $frontend );
 		$subject->shouldReceive( 'is_post' )->with()->andReturn( $post );
@@ -60,7 +60,7 @@ class RequestTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_is_allowed() {
+	public static function dp_test_is_allowed(): array {
 		return [
 			[ false, false, false, true ],
 			[ false, false, true, true ],
@@ -84,7 +84,7 @@ class RequestTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_is_frontend
 	 */
-	public function test_is_frontend( $ajax, $admin, $cli, $rest, $expected ) {
+	public function test_is_frontend( bool $ajax, bool $admin, bool $cli, bool $rest, bool $expected ) {
 		WP_Mock::userFunction( 'wp_doing_ajax' )->with()->andReturn( $ajax );
 		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( $admin );
 
@@ -100,7 +100,7 @@ class RequestTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_is_frontend() {
+	public static function dp_test_is_frontend(): array {
 		return [
 			[ false, false, false, false, true ],
 			[ false, false, false, true, false ],
@@ -124,11 +124,12 @@ class RequestTest extends CyrToLatTestCase {
 	/**
 	 * Test is_cli().
 	 *
-	 * @param bool $defined  Is constant WP_CLI defined.
-	 * @param bool $constant Its value.
-	 * @param bool $expected Expected.
+	 * @param bool|null $defined  Is constant WP_CLI defined.
+	 * @param bool|null $constant Its value.
+	 * @param bool|null $expected Expected.
 	 *
 	 * @dataProvider dp_test_is_cli
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public function test_is_cli( $defined, $constant, $expected ) {
 		FunctionMocker::replace( 'defined', $defined );
@@ -145,7 +146,7 @@ class RequestTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_is_cli() {
+	public static function dp_test_is_cli(): array {
 		return [
 			[ false, null, false ],
 			[ true, false, false ],
@@ -219,7 +220,8 @@ class RequestTest extends CyrToLatTestCase {
 		$rest_route             = '/wp/v2/posts';
 		$_SERVER['REQUEST_URI'] = '/wp-json' . $rest_route;
 
-		$subject = Mockery::mock( Request::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Request::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'get_rest_route' )->andReturnUsing(
 			function () use ( &$rest_route ) {
 				return $rest_route;
@@ -244,7 +246,7 @@ class RequestTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_get_rest_route( $current_path, $expected ) {
+	public function test_get_rest_route( string $current_path, string $expected ) {
 		$current_url = 'https://test.test' . $current_path;
 
 		$rest_path = '/wp-json';
@@ -274,7 +276,7 @@ class RequestTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_get_rest_route() {
+	public static function dp_test_get_rest_route(): array {
 		return [
 			'rest request' => [ '/wp-json/wp/v2/posts', '/wp/v2/posts' ],
 			'some request' => [ '/some-request', '' ],

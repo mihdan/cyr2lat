@@ -8,11 +8,11 @@
 namespace CyrToLat;
 
 /**
- * Class Admin_Notices
+ * Class AdminNotices
  *
- * @class Admin_Notices
+ * @class AdminNotices
  */
-class Admin_Notices {
+class AdminNotices {
 
 	/**
 	 * Admin notices array.
@@ -22,7 +22,7 @@ class Admin_Notices {
 	private $notices = [];
 
 	/**
-	 * Admin_Notices constructor.
+	 * AdminNotices constructor.
 	 */
 	public function __construct() {
 		add_action( 'admin_notices', [ $this, 'show_notices' ] );

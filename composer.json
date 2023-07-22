@@ -52,14 +52,13 @@
   },
   "autoload": {
     "classmap": [
-      "src/php",
       "libs"
-    ]
+    ],
+    "psr-4": {
+      "CyrToLat\\": "src/php"
+    }
   },
   "autoload-dev": {
-    "classmap": [
-      "src/php"
-    ],
     "psr-4": {
       "CyrToLat\\": "src/php",
       "CyrToLat\\Tests\\Unit\\": "tests/unit"
