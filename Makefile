@@ -65,7 +65,7 @@ scope:
 	@composer config repositories.polyfill-mbstring vcs https://github.com/kagg-design/polyfill-mbstring.git
 	@composer config repositories.php-scoper vcs https://github.com/humbug/php-scoper.git
 	@composer config platform.php 7.4
-	@composer require --no-scripts deliciousbrains/wp-background-processing symfony/polyfill-mbstring humbug/php-scoper
+	@composer require --no-scripts deliciousbrains/wp-background-processing:dev-master symfony/polyfill-mbstring humbug/php-scoper
 	@bin/scoper Cyr_To_Lat\\WP_Background_Processing wp-background-processing
 	@bin/scoper Cyr_To_Lat polyfill-mbstring
 	# Restore main composer files to the current branch version.

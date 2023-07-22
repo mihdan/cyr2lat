@@ -23,26 +23,5 @@ return [
 	'finders'           => [
 		Finder::create()->files()->in( WP_BACKGROUND_PROCESSING_BASE_DIR . '/classes' ),
 	],
-	'exclude-constants' => [ 'MINUTE_IN_SECONDS', '/regex/' ],
-	'patchers'          => [
-		/**
-		 * Patcher to remove prefix from global classes.
-		 */
-		static function ( string $file_path, string $prefix, string $contents ): string {
-			// "Use" statements.
-			$contents = preg_replace(
-				'/use\s+' . $prefix . '\\\(.+)/m',
-				'use $1',
-				$contents
-			);
-
-			// No blank line before file comment.
-			// Blank line after file comment.
-			return str_replace(
-				[ "<?php\n\n/**", " */\nnamespace" ],
-				[ "<?php\n/**", " */\n\nnamespace" ],
-				$contents
-			);
-		},
-	],
+	'exclude-constants' => [ 'MINUTE_IN_SECONDS' ],
 ];
