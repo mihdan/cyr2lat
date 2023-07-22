@@ -7,7 +7,7 @@
 
 namespace CyrToLat\Tests\Unit;
 
-use Cyr_To_Lat\Admin_Notices;
+use CyrToLat\Admin_Notices;
 use ReflectionClass;
 use ReflectionException;
 use WP_Mock;

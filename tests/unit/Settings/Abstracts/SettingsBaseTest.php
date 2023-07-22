@@ -17,7 +17,7 @@
 
 namespace CyrToLat\Tests\Unit\Settings\Abstracts;
 
-use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
+use CyrToLat\Settings\Abstracts\SettingsBase;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use PHPUnit\Runner\Version;
@@ -261,12 +261,12 @@ class SettingsBaseTest extends CyrToLatTestCase {
 			version_compare( Version::id(), '7', '>=' )
 		) {
 			self::assertStringContainsString(
-				'Cyr_To_Lat_Settings_Abstracts_SettingsBase',
+				'CyrToLat_Settings_Abstracts_SettingsBase',
 				$subject->$method()
 			);
 		} else {
 			self::assertContains(
-				'Cyr_To_Lat_Settings_Abstracts_SettingsBase',
+				'CyrToLat_Settings_Abstracts_SettingsBase',
 				$subject->$method()
 			);
 		}

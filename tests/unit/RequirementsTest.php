@@ -14,9 +14,9 @@
 
 namespace CyrToLat\Tests\Unit;
 
-use Cyr_To_Lat\Requirements;
-use Cyr_To_Lat\Settings\Settings;
-use Cyr_To_Lat\Admin_Notices;
+use CyrToLat\Requirements;
+use CyrToLat\Settings\Settings;
+use CyrToLat\Admin_Notices;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;

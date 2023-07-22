@@ -5,7 +5,7 @@
  * @package cyr-to-lat
  */
 
-namespace Cyr_To_Lat\Settings\Abstracts;
+namespace CyrToLat\Settings\Abstracts;
 
 /**
  * Interface SettingsInterface.

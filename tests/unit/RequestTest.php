@@ -9,7 +9,7 @@
 
 namespace CyrToLat\Tests\Unit;
 
-use Cyr_To_Lat\Request;
+use CyrToLat\Request;
 use Mockery;
 use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;

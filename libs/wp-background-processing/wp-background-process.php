@@ -1,6 +1,6 @@
 <?php
 
-namespace Cyr_To_Lat\WP_Background_Processing;
+namespace CyrToLat\WP_Background_Processing;
 
 /**
  * WP Background Process
@@ -531,7 +531,7 @@ abstract class WP_Background_Process extends WP_Async_Request
         $finish = $this->start_time + apply_filters($this->identifier . '_default_time_limit', 20);
         // 20 seconds
         $return = \false;
-        if (!(\defined('Cyr_To_Lat\\WP_Background_Processing\\WP_CLI') && \Cyr_To_Lat\WP_Background_Processing\WP_CLI) && \time() >= $finish) {
+        if (!(\defined('CyrToLat\\WP_Background_Processing\\WP_CLI') && \CyrToLat\WP_Background_Processing\WP_CLI) && \time() >= $finish) {
             $return = \true;
         }
         return apply_filters($this->identifier . '_time_exceeded', $return);

@@ -5,9 +5,9 @@
  * @package cyr-to-lat
  */
 
-namespace Cyr_To_Lat;
+namespace CyrToLat;
 
-use Cyr_To_Lat\Settings\Settings;
+use CyrToLat\Settings\Settings;
 
 /**
  * Class ACF

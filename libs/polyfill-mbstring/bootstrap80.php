@@ -1,6 +1,6 @@
 <?php
 
-namespace Cyr_To_Lat;
+namespace CyrToLat;
 
 /*
  * This file is part of the Symfony package.
@@ -10,7 +10,7 @@ namespace Cyr_To_Lat;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-use Cyr_To_Lat\Symfony\Polyfill\Mbstring as p;
+use CyrToLat\Symfony\Polyfill\Mbstring as p;
 if (!\function_exists('mb_convert_encoding')) {
     function mb_convert_encoding(array|string|null $string, ?string $to_encoding, array|string|null $from_encoding = null) : array|string|false
     {

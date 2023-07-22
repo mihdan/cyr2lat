@@ -13,8 +13,8 @@
 namespace CyrToLat\Tests\Unit;
 
 use cli\progress\Bar;
-use Cyr_To_Lat\Converter;
-use Cyr_To_Lat\WP_CLI;
+use CyrToLat\Converter;
+use CyrToLat\WP_CLI;
 use Mockery;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;

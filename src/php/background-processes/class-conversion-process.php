@@ -5,9 +5,9 @@
  * @package cyr-to-lat
  */
 
-namespace Cyr_To_Lat;
+namespace CyrToLat;
 
-use Cyr_To_Lat\WP_Background_Processing\WP_Background_Process;
+use CyrToLat\WP_Background_Processing\WP_Background_Process;
 
 /**
  * Class Conversion_Process

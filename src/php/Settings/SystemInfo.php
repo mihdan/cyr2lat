@@ -5,10 +5,10 @@
  * @package cyr-to-lat
  */
 
-namespace Cyr_To_Lat\Settings;
+namespace CyrToLat\Settings;
 
-use Cyr_To_Lat\Conversion_Tables;
-use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
+use CyrToLat\Conversion_Tables;
+use CyrToLat\Settings\Abstracts\SettingsBase;
 
 /**
  * Class SystemInfo

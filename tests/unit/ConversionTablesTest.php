@@ -7,7 +7,7 @@
 
 namespace CyrToLat\Tests\Unit;
 
-use Cyr_To_Lat\Conversion_Tables;
+use CyrToLat\Conversion_Tables;
 
 /**
  * Class ConversionTablesTest

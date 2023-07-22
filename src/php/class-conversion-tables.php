@@ -5,9 +5,9 @@
  * @package cyr-to-lat
  */
 
-namespace Cyr_To_Lat;
+namespace CyrToLat;
 
-use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
+use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 
 /**
  * Class Conversion_Tables

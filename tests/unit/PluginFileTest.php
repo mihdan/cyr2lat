@@ -9,7 +9,7 @@
 
 namespace CyrToLat\Tests\Unit;
 
-use Cyr_To_Lat\Main;
+use CyrToLat\Main;
 use Mockery;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;

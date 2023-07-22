@@ -9,8 +9,8 @@
 
 namespace CyrToLat\Tests\Unit;
 
-use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
-use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
+use CyrToLat\Settings\Abstracts\SettingsBase;
+use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;

@@ -10,19 +10,19 @@
 /** @noinspection PhpUndefinedClassInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
-namespace Cyr_To_Lat;
+namespace CyrToLat;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
-use Cyr_To_Lat\Settings\Converter as SettingsConverter;
-use Cyr_To_Lat\Settings\SystemInfo as SettingsSystemInfo;
-use Cyr_To_Lat\Settings\Tables as SettingsTables;
+use CyrToLat\Settings\Converter as SettingsConverter;
+use CyrToLat\Settings\SystemInfo as SettingsSystemInfo;
+use CyrToLat\Settings\Tables as SettingsTables;
 use Polylang;
 use SitePress;
 use WP_Error;
 use wpdb;
 use Exception;
-use Cyr_To_Lat\Settings\Settings;
-use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
+use CyrToLat\Settings\Settings;
+use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 
 /**
  * Class Main

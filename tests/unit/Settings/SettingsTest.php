@@ -16,9 +16,9 @@
 
 namespace CyrToLat\Tests\Unit\Settings;
 
-use Cyr_To_Lat\Settings\Converter;
-use Cyr_To_Lat\Settings\Settings;
-use Cyr_To_Lat\Settings\Tables;
+use CyrToLat\Settings\Converter;
+use CyrToLat\Settings\Settings;
+use CyrToLat\Settings\Tables;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use PHPUnit\Runner\Version;

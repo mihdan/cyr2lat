@@ -12,7 +12,7 @@
 
 namespace CyrToLat\Tests\Unit\Settings;
 
-use Cyr_To_Lat\Settings\PluginSettingsBase;
+use CyrToLat\Settings\PluginSettingsBase;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;

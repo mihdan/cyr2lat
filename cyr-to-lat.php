@@ -28,7 +28,7 @@
 // phpcs:ignore Generic.Commenting.DocComment.MissingShort
 /** @noinspection PhpParamsInspection */
 
-namespace Cyr_To_Lat;
+namespace CyrToLat;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	// @codeCoverageIgnoreStart

@@ -5,9 +5,9 @@
  * @package cyr-to-lat
  */
 
-namespace Cyr_To_Lat;
+namespace CyrToLat;
 
-use Cyr_To_Lat\Settings\Settings;
+use CyrToLat\Settings\Settings;
 
 /**
  * Class Converter
@@ -140,7 +140,7 @@ class Converter {
 		if ( ! isset( $_POST['ctl-convert'] ) ) {
 			return;
 		}
-		check_admin_referer( \Cyr_To_Lat\Settings\Converter::NONCE );
+		check_admin_referer( \CyrToLat\Settings\Converter::NONCE );
 		$this->convert_existing_slugs();
 	}
 
@@ -178,7 +178,7 @@ class Converter {
 		global $wpdb;
 
 		$post_types    = array_intersect(
-			\Cyr_To_Lat\Settings\Converter::get_convertible_post_types(),
+			\CyrToLat\Settings\Converter::get_convertible_post_types(),
 			array_filter( (array) $this->settings->get( 'background_post_types' ) )
 		);
 		$post_statuses = array_filter( (array) $this->settings->get( 'background_post_statuses' ) );

@@ -1,6 +1,6 @@
 <?php
 
-namespace Cyr_To_Lat\WP_Background_Processing;
+namespace CyrToLat\WP_Background_Processing;
 
 /**
  * WP Async Request

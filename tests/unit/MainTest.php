@@ -16,17 +16,17 @@
 
 namespace CyrToLat\Tests\Unit;
 
-use Cyr_To_Lat\ACF;
-use Cyr_To_Lat\Admin_Notices;
-use Cyr_To_Lat\Converter;
-use Cyr_To_Lat\Main;
-use Cyr_To_Lat\Post_Conversion_Process;
-use Cyr_To_Lat\Request;
-use Cyr_To_Lat\Requirements;
-use Cyr_To_Lat\Settings\Settings;
-use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
-use Cyr_To_Lat\Term_Conversion_Process;
-use Cyr_To_Lat\WP_CLI;
+use CyrToLat\ACF;
+use CyrToLat\Admin_Notices;
+use CyrToLat\Converter;
+use CyrToLat\Main;
+use CyrToLat\Post_Conversion_Process;
+use CyrToLat\Request;
+use CyrToLat\Requirements;
+use CyrToLat\Settings\Settings;
+use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
+use CyrToLat\Term_Conversion_Process;
+use CyrToLat\WP_CLI;
 use Exception;
 use Mockery;
 use PHPUnit\Runner\Version;

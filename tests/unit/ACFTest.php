@@ -9,9 +9,9 @@
 
 namespace CyrToLat\Tests\Unit;
 
-use Cyr_To_Lat\ACF;
-use Cyr_To_Lat\Main;
-use Cyr_To_Lat\Settings\Settings;
+use CyrToLat\ACF;
+use CyrToLat\Main;
+use CyrToLat\Settings\Settings;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;

@@ -14,8 +14,8 @@
 
 namespace CyrToLat\Tests\Unit\Settings;
 
-use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
-use Cyr_To_Lat\Settings\Converter;
+use CyrToLat\Settings\Abstracts\SettingsBase;
+use CyrToLat\Settings\Converter;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;

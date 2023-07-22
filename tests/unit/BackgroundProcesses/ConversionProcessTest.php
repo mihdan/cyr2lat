@@ -12,8 +12,8 @@
 
 namespace CyrToLat\Tests\Unit\BackgroundProcesses;
 
-use Cyr_To_Lat\Conversion_Process;
-use Cyr_To_Lat\Main;
+use CyrToLat\Conversion_Process;
+use CyrToLat\Main;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;

@@ -12,7 +12,7 @@
 /** @noinspection PhpUndefinedFunctionInspection */
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
 
-namespace Cyr_To_Lat;
+namespace CyrToLat;
 
 use cli\progress\Bar;
 use WP_CLI\NoOp;

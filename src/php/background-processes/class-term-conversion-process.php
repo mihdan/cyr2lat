@@ -5,7 +5,7 @@
  * @package cyr-to-lat
  */
 
-namespace Cyr_To_Lat;
+namespace CyrToLat;
 
 use stdClass;
 

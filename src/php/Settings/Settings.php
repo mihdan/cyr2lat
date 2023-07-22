@@ -5,11 +5,11 @@
  * @package cyr-to-lat
  */
 
-namespace Cyr_To_Lat\Settings;
+namespace CyrToLat\Settings;
 
-use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
-use Cyr_To_Lat\Settings\Abstracts\SettingsInterface;
-use Cyr_To_Lat\Symfony\Polyfill\Mbstring\Mbstring;
+use CyrToLat\Settings\Abstracts\SettingsBase;
+use CyrToLat\Settings\Abstracts\SettingsInterface;
+use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 
 /**
  * Class Settings

@@ -14,9 +14,9 @@
 
 namespace CyrToLat\Tests\Unit\Settings;
 
-use Cyr_To_Lat\Main;
-use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
-use Cyr_To_Lat\Settings\Tables;
+use CyrToLat\Main;
+use CyrToLat\Settings\Abstracts\SettingsBase;
+use CyrToLat\Settings\Tables;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;
@@ -216,7 +216,7 @@ class TablesTest extends CyrToLatTestCase {
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		FunctionMocker::replace(
-			'\Cyr_To_Lat\Conversion_Tables::get',
+			'\CyrToLat\Conversion_Tables::get',
 			static function ( $locale = '' ) {
 				switch ( $locale ) {
 					case 'bel':

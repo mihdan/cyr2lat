@@ -13,12 +13,12 @@
 
 namespace CyrToLat\Tests\Unit;
 
-use Cyr_To_Lat\Admin_Notices;
-use Cyr_To_Lat\Converter;
-use Cyr_To_Lat\Main;
-use Cyr_To_Lat\Post_Conversion_Process;
-use Cyr_To_Lat\Settings\Settings;
-use Cyr_To_Lat\Term_Conversion_Process;
+use CyrToLat\Admin_Notices;
+use CyrToLat\Converter;
+use CyrToLat\Main;
+use CyrToLat\Post_Conversion_Process;
+use CyrToLat\Settings\Settings;
+use CyrToLat\Term_Conversion_Process;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
@@ -317,7 +317,7 @@ class ConverterTest extends CyrToLatTestCase {
 
 		$args = $defaults;
 
-		FunctionMocker::replace( '\Cyr_To_Lat\Settings\Converter::get_convertible_post_types', $convertible_post_types );
+		FunctionMocker::replace( '\CyrToLat\Settings\Converter::get_convertible_post_types', $convertible_post_types );
 
 		$settings->shouldReceive( 'get' )->with( 'background_post_types' )->andReturn( $post_types );
 		$settings->shouldReceive( 'get' )->with( 'background_post_statuses' )->andReturn( $post_statuses );

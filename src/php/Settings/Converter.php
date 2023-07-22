@@ -5,9 +5,9 @@
  * @package cyr-to-lat
  */
 
-namespace Cyr_To_Lat\Settings;
+namespace CyrToLat\Settings;
 
-use Cyr_To_Lat\Settings\Abstracts\SettingsBase;
+use CyrToLat\Settings\Abstracts\SettingsBase;
 
 /**
  * Class Converter

@@ -1,6 +1,6 @@
 <?php
 
-namespace Cyr_To_Lat;
+namespace CyrToLat;
 
 /*
  * This file is part of the Symfony package.
@@ -10,7 +10,7 @@ namespace Cyr_To_Lat;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-use Cyr_To_Lat\Symfony\Polyfill\Mbstring as p;
+use CyrToLat\Symfony\Polyfill\Mbstring as p;
 if (\PHP_VERSION_ID >= 80000) {
     return require __DIR__ . '/bootstrap80.php';
 }
