@@ -1189,7 +1189,7 @@ abstract class CyrToLatTestCase extends TestCase {
 
 		$form_fields[ $locale ]['label'] .= '<br>(current)';
 
-		array_walk( $form_fields, 'self::set_defaults' );
+		array_walk( $form_fields, '\CyrToLat\Tests\Unit\CyrToLatTestCase::set_defaults' );
 
 		$is_multisite = function_exists( 'is_multisite' ) && is_multisite();
 
