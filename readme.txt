@@ -194,10 +194,10 @@ Yes you can!
 
 == Changelog ==
 
-= 5.6.0 (XX.XX.2023) =
+= 6.0.0 (XX.XX.2023) =
+* Dropped support of PHP 5.6. Minimum required PHP version is 7.0 now.
 * Tested with WordPress 6.3.
 * Tested with WooCommerce 7.9.
-* Dropped support of PHP 5.6. Minimum required PHP version is 7.0 now.
 * Added System Info tab.
 * Fixed console error when saving table data.
 
