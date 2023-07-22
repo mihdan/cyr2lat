@@ -21,15 +21,15 @@ class WP_CLI {
 	 *
 	 * @param string $message Message.
 	 */
-	public static function success( $message ) {
+	public static function success( string $message ) {
 	}
 
 	/**
 	 * Add command.
 	 *
-	 * @param string   $name     Name for the command (e.g. "post list" or "site empty").
-	 * @param callable $callable Command implementation as a class, function or closure.
+	 * @param string        $name     Name for the command (e.g. "post list" or "site empty").
+	 * @param callable|null $callable Command implementation as a class, function or closure.
 	 */
-	public static function add_command( $name, $callable ) {
+	public static function add_command( string $name, $callable ) {
 	}
 }

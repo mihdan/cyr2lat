@@ -102,7 +102,8 @@ class ConverterTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_conversion_notices
 	 */
 	public function test_conversion_notices(
-		$posts_process_running, $terms_process_running, $posts_process_completed, $terms_process_completed
+		bool $posts_process_running, bool $terms_process_running,
+		bool $posts_process_completed, bool $terms_process_completed
 	) {
 		$main              = Mockery::mock( Main::class );
 		$settings          = Mockery::mock( Settings::class );
@@ -164,7 +165,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_conversion_notices() {
+	public static function dp_test_conversion_notices(): array {
 		return [
 			[ false, false, false, false ],
 			[ true, false, false, false ],
@@ -192,7 +193,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_start_conversion
 	 */
-	public function test_start_conversion( $convert ) {
+	public function test_start_conversion( bool $convert ) {
 		$subject = Mockery::mock( Converter::class )->makePartial();
 
 		WP_Mock::passthruFunction( 'check_admin_referer' );
@@ -212,7 +213,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_start_conversion() {
+	public static function dp_test_start_conversion(): array {
 		return [
 			[ false ],
 			[ true ],
@@ -228,7 +229,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_process_handler
 	 */
-	public function test_process_handler( $query_arg, $nonce, $verify_nonce ) {
+	public function test_process_handler( string $query_arg, string $nonce, bool $verify_nonce ) {
 		$subject = Mockery::mock( Converter::class )->makePartial();
 
 		if ( $query_arg ) {
@@ -262,7 +263,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_process_handler() {
+	public static function dp_test_process_handler(): array {
 		return [
 			[ '', '', false ],
 			[ Converter::QUERY_ARG, '', false ],
@@ -274,13 +275,14 @@ class ConverterTest extends CyrToLatTestCase {
 	/**
 	 * Test convert_existing_slugs()
 	 *
-	 * @param array $posts              Posts to convert.
-	 * @param array $terms              Terms to convert.
-	 * @param bool  $include_attachment Include attachment as post type.
+	 * @param array|null $posts              Posts to convert.
+	 * @param array|null $terms              Terms to convert.
+	 * @param bool       $include_attachment Include attachment as post type.
 	 *
 	 * @dataProvider dp_test_convert_existing_slugs
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_convert_existing_slugs( $posts, $terms, $include_attachment ) {
+	public function test_convert_existing_slugs( $posts, $terms, bool $include_attachment ) {
 		global $wpdb;
 
 		$main              = Mockery::mock( Main::class );
@@ -399,7 +401,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_convert_existing_slugs() {
+	public static function dp_test_convert_existing_slugs(): array {
 		return [
 			'no posts, no terms, no attachments' => [ null, null, false ],
 			'no posts, no terms, attachments'    => [ null, null, true ],
@@ -416,7 +418,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 * @dataProvider        dp_test_log
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_log( $debug ) {
+	public function test_log( bool $debug ) {
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$message = 'Test message';
 		$method  = 'log';
@@ -466,7 +468,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_log() {
+	public static function dp_test_log(): array {
 		return [
 			[ false ],
 			[ true ],
@@ -477,6 +479,8 @@ class ConverterTest extends CyrToLatTestCase {
 	 * Get test subject
 	 *
 	 * @return Converter
+	 * @noinspection PhpMissingReturnTypeInspection
+	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
 	private function get_subject() {
 		$main              = Mockery::mock( Main::class );

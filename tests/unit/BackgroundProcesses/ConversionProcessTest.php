@@ -81,7 +81,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_is_process_completed
 	 */
-	public function test_is_process_completed( $transient, $expected ) {
+	public function test_is_process_completed( $transient, bool $expected ) {
 		$main    = Mockery::mock( Main::class );
 		$subject = new ConversionProcess( $main );
 
@@ -110,7 +110,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_is_process_completed()
 	 */
-	public static function dp_test_is_process_completed() {
+	public static function dp_test_is_process_completed(): array {
 		return [
 			[ true, true ],
 			[ false, false ],
@@ -125,7 +125,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_is_process_running
 	 */
-	public function test_is_process_running( $transient, $expected ) {
+	public function test_is_process_running( $transient, bool $expected ) {
 		$main    = Mockery::mock( Main::class );
 		$subject = new ConversionProcess( $main );
 
@@ -149,7 +149,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 * @dataProvider        dp_test_log
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_log( $debug ) {
+	public function test_log( bool $debug ) {
 		$subject = Mockery::mock( ConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'log';
 
@@ -198,7 +198,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_is_process_running()
 	 */
-	public static function dp_test_is_process_running() {
+	public static function dp_test_is_process_running(): array {
 		return [
 			[ true, true ],
 			[ false, false ],
@@ -210,7 +210,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_log() {
+	public static function dp_test_log(): array {
 		return [
 			[ false ],
 			[ true ],

@@ -420,7 +420,8 @@ class TablesTest extends CyrToLatTestCase {
 		$option_page  = 'cyr-to-lat';
 		$option_group = 'cyr_to_lat_group';
 
-		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Tables::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'option_page' )->with()->andReturn( $option_page );
 		$subject->shouldReceive( 'option_group' )->with()->andReturn( $option_group );
 
@@ -485,7 +486,8 @@ class TablesTest extends CyrToLatTestCase {
 		$main->shouldReceive( 'min_suffix' )->andReturn( '' );
 		$GLOBALS['cyr_to_lat_plugin'] = $main;
 
-		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Tables::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->with()->andReturn( true );
 
 		FunctionMocker::replace(
@@ -551,7 +553,8 @@ class TablesTest extends CyrToLatTestCase {
 	public function test_setup_sections() {
 		$tab_option_page = 'cyr-to-lat';
 
-		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Tables::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'option_page' )->andReturn( $tab_option_page );
 
 		$form_fields = self::get_test_form_fields();

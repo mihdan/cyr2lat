@@ -156,7 +156,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function get_protected_property( $object, $property_name ) {
+	protected function get_protected_property( $object, string $property_name ) {
 		$reflection_class = new ReflectionClass( $object );
 
 		$property = $reflection_class->getProperty( $property_name );
@@ -176,7 +176,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function set_protected_property( $object, $property_name, $value ) {
+	protected function set_protected_property( $object, string $property_name, $value ) {
 		$reflection_class = new ReflectionClass( $object );
 
 		$property = $reflection_class->getProperty( $property_name );
@@ -196,7 +196,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function set_method_accessibility( $object, $method_name, $accessible = true ) {
+	protected function set_method_accessibility( $object, string $method_name, bool $accessible = true ): ReflectionMethod {
 		$reflection_class = new ReflectionClass( $object );
 
 		$method = $reflection_class->getMethod( $method_name );
@@ -209,7 +209,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 * Plucks a certain field out of each object or array in an array.
 	 * Taken from WP Core.
 	 *
-	 * @param array      $input_list List of objects or arrays.
+	 * @param mixed      $input_list List of objects or arrays.
 	 * @param int|string $field      Field from the object to place instead of the entire object.
 	 * @param int|string $index_key  Optional. Field from the object to use as keys for the new array.
 	 *                               Default null.
@@ -218,7 +218,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *               corresponding to `$index_key`. If `$index_key` is null, array keys from the original
 	 *               `$input_list` will be preserved in the results.
 	 */
-	protected function wp_list_pluck( $input_list, $field, $index_key = null ) {
+	protected function wp_list_pluck( $input_list, $field, $index_key = null ): array {
 		if ( ! is_array( $input_list ) ) {
 			return [];
 		}
@@ -239,7 +239,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *               corresponding to `$index_key`. If `$index_key` is null, array keys from the original
 	 *               `$list` will be preserved in the results.
 	 */
-	private function pluck( $input_list, $field, $index_key = null ) {
+	private function pluck( array $input_list, $field, $index_key = null ): array {
 		$output   = $input_list;
 		$new_list = [];
 
@@ -297,7 +297,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @return array
 	 */
-	protected function get_conversion_table( $locale = '' ) {
+	protected function get_conversion_table( string $locale = '' ): array {
 		$table = [
 			'А' => 'A',
 			'Б' => 'B',
@@ -1073,7 +1073,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @return array
 	 */
-	protected static function get_test_form_fields( $locale = 'iso9' ) {
+	protected static function get_test_form_fields( string $locale = 'iso9' ): array {
 		$form_fields = [
 			'iso9'  => [
 				'label'        => 'ISO9 Table',
@@ -1209,7 +1209,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	protected static function set_defaults( &$field, $id ) {
+	protected static function set_defaults( array &$field, string $id ) {
 		$field = array_merge(
 			[
 				'default'  => '',
@@ -1228,7 +1228,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @return array
 	 */
-	protected static function get_test_settings() {
+	protected static function get_test_settings(): array {
 		return [
 			'iso9'  => [ 'iso9' ],
 			'bel'   => [ 'bel' ],
@@ -1261,7 +1261,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @return string[] Array of file header values keyed by header name.
 	 */
-	protected function get_file_data( $file, $default_headers, $context = '' ) {
+	protected function get_file_data( string $file, array $default_headers, string $context = '' ): array {
 		// We don't need to write to the file, so just open for reading.
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen
 		$fp = fopen( $file, 'rb' );
@@ -1294,7 +1294,7 @@ abstract class CyrToLatTestCase extends TestCase {
 		$extra_headers = $context ? apply_filters( "extra_{$context}_headers", [] ) : [];
 		if ( $extra_headers ) {
 			$extra_headers = array_combine( $extra_headers, $extra_headers ); // Keys equal values.
-			$all_headers   = array_merge( $extra_headers, (array) $default_headers );
+			$all_headers   = array_merge( $extra_headers, $default_headers );
 		} else {
 			$all_headers = $default_headers;
 		}
@@ -1313,15 +1313,16 @@ abstract class CyrToLatTestCase extends TestCase {
 	/**
 	 * Strip close comment and close php tags from file headers used by WP.
 	 *
-	 * @since 2.8.0
+	 * @param string $str Header comment to clean up.
+	 *
+	 * @return string
+	 *@since 2.8.0
 	 * @access private
 	 *
-	 * @see https://core.trac.wordpress.org/ticket/8497
+		  * @see https://core.trac.wordpress.org/ticket/8497
 	 *
-	 * @param string $str Header comment to clean up.
-	 * @return string
 	 */
-	private function cleanup_header_comment( $str ) {
+	private function cleanup_header_comment( string $str ): string {
 		return trim( preg_replace( '/\s*(?:\*\/|\?>).*/', '', $str ) );
 	}
 }

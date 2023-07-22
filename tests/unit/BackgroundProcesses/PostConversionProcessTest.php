@@ -49,9 +49,8 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_task
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection PhpParamsInspection
 	 */
-	public function test_task( $post_name, $transliterated_name ) {
+	public function test_task( string $post_name, string $transliterated_name ) {
 		global $wpdb;
 
 		$post              = (object) [
@@ -117,7 +116,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_task()
 	 */
-	public static function dp_test_task() {
+	public static function dp_test_task(): array {
 		return [
 			[ 'post_name', 'post_name' ],
 			[ 'post_name', 'transliterated_name' ],
@@ -133,9 +132,8 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_task_for_attachment
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection PhpParamsInspection
 	 */
-	public function test_task_for_attachment( $post_name, $transliterated_name ) {
+	public function test_task_for_attachment( string $post_name, string $transliterated_name ) {
 		global $wpdb;
 
 		$post = (object) [
@@ -208,7 +206,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_task_for_attachment()
 	 */
-	public static function dp_test_task_for_attachment() {
+	public static function dp_test_task_for_attachment(): array {
 		return [
 			[ 'post_name', 'post_name' ],
 			[ 'post_name', 'transliterated_name' ],
@@ -225,7 +223,8 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction( 'get_attached_file' )->with( $post_id )->andReturn( false );
 
-		$subject = Mockery::mock( PostConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( PostConversionProcess::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject
 			->shouldReceive( 'log' )
 			->with( 'Cannot convert attachment file for attachment id: ' . $post_id )
@@ -246,14 +245,15 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_rename_attachment
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_rename_attachment( $rename, $updated ) {
+	public function test_rename_attachment( bool $rename, bool $updated ) {
 		$post_id             = 5;
 		$file                = '/var/www/test/wp-content/uploads/2020/05/Скамейка.jpg';
 		$transliterated_file = '/var/www/test/wp-content/uploads/2020/05/Skamejka.jpg';
 
 		WP_Mock::userFunction( 'get_attached_file' )->with( $post_id )->andReturn( $file );
 
-		$subject = Mockery::mock( PostConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( PostConversionProcess::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'get_transliterated_file' )->with( $file )->once()->andReturn( $transliterated_file );
 		$subject->shouldReceive( 'rename_file' )->with( $file, $transliterated_file )->once()->andReturn( $rename );
 
@@ -282,7 +282,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_rename_attachment() {
+	public static function dp_test_rename_attachment(): array {
 		return [
 			[ false, false ],
 			[ true, false ],
@@ -351,7 +351,8 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 		WP_Mock::userFunction( 'wp_make_link_relative' )->with( $large_src[0] )->once()
 			->andReturn( $large_relative );
 
-		$subject = Mockery::mock( PostConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( PostConversionProcess::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'get_transliterated_file' )->with( $thumbnail_file )->once()
 			->andReturn( $transliterated_thumbnail_file );
 		$subject->shouldReceive( 'get_transliterated_file' )->with( $medium_file )->once()
@@ -485,7 +486,8 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_complete() {
-		$subject = Mockery::mock( PostConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( PostConversionProcess::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'log' )->with( 'Post slugs conversion completed.' )->once();
 
 		$method = 'complete';
@@ -521,14 +523,15 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	/**
 	 * Tests filter_post_locale()
 	 *
-	 * @param array  $wpml_post_language_details Post language details.
-	 * @param string $locale                     Site locale.
-	 * @param string $expected                   Expected result.
+	 * @param array|null $wpml_post_language_details Post language details.
+	 * @param string     $locale                     Site locale.
+	 * @param string     $expected                   Expected result.
 	 *
 	 * @dataProvider dp_test_filter_post_locale
 	 * @throws ReflectionException Reflection exception.
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_filter_post_locale( $wpml_post_language_details, $locale, $expected ) {
+	public function test_filter_post_locale( $wpml_post_language_details, string $locale, string $expected ) {
 		$post = (object) [
 			'ID' => 5,
 		];
@@ -554,7 +557,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_filter_post_locale() {
+	public static function dp_test_filter_post_locale(): array {
 		return [
 			[ null, 'ru_RU', 'ru_RU' ],
 			[ [], 'ru_RU', 'ru_RU' ],

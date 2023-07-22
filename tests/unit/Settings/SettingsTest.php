@@ -192,7 +192,7 @@ class SettingsTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_is_chinese_locale
 	 */
-	public function test_is_chinese_locale( $locale, $expected ) {
+	public function test_is_chinese_locale( string $locale, bool $expected ) {
 		$subject = Mockery::mock( Settings::class )->makePartial();
 
 		WP_Mock::userFunction(
@@ -210,7 +210,7 @@ class SettingsTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_is_chinese_locale() {
+	public static function dp_test_is_chinese_locale(): array {
 		return [
 			[ 'zh_CN', true ],
 			[ 'zh_HK', true ],
@@ -223,14 +223,15 @@ class SettingsTest extends CyrToLatTestCase {
 	/**
 	 * Test transpose_chinese_table()
 	 *
-	 * @param string $is_chinese_locale Current locale.
-	 * @param array  $table             Conversion table.
-	 * @param array  $expected          Expected result.
+	 * @param string|null $is_chinese_locale Current locale.
+	 * @param array       $table             Conversion table.
+	 * @param array       $expected          Expected result.
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 * @dataProvider dp_test_transpose_chinese_table
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_transpose_chinese_table( $is_chinese_locale, $table, $expected ) {
+	public function test_transpose_chinese_table( $is_chinese_locale, array $table, array $expected ) {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_chinese_locale' )->andReturn( $is_chinese_locale );
 		$method = 'transpose_chinese_table';
@@ -245,7 +246,7 @@ class SettingsTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_transpose_chinese_table() {
+	public static function dp_test_transpose_chinese_table(): array {
 		return [
 			[
 				false,

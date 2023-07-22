@@ -47,9 +47,8 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_task
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection PhpParamsInspection
 	 */
-	public function test_task( $term_slug, $transliterated_slug ) {
+	public function test_task( string $term_slug, string $transliterated_slug ) {
 		global $wpdb;
 
 		$term = (object) [
@@ -106,7 +105,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_task()
 	 */
-	public static function dp_test_task() {
+	public static function dp_test_task(): array {
 		return [
 			[ 'slug', 'slug' ],
 			[ 'slug', 'transliterated_slug' ],
@@ -119,7 +118,8 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_complete() {
-		$subject = Mockery::mock( TermConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( TermConversionProcess::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'log' )->with( 'Term slugs conversion completed.' )->once();
 
 		$method = 'complete';
@@ -162,7 +162,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_filter_term_locale_with_polylang
 	 * @throws ReflectionException Reflection exception.
 	 */
-	public function test_filter_term_locale_with_polylang( $pll_pll_get_term_language, $locale, $expected ) {
+	public function test_filter_term_locale_with_polylang( $pll_pll_get_term_language, string $locale, string $expected ) {
 		$term = (object) [
 			'taxonomy'         => 'category',
 			'term_taxonomy_id' => 5,
@@ -196,7 +196,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_filter_term_locale_with_polylang() {
+	public static function dp_test_filter_term_locale_with_polylang(): array {
 		return [
 			[ false, 'en_US', 'en_US' ],
 			[ 'ru', 'en_US', 'ru' ],
@@ -206,15 +206,16 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	/**
 	 * Tests filter_term_locale() with WPML
 	 *
-	 * @param array  $wpml_element_language_details Element language details.
-	 * @param array  $wpml_active_languages         Active languages.
-	 * @param string $locale                        Site locale.
-	 * @param string $expected                      Expected result.
+	 * @param array|null $wpml_element_language_details Element language details.
+	 * @param array|null $wpml_active_languages         Active languages.
+	 * @param string     $locale                        Site locale.
+	 * @param string     $expected                      Expected result.
 	 *
 	 * @dataProvider dp_test_filter_term_locale_with_wpml
 	 * @throws ReflectionException Reflection exception.
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_filter_term_locale_with_wpml( $wpml_element_language_details, $wpml_active_languages, $locale, $expected ) {
+	public function test_filter_term_locale_with_wpml( $wpml_element_language_details, $wpml_active_languages, string $locale, string $expected ) {
 		$term = (object) [
 			'taxonomy'         => 'category',
 			'term_taxonomy_id' => 5,
@@ -248,7 +249,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_filter_term_locale_with_wpml() {
+	public static function dp_test_filter_term_locale_with_wpml(): array {
 		return [
 			[ null, null, 'ru_RU', 'ru_RU' ],
 			[ (object) [], null, 'ru_RU', 'ru_RU' ],

@@ -299,9 +299,10 @@ class ConverterTest extends CyrToLatTestCase {
 	public function test_delayed_init_settings() {
 		$option_name   = 'cyr_to_lat_settings';
 		$form_fields   = self::get_test_form_fields();
-		$test_settings = $this->get_test_settings();
+		$test_settings = self::get_test_settings();
 
-		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Converter::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'delayed_init_form_fields' )->with()->once();
 		$subject->shouldReceive( 'option_name' )->with()->twice()->andReturn( $option_name );
 		$subject->shouldReceive( 'form_fields' )->with()->once()->andReturn( $form_fields );
@@ -368,7 +369,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_section_callback
 	 */
-	public function test_section_callback( $id, $expected ) {
+	public function test_section_callback( string $id, string $expected ) {
 		WP_Mock::passthruFunction( 'wp_kses_post' );
 
 		$converter = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
@@ -383,7 +384,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_section_callback() {
+	public static function dp_test_section_callback(): array {
 		return [
 			'Non-existing id'    => [ '', '' ],
 			'Background section' => [
@@ -402,7 +403,8 @@ class ConverterTest extends CyrToLatTestCase {
 	 * Test in_admin_header().
 	 */
 	public function test_in_admin_header() {
-		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Converter::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->with()->andReturn( true );
 
 		$expected = '		<div id="ctl-confirm-popup">
@@ -437,7 +439,8 @@ class ConverterTest extends CyrToLatTestCase {
 	 * Test in_admin_header() not on own screen.
 	 */
 	public function test_in_admin_header_not_on_own_screen() {
-		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Converter::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->with()->andReturn( false );
 
 		$expected = '';
@@ -457,7 +460,8 @@ class ConverterTest extends CyrToLatTestCase {
 		$plugin_version = '1.0.0';
 		$min            = '.min';
 
-		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Converter::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->with()->andReturn( true );
 		$this->set_protected_property( $subject, 'min_prefix', $min );
 
