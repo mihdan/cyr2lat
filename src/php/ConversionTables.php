@@ -10,11 +10,11 @@ namespace CyrToLat;
 use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 
 /**
- * Class Conversion_Tables
+ * Class ConversionTables
  *
- * @class Conversion_Tables
+ * @class ConversionTables
  */
-class Conversion_Tables {
+class ConversionTables {
 
 	/**
 	 * Get conversion table by locale.

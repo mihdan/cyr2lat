@@ -5,14 +5,15 @@
  * @package cyr-to-lat
  */
 
-namespace CyrToLat;
+namespace CyrToLat\BackgroundProcesses;
 
+use CyrToLat\Main;
 use stdClass;
 
 /**
- * Class Term_Conversion_Process
+ * Class TermConversionProcess
  */
-class Term_Conversion_Process extends Conversion_Process {
+class TermConversionProcess extends ConversionProcess {
 
 	/**
 	 * Site locale.
@@ -36,7 +37,7 @@ class Term_Conversion_Process extends Conversion_Process {
 	protected $action;
 
 	/**
-	 * Term_Conversion_Process constructor.
+	 * TermConversionProcess constructor.
 	 *
 	 * @param Main $main Plugin main class.
 	 */

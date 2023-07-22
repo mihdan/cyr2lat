@@ -13,11 +13,14 @@
 namespace CyrToLat;
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
+use CyrToLat\BackgroundProcesses\PostConversionProcess;
+use CyrToLat\BackgroundProcesses\TermConversionProcess;
 use CyrToLat\Settings\Converter as SettingsConverter;
 use CyrToLat\Settings\SystemInfo as SettingsSystemInfo;
 use CyrToLat\Settings\Tables as SettingsTables;
 use Polylang;
 use SitePress;
+use WP_CLI;
 use WP_Error;
 use wpdb;
 use Exception;
@@ -46,21 +49,21 @@ class Main {
 	/**
 	 * Process posts instance.
 	 *
-	 * @var Post_Conversion_Process
+	 * @var PostConversionProcess
 	 */
 	protected $process_all_posts;
 
 	/**
 	 * Process terms instance.
 	 *
-	 * @var Term_Conversion_Process
+	 * @var TermConversionProcess
 	 */
 	protected $process_all_terms;
 
 	/**
 	 * Admin Notices instance.
 	 *
-	 * @var Admin_Notices
+	 * @var AdminNotices
 	 */
 	protected $admin_notices;
 
@@ -74,7 +77,7 @@ class Main {
 	/**
 	 * WP_CLI instance.
 	 *
-	 * @var WP_CLI
+	 * @var WPCli
 	 */
 	protected $cli;
 
@@ -142,15 +145,15 @@ class Main {
 			]
 		);
 
-		$this->admin_notices = new Admin_Notices();
+		$this->admin_notices = new AdminNotices();
 		$requirements        = new Requirements( $this->settings, $this->admin_notices );
 
 		if ( ! $requirements->are_requirements_met() ) {
 			return;
 		}
 
-		$this->process_all_posts = new Post_Conversion_Process( $this );
-		$this->process_all_terms = new Term_Conversion_Process( $this );
+		$this->process_all_posts = new PostConversionProcess( $this );
+		$this->process_all_terms = new TermConversionProcess( $this );
 		$this->converter         = new Converter(
 			$this,
 			$this->settings,
@@ -160,7 +163,7 @@ class Main {
 		);
 
 		if ( $this->request->is_cli() ) {
-			$this->cli = new WP_CLI( $this->converter );
+			$this->cli = new WPCli( $this->converter );
 		}
 
 		$this->acf         = new ACF( $this->settings );
@@ -180,7 +183,7 @@ class Main {
 				 *
 				 * @noinspection PhpParamsInspection
 				 */
-				\WP_CLI::add_command( 'cyr2lat', $this->cli );
+				WP_CLI::add_command( 'cyr2lat', $this->cli );
 			} catch ( Exception $ex ) {
 				return;
 			}
@@ -390,7 +393,7 @@ class Main {
 	 * @return string
 	 */
 	private function fix_mac_string( string $string, array $table ): string {
-		$fix_table = Conversion_Tables::get_fix_table_for_mac();
+		$fix_table = ConversionTables::get_fix_table_for_mac();
 
 		$fix = [];
 		foreach ( $fix_table as $key => $value ) {

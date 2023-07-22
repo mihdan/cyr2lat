@@ -13,12 +13,12 @@
 
 namespace CyrToLat\Tests\Unit;
 
-use CyrToLat\Admin_Notices;
+use CyrToLat\AdminNotices;
+use CyrToLat\BackgroundProcesses\PostConversionProcess;
+use CyrToLat\BackgroundProcesses\TermConversionProcess;
 use CyrToLat\Converter;
 use CyrToLat\Main;
-use CyrToLat\Post_Conversion_Process;
 use CyrToLat\Settings\Settings;
-use CyrToLat\Term_Conversion_Process;
 use Mockery;
 use ReflectionClass;
 use ReflectionException;
@@ -57,9 +57,9 @@ class ConverterTest extends CyrToLatTestCase {
 
 		$main          = Mockery::mock( Main::class );
 		$settings      = Mockery::mock( Settings::class );
-		$post_cp       = Mockery::mock( Post_Conversion_Process::class );
-		$term_cp       = Mockery::mock( Term_Conversion_Process::class );
-		$admin_notices = Mockery::mock( Admin_Notices::class );
+		$post_cp       = Mockery::mock( PostConversionProcess::class );
+		$term_cp       = Mockery::mock( TermConversionProcess::class );
+		$admin_notices = Mockery::mock( AdminNotices::class );
 
 		// Get mock, without the constructor being called.
 		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
@@ -74,9 +74,9 @@ class ConverterTest extends CyrToLatTestCase {
 
 		self::assertInstanceOf( Main::class, $this->get_protected_property( $mock, 'main' ) );
 		self::assertInstanceOf( Settings::class, $this->get_protected_property( $mock, 'settings' ) );
-		self::assertInstanceOf( Post_Conversion_Process::class, $this->get_protected_property( $mock, 'process_all_posts' ) );
-		self::assertInstanceOf( Term_Conversion_Process::class, $this->get_protected_property( $mock, 'process_all_terms' ) );
-		self::assertInstanceOf( Admin_Notices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
+		self::assertInstanceOf( PostConversionProcess::class, $this->get_protected_property( $mock, 'process_all_posts' ) );
+		self::assertInstanceOf( TermConversionProcess::class, $this->get_protected_property( $mock, 'process_all_terms' ) );
+		self::assertInstanceOf( AdminNotices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
 	}
 
 	/**
@@ -106,9 +106,9 @@ class ConverterTest extends CyrToLatTestCase {
 	) {
 		$main              = Mockery::mock( Main::class );
 		$settings          = Mockery::mock( Settings::class );
-		$process_all_posts = Mockery::mock( Post_Conversion_Process::class )->shouldAllowMockingProtectedMethods();
-		$process_all_terms = Mockery::mock( Term_Conversion_Process::class )->shouldAllowMockingProtectedMethods();
-		$admin_notices     = Mockery::mock( Admin_Notices::class );
+		$process_all_posts = Mockery::mock( PostConversionProcess::class )->shouldAllowMockingProtectedMethods();
+		$process_all_terms = Mockery::mock( TermConversionProcess::class )->shouldAllowMockingProtectedMethods();
+		$admin_notices     = Mockery::mock( AdminNotices::class );
 
 		$subject = new Converter(
 			$main,
@@ -285,9 +285,9 @@ class ConverterTest extends CyrToLatTestCase {
 
 		$main              = Mockery::mock( Main::class );
 		$settings          = Mockery::mock( Settings::class );
-		$process_all_posts = Mockery::mock( Post_Conversion_Process::class );
-		$process_all_terms = Mockery::mock( Term_Conversion_Process::class );
-		$admin_notices     = Mockery::mock( Admin_Notices::class );
+		$process_all_posts = Mockery::mock( PostConversionProcess::class );
+		$process_all_terms = Mockery::mock( TermConversionProcess::class );
+		$admin_notices     = Mockery::mock( AdminNotices::class );
 
 		$subject = new Converter(
 			$main,
@@ -481,9 +481,9 @@ class ConverterTest extends CyrToLatTestCase {
 	private function get_subject() {
 		$main              = Mockery::mock( Main::class );
 		$settings          = Mockery::mock( Settings::class );
-		$process_all_posts = Mockery::mock( Post_Conversion_Process::class );
-		$process_all_terms = Mockery::mock( Term_Conversion_Process::class );
-		$admin_notices     = Mockery::mock( Admin_Notices::class );
+		$process_all_posts = Mockery::mock( PostConversionProcess::class );
+		$process_all_terms = Mockery::mock( TermConversionProcess::class );
+		$admin_notices     = Mockery::mock( AdminNotices::class );
 
 		return new Converter(
 			$main,

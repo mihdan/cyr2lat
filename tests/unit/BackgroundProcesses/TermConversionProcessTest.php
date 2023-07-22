@@ -14,7 +14,7 @@
 namespace CyrToLat\Tests\Unit\BackgroundProcesses;
 
 use CyrToLat\Main;
-use CyrToLat\Term_Conversion_Process;
+use CyrToLat\BackgroundProcesses\TermConversionProcess;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;
@@ -75,7 +75,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 			[ 'return' => 'ru_RU' ]
 		);
 
-		$subject = Mockery::mock( Term_Conversion_Process::class, [ $main ] )->makePartial()
+		$subject = Mockery::mock( TermConversionProcess::class, [ $main ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();
 
 		$method = 'task';
@@ -119,7 +119,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_complete() {
-		$subject = Mockery::mock( Term_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( TermConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'log' )->with( 'Term slugs conversion completed.' )->once();
 
 		$method = 'complete';
@@ -186,7 +186,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 			->andReturn( $pll_pll_get_term_language );
 
 		$main    = Mockery::mock( Main::class );
-		$subject = new Term_Conversion_Process( $main );
+		$subject = new TermConversionProcess( $main );
 		$this->set_protected_property( $subject, 'term', $term );
 		self::assertSame( $expected, $subject->filter_term_locale() );
 	}
@@ -238,7 +238,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 		);
 
 		$main    = Mockery::mock( Main::class );
-		$subject = new Term_Conversion_Process( $main );
+		$subject = new TermConversionProcess( $main );
 		$this->set_protected_property( $subject, 'term', $term );
 		self::assertSame( $expected, $subject->filter_term_locale() );
 	}

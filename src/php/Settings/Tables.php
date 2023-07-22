@@ -7,7 +7,7 @@
 
 namespace CyrToLat\Settings;
 
-use CyrToLat\Conversion_Tables;
+use CyrToLat\ConversionTables;
 use CyrToLat\Settings\Abstracts\SettingsBase;
 
 /**
@@ -152,7 +152,7 @@ class Tables extends PluginSettingsBase {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => Conversion_Tables::get( $locale ),
+				'default'      => ConversionTables::get( $locale ),
 			];
 		}
 	}

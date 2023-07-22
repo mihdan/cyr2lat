@@ -12,7 +12,7 @@
 
 namespace CyrToLat\Tests\Unit\BackgroundProcesses;
 
-use CyrToLat\Conversion_Process;
+use CyrToLat\BackgroundProcesses\ConversionProcess;
 use CyrToLat\Main;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
@@ -34,7 +34,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_task() {
-		$subject = Mockery::mock( Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( ConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'task';
 
 		$this->set_method_accessibility( $subject, $method );
@@ -48,7 +48,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_complete() {
-		$subject = Mockery::mock( Conversion_Process::class )->makePartial();
+		$subject = Mockery::mock( ConversionProcess::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'clear_scheduled_event' )->once();
 
@@ -83,7 +83,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 */
 	public function test_is_process_completed( $transient, $expected ) {
 		$main    = Mockery::mock( Main::class );
-		$subject = new Conversion_Process( $main );
+		$subject = new ConversionProcess( $main );
 
 		WP_Mock::userFunction(
 			'get_site_transient',
@@ -127,7 +127,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 */
 	public function test_is_process_running( $transient, $expected ) {
 		$main    = Mockery::mock( Main::class );
-		$subject = new Conversion_Process( $main );
+		$subject = new ConversionProcess( $main );
 
 		WP_Mock::userFunction(
 			'get_site_transient',
@@ -150,7 +150,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_log( $debug ) {
-		$subject = Mockery::mock( Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( ConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'log';
 
 		$this->set_method_accessibility( $subject, $method );

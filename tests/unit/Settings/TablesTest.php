@@ -216,7 +216,7 @@ class TablesTest extends CyrToLatTestCase {
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		FunctionMocker::replace(
-			'\CyrToLat\Conversion_Tables::get',
+			'\CyrToLat\ConversionTables::get',
 			static function ( $locale = '' ) {
 				switch ( $locale ) {
 					case 'bel':

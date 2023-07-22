@@ -7,7 +7,7 @@
 
 namespace CyrToLat\Settings;
 
-use CyrToLat\Conversion_Tables;
+use CyrToLat\ConversionTables;
 use CyrToLat\Settings\Abstracts\SettingsBase;
 
 /**
@@ -153,7 +153,7 @@ class SystemInfo extends PluginSettingsBase {
 		$data .= $this->data( 'Version', CYR_TO_LAT_VERSION );
 
 		foreach ( $locales as $key => $locale ) {
-			$default_table = Conversion_Tables::get( $key );
+			$default_table = ConversionTables::get( $key );
 			$table         = $settings->get( $key );
 			$diff          = array_diff( $table, $default_table );
 

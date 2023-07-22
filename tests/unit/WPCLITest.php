@@ -14,7 +14,7 @@ namespace CyrToLat\Tests\Unit;
 
 use cli\progress\Bar;
 use CyrToLat\Converter;
-use CyrToLat\WP_CLI;
+use CyrToLat\WPCli;
 use Mockery;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
@@ -39,7 +39,7 @@ class WPCLITest extends CyrToLatTestCase {
 	public function test_regenerate( $args, $assoc_args, $convert_params ) {
 		$converter = Mockery::mock( Converter::class );
 
-		$subject = Mockery::mock( WP_CLI::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( WPCli::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$notify = Mockery::mock( Bar::class );
 		$notify->shouldReceive( 'tick' );
@@ -59,7 +59,7 @@ class WPCLITest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_regenerate()
 	 */
-	public static function dp_test_regenerate() {
+	public static function dp_test_regenerate(): array {
 		return [
 			[ [], [], [] ],
 			[
@@ -93,7 +93,7 @@ class WPCLITest extends CyrToLatTestCase {
 	public function test_make_progress_bar() {
 		$converter = Mockery::mock( Converter::class );
 
-		$subject = Mockery::mock( WP_CLI::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( WPCli::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$notify = Mockery::Mock( Bar::class );
 

@@ -5,14 +5,15 @@
  * @package cyr-to-lat
  */
 
-namespace CyrToLat;
+namespace CyrToLat\BackgroundProcesses;
 
+use CyrToLat\Main;
 use CyrToLat\WP_Background_Processing\WP_Background_Process;
 
 /**
- * Class Conversion_Process
+ * Class ConversionProcess
  */
-class Conversion_Process extends WP_Background_Process {
+class ConversionProcess extends WP_Background_Process {
 
 	/**
 	 * Prefix
@@ -29,7 +30,7 @@ class Conversion_Process extends WP_Background_Process {
 	protected $main;
 
 	/**
-	 * Conversion_Process constructor
+	 * ConversionProcess constructor
 	 *
 	 * @param Main $main Plugin main class.
 	 */

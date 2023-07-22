@@ -7,6 +7,8 @@
 
 namespace CyrToLat;
 
+use CyrToLat\BackgroundProcesses\PostConversionProcess;
+use CyrToLat\BackgroundProcesses\TermConversionProcess;
 use CyrToLat\Settings\Settings;
 
 /**
@@ -48,34 +50,34 @@ class Converter {
 	/**
 	 * Background process to convert posts.
 	 *
-	 * @var Post_Conversion_Process
+	 * @var PostConversionProcess
 	 */
 	protected $process_all_posts;
 
 	/**
 	 * Background process to convert terms.
 	 *
-	 * @var Term_Conversion_Process
+	 * @var TermConversionProcess
 	 */
 	protected $process_all_terms;
 
 	/**
 	 * Admin notices.
 	 *
-	 * @var Admin_Notices
+	 * @var AdminNotices
 	 */
 	protected $admin_notices;
 
 	/**
 	 * Converter constructor.
 	 *
-	 * @param Main                    $main              Plugin main class.
-	 * @param Settings                $settings          Plugin settings.
-	 * @param Post_Conversion_Process $process_all_posts Post conversion process.
-	 * @param Term_Conversion_Process $process_all_terms Term conversion process.
-	 * @param Admin_Notices           $admin_notices     Admin notices.
+	 * @param Main                  $main              Plugin main class.
+	 * @param Settings              $settings          Plugin settings.
+	 * @param PostConversionProcess $process_all_posts Post conversion process.
+	 * @param TermConversionProcess $process_all_terms Term conversion process.
+	 * @param AdminNotices          $admin_notices     Admin notices.
 	 */
-	public function __construct( Main $main, Settings $settings, Post_Conversion_Process $process_all_posts, Term_Conversion_Process $process_all_terms, Admin_Notices $admin_notices ) {
+	public function __construct( Main $main, Settings $settings, PostConversionProcess $process_all_posts, TermConversionProcess $process_all_terms, AdminNotices $admin_notices ) {
 		$this->main              = $main;
 		$this->settings          = $settings;
 		$this->process_all_posts = $process_all_posts;

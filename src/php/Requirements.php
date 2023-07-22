@@ -29,7 +29,7 @@ class Requirements {
 	/**
 	 * Admin notices.
 	 *
-	 * @var Admin_Notices
+	 * @var AdminNotices
 	 */
 	protected $admin_notices;
 
@@ -51,10 +51,10 @@ class Requirements {
 	 * Requirements constructor.
 	 *
 	 * @param Settings                  $settings      Settings.
-	 * @param Admin_Notices             $admin_notices Admin notices.
+	 * @param AdminNotices              $admin_notices Admin notices.
 	 * @param WP_Filesystem_Direct|null $wp_filesystem File system.
 	 */
-	public function __construct( Settings $settings, Admin_Notices $admin_notices, WP_Filesystem_Direct $wp_filesystem = null ) {
+	public function __construct( Settings $settings, AdminNotices $admin_notices, WP_Filesystem_Direct $wp_filesystem = null ) {
 		$this->settings   = $settings;
 		$this->screen_ids = [ 'screen_ids' => $this->settings->screen_ids() ];
 

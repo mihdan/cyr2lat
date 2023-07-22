@@ -17,25 +17,25 @@
 namespace CyrToLat\Tests\Unit;
 
 use CyrToLat\ACF;
-use CyrToLat\Admin_Notices;
+use CyrToLat\AdminNotices;
+use CyrToLat\BackgroundProcesses\PostConversionProcess;
+use CyrToLat\BackgroundProcesses\TermConversionProcess;
 use CyrToLat\Converter;
 use CyrToLat\Main;
-use CyrToLat\Post_Conversion_Process;
 use CyrToLat\Request;
 use CyrToLat\Requirements;
 use CyrToLat\Settings\Settings;
 use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
-use CyrToLat\Term_Conversion_Process;
-use CyrToLat\WP_CLI;
+use CyrToLat\WPCli;
 use Exception;
 use Mockery;
 use PHPUnit\Runner\Version;
 use ReflectionClass;
 use ReflectionException;
-use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
 use WP_REST_Server;
 use WP_Screen;
+use tad\FunctionMocker\FunctionMocker;
 use wpdb;
 
 /**
@@ -82,7 +82,7 @@ class MainTest extends CyrToLatTestCase {
 		);
 
 		Mockery::mock( 'overload:' . Settings::class );
-		Mockery::mock( 'overload:' . Admin_Notices::class );
+		Mockery::mock( 'overload:' . AdminNotices::class );
 
 		$requirements = Mockery::mock( 'overload:' . Requirements::class );
 		$requirements->shouldReceive( 'are_requirements_met' )->with()->andReturnUsing(
@@ -91,10 +91,10 @@ class MainTest extends CyrToLatTestCase {
 			}
 		);
 
-		Mockery::mock( 'overload:' . Post_Conversion_Process::class );
-		Mockery::mock( 'overload:' . Term_Conversion_Process::class );
+		Mockery::mock( 'overload:' . PostConversionProcess::class );
+		Mockery::mock( 'overload:' . TermConversionProcess::class );
 		Mockery::mock( 'overload:' . Converter::class );
-		Mockery::mock( 'overload:' . WP_CLI::class );
+		Mockery::mock( 'overload:' . WPCli::class );
 		Mockery::mock( 'overload:' . ACF::class );
 
 		// Get mock, without the constructor being called.
@@ -107,11 +107,11 @@ class MainTest extends CyrToLatTestCase {
 
 		self::assertInstanceOf( Request::class, $this->get_protected_property( $mock, 'request' ) );
 		self::assertInstanceOf( Settings::class, $this->get_protected_property( $mock, 'settings' ) );
-		self::assertInstanceOf( Admin_Notices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
-		self::assertInstanceOf( Post_Conversion_Process::class, $this->get_protected_property( $mock, 'process_all_posts' ) );
-		self::assertInstanceOf( Term_Conversion_Process::class, $this->get_protected_property( $mock, 'process_all_terms' ) );
+		self::assertInstanceOf( AdminNotices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
+		self::assertInstanceOf( PostConversionProcess::class, $this->get_protected_property( $mock, 'process_all_posts' ) );
+		self::assertInstanceOf( TermConversionProcess::class, $this->get_protected_property( $mock, 'process_all_terms' ) );
 		self::assertInstanceOf( Converter::class, $this->get_protected_property( $mock, 'converter' ) );
-		self::assertInstanceOf( WP_CLI::class, $this->get_protected_property( $mock, 'cli' ) );
+		self::assertInstanceOf( WPCli::class, $this->get_protected_property( $mock, 'cli' ) );
 		self::assertInstanceOf( ACF::class, $this->get_protected_property( $mock, 'acf' ) );
 		self::assertSame( $frontend, $this->get_protected_property( $mock, 'is_frontend' ) );
 
@@ -128,7 +128,7 @@ class MainTest extends CyrToLatTestCase {
 
 		self::assertInstanceOf( Request::class, $this->get_protected_property( $mock, 'request' ) );
 		self::assertInstanceOf( Settings::class, $this->get_protected_property( $mock, 'settings' ) );
-		self::assertInstanceOf( Admin_Notices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
+		self::assertInstanceOf( AdminNotices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
 		self::assertNull( $this->get_protected_property( $mock, 'process_all_posts' ) );
 		self::assertNull( $this->get_protected_property( $mock, 'process_all_terms' ) );
 		self::assertNull( $this->get_protected_property( $mock, 'converter' ) );
@@ -213,7 +213,6 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_init_hooks
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection PhpParamsInspection
 	 */
 	public function test_init_hooks( $polylang, $sitepress, $frontend ) {
 		$wpml_locale = 'en_US';
@@ -287,7 +286,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_init_hooks() {
+	public static function dp_test_init_hooks(): array {
 		return [
 			[ false, false, false ],
 			[ false, false, true ],
@@ -417,7 +416,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_sanitize_title() {
+	public static function dp_test_sanitize_title(): array {
 		return [
 			'empty string'               => [
 				'',
@@ -514,7 +513,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_sanitize_title_for_insert_term()
 	 */
-	public static function dp_test_sanitize_title_for_insert_term() {
+	public static function dp_test_sanitize_title_for_insert_term(): array {
 		return [
 			[ 'title', 'term', 'term' ],
 			[ 'title', '', 'title' ],
@@ -579,7 +578,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_sanitize_title_for_get_terms()
 	 */
-	public static function dp_test_sanitize_title_for_get_terms() {
+	public static function dp_test_sanitize_title_for_get_terms(): array {
 		return [
 			[ 'title', 'term', [ 'taxonomy' ], "'taxonomy'", 'term' ],
 			[ 'title', 'term', [ 'taxonomy1', 'taxonomy2' ], "'taxonomy1', 'taxonomy2'", 'term' ],
@@ -650,7 +649,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_sanitize_title_for_wc_attribute_taxonomy() {
+	public static function dp_test_sanitize_title_for_wc_attribute_taxonomy(): array {
 		$attribute_taxonomies = [
 			'id:3' => (object) [
 				'attribute_id'      => '3',
@@ -683,7 +682,6 @@ class MainTest extends CyrToLatTestCase {
 	 * Test woocommerce_before_template_part_filter().
 	 *
 	 * @return void
-	 * @noinspection PhpParamsInspection
 	 */
 	public function test_woocommerce_before_template_part_filter() {
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -736,7 +734,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_transliterate() {
+	public static function dp_test_transliterate(): array {
 		$bad_multibyte_content = pack( 'C*', ...array_slice( unpack( 'C*', 'я' ), 1 ) );
 
 		return [
@@ -787,7 +785,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_split_chinese_string() {
+	public static function dp_test_split_chinese_string(): array {
 		return [
 			'general'     => [
 				'我是俄罗斯人',
@@ -866,7 +864,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_sanitize_filename() {
+	public static function dp_test_sanitize_filename(): array {
 		return [
 			'empty string'               => [
 				'',
@@ -942,7 +940,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array[]
 	 */
-	public static function dp_test_min_suffix() {
+	public static function dp_test_min_suffix(): array {
 		return [
 			[ false, false, '.min' ],
 			[ false, true, '.min' ],
@@ -1080,7 +1078,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_sanitize_post_name()
 	 */
-	public static function dp_test_sanitize_post_name() {
+	public static function dp_test_sanitize_post_name(): array {
 		return [
 			[
 				'post name set' => [
@@ -1321,7 +1319,6 @@ class MainTest extends CyrToLatTestCase {
 	 * Test pll_locale_filter() with term.
 	 *
 	 * @throws ReflectionException ReflectionException.
-	 * @noinspection PhpDynamicFieldDeclarationInspection
 	 */
 	public function test_pll_locale_filter_with_term() {
 		$locale           = 'en_US';
@@ -1472,7 +1469,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_wpml_locale_filter() {
+	public static function dp_test_wpml_locale_filter(): array {
 		return [
 			'Existing language code, return from wpml' => [ 'ru', 'ru_RU' ],
 			'Not existing language code, return null'  => [ 'some', null ],
@@ -1556,7 +1553,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_wpml_language_has_switched() {
+	public static function dp_test_wpml_language_has_switched(): array {
 		return [
 			'Existing language code'     => [ 'ru', 'ru_RU' ],
 			'Not existing language code' => [ 'some', null ],
@@ -1613,7 +1610,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public static function dp_test_declare_wc_compatibility() {
+	public static function dp_test_declare_wc_compatibility(): array {
 		return [
 			[ false ],
 			[ true ],
@@ -1658,7 +1655,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Data provider for test_prepare_in()
 	 */
-	public static function dp_test_prepare_in() {
+	public static function dp_test_prepare_in(): array {
 		return [
 			[ null, null, '' ],
 			[ '', null, '' ],
@@ -1676,6 +1673,8 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return Mockery\Mock
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection PhpMissingReturnTypeInspection
+	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
 	private function get_subject() {
 		$locale     = 'ru_RU';
@@ -1685,12 +1684,12 @@ class MainTest extends CyrToLatTestCase {
 		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
 		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
 
-		$process_all_posts = Mockery::mock( Post_Conversion_Process::class );
-		$process_all_terms = Mockery::mock( Term_Conversion_Process::class );
-		$admin_notices     = Mockery::mock( Admin_Notices::class );
+		$process_all_posts = Mockery::mock( PostConversionProcess::class );
+		$process_all_terms = Mockery::mock( TermConversionProcess::class );
+		$admin_notices     = Mockery::mock( AdminNotices::class );
 
 		$converter = Mockery::mock( Converter::class );
-		$cli       = Mockery::mock( WP_CLI::class );
+		$cli       = Mockery::mock( WPCli::class );
 		$acf       = Mockery::mock( ACF::class );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -1715,7 +1714,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	protected function transpose_chinese_table( $table ) {
+	protected function transpose_chinese_table( $table ): array {
 		$transposed_table = [];
 		foreach ( $table as $key => $item ) {
 			$hieroglyphs = Mbstring::mb_str_split( $item );

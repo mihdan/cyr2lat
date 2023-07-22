@@ -15,16 +15,17 @@
 namespace CyrToLat;
 
 use cli\progress\Bar;
+use WP_CLI;
 use WP_CLI\NoOp;
 use WP_CLI_Command;
 use function WP_CLI\Utils\make_progress_bar;
 
 /**
- * Class WP_CLI
+ * Class WPCli
  *
- * @class WP_CLI
+ * @class WPCli
  */
-class WP_CLI extends WP_CLI_Command {
+class WPCli extends WP_CLI_Command {
 
 	/**
 	 * Converter class.
@@ -57,7 +58,6 @@ class WP_CLI extends WP_CLI_Command {
 	 * @param array $assoc_args Arguments in associative array.
 	 *
 	 * @noinspection PhpUnusedParameterInspection
-	 * @noinspection PhpUndefinedMethodInspection
 	 */
 	public function regenerate( array $args = [], array $assoc_args = [] ) {
 
@@ -84,7 +84,7 @@ class WP_CLI extends WP_CLI_Command {
 		$notify->tick();
 		$notify->finish();
 
-		\WP_CLI::success( 'Regenerate Completed.' );
+		WP_CLI::success( 'Regenerate Completed.' );
 	}
 
 	/**

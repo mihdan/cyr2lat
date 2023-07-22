@@ -15,7 +15,7 @@
 namespace CyrToLat\Tests\Unit\BackgroundProcesses;
 
 use CyrToLat\Main;
-use CyrToLat\Post_Conversion_Process;
+use CyrToLat\BackgroundProcesses\PostConversionProcess;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;
@@ -85,7 +85,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 			[ 'return' => 'ru_RU' ]
 		);
 
-		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
+		$subject = Mockery::mock( PostConversionProcess::class, [ $main ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();
 		$method  = 'task';
 
@@ -147,7 +147,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 		$main = Mockery::mock( Main::class );
 		$main->shouldReceive( 'transliterate' )->with( $post_name )->andReturn( $transliterated_name );
 
-		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
+		$subject = Mockery::mock( PostConversionProcess::class, [ $main ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();
 		$method  = 'task';
 
@@ -225,7 +225,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction( 'get_attached_file' )->with( $post_id )->andReturn( false );
 
-		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( PostConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject
 			->shouldReceive( 'log' )
 			->with( 'Cannot convert attachment file for attachment id: ' . $post_id )
@@ -253,7 +253,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction( 'get_attached_file' )->with( $post_id )->andReturn( $file );
 
-		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( PostConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'get_transliterated_file' )->with( $file )->once()->andReturn( $transliterated_file );
 		$subject->shouldReceive( 'rename_file' )->with( $file, $transliterated_file )->once()->andReturn( $rename );
 
@@ -351,7 +351,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 		WP_Mock::userFunction( 'wp_make_link_relative' )->with( $large_src[0] )->once()
 			->andReturn( $large_relative );
 
-		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( PostConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'get_transliterated_file' )->with( $thumbnail_file )->once()
 			->andReturn( $transliterated_thumbnail_file );
 		$subject->shouldReceive( 'get_transliterated_file' )->with( $medium_file )->once()
@@ -420,7 +420,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 		$main->shouldReceive( 'transliterate' )->with( $meta['sizes']['thumbnail']['file'] )
 			->andReturn( $transliterated_meta['sizes']['thumbnail']['file'] );
 
-		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
+		$subject = Mockery::mock( PostConversionProcess::class, [ $main ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();
 		$method  = 'update_attachment_metadata';
 
@@ -444,7 +444,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 		$main = Mockery::mock( Main::class );
 		$main->shouldReceive( 'transliterate' )->with( 'Скамейка' )->andReturn( 'Skamejka' );
 
-		$subject = Mockery::mock( Post_Conversion_Process::class, [ $main ] )->makePartial()
+		$subject = Mockery::mock( PostConversionProcess::class, [ $main ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();
 		$method  = 'get_transliterated_file';
 
@@ -462,7 +462,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 		$file     = '/var/www/test/wp-content/uploads/2020/05/Скамейка.jpg';
 		$new_file = '/var/www/test/wp-content/uploads/2020/05/Skamejka.jpg';
 
-		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()
+		$subject = Mockery::mock( PostConversionProcess::class )->makePartial()
 			->shouldAllowMockingProtectedMethods();
 		$method  = 'rename_file';
 
@@ -485,7 +485,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_complete() {
-		$subject = Mockery::mock( Post_Conversion_Process::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( PostConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'log' )->with( 'Post slugs conversion completed.' )->once();
 
 		$method = 'complete';
@@ -544,7 +544,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 		);
 
 		$main    = Mockery::mock( Main::class );
-		$subject = new Post_Conversion_Process( $main );
+		$subject = new PostConversionProcess( $main );
 		$this->set_protected_property( $subject, 'post', $post );
 		self::assertSame( $expected, $subject->filter_post_locale() );
 	}
