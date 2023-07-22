@@ -1316,11 +1316,8 @@ abstract class CyrToLatTestCase extends TestCase {
 	 * @param string $str Header comment to clean up.
 	 *
 	 * @return string
-	 *@since 2.8.0
-	 * @access private
 	 *
-		  * @see https://core.trac.wordpress.org/ticket/8497
-	 *
+	 * @see https://core.trac.wordpress.org/ticket/8497
 	 */
 	private function cleanup_header_comment( string $str ): string {
 		return trim( preg_replace( '/\s*(?:\*\/|\?>).*/', '', $str ) );
