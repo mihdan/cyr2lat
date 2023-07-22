@@ -56,7 +56,10 @@
     ],
     "psr-4": {
       "CyrToLat\\": "src/php"
-    }
+    },
+    "files": [
+      "src/php/includes/deprecated.php"
+    ]
   },
   "autoload-dev": {
     "psr-4": {
