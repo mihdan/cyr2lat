@@ -151,6 +151,9 @@ class SystemInfo extends PluginSettingsBase {
 		$locales = $tables->get_locales();
 
 		$data .= $this->data( 'Version', CYR_TO_LAT_VERSION );
+		$data .= $this->data( 'Site locale', get_locale() );
+		$data .= $this->data( 'User locale', get_user_locale() );
+		$data .= $this->data( 'Current table', $tables->get_current_locale() );
 
 		foreach ( $locales as $key => $locale ) {
 			$default_table = ConversionTables::get( $key );
@@ -161,7 +164,9 @@ class SystemInfo extends PluginSettingsBase {
 				continue;
 			}
 
-			$data .= $this->header( '--- ' . $locale['label'] . ' customization ---' );
+			$table_name = 'iso9' === $key ? 'ISO9' : $key;
+
+			$data .= $this->header( "--- $table_name table customization ---" );
 
 			foreach ( $diff as $symbol => $transliteration ) {
 				$data .= $this->data( $symbol, $transliteration );
