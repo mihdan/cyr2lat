@@ -139,6 +139,33 @@ function my_ctl_pre_sanitize_filename( $result, $filename ) {
 add_filter( 'ctl_pre_sanitize_filename', 10, 2 );
 `
 
+= How can I allow the plugin to work on the frontend? =
+
+Add similar code to your theme's `functions.php` file:
+
+`
+/**
+ * Filter status allowed Cyr To Lat plugin to work.
+ *
+ * @param bool $allowed
+ *
+ * @return bool
+ */
+function my_ctl_allow( bool $allowed ): bool {
+	$uri = isset( $_SERVER['REQUEST_URI'] ) ?
+		sanitize_url( wp_unslash( $_SERVER['REQUEST_URI'] ) ) :
+		'';
+
+	if ( 0 === strpos( $uri, '/divi-comments' ) ) {
+		return true;
+	}
+
+	return $allowed;
+}
+
+add_filter( 'ctl_allow', 'my_ctl_allow' );
+`
+
 = How can I limit post types for background conversion? =
 
 Add similar code to your theme's `functions.php` file:
@@ -199,6 +226,7 @@ Yes you can!
 * Tested with WordPress 6.3.
 * Tested with WooCommerce 7.9.
 * Added System Info tab.
+* Added filter 'ctl_allow'
 * Fixed console error when saving table data.
 
 = 5.5.3 (15.07.2023) =

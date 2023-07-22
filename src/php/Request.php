@@ -20,11 +20,12 @@ class Request {
 	 * @return bool
 	 */
 	public function is_allowed(): bool {
-		return (
+		$allowed =
 			! $this->is_frontend() ||
 			( $this->is_frontend() && $this->is_post() ) ||
-			$this->is_cli()
-		);
+			$this->is_cli();
+
+		return (bool) apply_filters( 'ctl_allow', $allowed );
 	}
 
 	/**
