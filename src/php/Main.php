@@ -145,9 +145,32 @@ class Main {
 	 * @return void
 	 */
 	public function init_all() {
+		$this->init_multilingual();
 		$this->init_classes();
 		$this->init_cli();
 		$this->init_hooks();
+	}
+
+	/**
+	 * Init multilingual features.
+	 * It must be first in the init sequence, as we use defined filters internally in our classes.
+	 *
+	 * @return void
+	 */
+	protected function init_multilingual() {
+		if ( class_exists( Polylang::class ) ) {
+			add_filter( 'locale', [ $this, 'pll_locale_filter' ] );
+		}
+
+		if ( class_exists( SitePress::class ) ) {
+			$this->wpml_locale = $this->get_wpml_locale();
+
+			// We cannot use locale filter here
+			// as WPML reverts locale at PHP_INT_MAX in \WPML\ST\MO\Hooks\LanguageSwitch::filterLocale.
+			add_filter( 'ctl_locale', [ $this, 'wpml_locale_filter' ], - PHP_INT_MAX );
+
+			add_action( 'wpml_language_has_switched', [ $this, 'wpml_language_has_switched' ], 10, 3 );
+		}
 	}
 
 	/**
@@ -232,20 +255,6 @@ class Main {
 
 		if ( ! $this->is_frontend || class_exists( SitePress::class ) ) {
 			add_filter( 'get_terms_args', [ $this, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
-		}
-
-		if ( class_exists( Polylang::class ) ) {
-			add_filter( 'locale', [ $this, 'pll_locale_filter' ] );
-		}
-
-		if ( class_exists( SitePress::class ) ) {
-			$this->wpml_locale = $this->get_wpml_locale();
-
-			// We cannot use locale filter here
-			// as WPML reverts locale at PHP_INT_MAX in \WPML\ST\MO\Hooks\LanguageSwitch::filterLocale.
-			add_filter( 'ctl_locale', [ $this, 'wpml_locale_filter' ], - PHP_INT_MAX );
-
-			add_action( 'wpml_language_has_switched', [ $this, 'wpml_language_has_switched' ], 10, 3 );
 		}
 
 		add_action( 'before_woocommerce_init', [ $this, 'declare_wc_compatibility' ] );

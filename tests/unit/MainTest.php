@@ -76,18 +76,96 @@ class MainTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_init_all() {
-		$init_classes = 'init_classes';
-		$init_cli     = 'init_cli';
-		$init_hooks   = 'init_hooks';
+		$init_multilingual = 'init_multilingual';
+		$init_classes      = 'init_classes';
+		$init_cli          = 'init_cli';
+		$init_hooks        = 'init_hooks';
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( $init_multilingual )->once();
 		$subject->shouldReceive( $init_classes )->once();
 		$subject->shouldReceive( $init_cli )->once();
 		$subject->shouldReceive( $init_hooks )->once();
 
 		$subject->init_all();
+	}
+
+	/**
+	 * Test init_multilingual.
+	 *
+	 * @param boolean $polylang  Polylang is active.
+	 * @param boolean $sitepress WPML is active.
+	 *
+	 * @return void
+	 * @dataProvider dp_test_init_multilingual
+	 * @throws ReflectionException
+	 */
+	public function test_init_multilingual( bool $polylang, bool $sitepress ) {
+		$wpml_locale = 'en_US';
+
+		FunctionMocker::replace(
+			'class_exists',
+			static function ( $class ) use ( $polylang, $sitepress ) {
+				if ( 'Polylang' === $class ) {
+					return $polylang;
+				}
+
+				if ( 'SitePress' === $class ) {
+					return $sitepress;
+				}
+
+				return null;
+			}
+		);
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
+		$method = 'init_multilingual';
+
+		$this->set_method_accessibility( $subject, $method );
+
+		if ( $polylang ) {
+			WP_Mock::expectFilterAdded( 'locale', [ $subject, 'pll_locale_filter' ] );
+		} else {
+			WP_Mock::expectFilterNotAdded( 'locale', [ $subject, 'pll_locale_filter' ] );
+		}
+
+		if ( $sitepress ) {
+			$subject->shouldReceive( 'get_wpml_locale' )->andReturn( $wpml_locale );
+
+			WP_Mock::expectFilterAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ], - PHP_INT_MAX );
+			WP_Mock::expectActionAdded(
+				'wpml_language_has_switched',
+				[ $subject, 'wpml_language_has_switched' ],
+				10,
+				3
+			);
+		} else {
+			WP_Mock::expectFilterNotAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ] );
+			WP_Mock::expectActionNotAdded( 'wpml_language_has_switched', [ $subject, 'wpml_language_has_switched' ] );
+		}
+
+		$subject->$method();
+
+		if ( $sitepress ) {
+			self::assertSame( $wpml_locale, $this->get_protected_property( $subject, 'wpml_locale' ) );
+		}
+	}
+
+	/**
+	 * Data provider for test_init_multilingual().
+	 *
+	 * @return array
+	 */
+	public function dp_test_init_multilingual() {
+		return [
+			[ false, false ],
+			[ false, true ],
+			[ true, false ],
+			[ true, true ],
+		];
 	}
 
 	/**
@@ -248,16 +326,13 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test init_hooks()
 	 *
-	 * @param boolean $polylang  Polylang is active.
 	 * @param boolean $sitepress WPML is active.
 	 * @param boolean $frontend  It is frontend.
 	 *
 	 * @dataProvider dp_test_init_hooks
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_hooks( bool $polylang, bool $sitepress, bool $frontend ) {
-		$wpml_locale = 'en_US';
-
+	public function test_init_hooks( bool $sitepress, bool $frontend ) {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 
@@ -275,11 +350,7 @@ class MainTest extends CyrToLatTestCase {
 
 		FunctionMocker::replace(
 			'class_exists',
-			static function ( $class ) use ( $polylang, $sitepress ) {
-				if ( 'Polylang' === $class ) {
-					return $polylang;
-				}
-
+			static function ( $class ) use ( $sitepress ) {
 				if ( 'SitePress' === $class ) {
 					return $sitepress;
 				}
@@ -294,51 +365,22 @@ class MainTest extends CyrToLatTestCase {
 			WP_Mock::expectFilterNotAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ] );
 		}
 
-		if ( $polylang ) {
-			WP_Mock::expectFilterAdded( 'locale', [ $subject, 'pll_locale_filter' ] );
-		} else {
-			WP_Mock::expectFilterNotAdded( 'locale', [ $subject, 'pll_locale_filter' ] );
-		}
-
-		if ( $sitepress ) {
-			$subject->shouldReceive( 'get_wpml_locale' )->andReturn( $wpml_locale );
-
-			WP_Mock::expectFilterAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ], - PHP_INT_MAX );
-			WP_Mock::expectActionAdded(
-				'wpml_language_has_switched',
-				[ $subject, 'wpml_language_has_switched' ],
-				10,
-				3
-			);
-		} else {
-			WP_Mock::expectFilterNotAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ] );
-			WP_Mock::expectActionNotAdded( 'wpml_language_has_switched', [ $subject, 'wpml_language_has_switched' ] );
-		}
-
 		WP_Mock::expectActionAdded( 'before_woocommerce_init', [ $subject, 'declare_wc_compatibility' ] );
 
 		$subject->$method();
-
-		if ( $sitepress ) {
-			self::assertSame( $wpml_locale, $this->get_protected_property( $subject, 'wpml_locale' ) );
-		}
 	}
 
 	/**
-	 * Data provider for dp_test_init_hooks().
+	 * Data provider for test_init_hooks()
 	 *
 	 * @return array
 	 */
 	public static function dp_test_init_hooks(): array {
 		return [
-			[ false, false, false ],
-			[ false, false, true ],
-			[ false, true, false ],
-			[ false, true, true ],
-			[ true, false, false ],
-			[ true, false, true ],
-			[ true, true, false ],
-			[ true, true, true ],
+			[ false, false ],
+			[ false, true ],
+			[ true, false ],
+			[ true, true ],
 		];
 	}
 
@@ -456,7 +498,7 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Data provider for test_sanitize_title
+	 * Data provider for test_sanitize_title()
 	 *
 	 * @return array
 	 */

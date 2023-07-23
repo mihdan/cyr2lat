@@ -129,7 +129,7 @@ class Tables extends PluginSettingsBase {
 	 * @return string
 	 */
 	public function get_current_locale(): string {
-		$current_locale = get_locale();
+		$current_locale = (string) apply_filters( 'ctl_locale', get_locale() );
 
 		return array_key_exists( $current_locale, $this->locales ) ? $current_locale : 'iso9';
 	}
