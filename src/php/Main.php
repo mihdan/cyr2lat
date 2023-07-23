@@ -137,20 +137,7 @@ class Main {
 	 */
 	public function init() {
 		$this->init_classes();
-
-		if ( $this->request->is_cli() ) {
-			try {
-				/**
-				 * Method WP_CLI::add_command() accepts class as callable.
-				 *
-				 * @noinspection PhpParamsInspection
-				 */
-				WP_CLI::add_command( 'cyr2lat', $this->cli );
-			} catch ( Exception $ex ) {
-				return;
-			}
-		}
-
+		$this->init_cli();
 		$this->init_hooks();
 	}
 
@@ -188,18 +175,38 @@ class Main {
 			$this->admin_notices
 		);
 
-		if ( $this->request->is_cli() ) {
-			$this->cli = new WPCli( $this->converter );
-		}
-
 		$this->acf         = new ACF( $this->settings );
 		$this->is_frontend = $this->request->is_frontend();
 	}
 
 	/**
+	 * Init in CLI mode.
+	 *
+	 * @return void
+	 */
+	protected function init_cli() {
+		if ( ! $this->request->is_cli() ) {
+			return;
+		}
+
+		$this->cli = new WPCli( $this->converter );
+
+		try {
+			/**
+			 * Method WP_CLI::add_command() accepts class as callable.
+			 *
+			 * @noinspection PhpParamsInspection
+			 */
+			WP_CLI::add_command( 'cyr2lat', $this->cli );
+		} catch ( Exception $ex ) {
+			return;
+		}
+	}
+
+	/**
 	 * Init hooks.
 	 */
-	public function init_hooks() {
+	protected function init_hooks() {
 		if ( $this->is_frontend ) {
 			add_action( 'woocommerce_before_template_part', [ $this, 'woocommerce_before_template_part_filter' ] );
 			add_action( 'woocommerce_after_template_part', [ $this, 'woocommerce_after_template_part_filter' ] );

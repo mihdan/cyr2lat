@@ -58,6 +58,26 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test init().
+	 *
+	 * @return void
+	 */
+	public function test_init() {
+		$init_classes = 'init_classes';
+		$init_cli     = 'init_cli';
+		$init_hooks   = 'init_hooks';
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( $init_classes )->once();
+		$subject->shouldReceive( $init_cli )->once();
+		$subject->shouldReceive( $init_hooks )->once();
+
+		$subject->init();
+	}
+
+	/**
 	 * Test init_classes().
 	 *
 	 * @throws ReflectionException Reflection Exception.
@@ -72,7 +92,6 @@ class MainTest extends CyrToLatTestCase {
 		$requirements_met = true;
 
 		$request = Mockery::mock( 'overload:' . Request::class );
-		$request->shouldReceive( 'is_cli' )->with()->andReturn( true );
 		$request->shouldReceive( 'is_frontend' )->with()->andReturnUsing(
 			function () use ( &$frontend ) {
 				return $frontend;
@@ -92,7 +111,6 @@ class MainTest extends CyrToLatTestCase {
 		Mockery::mock( 'overload:' . PostConversionProcess::class );
 		Mockery::mock( 'overload:' . TermConversionProcess::class );
 		Mockery::mock( 'overload:' . Converter::class );
-		Mockery::mock( 'overload:' . WPCli::class );
 		Mockery::mock( 'overload:' . ACF::class );
 
 		$subject = new Main();
@@ -106,7 +124,6 @@ class MainTest extends CyrToLatTestCase {
 		self::assertInstanceOf( PostConversionProcess::class, $this->get_protected_property( $subject, 'process_all_posts' ) );
 		self::assertInstanceOf( TermConversionProcess::class, $this->get_protected_property( $subject, 'process_all_terms' ) );
 		self::assertInstanceOf( Converter::class, $this->get_protected_property( $subject, 'converter' ) );
-		self::assertInstanceOf( WPCli::class, $this->get_protected_property( $subject, 'cli' ) );
 		self::assertInstanceOf( ACF::class, $this->get_protected_property( $subject, 'acf' ) );
 		self::assertSame( $frontend, $this->get_protected_property( $subject, 'is_frontend' ) );
 
@@ -129,20 +146,36 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test init()
+	 * Test init_cli()
 	 *
 	 * @throws ReflectionException ReflectionException.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
-	public function test_init() {
+	public function test_init_cli() {
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_cli' )->andReturn( false );
+		$request->shouldReceive( 'is_cli' )->andReturn( true );
+
+		Mockery::mock( 'overload:' . WPCli::class );
+
+		$add_command = FunctionMocker::replace(
+			'\WP_CLI::add_command'
+		);
 
 		$subject = Mockery::mock( Main::class )->makePartial();
-		$subject->shouldReceive( 'init_classes' )->once();
-		$subject->shouldReceive( 'init_hooks' )->once();
-		$this->set_protected_property( $subject, 'request', $request );
+		$subject->shouldAllowMockingProtectedMethods();
+		$method  = 'init_cli';
 
-		$subject->init();
+		$this->set_protected_property( $subject, 'request', $request );
+		$this->set_method_accessibility( $subject, $method );
+
+		$subject->$method();
+
+		$cli = $this->get_protected_property( $subject, 'cli' );
+		self::assertInstanceOf( WPCli::class, $cli );
+
+		$add_command->wasCalledWithOnce( [ 'cyr2lat', $cli ] );
 	}
 
 	/**
@@ -150,15 +183,21 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 * @noinspection ThrowRawExceptionInspection
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
 	 */
-	public function test_init_with_cli_error() {
+	public function test_init_cli_with_cli_error() {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
-		$subject->shouldReceive( 'init_classes' )->once();
-		$subject->shouldReceive( 'init_hooks' )->never();
+		$method = 'init_cli';
+
 		$this->set_protected_property( $subject, 'request', $request );
+		$this->set_method_accessibility( $subject, $method );
+
+		Mockery::mock( 'overload:' . WPCli::class );
 
 		$add_command = FunctionMocker::replace(
 			'\WP_CLI::add_command',
@@ -167,34 +206,30 @@ class MainTest extends CyrToLatTestCase {
 			}
 		);
 
-		$subject->init();
+		$subject->$method();
 
-		$add_command->wasCalledWithOnce( [ 'cyr2lat', null ] );
+		$cli = $this->get_protected_property( $subject, 'cli' );
+
+		$add_command->wasCalledWithOnce( [ 'cyr2lat', $cli ] );
 	}
 
 	/**
-	 * Test init() with CLI
+	 * Test init_cli() when not in CLI.
 	 *
-	 * @throws ReflectionException ReflectionException.
-	 * @noinspection PhpRedundantOptionalArgumentInspection
+	 * @return void
+	 * @throws ReflectionException
 	 */
-	public function test_init_with_cli() {
+	public function test_init_cli_when_not_in_cli() {
 		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_cli' )->andReturn( true );
+		$request->shouldReceive( 'is_cli' )->andReturn( false );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
-		$subject->shouldReceive( 'init_classes' )->once();
-		$subject->shouldReceive( 'init_hooks' )->once();
+		$method = 'init_cli';
+
 		$this->set_protected_property( $subject, 'request', $request );
+		$this->set_method_accessibility( $subject, $method );
 
-		$add_command = FunctionMocker::replace(
-			'\WP_CLI::add_command',
-			null
-		);
-
-		$subject->init();
-
-		$add_command->wasCalledWithOnce( [ 'cyr2lat', null ] );
+		$subject->$method();
 	}
 
 	/**
@@ -207,13 +242,15 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_init_hooks
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_hooks( $polylang, $sitepress, $frontend ) {
+	public function test_init_hooks( bool $polylang, bool $sitepress, bool $frontend ) {
 		$wpml_locale = 'en_US';
 
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
+		$method = 'init_hooks';
+
 		$subject->shouldAllowMockingProtectedMethods();
 		$this->set_protected_property( $subject, 'request', $request );
 		$this->set_protected_property( $subject, 'is_frontend', $frontend );
@@ -267,7 +304,7 @@ class MainTest extends CyrToLatTestCase {
 
 		WP_Mock::expectActionAdded( 'before_woocommerce_init', [ $subject, 'declare_wc_compatibility' ] );
 
-		$subject->init_hooks();
+		$subject->$method();
 
 		if ( $sitepress ) {
 			self::assertSame( $wpml_locale, $this->get_protected_property( $subject, 'wpml_locale' ) );
@@ -302,8 +339,9 @@ class MainTest extends CyrToLatTestCase {
 		$request->shouldReceive( 'is_allowed' )->andReturn( false );
 
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$this->set_protected_property( $subject, 'request', $request );
+		$method = 'init_hooks';
 
+		$this->set_protected_property( $subject, 'request', $request );
 		$this->set_protected_property( $subject, 'is_frontend', false );
 
 		WP_Mock::expectFilterNotAdded( 'woocommerce_before_template_part', [ $subject, 'woocommerce_before_template_part_filter' ] );
@@ -318,7 +356,7 @@ class MainTest extends CyrToLatTestCase {
 		WP_Mock::expectActionNotAdded( 'wpml_language_has_switched', [ $subject, 'wpml_language_has_switched' ] );
 		WP_Mock::expectActionNotAdded( 'before_woocommerce_init', [ $subject, 'declare_wc_compatibility' ] );
 
-		$subject->init_hooks();
+		$subject->$method();
 	}
 
 	/**
@@ -396,7 +434,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_sanitize_title
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_sanitize_title( $title, $expected ) {
+	public function test_sanitize_title( string $title, string $expected ) {
 		$subject = $this->get_subject();
 
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
@@ -456,7 +494,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_sanitize_title_for_insert_term
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_sanitize_title_for_insert_term( $title, $term, $expected ) {
+	public function test_sanitize_title_for_insert_term( string $title, $term, string $expected ) {
 		global $wpdb;
 
 		$taxonomy     = 'taxonomy';
@@ -519,7 +557,7 @@ class MainTest extends CyrToLatTestCase {
 	 * Test sanitize_title() for get_terms
 	 *
 	 * @param string $title               Title to sanitize.
-	 * @param string $term                Term to us.
+	 * @param string $term                Term to use.
 	 * @param array  $taxonomies          Taxonomies to use.
 	 * @param string $prepared_taxonomies Prepared taxonomies to use.
 	 * @param string $expected            Expected result.
@@ -527,7 +565,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_sanitize_title_for_get_terms
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_sanitize_title_for_get_terms( $title, $term, $taxonomies, $prepared_taxonomies, $expected ) {
+	public function test_sanitize_title_for_get_terms( string $title, string $term, array $taxonomies, string $prepared_taxonomies, string $expected ) {
 		global $wpdb;
 
 		$subject = $this->get_subject();
@@ -604,16 +642,17 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test sanitize_title() for term WC attribute taxonomy
 	 *
-	 * @param string $title                Title.
-	 * @param bool   $is_wc                Is WooCommerce active.
-	 * @param array  $attribute_taxonomies Attribute Taxonomies.
-	 * @param bool   $expected             Expected result.
+	 * @param string     $title                Title.
+	 * @param bool       $is_wc                Is WooCommerce active.
+	 * @param array|null $attribute_taxonomies Attribute Taxonomies.
+	 * @param int        $expected             Expected result.
 	 *
 	 * @dataProvider dp_test_sanitize_title_for_wc_attribute_taxonomy
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public function test_sanitize_title_for_wc_attribute_taxonomy(
-		$title, $is_wc, $attribute_taxonomies, $expected
+		string $title, bool $is_wc, $attribute_taxonomies, int $expected
 	) {
 		FunctionMocker::replace(
 			'function_exists',
@@ -707,7 +746,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_transliterate
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_transliterate( $string, $expected ) {
+	public function test_transliterate( string $string, string $expected ) {
 		$subject = $this->get_subject();
 
 		$settings = $this->get_protected_property( $subject, 'settings' );
@@ -756,7 +795,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 * @dataProvider dp_test_split_chinese_string
 	 */
-	public function test_split_chinese_string( $string, $expected ) {
+	public function test_split_chinese_string( string $string, string $expected ) {
 		$locale = 'zh_CN';
 		$table  = $this->get_conversion_table( $locale );
 		$table  = $this->transpose_chinese_table( $table );
@@ -820,7 +859,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_sanitize_filename
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_sanitize_filename( $filename, $expected ) {
+	public function test_sanitize_filename( string $filename, string $expected ) {
 		WP_Mock::userFunction(
 			'seems_utf8',
 			[
@@ -900,7 +939,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @return void
 	 * @dataProvider dp_test_min_suffix
 	 */
-	public function test_min_suffix( $defined, $script_debug, $expected ) {
+	public function test_min_suffix( bool $defined, bool $script_debug, string $expected ) {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		FunctionMocker::replace(
@@ -1035,7 +1074,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_sanitize_post_name
 	 */
-	public function test_sanitize_post_name( $data, $expected ) {
+	public function test_sanitize_post_name( array $data, array $expected ) {
 
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$GLOBALS['wp_version'] = '5.0';
@@ -1380,13 +1419,14 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test get_wpml_locale().
 	 *
-	 * @param string $language_code Current language code.
-	 * @param string $expected      Expected.
+	 * @param string      $language_code Current language code.
+	 * @param string|null $expected      Expected.
 	 *
 	 * @dataProvider dp_test_wpml_locale_filter
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_get_wpml_locale( $language_code, $expected ) {
+	public function test_get_wpml_locale( string $language_code, $expected ) {
 		$languages = [
 			'be' =>
 				[
@@ -1472,11 +1512,12 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test wpml_language_has_switched().
 	 *
-	 * @param string $language_code Current language code.
-	 * @param string $expected      Expected.
+	 * @param string|null $language_code Current language code.
+	 * @param string|null $expected      Expected.
 	 *
 	 * @dataProvider dp_test_wpml_language_has_switched
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public function test_wpml_language_has_switched( $language_code, $expected ) {
 		$languages = [
@@ -1561,7 +1602,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_declare_wc_compatibility
 	 */
-	public function test_declare_wc_compatibility( $feature_util ) {
+	public function test_declare_wc_compatibility( bool $feature_util ) {
 		FunctionMocker::replace(
 			'constant',
 			static function ( $name ) {
@@ -1613,13 +1654,14 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test prepare_in()
 	 *
-	 * @param mixed  $items    Items to prepare.
-	 * @param string $format   Format.
-	 * @param string $expected Expected result.
+	 * @param mixed       $items    Items to prepare.
+	 * @param string|null $format   Format.
+	 * @param string      $expected Expected result.
 	 *
 	 * @dataProvider dp_test_prepare_in
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_prepare_in( $items, $format, $expected ) {
+	public function test_prepare_in( $items, $format, string $expected ) {
 		global $wpdb;
 
 		$items    = (array) $items;
@@ -1707,7 +1749,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	protected function transpose_chinese_table( $table ): array {
+	protected function transpose_chinese_table( array $table ): array {
 		$transposed_table = [];
 		foreach ( $table as $key => $item ) {
 			$hieroglyphs = Mbstring::mb_str_split( $item );
