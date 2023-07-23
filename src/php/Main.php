@@ -133,9 +133,18 @@ class Main {
 	/**
 	 * Init plugin.
 	 *
-	 * @noinspection PhpUndefinedClassInspection
+	 * @return void
 	 */
 	public function init() {
+		add_action( 'plugins_loaded', [ $this, 'init_all' ], - PHP_INT_MAX );
+	}
+
+	/**
+	 * Init all plugin stuffs.
+	 *
+	 * @return void
+	 */
+	public function init_all() {
 		$this->init_classes();
 		$this->init_cli();
 		$this->init_hooks();

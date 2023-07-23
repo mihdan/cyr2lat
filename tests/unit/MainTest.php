@@ -63,6 +63,19 @@ class MainTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_init() {
+		$subject = new Main();
+
+		WP_Mock::expectActionAdded( 'plugins_loaded', [ $subject, 'init_all' ], - PHP_INT_MAX );
+
+		$subject->init();
+	}
+
+	/**
+	 * Test init_all().
+	 *
+	 * @return void
+	 */
+	public function test_init_all() {
 		$init_classes = 'init_classes';
 		$init_cli     = 'init_cli';
 		$init_hooks   = 'init_hooks';
@@ -74,7 +87,7 @@ class MainTest extends CyrToLatTestCase {
 		$subject->shouldReceive( $init_cli )->once();
 		$subject->shouldReceive( $init_hooks )->once();
 
-		$subject->init();
+		$subject->init_all();
 	}
 
 	/**
