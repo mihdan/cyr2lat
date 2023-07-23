@@ -85,25 +85,23 @@ define( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', '7.0' );
  */
 define( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS', 1000 );
 
+require_once constant( 'CYR_TO_LAT_PATH' ) . '/vendor/autoload.php';
+require_once constant( 'CYR_TO_LAT_PATH' ) . '/libs/polyfill-mbstring/bootstrap.php';
+
 /**
- * Get the instance of the main plugin class.
+ * Get main class instance.
  *
  * @return Main
  */
 function cyr_to_lat(): Main {
-
 	// Global for backwards compatibility.
 	global $cyr_to_lat_plugin;
 
-	require_once constant( 'CYR_TO_LAT_PATH' ) . '/vendor/autoload.php';
-	require_once constant( 'CYR_TO_LAT_PATH' ) . '/libs/polyfill-mbstring/bootstrap.php';
-
-	$cyr_to_lat_plugin = Main::instance();
+	if ( ! $cyr_to_lat_plugin ) {
+		$cyr_to_lat_plugin = new Main();
+	}
 
 	return $cyr_to_lat_plugin;
 }
 
-/**
- * Init plugin on plugin load.
- */
 cyr_to_lat()->init();

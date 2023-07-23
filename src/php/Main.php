@@ -131,21 +131,6 @@ class Main {
 	protected $is_frontend;
 
 	/**
-	 * Get a single instance of the plugin.
-	 *
-	 * @return Main
-	 */
-	public static function instance(): Main {
-		static $instance;
-
-		if ( ! $instance ) {
-			$instance = new self();
-		}
-
-		return $instance;
-	}
-
-	/**
 	 * Init plugin.
 	 *
 	 * @noinspection PhpUndefinedClassInspection

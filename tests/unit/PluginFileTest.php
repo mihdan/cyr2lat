@@ -88,7 +88,6 @@ class PluginFileTest extends CyrToLatTestCase {
 		);
 
 		$main = Mockery::mock( 'overload:' . Main::class );
-		$main->shouldReceive( 'instance' )->once()->andReturn( $main );
 		$main->shouldReceive( 'init' )->once();
 
 		require PLUGIN_MAIN_FILE;
