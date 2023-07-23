@@ -228,6 +228,7 @@ Yes you can!
 * Added System Info tab.
 * Added filter 'ctl_allow'
 * Fixed console error when saving table data.
+* Fixed current table setting on Tables page with WPML.
 
 = 5.5.3 (15.07.2023) =
 * Tested with WooCommerce 7.8.
