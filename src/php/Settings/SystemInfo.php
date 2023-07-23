@@ -142,18 +142,20 @@ class SystemInfo extends PluginSettingsBase {
 		 *
 		 * @var Tables $tables
 		 */
-		$tables  = array_filter(
+		$tables         = array_filter(
 			$tabs,
 			static function ( $tab ) {
 				return is_a( $tab, Tables::class );
 			}
 		)[0];
-		$locales = $tables->get_locales();
+		$locales        = $tables->get_locales();
+		$current_locale = $tables->get_current_locale();
+		$current_locale = 'iso9' === $current_locale ? 'ISO9' : $current_locale;
 
 		$data .= $this->data( 'Version', CYR_TO_LAT_VERSION );
 		$data .= $this->data( 'Site locale', get_locale() );
 		$data .= $this->data( 'User locale', get_user_locale() );
-		$data .= $this->data( 'Current table', $tables->get_current_locale() );
+		$data .= $this->data( 'Current table', $current_locale );
 
 		foreach ( $locales as $key => $locale ) {
 			$default_table = ConversionTables::get( $key );
