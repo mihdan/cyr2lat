@@ -88,15 +88,10 @@ class PluginFileTest extends CyrToLatTestCase {
 		);
 
 		$main = Mockery::mock( 'overload:' . Main::class );
+		$main->shouldReceive( 'instance' )->once()->andReturn( $main );
 		$main->shouldReceive( 'init' )->once();
 
 		require PLUGIN_MAIN_FILE;
-
-		// Include main file the second time to make sure that plugin is not activated again.
-		include PLUGIN_MAIN_FILE;
-
-		$defined->wasCalledWithTimes( [ 'ABSPATH' ], 2 );
-		$defined->wasCalledWithTimes( [ 'CYR_TO_LAT_VERSION' ], 2 );
 
 		$expected    = [
 			'version' => CYR_TO_LAT_TEST_VERSION,

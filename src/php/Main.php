@@ -131,9 +131,50 @@ class Main {
 	protected $is_frontend;
 
 	/**
-	 * Main constructor.
+	 * Get a single instance of the plugin.
+	 *
+	 * @return Main
 	 */
-	public function __construct() {
+	public static function instance(): Main {
+		static $instance;
+
+		if ( ! $instance ) {
+			$instance = new self();
+		}
+
+		return $instance;
+	}
+
+	/**
+	 * Init plugin.
+	 *
+	 * @noinspection PhpUndefinedClassInspection
+	 */
+	public function init() {
+		$this->init_classes();
+
+		if ( $this->request->is_cli() ) {
+			try {
+				/**
+				 * Method WP_CLI::add_command() accepts class as callable.
+				 *
+				 * @noinspection PhpParamsInspection
+				 */
+				WP_CLI::add_command( 'cyr2lat', $this->cli );
+			} catch ( Exception $ex ) {
+				return;
+			}
+		}
+
+		$this->init_hooks();
+	}
+
+	/**
+	 * Init other classes.
+	 *
+	 * @return void
+	 */
+	public function init_classes() {
 		$this->request  = new Request();
 		$this->settings = new Settings(
 			[
@@ -171,29 +212,7 @@ class Main {
 	}
 
 	/**
-	 * Init class.
-	 *
-	 * @noinspection PhpUndefinedClassInspection
-	 */
-	public function init() {
-		if ( $this->request->is_cli() ) {
-			try {
-				/**
-				 * Method WP_CLI::add_command() accepts class as callable.
-				 *
-				 * @noinspection PhpParamsInspection
-				 */
-				WP_CLI::add_command( 'cyr2lat', $this->cli );
-			} catch ( Exception $ex ) {
-				return;
-			}
-		}
-
-		$this->init_hooks();
-	}
-
-	/**
-	 * Init class hooks.
+	 * Init hooks.
 	 */
 	public function init_hooks() {
 		if ( $this->is_frontend ) {

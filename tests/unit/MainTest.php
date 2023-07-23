@@ -30,7 +30,6 @@ use CyrToLat\WPCli;
 use Exception;
 use Mockery;
 use PHPUnit\Runner\Version;
-use ReflectionClass;
 use ReflectionException;
 use WP_Mock;
 use WP_REST_Server;
@@ -59,16 +58,15 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test constructor
+	 * Test init_classes().
 	 *
 	 * @throws ReflectionException Reflection Exception.
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
-	public function test_constructor() {
-		$classname = Main::class;
-		$frontend  = false;
+	public function test_init_classes() {
+		$frontend = false;
 
 		// Test when requirements are met.
 		$requirements_met = true;
@@ -97,44 +95,37 @@ class MainTest extends CyrToLatTestCase {
 		Mockery::mock( 'overload:' . WPCli::class );
 		Mockery::mock( 'overload:' . ACF::class );
 
-		// Get mock, without the constructor being called.
-		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
+		$subject = new Main();
+		$method  = 'init_classes';
 
-		// Now call the constructor.
-		$reflected_class = new ReflectionClass( $classname );
-		$constructor     = $reflected_class->getConstructor();
-		$constructor->invoke( $mock );
+		$subject->$method();
 
-		self::assertInstanceOf( Request::class, $this->get_protected_property( $mock, 'request' ) );
-		self::assertInstanceOf( Settings::class, $this->get_protected_property( $mock, 'settings' ) );
-		self::assertInstanceOf( AdminNotices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
-		self::assertInstanceOf( PostConversionProcess::class, $this->get_protected_property( $mock, 'process_all_posts' ) );
-		self::assertInstanceOf( TermConversionProcess::class, $this->get_protected_property( $mock, 'process_all_terms' ) );
-		self::assertInstanceOf( Converter::class, $this->get_protected_property( $mock, 'converter' ) );
-		self::assertInstanceOf( WPCli::class, $this->get_protected_property( $mock, 'cli' ) );
-		self::assertInstanceOf( ACF::class, $this->get_protected_property( $mock, 'acf' ) );
-		self::assertSame( $frontend, $this->get_protected_property( $mock, 'is_frontend' ) );
+		self::assertInstanceOf( Request::class, $this->get_protected_property( $subject, 'request' ) );
+		self::assertInstanceOf( Settings::class, $this->get_protected_property( $subject, 'settings' ) );
+		self::assertInstanceOf( AdminNotices::class, $this->get_protected_property( $subject, 'admin_notices' ) );
+		self::assertInstanceOf( PostConversionProcess::class, $this->get_protected_property( $subject, 'process_all_posts' ) );
+		self::assertInstanceOf( TermConversionProcess::class, $this->get_protected_property( $subject, 'process_all_terms' ) );
+		self::assertInstanceOf( Converter::class, $this->get_protected_property( $subject, 'converter' ) );
+		self::assertInstanceOf( WPCli::class, $this->get_protected_property( $subject, 'cli' ) );
+		self::assertInstanceOf( ACF::class, $this->get_protected_property( $subject, 'acf' ) );
+		self::assertSame( $frontend, $this->get_protected_property( $subject, 'is_frontend' ) );
 
 		// Test when requirements are not met.
 		$requirements_met = false;
 
-		// Get mock, without the constructor being called.
-		$mock = $this->getMockBuilder( $classname )->disableOriginalConstructor()->getMock();
+		$subject = new Main();
 
-		// Now call the constructor.
-		$reflected_class = new ReflectionClass( $classname );
-		$constructor     = $reflected_class->getConstructor();
-		$constructor->invoke( $mock );
+		$subject->$method();
 
-		self::assertInstanceOf( Request::class, $this->get_protected_property( $mock, 'request' ) );
-		self::assertInstanceOf( Settings::class, $this->get_protected_property( $mock, 'settings' ) );
-		self::assertInstanceOf( AdminNotices::class, $this->get_protected_property( $mock, 'admin_notices' ) );
-		self::assertNull( $this->get_protected_property( $mock, 'process_all_posts' ) );
-		self::assertNull( $this->get_protected_property( $mock, 'process_all_terms' ) );
-		self::assertNull( $this->get_protected_property( $mock, 'converter' ) );
-		self::assertNull( $this->get_protected_property( $mock, 'cli' ) );
-		self::assertNull( $this->get_protected_property( $mock, 'acf' ) );
-		self::assertNull( $this->get_protected_property( $mock, 'is_frontend' ) );
+		self::assertInstanceOf( Request::class, $this->get_protected_property( $subject, 'request' ) );
+		self::assertInstanceOf( Settings::class, $this->get_protected_property( $subject, 'settings' ) );
+		self::assertInstanceOf( AdminNotices::class, $this->get_protected_property( $subject, 'admin_notices' ) );
+		self::assertNull( $this->get_protected_property( $subject, 'process_all_posts' ) );
+		self::assertNull( $this->get_protected_property( $subject, 'process_all_terms' ) );
+		self::assertNull( $this->get_protected_property( $subject, 'converter' ) );
+		self::assertNull( $this->get_protected_property( $subject, 'cli' ) );
+		self::assertNull( $this->get_protected_property( $subject, 'acf' ) );
+		self::assertNull( $this->get_protected_property( $subject, 'is_frontend' ) );
 	}
 
 	/**
@@ -147,9 +138,9 @@ class MainTest extends CyrToLatTestCase {
 		$request->shouldReceive( 'is_cli' )->andReturn( false );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
-		$this->set_protected_property( $subject, 'request', $request );
-
+		$subject->shouldReceive( 'init_classes' )->once();
 		$subject->shouldReceive( 'init_hooks' )->once();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		$subject->init();
 	}
@@ -165,8 +156,9 @@ class MainTest extends CyrToLatTestCase {
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
-		$this->set_protected_property( $subject, 'request', $request );
+		$subject->shouldReceive( 'init_classes' )->once();
 		$subject->shouldReceive( 'init_hooks' )->never();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		$add_command = FunctionMocker::replace(
 			'\WP_CLI::add_command',
@@ -191,8 +183,9 @@ class MainTest extends CyrToLatTestCase {
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
-		$this->set_protected_property( $subject, 'request', $request );
+		$subject->shouldReceive( 'init_classes' )->once();
 		$subject->shouldReceive( 'init_hooks' )->once();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		$add_command = FunctionMocker::replace(
 			'\WP_CLI::add_command',
@@ -220,9 +213,9 @@ class MainTest extends CyrToLatTestCase {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 
-		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
 		$this->set_protected_property( $subject, 'request', $request );
-
 		$this->set_protected_property( $subject, 'is_frontend', $frontend );
 
 		WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );

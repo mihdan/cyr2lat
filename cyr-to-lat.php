@@ -26,9 +26,9 @@
  */
 
 // phpcs:ignore Generic.Commenting.DocComment.MissingShort
-/** @noinspection PhpParamsInspection */
+/** @noinspection PhpDefineCanBeReplacedWithConstInspection */
 
-namespace CyrToLat;
+use CyrToLat\Main;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	// @codeCoverageIgnoreStart
@@ -86,12 +86,24 @@ define( 'CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION', '7.0' );
 define( 'CYR_TO_LAT_REQUIRED_MAX_INPUT_VARS', 1000 );
 
 /**
+ * Get the instance of the main plugin class.
+ *
+ * @return Main
+ */
+function cyr_to_lat(): Main {
+
+	// Global for backwards compatibility.
+	global $cyr_to_lat_plugin;
+
+	require_once constant( 'CYR_TO_LAT_PATH' ) . '/vendor/autoload.php';
+	require_once constant( 'CYR_TO_LAT_PATH' ) . '/libs/polyfill-mbstring/bootstrap.php';
+
+	$cyr_to_lat_plugin = Main::instance();
+
+	return $cyr_to_lat_plugin;
+}
+
+/**
  * Init plugin on plugin load.
  */
-require_once constant( 'CYR_TO_LAT_PATH' ) . '/vendor/autoload.php';
-require_once constant( 'CYR_TO_LAT_PATH' ) . '/libs/polyfill-mbstring/bootstrap.php';
-
-global $cyr_to_lat_plugin;
-
-$cyr_to_lat_plugin = new Main();
-$cyr_to_lat_plugin->init();
+cyr_to_lat()->init();
