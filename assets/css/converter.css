@@ -1,3 +1,70 @@
+#ctl-options table tbody {
+	background: #fff;
+}
+
+#ctl-options table tbody tr {
+	display: grid;
+	align-self: start;
+}
+
+#ctl-options table tbody tr td {
+	padding: 0;
+	margin: 0;
+	position: relative;
+}
+
+/* Section Post Types and Statuses */
+.ctl-section-types-statuses + table {
+	max-width: 760px;
+}
+
+.ctl-section-types-statuses + table tbody {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 10px 20px;
+	padding: 15px 20px;
+}
+
+.ctl-section-types-statuses + table tbody tr th {
+	padding: 0 0 10px 0;
+}
+
+.ctl-section-types-statuses + table tbody tr td input {
+	width: 100%;
+}
+
+#ctl-options fieldset + .helper::before {
+	transform: translate(25px, -0.8em);
+	top: 50%;
+}
+
+#ctl-options table tbody tr th {
+	padding: 5px 0 10px 0;
+}
+
+#ctl-options fieldset + .helper::before {
+	transform: translate(200px, -1.9em);
+	top: 0;
+	left: 0;
+	right: unset;
+}
+
+#ctl-options fieldset + .helper .helper-content {
+	top: 0;
+	left: 0;
+	right: unset;
+	transform: translate(calc(200px - 100% + 1.2em), -6.6em);
+	min-width: 200px;
+}
+
+#ctl-options .helper .helper-content::after {
+	bottom: 0;
+	top: unset;
+	border-bottom-color: transparent;
+	border-top-color: #000;
+	transform: translateY(100%);
+}
+
 #ctl-confirm-popup {
 	display: none;
 	position: fixed;
@@ -5,8 +72,13 @@
 	right: 0;
 	top: 0;
 	bottom: 0;
-	background: rgba(241,241,241,0.8);
+	background: rgba(241, 241, 241, 0.8);
 	z-index: 9999;
+}
+
+#ctl-convert-button {
+	color: #d63638;
+	border-color: #d63638;
 }
 
 #ctl-confirm-content {
@@ -16,59 +88,13 @@
 	top: 50%;
 	transform: translate(-50%, -50%);
 	background: #fff;
-	padding: 20px;
+	padding: 0 1.3em 1.3em 1.3em;
 }
 
-.helper {
-	position: relative;
-	float: left;
-	left: -1.7em;
-	top: 0.4em;
+#ctl-confirm-buttons {
+	margin-top: 1.3em;
 }
 
-.helper-content {
-	position: absolute;
-	display: none;
-	line-height: 1.5em;
-	top: 50%;
-	left: 50%;
-	transform: translate(calc(-50% + 5px), 26px);
-	color: #fff;
-	font-size: .8em;
-	width: 150px;
-	background: #333;
-	text-align: center;
-	border-radius: 3px;
-	padding: .618em 1em;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
-}
-
-.helper::after {
-	font-family: Dashicons;
-	font-size: 1.3em;
-	speak: none;
-	font-weight: 400;
-	text-transform: none;
-	line-height: 1;
-	-webkit-font-smoothing: antialiased;
-	text-indent: 0;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	text-align: center;
-	content: "";
-	cursor: help;
-	font-variant: normal;
-	margin: 0;
-}
-
-.helper:hover .helper-content {
-	display: block;
-}
-
-#ctl-convert-button {
-	color: #d63638;
-	border-color: #d63638;
+#ctl-confirm-cancel {
+	margin-left: 0.5em;
 }

@@ -4,6 +4,12 @@
 
 /* global Cyr2LatTablesObject */
 
+/**
+ * @param Cyr2LatTablesObject.ajaxUrl
+ * @param Cyr2LatTablesObject.action
+ * @param Cyr2LatTablesObject.nonce
+ */
+
 class Tables {
 	/**
 	 * Class constructor.
@@ -31,12 +37,6 @@ class Tables {
 		this.optionsForm = document.querySelector( this.OPTIONS_FORM_SELECTOR );
 		this.tablesData = this.getTablesData();
 		this.submitButton = document.querySelector( this.SUBMIT_SELECTOR );
-
-		// Copy to class properties, otherwise eslint marks some properties of global object as unresolved.
-		this.optionsSaveSuccessMessage =
-			Cyr2LatTablesObject.optionsSaveSuccessMessage;
-		this.optionsSaveErrorMessage =
-			Cyr2LatTablesObject.optionsSaveErrorMessage;
 
 		this.addWrapper();
 		this.addMessageLines();
@@ -185,25 +185,43 @@ class Tables {
 		} );
 		document.body.appendChild( activeForm );
 
-		return fetch( this.optionsForm.getAttribute( 'action' ), {
-			method: activeForm.method,
-			body: new URLSearchParams( [ ...new FormData( activeForm ) ] ),
+		const params = new URLSearchParams( [ ...new FormData( activeForm ) ] );
+
+		params.append( 'action', Cyr2LatTablesObject.action );
+		params.append( 'nonce', Cyr2LatTablesObject.nonce );
+
+		return fetch( Cyr2LatTablesObject.ajaxUrl, {
+			method: 'POST',
+			body: params,
 		} )
 			.then( ( response ) => {
-				if ( response.ok ) {
+				if ( ! response.ok ) {
+					throw new Error( response.statusText );
+				}
+
+				return response.json();
+			} )
+			.then( ( json ) => {
+				if ( json.success ) {
 					this.showMessage(
 						this.successMessage,
-						this.optionsSaveSuccessMessage
+						json.data
 					);
+
 					this.tablesData = this.getTablesData();
 				} else {
 					this.showMessage(
 						this.errorMessage,
-						this.optionsSaveErrorMessage
+						json.data
 					);
 				}
-
-				return response.json();
+			} )
+			.catch( ( error ) => {
+				this.showMessage(
+					this.errorMessage,
+					error
+				);
+				return {};
 			} )
 			.finally( () => {
 				activeForm.parentNode.removeChild( activeForm );
@@ -378,7 +396,7 @@ class Tables {
 			const plus = document.createElement( 'div' );
 			plus.classList.add( this.PLUS_CLASS );
 			plus.innerHTML = this.plusButton;
-			table.querySelector( 'td' ).appendChild( plus );
+			table.querySelector( 'td fieldset' ).appendChild( plus );
 
 			return null;
 		} );
@@ -492,7 +510,7 @@ class Tables {
 	 * @param {Element} label Label to edit.
 	 */
 	editLabel( label ) {
-		label.parentNode.appendChild( this.editLabelInput );
+		label.parentNode.insertBefore( this.editLabelInput, label.nextSibling );
 		this.editLabelInput.value = label.innerHTML;
 
 		this.editLabelInput.classList.remove( this.EDIT_LABEL_ERROR_CLASS );
@@ -550,7 +568,7 @@ class Tables {
 			return;
 		}
 
-		const input = this.editLabelInput.parentNode.querySelector( 'input' );
+		const input = this.editLabelInput.nextElementSibling;
 
 		this.hideEditLabelInput();
 

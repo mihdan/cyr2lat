@@ -6,10 +6,17 @@
 #ctl-options.ctl-tables h2.nav-tab,
 #ctl-options.ctl-tables table.active {
 	display: block;
+	font-size: 14px;
+	border-radius: 4px;
 }
 
 #ctl-options .form-table th {
 	display: none;
+}
+
+#ctl-options table tbody tr td {
+	padding: 15px 10px;
+	display: table-cell;
 }
 
 .ctl-table {
@@ -41,7 +48,7 @@
 }
 
 #ctl-options .nav-tab-wrapper {
-	width: 125px;
+	width: 120px;
 	float: left;
 	padding-top: 22px;
 	border-bottom: none;
@@ -49,7 +56,7 @@
 }
 
 body.js #ctl-options .ctl-table {
-	width: calc(100% - 125px);
+	width: calc(100% - 120px);
 	float: left;
 	clear: none;
 }
@@ -81,7 +88,6 @@ body.js #ctl-options .ctl-table {
 }
 
 #ctl-options .nav-tab-current.nav-tab-active {
-	/*box-shadow: 0 0 5px 5px #2271b1;*/
 	background: #2271b1;
 	color: #fff;
 	border-color: #0a4b78;
@@ -94,32 +100,50 @@ body.js #ctl-options .ctl-table {
 .ctl-table-cell {
 	float: left;
 	position: relative;
-	margin-bottom: 1em;
+	margin: 0 0.2em 1em 0.2em;
+	width: 6.2em;
+	display: flex;
+	justify-content: space-between;
 }
 
-.ctl-table-cell label {
-	width: 2.4em;
+td fieldset .ctl-table-cell label {
+	width: 3em;
 	display: inline-block;
 	text-align: right;
-	margin-right: 0.2em;
+	margin: 0 !important;
+	padding: 0 8px;
+	line-height: 30px;
+	height: 30px;
+	border-radius: 4px;
+	border: 1px solid transparent;
+	vertical-align: middle;
+	box-sizing: border-box;
 }
 
 .ctl-table-cell input {
 	width: 3em !important;
 	display: inline-block;
+	vertical-align: middle;
+	margin: 0;
+	border-width: 1px;
 }
 
 .ctl-table-cell #ctl-edit-label {
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 2.4em !important;
-	padding: 0;
-	border: 1px solid #007cba;
+	width: 3em !important;
+	margin: 0;
+	padding: 0 8px;
+	border: 1px solid #007cba !important;
 	box-shadow: 0 0 0 1px #007cba;
-	outline: 2px solid #0000;
+	outline: none;
 	border-radius: 4px;
-	line-height: 2;
+	height: 30px;
+}
+
+.ctl-table-cell #ctl-edit-label:focus-visible {
+	outline: none;
 }
 
 .ctl-edit-label-error {
@@ -128,8 +152,11 @@ body.js #ctl-options .ctl-table {
 
 .ctl-plus {
 	position: relative;
-	float: left;
-	display: inline-block;
+	display: flex;
+	height: 30px;
+	width: 6.2em;
+	align-items: center;
+	justify-content: center;
 }
 
 .ctl-plus button {
@@ -138,30 +165,33 @@ body.js #ctl-options .ctl-table {
 	height: 24px;
 	width: 24px;
 	padding: 0;
-	position: absolute;
-	top: 0.35em;
-	left: 1.8em;
 }
 
 .ctl-plus button:focus {
 	outline: none;
 }
 
-#appreciation {
-	clear: both;
-	padding-top: 10px;
-}
-
-@media screen and (max-width: 767px) {
-	.ctl-table-cell label {
-		width: 2.2em;
+@media screen and (max-width: 782px) {
+	.ctl-table-cell {
+		width: 100px;
 	}
 
-	.ctl-table-cell input {
-		width: 2.8em !important;
+	td fieldset .ctl-table-cell label {
+		height: 40px;
+		line-height: 40px;
+		width: 48px;
 	}
 
-	#ctl-options .submit {
-		padding-top: 20px;
+	.ctl-table-cell #ctl-edit-label {
+		height: 40px;
+	}
+
+	#ctl-options table tbody tr td {
+		padding: 15px 1px;
+	}
+
+	.ctl-plus {
+		height: 40px;
+		width: 100px;
 	}
 }

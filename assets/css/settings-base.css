@@ -1,3 +1,15 @@
+.wrap h1.ctl-settings-header {
+	font-size: 34px;
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+}
+
+.ctl-logo {
+	height: 64px;
+	margin: 10px 5px 10px 0;
+}
+
 .ctl-settings-tabs {
 	line-height: 4.5em;
 	background: #fff;
@@ -21,5 +33,133 @@
 }
 
 .ctl-settings-tab.active {
-	border-bottom: 2px solid #4f94d4;
+	border-bottom: 2px solid #2271b1;
+}
+
+#ctl-options h2 {
+	font-size: 1.5em;
+}
+
+#ctl-options h3 {
+	margin: 1.5em 0 1em;
+}
+
+#ctl-options table tbody tr td {
+	padding: 0;
+	margin: 0;
+	display: block;
+	position: relative;
+	width: max-content;
+}
+
+#ctl-options table tr td input[type="checkbox"] {
+	display: inline;
+	border: none;
+	box-shadow: none;
+	margin: 0 4px 0 0;
+	min-width: 0;
+	width: 0;
+}
+
+#ctl-options table tr td input[type="checkbox"]::before {
+	background: no-repeat url('../images/checkbox-off.svg');
+	margin: 0;
+	width: 2.4792rem;
+	height: 1.3125rem;
+	content: '';
+	display: inline-block;
+	float: left;
+}
+
+#ctl-options table tr td input[type="checkbox"]:checked::before {
+	background: no-repeat url('../images/checkbox-on.svg');
+}
+
+#ctl-options fieldset:disabled {
+	color: #dadada;
+}
+
+/* Helper */
+#ctl-options .helper::before {
+	content: '?';
+	position: absolute;
+	right: 0;
+	top: 0;
+	transform: translate(0, -26px);
+	background: #000;
+	color: #fff;
+	width: 1.2em;
+	height: 1.2em;
+	text-align: center;
+	border-radius: 1.2em;
+}
+
+#ctl-options fieldset + .helper::before {
+	transform: translate(25px, -0.8em);
+	top: 50%;
+}
+
+#ctl-options .helper .helper-content {
+	display: none;
+	position: absolute;
+	top: 0;
+	right: 0;
+	transform: translate(1px, 10px);
+	background: #000;
+	color: #fff;
+	padding: 0.5em 1em;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+#ctl-options fieldset + .helper .helper-content {
+	top: 50%;
+	transform: translate(25px, 25px);
+	width: calc(100% + 25px);
+}
+
+#ctl-options .helper:hover {
+	cursor: help;
+}
+
+#ctl-options .helper:hover .helper-content {
+	display: block;
+	z-index: 1;
+}
+
+#ctl-options .helper .helper-content::after {
+	content: '';
+	border: solid 10px transparent;
+	border-bottom-color: #000;
+	position: absolute;
+	top: 0;
+	right: 0;
+	transform: translateY(-100%);
+}
+
+#ctl-options .helper .helper-content a {
+	color: #fff;
+}
+
+@media (max-width: 600px) {
+	#ctl-options table tbody {
+		grid-template-columns: 1fr;
+	}
+
+	#ctl-options table tbody tr {
+		position: relative;
+	}
+
+	#ctl-options fieldset + .helper::before {
+		transform: translate(0px, -0.7em);
+	}
+
+	#ctl-options fieldset + .helper .helper-content {
+		transform: translate(0, 25px);
+		width: 100%;
+	}
+
+	#ctl-options .helper {
+		z-index: 1;
+	}
 }

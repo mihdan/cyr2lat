@@ -10,16 +10,10 @@
 	<exclude-pattern>*/\.yarn/*</exclude-pattern>
 	<exclude-pattern>*/assets/*</exclude-pattern>
 	<exclude-pattern>*/languages/*</exclude-pattern>
-	<exclude-pattern>*/lib/*</exclude-pattern>
+	<exclude-pattern>*/libs/*</exclude-pattern>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/src/js/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
-	<exclude-pattern>*\.js</exclude-pattern>
-	<exclude-pattern>*\.mo</exclude-pattern>
-	<exclude-pattern>*\.po</exclude-pattern>
-	<exclude-pattern>*\.twig</exclude-pattern>
-	<exclude-pattern>*\.css</exclude-pattern>
-	<exclude-pattern>*\.scss</exclude-pattern>
 
 	<!-- How to scan -->
 	<arg value="sp"/><!-- Show sniff and progress -->
@@ -29,7 +23,7 @@
 	<arg name="cache" value=".phpcs.cache"/>
 
 	<config name="installed_paths" value="vendor/phpcompatibility/php-compatibility,vendor/phpcompatibility/phpcompatibility-paragonie,vendor/phpcompatibility/phpcompatibility-wp,vendor/wp-coding-standards/wpcs"/>
-	<config name="testVersion" value="5.6-"/>
+	<config name="testVersion" value="7.0-"/>
 
 	<!-- Rules: Check PHP version compatibility -->
 	<rule ref="PHPCompatibility"/>

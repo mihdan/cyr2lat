@@ -5,9 +5,10 @@
  * @package cyr-to-lat
  */
 
-namespace Cyr_To_Lat\Settings;
+namespace CyrToLat\Settings;
 
-use Cyr_To_Lat\Conversion_Tables;
+use CyrToLat\ConversionTables;
+use CyrToLat\Settings\Abstracts\SettingsBase;
 
 /**
  * Class Tables
@@ -27,6 +28,11 @@ class Tables extends PluginSettingsBase {
 	const OBJECT = 'Cyr2LatTablesObject';
 
 	/**
+	 * Save table ajax action.
+	 */
+	const SAVE_TABLE_ACTION = 'cyr-to-lat-save-table';
+
+	/**
 	 * Served locales.
 	 *
 	 * @var array
@@ -34,57 +40,12 @@ class Tables extends PluginSettingsBase {
 	protected $locales = [];
 
 	/**
-	 * Get screen id.
-	 *
-	 * @return string
-	 */
-	public function screen_id() {
-		return 'settings_page_cyr-to-lat';
-	}
-
-	/**
-	 * Get option group.
-	 *
-	 * @return string
-	 */
-	protected function option_group() {
-		return 'cyr_to_lat_group';
-	}
-
-	/**
-	 * Get option page.
-	 *
-	 * @return string
-	 */
-	protected function option_page() {
-		return 'cyr-to-lat';
-	}
-
-	/**
-	 * Get option name.
-	 *
-	 * @return string
-	 */
-	protected function option_name() {
-		return 'cyr_to_lat_settings';
-	}
-
-	/**
 	 * Get page title.
 	 *
 	 * @return string
 	 */
-	protected function page_title() {
+	protected function page_title(): string {
 		return __( 'Tables', 'cyr2lat' );
-	}
-
-	/**
-	 * Get menu title.
-	 *
-	 * @return string
-	 */
-	protected function menu_title() {
-		return __( 'Cyr To Lat', 'cyr2lat' );
 	}
 
 	/**
@@ -92,8 +53,26 @@ class Tables extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	protected function section_title() {
+	protected function section_title(): string {
 		return 'tables';
+	}
+
+	/**
+	 * Init class hooks.
+	 */
+	protected function init_hooks() {
+		parent::init_hooks();
+
+		add_action( 'wp_ajax_' . self::SAVE_TABLE_ACTION, [ $this, 'save_table' ] );
+	}
+
+	/**
+	 * Get locales.
+	 *
+	 * @return array
+	 */
+	public function get_locales(): array {
+		return $this->locales;
 	}
 
 	/**
@@ -149,8 +128,8 @@ class Tables extends PluginSettingsBase {
 	 *
 	 * @return string
 	 */
-	private function get_current_locale() {
-		$current_locale = get_locale();
+	public function get_current_locale(): string {
+		$current_locale = (string) apply_filters( 'ctl_locale', get_locale() );
 
 		return array_key_exists( $current_locale, $this->locales ) ? $current_locale : 'iso9';
 	}
@@ -163,8 +142,6 @@ class Tables extends PluginSettingsBase {
 
 		$current_locale = $this->get_current_locale();
 
-		$this->form_fields = [];
-
 		foreach ( $this->locales as $locale => $info ) {
 			$current = ( $locale === $current_locale ) ? '<br>' . __( '(current)', 'cyr2lat' ) : '';
 
@@ -175,48 +152,9 @@ class Tables extends PluginSettingsBase {
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => Conversion_Tables::get( $locale ),
+				'default'      => ConversionTables::get( $locale ),
 			];
 		}
-	}
-
-	/**
-	 * Show settings page.
-	 */
-	public function settings_page() {
-		?>
-		<div class="wrap">
-			<h1>
-				<?php
-				// Admin panel title.
-				esc_html_e( 'Cyr To Lat Plugin Options', 'cyr2lat' );
-				?>
-			</h1>
-
-			<form
-				id="ctl-options"
-				class="ctl-<?php echo esc_attr( $this->section_title() ); ?>"
-				action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>"
-				method="post">
-				<?php
-				do_settings_sections( $this->option_page() ); // Sections with options.
-				settings_fields( $this->option_group() ); // Hidden protection fields.
-				submit_button();
-				?>
-			</form>
-
-			<div id="appreciation">
-				<h2>
-					<?php echo esc_html( __( 'Your Appreciation', 'cyr2lat' ) ); ?>
-				</h2>
-				<a
-					target="_blank"
-					href="https://wordpress.org/support/view/plugin-reviews/cyr2lat?rate=5#new-post">
-					<?php echo esc_html( __( 'Leave a ★★★★★ plugin review on WordPress.org', 'cyr2lat' ) ); ?>
-				</a>
-			</div>
-		</div>
-		<?php
 	}
 
 	/**
@@ -224,8 +162,9 @@ class Tables extends PluginSettingsBase {
 	 *
 	 * @param array $arguments Section arguments.
 	 */
-	public function section_callback( $arguments ) {
+	public function section_callback( array $arguments ) {
 		$locale = str_replace( '_section', '', $arguments['id'] );
+
 		if ( $this->get_current_locale() === $locale ) {
 			echo '<div id="ctl-current"></div>';
 		}
@@ -235,14 +174,6 @@ class Tables extends PluginSettingsBase {
 	 * Enqueue class scripts.
 	 */
 	public function admin_enqueue_scripts() {
-		global $cyr_to_lat_plugin;
-
-		if ( ! $this->is_options_screen() ) {
-			return;
-		}
-
-		$min = $cyr_to_lat_plugin->min_suffix();
-
 		wp_enqueue_script(
 			self::HANDLE,
 			constant( 'CYR_TO_LAT_URL' ) . '/assets/js/apps/tables.js',
@@ -255,15 +186,16 @@ class Tables extends PluginSettingsBase {
 			self::HANDLE,
 			self::OBJECT,
 			[
-				'optionsSaveSuccessMessage' => __( 'Options saved.', 'cyr2lat' ),
-				'optionsSaveErrorMessage'   => __( 'Error saving options.', 'cyr2lat' ),
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'action'  => self::SAVE_TABLE_ACTION,
+				'nonce'   => wp_create_nonce( self::SAVE_TABLE_ACTION ),
 			]
 		);
 
 		wp_enqueue_style(
 			self::HANDLE,
-			constant( 'CYR_TO_LAT_URL' ) . "/assets/css/tables$min.css",
-			[],
+			constant( 'CYR_TO_LAT_URL' ) . "/assets/css/tables$this->min_prefix.css",
+			[ SettingsBase::HANDLE ],
 			constant( 'CYR_TO_LAT_VERSION' )
 		);
 	}
@@ -272,10 +204,6 @@ class Tables extends PluginSettingsBase {
 	 * Setup settings sections.
 	 */
 	public function setup_sections() {
-		if ( ! $this->is_options_screen() ) {
-			return;
-		}
-
 		foreach ( $this->form_fields as $form_field ) {
 			add_settings_section(
 				$form_field['section'],
@@ -284,5 +212,41 @@ class Tables extends PluginSettingsBase {
 				$this->option_page()
 			);
 		}
+	}
+
+	/**
+	 * Save table.
+	 *
+	 * @return void
+	 */
+	public function save_table() {
+		// Run a security check.
+		if ( ! check_ajax_referer( self::SAVE_TABLE_ACTION, 'nonce', false ) ) {
+			wp_send_json_error( esc_html__( 'Your session has expired. Please reload the page.', 'cyr2lat' ) );
+		}
+
+		// Check for permissions.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( esc_html__( 'You are not allowed to perform this action.', 'cyr2lat' ) );
+		}
+
+		$new_settings = isset( $_POST['cyr_to_lat_settings'] ) ?
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			wp_unslash( $_POST['cyr_to_lat_settings'] ) :
+			[];
+
+		// We have only one table returned, so this is loop is executed once.
+		foreach ( $new_settings as $new_key => $new_value ) {
+			$key   = sanitize_text_field( $new_key );
+			$value = [];
+
+			foreach ( $new_value as $k => $v ) {
+				$value[ sanitize_text_field( $k ) ] = sanitize_text_field( $v );
+			}
+
+			$this->update_option( $key, $value );
+		}
+
+		wp_send_json_success( esc_html__( 'Options saved.', 'cyr2lat' ) );
 	}
 }

@@ -2475,18 +2475,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/babel-plugin-import-jsx-pragma@npm:^4.20.0":
-  version: 4.20.0
-  resolution: "@wordpress/babel-plugin-import-jsx-pragma@npm:4.20.0"
+"@wordpress/babel-plugin-import-jsx-pragma@npm:^4.21.0":
+  version: 4.21.0
+  resolution: "@wordpress/babel-plugin-import-jsx-pragma@npm:4.21.0"
   peerDependencies:
     "@babel/core": ^7.12.9
-  checksum: 49b9841e1a3bda5fbc125b5ba729eea056d9019b3d9be5654f531eb1ec25ce397a2e436d53398e00897d9e1fd34e321505e1be0939b351a60142b5a20f7a397d
+  checksum: dad1525bc156e5882ddf0405dc875083e97bfe973079e46399406b83d4c2d302d66e77a3dfe55fd15fd332a5bb6367ba7d35d64e8197d8945f9c465f86411a80
   languageName: node
   linkType: hard
 
-"@wordpress/babel-preset-default@npm:^7.21.0":
-  version: 7.21.0
-  resolution: "@wordpress/babel-preset-default@npm:7.21.0"
+"@wordpress/babel-preset-default@npm:^7.22.0":
+  version: 7.22.0
+  resolution: "@wordpress/babel-preset-default@npm:7.22.0"
   dependencies:
     "@babel/core": ^7.16.0
     "@babel/plugin-transform-react-jsx": ^7.16.0
@@ -2494,57 +2494,57 @@ __metadata:
     "@babel/preset-env": ^7.16.0
     "@babel/preset-typescript": ^7.16.0
     "@babel/runtime": ^7.16.0
-    "@wordpress/babel-plugin-import-jsx-pragma": ^4.20.0
-    "@wordpress/browserslist-config": ^5.20.0
-    "@wordpress/element": ^5.14.0
-    "@wordpress/warning": ^2.37.0
-    browserslist: ^4.17.6
-    core-js: ^3.19.1
-  checksum: ae05815c56df054cfee5e7af53f4080f964d5c15d38e6de1f894513d23154893ddae29c046f7f045e925fd708797d2420d60e6b63995ff703ed471a54a3bbe11
+    "@wordpress/babel-plugin-import-jsx-pragma": ^4.21.0
+    "@wordpress/browserslist-config": ^5.21.0
+    "@wordpress/element": ^5.15.0
+    "@wordpress/warning": ^2.38.0
+    browserslist: ^4.21.9
+    core-js: ^3.31.0
+  checksum: 8011b387b9f1b52df95bc91b7e96130fcfa6be91c3e1f2548f8891fcbb66654b7cb45180b139e54148dd751050e42c24af18f6f3e9acca5d03c2cf290abd6eb1
   languageName: node
   linkType: hard
 
-"@wordpress/browserslist-config@npm:^5.20.0":
-  version: 5.20.0
-  resolution: "@wordpress/browserslist-config@npm:5.20.0"
-  checksum: 1a7d9443ba815c63786db43db1ee77d85be0d937f1114d5faaa8008f0f6f632403fa962253bb28ed6d3e9da28b719760cad0fb95abfb98f55e271772fec4689f
+"@wordpress/browserslist-config@npm:^5.21.0":
+  version: 5.21.0
+  resolution: "@wordpress/browserslist-config@npm:5.21.0"
+  checksum: 9318c1a44d5a30a458a84f93646c9c12c18ea8b97314f54e7f9755cb661966ff27cc0c4f91c7b949bde60a6725cf1453ca91d3bdcf176f339917e654e0519375
   languageName: node
   linkType: hard
 
-"@wordpress/element@npm:^5.14.0":
-  version: 5.14.0
-  resolution: "@wordpress/element@npm:5.14.0"
+"@wordpress/element@npm:^5.15.0":
+  version: 5.15.0
+  resolution: "@wordpress/element@npm:5.15.0"
   dependencies:
     "@babel/runtime": ^7.16.0
     "@types/react": ^18.0.21
     "@types/react-dom": ^18.0.6
-    "@wordpress/escape-html": ^2.37.0
+    "@wordpress/escape-html": ^2.38.0
     change-case: ^4.1.2
     is-plain-object: ^5.0.0
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 7b07f2862b5bc976dc10c1ecf2f3df1e3e264fd4d13580f5ea88c04845494865a18f2ded52a48ec194ff65fc5c0174e229f4eeab8fd91f1781180cba5f6b3813
+  checksum: 178aabc4a0aef40c85d78c3cca468ccadb064cc9bfceac15a51a2a0c434a46b6b927cd6aeb308f7ab17c59bec9599fdadce94644492e275aa434943513934f47
   languageName: node
   linkType: hard
 
-"@wordpress/escape-html@npm:^2.37.0":
-  version: 2.37.0
-  resolution: "@wordpress/escape-html@npm:2.37.0"
+"@wordpress/escape-html@npm:^2.38.0":
+  version: 2.38.0
+  resolution: "@wordpress/escape-html@npm:2.38.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-  checksum: ceb9a394ac3ba888ec687beff371b2974d34886c23d3bd537a374cc0d48a61c023d99280321b9780bcc40e37ced51dda1348f5490fe7621a69cbcc454dd98226
+  checksum: 4cf3c2a3b068c0d9174119b034fdc7376a7ca42d5fa8e07121de375268fd93008323f28abfa1062a57a07eda4b33c7a3cb2d879fc40b80446f516528a957fbb4
   languageName: node
   linkType: hard
 
-"@wordpress/eslint-plugin@npm:^14.10.0":
-  version: 14.10.0
-  resolution: "@wordpress/eslint-plugin@npm:14.10.0"
+"@wordpress/eslint-plugin@npm:^14.11.0":
+  version: 14.11.0
+  resolution: "@wordpress/eslint-plugin@npm:14.11.0"
   dependencies:
     "@babel/eslint-parser": ^7.16.0
     "@typescript-eslint/eslint-plugin": ^5.3.0
     "@typescript-eslint/parser": ^5.3.0
-    "@wordpress/babel-preset-default": ^7.21.0
-    "@wordpress/prettier-config": ^2.20.0
+    "@wordpress/babel-preset-default": ^7.22.0
+    "@wordpress/prettier-config": ^2.21.0
     cosmiconfig: ^7.0.0
     eslint-config-prettier: ^8.3.0
     eslint-plugin-import: ^2.25.2
@@ -2566,23 +2566,23 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: b5185776403cf9607cff9de4d34a16465feb5e35d71840ec977f13caf3708987ab2d38f8691c7e815a9da8a30e8b78ba8bd14b68fb4d2f30d711c57e4747cd1b
+  checksum: 372b7d1d008c823be3b8ca55729447958ef4b82765d19843ed5f6e49a3270282cc82ca88e280bca3e85bacfaa3d08ae676618f2187f43595e3e726eb84f9e8f4
   languageName: node
   linkType: hard
 
-"@wordpress/prettier-config@npm:^2.20.0":
-  version: 2.20.0
-  resolution: "@wordpress/prettier-config@npm:2.20.0"
+"@wordpress/prettier-config@npm:^2.21.0":
+  version: 2.21.0
+  resolution: "@wordpress/prettier-config@npm:2.21.0"
   peerDependencies:
     prettier: ">=2"
-  checksum: e59b4c116b7f3a912e88fbe6e70da696ff883960c17f7b6265d0882139e16ad521fa6ce0378f2431ee3ecf96c94ea2cb97825af2a84811356d38c45242c97b95
+  checksum: 18b956bb8e261efaa288ecd01edc77c84ba61258af330f58409a74fe23363983ba65192fb37c6c6818ce419667bf95541d4187404bdeb50b606d90f93949ef00
   languageName: node
   linkType: hard
 
-"@wordpress/warning@npm:^2.37.0":
-  version: 2.37.0
-  resolution: "@wordpress/warning@npm:2.37.0"
-  checksum: 584e3f4f5776cc79d14301cd8533ec2da7ff6b1e08c54afd0f1e9c860a580cca7d2a9950fe62ba3033eabef394de70a1cdeca0fb00b26a5d7fff6d7780cfa07c
+"@wordpress/warning@npm:^2.38.0":
+  version: 2.38.0
+  resolution: "@wordpress/warning@npm:2.38.0"
+  checksum: 3a4b9f7dbecca476981f894365a82d14333537209f89e8f6026d01dd0a665187ec2f9765c583e0fcea696b539ddf0054a98b9fbf39e51c1d58368c73f1153906
   languageName: node
   linkType: hard
 
@@ -3188,7 +3188,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.0.0, browserslist@npm:^4.14.5, browserslist@npm:^4.17.6, browserslist@npm:^4.21.4, browserslist@npm:^4.21.5, browserslist@npm:^4.21.9":
+"browserslist@npm:^4.0.0, browserslist@npm:^4.14.5, browserslist@npm:^4.21.4, browserslist@npm:^4.21.5, browserslist@npm:^4.21.9":
   version: 4.21.9
   resolution: "browserslist@npm:4.21.9"
   dependencies:
@@ -3582,7 +3582,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.19.1":
+"core-js@npm:^3.31.0":
   version: 3.31.1
   resolution: "core-js@npm:3.31.1"
   checksum: 14519213a63c55cf188bdd2f4dece54583feaf6b90e75d6c65e07f509cd487055bf64898aeda7c97c36029ac1ea2f2ed8e4b02281553f6a257e7143a32a14015
@@ -3854,20 +3854,20 @@ __metadata:
   dependencies:
     "@babel/core": ^7.22.9
     "@babel/preset-env": ^7.22.9
-    "@wordpress/eslint-plugin": ^14.10.0
+    "@wordpress/eslint-plugin": ^14.11.0
     autoprefixer: ^10.4.14
     babel-loader: ^9.1.3
     coveralls: ^3.1.1
     css-loader: ^6.8.1
     css-minimizer-webpack-plugin: ^5.0.1
     eslint: ^8.45.0
-    glob: ^9.3.5
+    glob: ^10.3.3
     jest: ^29.6.1
     jest-environment-jsdom: ^29.6.1
     jest-fetch-mock: ^3.0.3
     mini-css-extract-plugin: ^2.7.6
     terser-webpack-plugin: ^5.3.9
-    webpack: ^5.88.1
+    webpack: ^5.88.2
     webpack-cli: ^5.1.4
     webpack-remove-empty-scripts: ^1.0.3
   languageName: unknown
@@ -5064,7 +5064,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^10.2.2":
+"glob@npm:^10.2.2, glob@npm:^10.3.3":
   version: 10.3.3
   resolution: "glob@npm:10.3.3"
   dependencies:
@@ -5090,18 +5090,6 @@ __metadata:
     once: ^1.3.0
     path-is-absolute: ^1.0.0
   checksum: 29452e97b38fa704dabb1d1045350fb2467cf0277e155aa9ff7077e90ad81d1ea9d53d3ee63bd37c05b09a065e90f16aec4a65f5b8de401d1dac40bc5605d133
-  languageName: node
-  linkType: hard
-
-"glob@npm:^9.3.5":
-  version: 9.3.5
-  resolution: "glob@npm:9.3.5"
-  dependencies:
-    fs.realpath: ^1.0.0
-    minimatch: ^8.0.2
-    minipass: ^4.2.4
-    path-scurry: ^1.6.1
-  checksum: 94b093adbc591bc36b582f77927d1fb0dbf3ccc231828512b017601408be98d1fe798fc8c0b19c6f2d1a7660339c3502ce698de475e9d938ccbb69b47b647c84
   languageName: node
   linkType: hard
 
@@ -6730,15 +6718,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^8.0.2":
-  version: 8.0.4
-  resolution: "minimatch@npm:8.0.4"
-  dependencies:
-    brace-expansion: ^2.0.1
-  checksum: 2e46cffb86bacbc524ad45a6426f338920c529dd13f3a732cc2cf7618988ee1aae88df4ca28983285aca9e0f45222019ac2d14ebd17c1edadd2ee12221ab801a
-  languageName: node
-  linkType: hard
-
 "minimatch@npm:^9.0.1":
   version: 9.0.3
   resolution: "minimatch@npm:9.0.3"
@@ -6812,13 +6791,6 @@ __metadata:
   dependencies:
     yallist: ^4.0.0
   checksum: a30d083c8054cee83cdcdc97f97e4641a3f58ae743970457b1489ce38ee1167b3aaf7d815cd39ec7a99b9c40397fd4f686e83750e73e652b21cb516f6d845e48
-  languageName: node
-  linkType: hard
-
-"minipass@npm:^4.2.4":
-  version: 4.2.8
-  resolution: "minipass@npm:4.2.8"
-  checksum: 7f4914d5295a9a30807cae5227a37a926e6d910c03f315930fde52332cf0575dfbc20295318f91f0baf0e6bb11a6f668e30cde8027dea7a11b9d159867a3c830
   languageName: node
   linkType: hard
 
@@ -7307,7 +7279,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-scurry@npm:^1.10.1, path-scurry@npm:^1.6.1":
+"path-scurry@npm:^1.10.1":
   version: 1.10.1
   resolution: "path-scurry@npm:1.10.1"
   dependencies:
@@ -9183,9 +9155,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.88.1":
-  version: 5.88.1
-  resolution: "webpack@npm:5.88.1"
+"webpack@npm:^5.88.2":
+  version: 5.88.2
+  resolution: "webpack@npm:5.88.2"
   dependencies:
     "@types/eslint-scope": ^3.7.3
     "@types/estree": ^1.0.0
@@ -9216,7 +9188,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 726e7e05ab2e7c142609a673dd6aa1a711ed97f349418a2a393d650c5ddad172d191257f60e1e37f6b2a77261571c202aabd5ce9240791a686774f0801cf5ec2
+  checksum: 79476a782da31a21f6dd38fbbd06b68da93baf6a62f0d08ca99222367f3b8668f5a1f2086b7bb78e23172e31fa6df6fa7ab09b25e827866c4fc4dc2b30443ce2
   languageName: node
   linkType: hard
 

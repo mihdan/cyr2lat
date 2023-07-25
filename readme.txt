@@ -2,9 +2,9 @@
 Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
-Tested up to: 6.2
-Stable tag: 5.5.3
-Requires PHP: 5.6.20
+Tested up to: 6.3
+Stable tag: 6.0.0
+Requires PHP: 7.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -139,6 +139,33 @@ function my_ctl_pre_sanitize_filename( $result, $filename ) {
 add_filter( 'ctl_pre_sanitize_filename', 10, 2 );
 `
 
+= How can I allow the plugin to work on the frontend? =
+
+Add similar code to your theme's `functions.php` file:
+
+`
+/**
+ * Filter status allowed Cyr To Lat plugin to work.
+ *
+ * @param bool $allowed
+ *
+ * @return bool
+ */
+function my_ctl_allow( bool $allowed ): bool {
+	$uri = isset( $_SERVER['REQUEST_URI'] ) ?
+		sanitize_url( wp_unslash( $_SERVER['REQUEST_URI'] ) ) :
+		'';
+
+	if ( 0 === strpos( $uri, '/divi-comments' ) ) {
+		return true;
+	}
+
+	return $allowed;
+}
+
+add_filter( 'ctl_allow', 'my_ctl_allow' );
+`
+
 = How can I limit post types for background conversion? =
 
 Add similar code to your theme's `functions.php` file:
@@ -193,6 +220,15 @@ Yes you can!
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 6.0.0 (26.07.2023) =
+* Dropped support of PHP 5.6. Minimum required PHP version is 7.0 now.
+* Tested with WordPress 6.3.
+* Tested with WooCommerce 7.9.
+* Added System Info tab.
+* Added filter 'ctl_allow'
+* Fixed console error when saving table data.
+* Fixed current table setting on Tables page with WPML.
 
 = 5.5.3 (15.07.2023) =
 * Tested with WooCommerce 7.8.
