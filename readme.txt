@@ -221,6 +221,9 @@ Yes you can!
 
 == Changelog ==
 
+= 6.0.1 (26.07.2023) =
+* Fixed fatal error on System Info page with empty options.
+
 = 6.0.0 (26.07.2023) =
 * Dropped support of PHP 5.6. Minimum required PHP version is 7.0 now.
 * Tested with WordPress 6.3.
