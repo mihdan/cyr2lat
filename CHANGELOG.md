@@ -1,4 +1,4 @@
-## 6.0.0 (25.07.2023) ##
+## 6.0.0 (26.07.2023) ##
 * Dropped support of PHP 5.6. Minimum required PHP version is 7.0 now.
 * Tested with WordPress 6.3.
 * Tested with WooCommerce 7.9.
