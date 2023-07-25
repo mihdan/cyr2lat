@@ -5,7 +5,7 @@ const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 const WebpackRemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
 
-const webPackModule = ( production = true ) => {
+const webPackModule = ( production ) => {
 	return {
 		rules: [
 			{
@@ -38,7 +38,7 @@ const webPackModule = ( production = true ) => {
 	};
 };
 
-const lookup = ( lookupPath ) => {
+const lookup = ( lookupPath, prefix ) => {
 	const ext = path.extname( lookupPath );
 	const entries = {};
 
@@ -50,10 +50,10 @@ const lookup = ( lookupPath ) => {
 		let filename = path.basename( filePath, ext );
 
 		if ( 'app' === filename ) {
-			filename = 'apps/' + path.basename( path.dirname( filePath ) );
+			filename = path.basename( path.dirname( filePath ) );
 		}
 
-		entries[ filename ] = path.resolve( filePath );
+		entries[ prefix + '/' + filename ] = path.resolve( filePath );
 
 		return filePath;
 	} );
@@ -66,9 +66,9 @@ const cyr2lat = ( env ) => {
 	 * @param env.production
 	 */
 	const production = env.production ? env.production : false;
-	const cssEntries = lookup( './assets/css/*.css' );
-	const jsEntries = lookup( './assets/js/*.js' );
-	const appEntries = lookup( './src/js/**/app.js' );
+	const cssEntries = lookup( './assets/css/*.css', 'css' );
+	const jsEntries = lookup( './assets/js/*.js', 'js' );
+	const appEntries = lookup( './src/js/**/app.js', 'js/apps' );
 
 	const entries = {
 		...cssEntries,
@@ -83,15 +83,15 @@ const cyr2lat = ( env ) => {
 		output: {
 			path: path.join( __dirname, 'assets' ),
 			filename: ( pathData ) => {
-				return pathData.chunk.name.includes( 'apps/' )
-					? 'js/[name].js'
-					: 'js/[name].min.js';
+				return pathData.chunk.name.includes( 'apps' )
+					? '[name].js'
+					: '[name].min.js';
 			},
 		},
 		plugins: [
 			new WebpackRemoveEmptyScriptsPlugin(),
 			new MiniCssExtractPlugin( {
-				filename: 'css/[name].min.css',
+				filename: '[name].min.css',
 			} ),
 		],
 		optimization: {
@@ -105,4 +105,4 @@ const cyr2lat = ( env ) => {
 	};
 };
 
-module.exports = [ cyr2lat ];
+module.exports = cyr2lat;
