@@ -1,9 +1,11 @@
-## 6.0.0 (XX.XX.2023) ##
+## 6.0.0 (25.07.2023) ##
 * Dropped support of PHP 5.6. Minimum required PHP version is 7.0 now.
 * Tested with WordPress 6.3.
 * Tested with WooCommerce 7.9.
 * Added System Info tab.
+* Added filter 'ctl_allow'
 * Fixed console error when saving table data.
+* Fixed current table setting on Tables page with WPML.
 
 ## 5.5.3 (15.07.2023) ##
 * Tested with WooCommerce 7.8.

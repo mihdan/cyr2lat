@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
 Tested up to: 6.3
-Stable tag: 5.5.3
+Stable tag: 6.0.0
 Requires PHP: 7.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -221,7 +221,7 @@ Yes you can!
 
 == Changelog ==
 
-= 6.0.0 (XX.XX.2023) =
+= 6.0.0 (25.07.2023) =
 * Dropped support of PHP 5.6. Minimum required PHP version is 7.0 now.
 * Tested with WordPress 6.3.
 * Tested with WooCommerce 7.9.
