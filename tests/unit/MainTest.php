@@ -100,7 +100,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return void
 	 * @dataProvider dp_test_init_multilingual
-	 * @throws ReflectionException
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_multilingual( bool $polylang, bool $sitepress ) {
 		$wpml_locale = 'en_US';
@@ -159,7 +159,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return array
 	 */
-	public function dp_test_init_multilingual() {
+	public function dp_test_init_multilingual(): array {
 		return [
 			[ false, false ],
 			[ false, true ],
@@ -256,7 +256,8 @@ class MainTest extends CyrToLatTestCase {
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
-		$method  = 'init_cli';
+
+		$method = 'init_cli';
 
 		$this->set_protected_property( $subject, 'request', $request );
 		$this->set_method_accessibility( $subject, $method );
@@ -283,7 +284,7 @@ class MainTest extends CyrToLatTestCase {
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
-		$method = 'init_cli';
+		$method  = 'init_cli';
 
 		$this->set_protected_property( $subject, 'request', $request );
 		$this->set_method_accessibility( $subject, $method );
@@ -308,14 +309,14 @@ class MainTest extends CyrToLatTestCase {
 	 * Test init_cli() when not in CLI.
 	 *
 	 * @return void
-	 * @throws ReflectionException
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_init_cli_when_not_in_cli() {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_cli' )->andReturn( false );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
-		$method = 'init_cli';
+		$method  = 'init_cli';
 
 		$this->set_protected_property( $subject, 'request', $request );
 		$this->set_method_accessibility( $subject, $method );
@@ -337,7 +338,7 @@ class MainTest extends CyrToLatTestCase {
 		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
-		$method = 'init_hooks';
+		$method  = 'init_hooks';
 
 		$subject->shouldAllowMockingProtectedMethods();
 		$this->set_protected_property( $subject, 'request', $request );
@@ -394,7 +395,7 @@ class MainTest extends CyrToLatTestCase {
 		$request->shouldReceive( 'is_allowed' )->andReturn( false );
 
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		$method = 'init_hooks';
+		$method  = 'init_hooks';
 
 		$this->set_protected_property( $subject, 'request', $request );
 		$this->set_protected_property( $subject, 'is_frontend', false );
