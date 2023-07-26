@@ -92,7 +92,7 @@ class WPCli extends WP_CLI_Command {
 	 *
 	 * @return Bar|NoOp
 	 */
-	private function make_progress_bar() {
+	protected function make_progress_bar() {
 		return make_progress_bar( 'Regenerate existing slugs', 1 );
 	}
 }
