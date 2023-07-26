@@ -179,11 +179,12 @@ abstract class PluginSettingsBase extends SettingsBase {
 	/**
 	 * When user is on the plugin admin page, display footer text that graciously asks them to rate us.
 	 *
-	 * @param string $text Footer text.
+	 * @param string|null $text Footer text.
 	 *
 	 * @return string
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function admin_footer_text( string $text ): string {
+	public function admin_footer_text( $text ): string {
 		if ( ! $this->is_options_screen() ) {
 			return $text;
 		}
