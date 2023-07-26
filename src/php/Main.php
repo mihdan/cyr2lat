@@ -112,7 +112,7 @@ class Main {
 	/**
 	 * WPML locale.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
 	protected $wpml_locale;
 
@@ -743,7 +743,7 @@ class Main {
 	 *
 	 * @param string|mixed $locale Locale.
 	 *
-	 * @return string|mixed
+	 * @return string|null|mixed
 	 */
 	public function wpml_locale_filter( $locale ) {
 		if ( $this->wpml_locale ) {
@@ -777,6 +777,7 @@ class Main {
 	 * @param bool|string $cookie_lang       Optionally also switch the cookie language to the value given.
 	 * @param string      $original_language Original language.
 	 *
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 * @noinspection PhpMissingParamTypeInspection
 	 */

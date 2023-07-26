@@ -46,6 +46,8 @@ class AdminNotices {
 
 	/**
 	 * Show all notices.
+	 *
+	 * @return void
 	 */
 	public function show_notices() {
 		foreach ( $this->notices as $notice ) {
