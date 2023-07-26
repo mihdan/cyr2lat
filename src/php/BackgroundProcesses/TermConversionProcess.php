@@ -92,13 +92,14 @@ class TermConversionProcess extends ConversionProcess {
 	/**
 	 * Filter term locale
 	 *
-	 * @return string
+	 * @return string|mixed
 	 * @noinspection PhpUndefinedFunctionInspection
 	 */
-	public function filter_term_locale(): string {
+	public function filter_term_locale() {
 		// Polylang filter.
 		if ( class_exists( 'Polylang' ) ) {
 			$pll_pll_get_term_language = pll_get_term_language( $this->term->term_taxonomy_id );
+
 			if ( false !== $pll_pll_get_term_language ) {
 				return $pll_pll_get_term_language;
 			}
