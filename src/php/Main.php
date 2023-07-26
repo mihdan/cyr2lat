@@ -272,14 +272,16 @@ class Main {
 	/**
 	 * Sanitize title.
 	 *
-	 * @param string $title     Sanitized title.
-	 * @param string $raw_title The title prior to sanitization.
-	 * @param string $context   The context for which the title is being sanitized.
+	 * @param string|mixed $title     Sanitized title.
+	 * @param string|mixed $raw_title The title prior to sanitization.
+	 * @param string|mixed $context   The context for which the title is being sanitized.
 	 *
-	 * @return string
+	 * @return string|mixed
 	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection PhpMissingReturnTypeInspection
+	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
-	public function sanitize_title( string $title, string $raw_title = '', string $context = '' ): string {
+	public function sanitize_title( $title, $raw_title = '', $context = '' ) {
 		global $wpdb;
 
 		if (
@@ -295,7 +297,7 @@ class Main {
 			return $title;
 		}
 
-		$title = urldecode( $title );
+		$title = urldecode( (string) $title );
 		$pre   = apply_filters( 'ctl_pre_sanitize_title', false, $title );
 
 		if ( false !== $pre ) {
@@ -384,18 +386,22 @@ class Main {
 	/**
 	 * Sanitize filename.
 	 *
-	 * @param string $filename     Sanitized filename.
-	 * @param string $filename_raw The filename prior to sanitization.
+	 * @param string|mixed $filename     Sanitized filename.
+	 * @param string|mixed $filename_raw The filename prior to sanitization.
 	 *
 	 * @return string
 	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection PhpMissingReturnTypeInspection
+	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
-	public function sanitize_filename( string $filename, string $filename_raw ): string {
+	public function sanitize_filename( $filename, $filename_raw ) {
 		$pre = apply_filters( 'ctl_pre_sanitize_filename', false, $filename );
 
 		if ( false !== $pre ) {
 			return $pre;
 		}
+
+		$filename = (string) $filename;
 
 		if ( seems_utf8( $filename ) ) {
 			$filename = (string) Mbstring::mb_strtolower( $filename );
@@ -528,13 +534,13 @@ class Main {
 	/**
 	 * Gutenberg support
 	 *
-	 * @param array $data    An array of slashed post data.
-	 * @param array $postarr An array of sanitized, but otherwise unmodified post data.
+	 * @param array|mixed $data    An array of slashed post data.
+	 * @param array|mixed $postarr An array of sanitized, but otherwise unmodified post data.
 	 *
-	 * @return array
+	 * @return array|mixed
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function sanitize_post_name( array $data, array $postarr = [] ): array {
+	public function sanitize_post_name( $data, $postarr = [] ) {
 		global $current_screen;
 
 		if ( ! $this->is_gutenberg_editor_active() ) {
@@ -562,7 +568,7 @@ class Main {
 	 * @param string|int|WP_Error $term     The term name to add, or a WP_Error object if there's an error.
 	 * @param string              $taxonomy Taxonomy slug.
 	 *
-	 * @return string|int
+	 * @return string|int|WP_Error
 	 */
 	public function pre_insert_term_filter( $term, string $taxonomy ) {
 		if (
@@ -582,10 +588,12 @@ class Main {
 	/**
 	 * Filters the terms query arguments.
 	 *
-	 * @param array    $args       An array of get_terms() arguments.
-	 * @param string[] $taxonomies An array of taxonomy names.
+	 * @param array|mixed $args       An array of get_terms() arguments.
+	 * @param string[]    $taxonomies An array of taxonomy names.
+	 *
+	 * @return array|mixed
 	 */
-	public function get_terms_args_filter( array $args, array $taxonomies ): array {
+	public function get_terms_args_filter( $args, array $taxonomies ) {
 		$this->is_term    = true;
 		$this->taxonomies = $taxonomies;
 
@@ -595,16 +603,17 @@ class Main {
 	/**
 	 * Locale filter for Polylang.
 	 *
-	 * @param string $locale Locale.
+	 * @param string|mixed $locale Locale.
 	 *
-	 * @return string
+	 * @return string|mixed
 	 */
-	public function pll_locale_filter( string $locale ) {
+	public function pll_locale_filter( $locale ) {
 		if ( $this->pll_locale ) {
 			return $this->pll_locale;
 		}
 
 		$rest_locale = $this->pll_locale_filter_with_rest();
+
 		if ( false === $rest_locale ) {
 			return $locale;
 		}
@@ -732,11 +741,11 @@ class Main {
 	/**
 	 * Locale filter for WPML.
 	 *
-	 * @param string $locale Locale.
+	 * @param string|mixed $locale Locale.
 	 *
-	 * @return string
+	 * @return string|mixed
 	 */
-	public function wpml_locale_filter( string $locale ): string {
+	public function wpml_locale_filter( $locale ) {
 		if ( $this->wpml_locale ) {
 			return $this->wpml_locale;
 		}

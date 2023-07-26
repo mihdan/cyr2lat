@@ -1,3 +1,6 @@
+## 6.0.2 (26.07.2023) ##
+* Fixed fatal error in admin_footer_text().
+
 ## 6.0.1 (26.07.2023) ##
 * Fixed fatal error on System Info page with empty options.
 
