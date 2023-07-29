@@ -10,6 +10,12 @@
 	border-radius: 4px;
 }
 
+#ctl-options.ctl-tables h2.nav-tab {
+	padding: 5px;
+	white-space: pre-line;
+	overflow-wrap: break-word;
+}
+
 #ctl-options .form-table th {
 	display: none;
 }
@@ -118,6 +124,8 @@ td fieldset .ctl-table-cell label {
 	border: 1px solid transparent;
 	vertical-align: middle;
 	box-sizing: border-box;
+	overflow: hidden;
+	word-break: break-all;
 }
 
 .ctl-table-cell input {
