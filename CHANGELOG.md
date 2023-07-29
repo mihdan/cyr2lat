@@ -1,3 +1,6 @@
+## 6.0.3 (29.07.2023) ##
+* Fixed fatal error with Jetpack sync.
+
 ## 6.0.2 (26.07.2023) ##
 * Fixed fatal error in admin_footer_text().
 

@@ -41,6 +41,8 @@ class ACF {
 
 	/**
 	 * Enqueue script in ACF field group page.
+	 *
+	 * @return void
 	 */
 	public function enqueue_script() {
 		global $cyr_to_lat_plugin;

@@ -84,42 +84,18 @@ class Tables extends PluginSettingsBase {
 		}
 
 		$this->locales = [
-			'iso9'  => [
-				'label' => __( 'ISO9 Table', 'cyr2lat' ),
-			],
-			'bel'   => [
-				'label' => __( 'bel Table', 'cyr2lat' ),
-			],
-			'uk'    => [
-				'label' => __( 'uk Table', 'cyr2lat' ),
-			],
-			'bg_BG' => [
-				'label' => __( 'bg_BG Table', 'cyr2lat' ),
-			],
-			'mk_MK' => [
-				'label' => __( 'mk_MK Table', 'cyr2lat' ),
-			],
-			'sr_RS' => [
-				'label' => __( 'sr_RS Table', 'cyr2lat' ),
-			],
-			'el'    => [
-				'label' => __( 'el Table', 'cyr2lat' ),
-			],
-			'hy'    => [
-				'label' => __( 'hy Table', 'cyr2lat' ),
-			],
-			'ka_GE' => [
-				'label' => __( 'ka_GE Table', 'cyr2lat' ),
-			],
-			'kk'    => [
-				'label' => __( 'kk Table', 'cyr2lat' ),
-			],
-			'he_IL' => [
-				'label' => __( 'he_IL Table', 'cyr2lat' ),
-			],
-			'zh_CN' => [
-				'label' => __( 'zh_CN Table', 'cyr2lat' ),
-			],
+			'iso9'  => __( 'Default', 'cyr2lat' ) . '<br>ISO9',
+			'bel'   => __( 'Belarusian', 'cyr2lat' ) . '<br>bel',
+			'uk'    => __( 'Ukrainian', 'cyr2lat' ) . '<br>uk',
+			'bg_BG' => __( 'Bulgarian', 'cyr2lat' ) . '<br>bg_BG',
+			'mk_MK' => __( 'Macedonian', 'cyr2lat' ) . '<br>mk_MK',
+			'sr_RS' => __( 'Serbian', 'cyr2lat' ) . '<br>sr_RS',
+			'el'    => __( 'Greek', 'cyr2lat' ) . '<br>el',
+			'hy'    => __( 'Armenian', 'cyr2lat' ) . '<br>hy',
+			'ka_GE' => __( 'Georgian', 'cyr2lat' ) . '<br>ka_GE',
+			'kk'    => __( 'Kazakh', 'cyr2lat' ) . '<br>kk',
+			'he_IL' => __( 'Hebrew', 'cyr2lat' ) . '<br>he_IL',
+			'zh_CN' => __( 'Chinese (China)', 'cyr2lat' ) . '<br>zh_CN',
 		];
 	}
 
@@ -143,10 +119,10 @@ class Tables extends PluginSettingsBase {
 		$current_locale = $this->get_current_locale();
 
 		foreach ( $this->locales as $locale => $info ) {
-			$current = ( $locale === $current_locale ) ? '<br>' . __( '(current)', 'cyr2lat' ) : '';
+			$info = ( $locale === $current_locale ) ? $info . '<br>' . __( '(current)', 'cyr2lat' ) : $info;
 
 			$this->form_fields[ $locale ] = [
-				'label'        => $info['label'] . $current,
+				'title'        => $info,
 				'section'      => $locale . '_section',
 				'type'         => 'table',
 				'placeholder'  => '',
@@ -198,20 +174,6 @@ class Tables extends PluginSettingsBase {
 			[ SettingsBase::HANDLE ],
 			constant( 'CYR_TO_LAT_VERSION' )
 		);
-	}
-
-	/**
-	 * Setup settings sections.
-	 */
-	public function setup_sections() {
-		foreach ( $this->form_fields as $form_field ) {
-			add_settings_section(
-				$form_field['section'],
-				$form_field['label'],
-				[ $this, 'section_callback' ],
-				$this->option_page()
-			);
-		}
 	}
 
 	/**

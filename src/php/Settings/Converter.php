@@ -148,6 +148,8 @@ class Converter extends PluginSettingsBase {
 	/**
 	 * Init form fields and settings late, on 'init' hook with PHP_INT_MAX priority,
 	 * to allow all plugins to register post types.
+	 *
+	 * @return void
 	 */
 	public function delayed_init_settings() {
 		$this->delayed_init_form_fields();
@@ -216,6 +218,8 @@ class Converter extends PluginSettingsBase {
 
 	/**
 	 * Output convert confirmation popup.
+	 *
+	 * @return void
 	 */
 	public function in_admin_header() {
 		if ( ! $this->is_options_screen() ) {

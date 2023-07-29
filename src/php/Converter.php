@@ -97,6 +97,8 @@ class Converter {
 
 	/**
 	 * Show conversion notices.
+	 *
+	 * @return void
 	 */
 	public function conversion_notices() {
 		$posts_process_running = $this->process_all_posts->is_processing();
@@ -137,6 +139,8 @@ class Converter {
 
 	/**
 	 * Check if we have to start conversion and start it.
+	 *
+	 * @return void
 	 */
 	public function start_conversion() {
 		if ( ! isset( $_POST['ctl-convert'] ) ) {
@@ -148,6 +152,8 @@ class Converter {
 
 	/**
 	 * Process handler.
+	 *
+	 * @return void
 	 */
 	public function process_handler() {
 		if ( ! isset( $_GET[ self::QUERY_ARG ], $_GET['_wpnonce'] ) ) {

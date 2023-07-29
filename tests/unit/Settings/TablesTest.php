@@ -161,42 +161,18 @@ class TablesTest extends CyrToLatTestCase {
 		$method->invoke( $subject );
 
 		$expected = [
-			'iso9'  => [
-				'label' => __( 'ISO9 Table', 'cyr2lat' ),
-			],
-			'bel'   => [
-				'label' => __( 'bel Table', 'cyr2lat' ),
-			],
-			'uk'    => [
-				'label' => __( 'uk Table', 'cyr2lat' ),
-			],
-			'bg_BG' => [
-				'label' => __( 'bg_BG Table', 'cyr2lat' ),
-			],
-			'mk_MK' => [
-				'label' => __( 'mk_MK Table', 'cyr2lat' ),
-			],
-			'sr_RS' => [
-				'label' => __( 'sr_RS Table', 'cyr2lat' ),
-			],
-			'el'    => [
-				'label' => __( 'el Table', 'cyr2lat' ),
-			],
-			'hy'    => [
-				'label' => __( 'hy Table', 'cyr2lat' ),
-			],
-			'ka_GE' => [
-				'label' => __( 'ka_GE Table', 'cyr2lat' ),
-			],
-			'kk'    => [
-				'label' => __( 'kk Table', 'cyr2lat' ),
-			],
-			'he_IL' => [
-				'label' => __( 'he_IL Table', 'cyr2lat' ),
-			],
-			'zh_CN' => [
-				'label' => __( 'zh_CN Table', 'cyr2lat' ),
-			],
+			'iso9'  => 'Default<br>ISO9',
+			'bel'   => 'Belarusian<br>bel',
+			'uk'    => 'Ukrainian<br>uk',
+			'bg_BG' => 'Bulgarian<br>bg_BG',
+			'mk_MK' => 'Macedonian<br>mk_MK',
+			'sr_RS' => 'Serbian<br>sr_RS',
+			'el'    => 'Greek<br>el',
+			'hy'    => 'Armenian<br>hy',
+			'ka_GE' => 'Georgian<br>ka_GE',
+			'kk'    => 'Kazakh<br>kk',
+			'he_IL' => 'Hebrew<br>he_IL',
+			'zh_CN' => 'Chinese (China)<br>zh_CN',
 		];
 
 		self::assertSame( $expected, $this->get_protected_property( $subject, 'locales' ) );
@@ -252,7 +228,7 @@ class TablesTest extends CyrToLatTestCase {
 		$expected = [
 			'iso9'  =>
 				[
-					'label'        => 'ISO9 Table<br>(current)',
+					'title'        => 'Default<br>ISO9<br>(current)',
 					'section'      => 'iso9_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -265,7 +241,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'bel'   =>
 				[
-					'label'        => 'bel Table',
+					'title'        => 'Belarusian<br>bel',
 					'section'      => 'bel_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -278,7 +254,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'uk'    =>
 				[
-					'label'        => 'uk Table',
+					'title'        => 'Ukrainian<br>uk',
 					'section'      => 'uk_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -291,7 +267,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'bg_BG' =>
 				[
-					'label'        => 'bg_BG Table',
+					'title'        => 'Bulgarian<br>bg_BG',
 					'section'      => 'bg_BG_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -304,7 +280,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'mk_MK' =>
 				[
-					'label'        => 'mk_MK Table',
+					'title'        => 'Macedonian<br>mk_MK',
 					'section'      => 'mk_MK_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -317,7 +293,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'sr_RS' =>
 				[
-					'label'        => 'sr_RS Table',
+					'title'        => 'Serbian<br>sr_RS',
 					'section'      => 'sr_RS_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -330,7 +306,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'el'    =>
 				[
-					'label'        => 'el Table',
+					'title'        => 'Greek<br>el',
 					'section'      => 'el_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -343,7 +319,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'hy'    =>
 				[
-					'label'        => 'hy Table',
+					'title'        => 'Armenian<br>hy',
 					'section'      => 'hy_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -356,7 +332,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'ka_GE' =>
 				[
-					'label'        => 'ka_GE Table',
+					'title'        => 'Georgian<br>ka_GE',
 					'section'      => 'ka_GE_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -369,7 +345,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'kk'    =>
 				[
-					'label'        => 'kk Table',
+					'title'        => 'Kazakh<br>kk',
 					'section'      => 'kk_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -382,7 +358,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'he_IL' =>
 				[
-					'label'        => 'he_IL Table',
+					'title'        => 'Hebrew<br>he_IL',
 					'section'      => 'he_IL_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -395,7 +371,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'zh_CN' =>
 				[
-					'label'        => 'zh_CN Table',
+					'title'        => 'Chinese (China)<br>zh_CN',
 					'section'      => 'zh_CN_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -543,44 +519,5 @@ class TablesTest extends CyrToLatTestCase {
 			->once();
 
 		$subject->admin_enqueue_scripts();
-	}
-
-	/**
-	 * Test setup_sections().
-	 *
-	 * @throws ReflectionException ReflectionException.
-	 */
-	public function test_setup_sections() {
-		$tab_option_page = 'cyr-to-lat';
-
-		$subject = Mockery::mock( Tables::class )->makePartial();
-		$subject->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'option_page' )->andReturn( $tab_option_page );
-
-		$form_fields = self::get_test_form_fields();
-
-		$this->set_protected_property( $subject, 'form_fields', $form_fields );
-
-		foreach ( $form_fields as $form_field ) {
-			WP_Mock::userFunction( 'add_settings_section' )
-				->with(
-					$form_field['section'],
-					$form_field['label'],
-					[ $subject, 'section_callback' ],
-					$tab_option_page
-				)
-				->once();
-		}
-
-		$subject->setup_sections();
-	}
-
-	/**
-	 * Test setup_sections() not on own screen.
-	 */
-	public function test_setup_sections_not_on_own_screen() {
-		$subject = Mockery::mock( Tables::class )->makePartial();
-
-		$subject->setup_sections();
 	}
 }
