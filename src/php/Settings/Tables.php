@@ -146,7 +146,7 @@ class Tables extends PluginSettingsBase {
 			$current = ( $locale === $current_locale ) ? '<br>' . __( '(current)', 'cyr2lat' ) : '';
 
 			$this->form_fields[ $locale ] = [
-				'label'        => $info['label'] . $current,
+				'title'        => $info['label'] . $current,
 				'section'      => $locale . '_section',
 				'type'         => 'table',
 				'placeholder'  => '',
@@ -198,20 +198,6 @@ class Tables extends PluginSettingsBase {
 			[ SettingsBase::HANDLE ],
 			constant( 'CYR_TO_LAT_VERSION' )
 		);
-	}
-
-	/**
-	 * Setup settings sections.
-	 */
-	public function setup_sections() {
-		foreach ( $this->form_fields as $form_field ) {
-			add_settings_section(
-				$form_field['section'],
-				$form_field['label'],
-				[ $this, 'section_callback' ],
-				$this->option_page()
-			);
-		}
 	}
 
 	/**

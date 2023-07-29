@@ -252,7 +252,7 @@ class TablesTest extends CyrToLatTestCase {
 		$expected = [
 			'iso9'  =>
 				[
-					'label'        => 'ISO9 Table<br>(current)',
+					'title'        => 'ISO9 Table<br>(current)',
 					'section'      => 'iso9_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -265,7 +265,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'bel'   =>
 				[
-					'label'        => 'bel Table',
+					'title'        => 'bel Table',
 					'section'      => 'bel_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -278,7 +278,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'uk'    =>
 				[
-					'label'        => 'uk Table',
+					'title'        => 'uk Table',
 					'section'      => 'uk_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -291,7 +291,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'bg_BG' =>
 				[
-					'label'        => 'bg_BG Table',
+					'title'        => 'bg_BG Table',
 					'section'      => 'bg_BG_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -304,7 +304,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'mk_MK' =>
 				[
-					'label'        => 'mk_MK Table',
+					'title'        => 'mk_MK Table',
 					'section'      => 'mk_MK_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -317,7 +317,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'sr_RS' =>
 				[
-					'label'        => 'sr_RS Table',
+					'title'        => 'sr_RS Table',
 					'section'      => 'sr_RS_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -330,7 +330,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'el'    =>
 				[
-					'label'        => 'el Table',
+					'title'        => 'el Table',
 					'section'      => 'el_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -343,7 +343,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'hy'    =>
 				[
-					'label'        => 'hy Table',
+					'title'        => 'hy Table',
 					'section'      => 'hy_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -356,7 +356,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'ka_GE' =>
 				[
-					'label'        => 'ka_GE Table',
+					'title'        => 'ka_GE Table',
 					'section'      => 'ka_GE_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -369,7 +369,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'kk'    =>
 				[
-					'label'        => 'kk Table',
+					'title'        => 'kk Table',
 					'section'      => 'kk_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -382,7 +382,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'he_IL' =>
 				[
-					'label'        => 'he_IL Table',
+					'title'        => 'he_IL Table',
 					'section'      => 'he_IL_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -395,7 +395,7 @@ class TablesTest extends CyrToLatTestCase {
 				],
 			'zh_CN' =>
 				[
-					'label'        => 'zh_CN Table',
+					'title'        => 'zh_CN Table',
 					'section'      => 'zh_CN_section',
 					'type'         => 'table',
 					'placeholder'  => '',
@@ -543,44 +543,5 @@ class TablesTest extends CyrToLatTestCase {
 			->once();
 
 		$subject->admin_enqueue_scripts();
-	}
-
-	/**
-	 * Test setup_sections().
-	 *
-	 * @throws ReflectionException ReflectionException.
-	 */
-	public function test_setup_sections() {
-		$tab_option_page = 'cyr-to-lat';
-
-		$subject = Mockery::mock( Tables::class )->makePartial();
-		$subject->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'option_page' )->andReturn( $tab_option_page );
-
-		$form_fields = self::get_test_form_fields();
-
-		$this->set_protected_property( $subject, 'form_fields', $form_fields );
-
-		foreach ( $form_fields as $form_field ) {
-			WP_Mock::userFunction( 'add_settings_section' )
-				->with(
-					$form_field['section'],
-					$form_field['label'],
-					[ $subject, 'section_callback' ],
-					$tab_option_page
-				)
-				->once();
-		}
-
-		$subject->setup_sections();
-	}
-
-	/**
-	 * Test setup_sections() not on own screen.
-	 */
-	public function test_setup_sections_not_on_own_screen() {
-		$subject = Mockery::mock( Tables::class )->makePartial();
-
-		$subject->setup_sections();
 	}
 }
