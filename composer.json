@@ -78,8 +78,6 @@
     "update-tests": "update-tests",
     "revert-tests": "update-tests revert",
     "phpcs": "vendor/bin/phpcs --colors --standard=phpcs.xml",
-    "acceptance": "codecept run acceptance -c .codeception.yml",
-    "integration": "codecept run integration -c .codeception.yml",
-    "unit": "codecept run unit -c .codeception.yml"
+    "unit": "vendor/bin/phpunit"
   }
 }
