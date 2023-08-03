@@ -2,7 +2,7 @@
 
 Converts Cyrillic characters in post, page and term slugs to Latin characters. Useful for creating human-readable URLs.
 
-![](./assets/banner-772x250.png)
+![Banner](./.wordpress-org/banner-772x250.png)
 
 ## Features
 
