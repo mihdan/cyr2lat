@@ -107,12 +107,12 @@ class MainTest extends CyrToLatTestCase {
 
 		FunctionMocker::replace(
 			'class_exists',
-			static function ( $class ) use ( $polylang, $sitepress ) {
-				if ( 'Polylang' === $class ) {
+			static function ( $class_name ) use ( $polylang, $sitepress ) {
+				if ( 'Polylang' === $class_name ) {
 					return $polylang;
 				}
 
-				if ( 'SitePress' === $class ) {
+				if ( 'SitePress' === $class_name ) {
 					return $sitepress;
 				}
 
@@ -351,8 +351,8 @@ class MainTest extends CyrToLatTestCase {
 
 		FunctionMocker::replace(
 			'class_exists',
-			static function ( $class ) use ( $sitepress ) {
-				if ( 'SitePress' === $class ) {
+			static function ( $class_name ) use ( $sitepress ) {
+				if ( 'SitePress' === $class_name ) {
 					return $sitepress;
 				}
 
@@ -448,12 +448,12 @@ class MainTest extends CyrToLatTestCase {
 
 		FunctionMocker::replace(
 			'class_exists',
-			static function ( $class ) {
-				if ( 'Polylang' === $class ) {
+			static function ( $class_name ) {
+				if ( 'Polylang' === $class_name ) {
 					return false;
 				}
 
-				if ( 'SitePress' === $class ) {
+				if ( 'SitePress' === $class_name ) {
 					return false;
 				}
 
@@ -684,8 +684,8 @@ class MainTest extends CyrToLatTestCase {
 
 		FunctionMocker::replace(
 			'class_exists',
-			static function ( $class ) {
-				return 'SitePress' === $class;
+			static function ( $class_name ) {
+				return 'SitePress' === $class_name;
 			}
 		);
 
@@ -708,7 +708,10 @@ class MainTest extends CyrToLatTestCase {
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public function test_sanitize_title_for_wc_attribute_taxonomy(
-		string $title, bool $is_wc, $attribute_taxonomies, int $expected
+		string $title,
+		bool $is_wc,
+		$attribute_taxonomies,
+		int $expected
 	) {
 		FunctionMocker::replace(
 			'function_exists',
@@ -718,7 +721,6 @@ class MainTest extends CyrToLatTestCase {
 				}
 
 				return null;
-
 			}
 		);
 
@@ -796,13 +798,13 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test transliterate()
 	 *
-	 * @param string $string   String to transliterate.
+	 * @param string $str      String to transliterate.
 	 * @param string $expected Expected result.
 	 *
 	 * @dataProvider dp_test_transliterate
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_transliterate( string $string, string $expected ) {
+	public function test_transliterate( string $str, string $expected ) {
 		$subject = $this->get_subject();
 
 		$settings = $this->get_protected_property( $subject, 'settings' );
@@ -814,7 +816,7 @@ class MainTest extends CyrToLatTestCase {
 			WP_Mock::expectFilter( 'ctl_table', $settings->get_table() );
 		}
 
-		self::assertSame( $expected, $subject->transliterate( $string ) );
+		self::assertSame( $expected, $subject->transliterate( $str ) );
 	}
 
 	/**
@@ -845,13 +847,13 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test split_chinese_string().
 	 *
-	 * @param string $string   String.
+	 * @param string $str      String.
 	 * @param string $expected Expected result.
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 * @dataProvider dp_test_split_chinese_string
 	 */
-	public function test_split_chinese_string( string $string, string $expected ) {
+	public function test_split_chinese_string( string $str, string $expected ) {
 		$locale = 'zh_CN';
 		$table  = $this->get_conversion_table( $locale );
 		$table  = $this->transpose_chinese_table( $table );
@@ -865,7 +867,7 @@ class MainTest extends CyrToLatTestCase {
 		$this->set_method_accessibility( $subject, $method );
 		$this->set_protected_property( $subject, 'settings', $settings );
 
-		self::assertSame( $expected, $subject->$method( $string, $table ) );
+		self::assertSame( $expected, $subject->$method( $str, $table ) );
 	}
 
 	/**
@@ -1000,7 +1002,7 @@ class MainTest extends CyrToLatTestCase {
 
 		FunctionMocker::replace(
 			'defined',
-			static function( $constant_name ) use ( $defined ) {
+			static function ( $constant_name ) use ( $defined ) {
 				if ( 'SCRIPT_DEBUG' === $constant_name ) {
 					return $defined;
 				}
@@ -1011,7 +1013,7 @@ class MainTest extends CyrToLatTestCase {
 
 		FunctionMocker::replace(
 			'constant',
-			static function( $name ) use ( $script_debug ) {
+			static function ( $name ) use ( $script_debug ) {
 				if ( 'SCRIPT_DEBUG' === $name ) {
 					return $script_debug;
 				}
@@ -1672,8 +1674,8 @@ class MainTest extends CyrToLatTestCase {
 
 		FunctionMocker::replace(
 			'class_exists',
-			static function ( $class ) use ( $feature_util ) {
-				if ( 'Automattic\WooCommerce\Utilities\FeaturesUtil' === $class ) {
+			static function ( $class_name ) use ( $feature_util ) {
+				if ( 'Automattic\WooCommerce\Utilities\FeaturesUtil' === $class_name ) {
 					return $feature_util;
 				}
 

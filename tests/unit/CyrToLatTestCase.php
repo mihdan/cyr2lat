@@ -149,19 +149,19 @@ abstract class CyrToLatTestCase extends TestCase {
 	/**
 	 * Get an object protected property.
 	 *
-	 * @param object $object        Object.
+	 * @param object $obj           Object.
 	 * @param string $property_name Property name.
 	 *
 	 * @return mixed
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function get_protected_property( $object, string $property_name ) {
-		$reflection_class = new ReflectionClass( $object );
+	protected function get_protected_property( $obj, string $property_name ) {
+		$reflection_class = new ReflectionClass( $obj );
 
 		$property = $reflection_class->getProperty( $property_name );
 		$property->setAccessible( true );
-		$value = $property->getValue( $object );
+		$value = $property->getValue( $obj );
 		$property->setAccessible( false );
 
 		return $value;
@@ -170,25 +170,25 @@ abstract class CyrToLatTestCase extends TestCase {
 	/**
 	 * Set an object protected property.
 	 *
-	 * @param object $object        Object.
+	 * @param object $obj           Object.
 	 * @param string $property_name Property name.
 	 * @param mixed  $value         Property vale.
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function set_protected_property( $object, string $property_name, $value ) {
-		$reflection_class = new ReflectionClass( $object );
+	protected function set_protected_property( $obj, string $property_name, $value ) {
+		$reflection_class = new ReflectionClass( $obj );
 
 		$property = $reflection_class->getProperty( $property_name );
 		$property->setAccessible( true );
-		$property->setValue( $object, $value );
+		$property->setValue( $obj, $value );
 		$property->setAccessible( false );
 	}
 
 	/**
 	 * Set an object protected method accessibility.
 	 *
-	 * @param object $object      Object.
+	 * @param object $obj         Object.
 	 * @param string $method_name Property name.
 	 * @param bool   $accessible  Property vale.
 	 *
@@ -196,8 +196,8 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function set_method_accessibility( $object, string $method_name, bool $accessible = true ): ReflectionMethod {
-		$reflection_class = new ReflectionClass( $object );
+	protected function set_method_accessibility( $obj, string $method_name, bool $accessible = true ): ReflectionMethod {
+		$reflection_class = new ReflectionClass( $obj );
 
 		$method = $reflection_class->getMethod( $method_name );
 		$method->setAccessible( $accessible );
@@ -640,13 +640,13 @@ abstract class CyrToLatTestCase extends TestCase {
 					'ש' => 'sh',
 					'ת' => 'th',
 				];
-				for ( $code = 0x0590; $code <= 0x05CF; $code ++ ) {
+				for ( $code = 0x0590; $code <= 0x05CF; $code++ ) {
 					$table[ Mbstring::mb_chr( $code ) ] = '';
 				}
-				for ( $code = 0x05F0; $code <= 0x05F5; $code ++ ) {
+				for ( $code = 0x05F0; $code <= 0x05F5; $code++ ) {
 					$table[ Mbstring::mb_chr( $code ) ] = '';
 				}
-				for ( $code = 0xFB1D; $code <= 0xFB4F; $code ++ ) {
+				for ( $code = 0xFB1D; $code <= 0xFB4F; $code++ ) {
 					$table[ Mbstring::mb_chr( $code ) ] = '';
 				}
 				break;
@@ -1263,16 +1263,16 @@ abstract class CyrToLatTestCase extends TestCase {
 	 */
 	protected function get_file_data( string $file, array $default_headers, string $context = '' ): array {
 		// We don't need to write to the file, so just open for reading.
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		$fp = fopen( $file, 'rb' );
 
 		if ( $fp ) {
 			// Pull only the first 8 KB of the file in.
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fread
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fread
 			$file_data = fread( $fp, 8 * KB_IN_BYTES );
 
 			// PHP will close file handle, but we are good citizens.
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fclose
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			fclose( $fp );
 		} else {
 			$file_data = '';

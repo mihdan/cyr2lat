@@ -422,12 +422,12 @@ class Main {
 	/**
 	 * Fix string encoding on macOS.
 	 *
-	 * @param string $string String.
-	 * @param array  $table  Conversion table.
+	 * @param string $str   String.
+	 * @param array  $table Conversion table.
 	 *
 	 * @return string
 	 */
-	private function fix_mac_string( string $string, array $table ): string {
+	private function fix_mac_string( string $str, array $table ): string {
 		$fix_table = ConversionTables::get_fix_table_for_mac();
 
 		$fix = [];
@@ -437,50 +437,50 @@ class Main {
 			}
 		}
 
-		return strtr( $string, $fix );
+		return strtr( $str, $fix );
 	}
 
 	/**
 	 * Split Chinese string by hyphens.
 	 *
-	 * @param string $string String.
-	 * @param array  $table  Conversion table.
+	 * @param string $str   String.
+	 * @param array  $table Conversion table.
 	 *
 	 * @return string
 	 */
-	protected function split_chinese_string( string $string, array $table ): string {
-		if ( ! $this->settings->is_chinese_locale() || mb_strlen( $string ) < 4 ) {
-			return $string;
+	protected function split_chinese_string( string $str, array $table ): string {
+		if ( ! $this->settings->is_chinese_locale() || mb_strlen( $str ) < 4 ) {
+			return $str;
 		}
 
-		$chars  = Mbstring::mb_str_split( $string );
-		$string = '';
+		$chars = Mbstring::mb_str_split( $str );
+		$str   = '';
 
 		foreach ( $chars as $char ) {
 			if ( isset( $table[ $char ] ) ) {
-				$string .= '-' . $char . '-';
+				$str .= '-' . $char . '-';
 			} else {
-				$string .= $char;
+				$str .= $char;
 			}
 		}
 
-		return $string;
+		return $str;
 	}
 
 	/**
 	 * Transliterate string using a table.
 	 *
-	 * @param string $string String.
+	 * @param string $str String.
 	 *
 	 * @return string
 	 */
-	public function transliterate( string $string ): string {
+	public function transliterate( string $str ): string {
 		$table = (array) apply_filters( 'ctl_table', $this->settings->get_table() );
 
-		$string = $this->fix_mac_string( $string, $table );
-		$string = $this->split_chinese_string( $string, $table );
+		$str = $this->fix_mac_string( $str, $table );
+		$str = $this->split_chinese_string( $str, $table );
 
-		return strtr( $string, $table );
+		return strtr( $str, $table );
 	}
 
 	/**

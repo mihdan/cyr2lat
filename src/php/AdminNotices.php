@@ -31,15 +31,15 @@ class AdminNotices {
 	/**
 	 * Add admin notice.
 	 *
-	 * @param string $message Message to show.
-	 * @param string $class   Message class: notice notice-success notice-error notice-warning notice-info
-	 *                        is-dismissible.
-	 * @param array  $options Notice options.
+	 * @param string $message    Message to show.
+	 * @param string $class_name Message class: notice notice-success notice-error notice-warning notice-info
+	 *                           is-dismissible.
+	 * @param array  $options    Notice options.
 	 */
-	public function add_notice( string $message, string $class = 'notice', array $options = [] ) {
+	public function add_notice( string $message, string $class_name = 'notice', array $options = [] ) {
 		$this->notices[] = [
 			'message' => $message,
-			'class'   => $class,
+			'class'   => $class_name,
 			'options' => $options,
 		];
 	}

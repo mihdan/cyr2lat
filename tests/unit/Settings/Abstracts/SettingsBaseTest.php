@@ -1069,7 +1069,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 		WP_Mock::passthruFunction( 'wp_kses' );
 
 		WP_Mock::userFunction( 'checked' )->andReturnUsing(
-			function ( $checked, $current, $echo ) {
+			function ( $checked, $current, $do_echo ) {
 				$result = '';
 				if ( (string) $checked === (string) $current ) {
 					$result = 'checked="checked"';
@@ -1080,7 +1080,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 		);
 
 		WP_Mock::userFunction( 'selected' )->andReturnUsing(
-			function ( $checked, $current, $echo ) {
+			function ( $checked, $current, $do_echo ) {
 				$result = '';
 
 				if ( (string) $checked === (string) $current ) {
@@ -2119,8 +2119,8 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	public function test_is_options_screen_when_get_current_screen_does_not_exist() {
 		FunctionMocker::replace(
 			'function_exists',
-			static function ( $function ) {
-				return 'get_current_screen' !== $function;
+			static function ( $func ) {
+				return 'get_current_screen' !== $func;
 			}
 		);
 

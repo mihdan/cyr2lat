@@ -193,7 +193,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 		return wp_kses(
 			sprintf(
 			/* translators: 1: plugin name, 2: wp.org review link with stars, 3: wp.org review link with text. */
-				__( 'Please rate %1$s %2$s on %3$s</a>. Thank you!', 'cyr2lat' ),
+				__( 'Please rate %1$s %2$s on %3$s. Thank you!', 'cyr2lat' ),
 				'<strong>Cyr To Lat</strong>',
 				sprintf(
 					'<a href="%s" target="_blank" rel="noopener noreferrer">★★★★★</a>',

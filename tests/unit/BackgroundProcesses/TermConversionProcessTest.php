@@ -177,8 +177,8 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 
 		FunctionMocker::replace(
 			'class_exists',
-			static function ( $class ) {
-				return 'Polylang' === $class;
+			static function ( $class_name ) {
+				return 'Polylang' === $class_name;
 			}
 		);
 

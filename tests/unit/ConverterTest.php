@@ -102,8 +102,10 @@ class ConverterTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_conversion_notices
 	 */
 	public function test_conversion_notices(
-		bool $posts_process_running, bool $terms_process_running,
-		bool $posts_process_completed, bool $terms_process_completed
+		bool $posts_process_running,
+		bool $terms_process_running,
+		bool $posts_process_completed,
+		bool $terms_process_completed
 	) {
 		$main              = Mockery::mock( Main::class );
 		$settings          = Mockery::mock( Settings::class );

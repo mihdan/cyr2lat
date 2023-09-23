@@ -100,7 +100,7 @@ class SettingsTest extends CyrToLatTestCase {
 
 		$tables = Mockery::mock( Tables::class );
 		$tables->shouldReceive( 'get' )->andReturnUsing(
-			function( $key, $empty_value ) use ( $tables_key, &$tables_value ) {
+			function ( $key, $empty_value ) use ( $tables_key, &$tables_value ) {
 				if ( $key === $tables_key ) {
 					return $tables_value;
 				}
@@ -115,7 +115,7 @@ class SettingsTest extends CyrToLatTestCase {
 
 		$converter = Mockery::mock( Converter::class );
 		$converter->shouldReceive( 'get' )->andReturnUsing(
-			function( $key, $empty_value ) use ( $converter_key, $converter_value ) {
+			function ( $key, $empty_value ) use ( $converter_key, $converter_value ) {
 				if ( $key === $converter_key ) {
 					return $converter_value;
 				}

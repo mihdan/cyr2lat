@@ -28,8 +28,8 @@ class WP_CLI {
 	 * Add command.
 	 *
 	 * @param string        $name     Name for the command (e.g. "post list" or "site empty").
-	 * @param callable|null $callable Command implementation as a class, function or closure.
+	 * @param callable|null $callback Command implementation as a class, function or closure.
 	 */
-	public static function add_command( string $name, $callable ) {
+	public static function add_command( string $name, $callback ) {
 	}
 }

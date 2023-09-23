@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
 Tested up to: 6.3
-Stable tag: 6.0.3
+Stable tag: 6.0.4
 Requires PHP: 7.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -221,7 +221,10 @@ Yes you can!
 
 == Changelog ==
 
-= 6.0.3 (29.07.2023) =
+= 6.0.4 (23.09.2023) =
+* Fixed disappeared file descriptions on the Theme File Editor page.
+
+* = 6.0.3 (29.07.2023) =
 * Fixed fatal error with Jetpack sync.
 
 = 6.0.2 (26.07.2023) =

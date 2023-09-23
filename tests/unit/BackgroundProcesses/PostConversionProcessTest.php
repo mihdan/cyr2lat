@@ -339,8 +339,8 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 			}
 		);
 		WP_Mock::userFunction( 'untrailingslashit' )->with( $abspath )->andReturnUsing(
-			function ( $string ) {
-				return rtrim( $string, '/' );
+			function ( $str ) {
+				return rtrim( $str, '/' );
 			}
 		);
 

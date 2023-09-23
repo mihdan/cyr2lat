@@ -53,6 +53,8 @@ class Requirements {
 	 * @param Settings                  $settings      Settings.
 	 * @param AdminNotices              $admin_notices Admin notices.
 	 * @param WP_Filesystem_Direct|null $wp_filesystem File system.
+	 *
+	 * @noinspection PhpUnusedLocalVariableInspection
 	 */
 	public function __construct( Settings $settings, AdminNotices $admin_notices, WP_Filesystem_Direct $wp_filesystem = null ) {
 		$this->settings   = $settings;
@@ -62,6 +64,12 @@ class Requirements {
 
 		// @codeCoverageIgnoreStart
 		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			/**
+			 * Make the scope of $wp_file_descriptions global,
+			 * so that when wp-admin/includes/file.php assigns to it, it is adjusting the global variable as intended.
+			 */
+			global $wp_file_descriptions;
+
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
 		// @codeCoverageIgnoreEnd
