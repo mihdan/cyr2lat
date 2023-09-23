@@ -1,3 +1,6 @@
+## 6.0.4 (23.09.2023) ##
+* Fixed disappeared file descriptions on the Theme File Editor page.
+
 ## 6.0.3 (29.07.2023) ##
 * Fixed fatal error with Jetpack sync.
 
