@@ -184,6 +184,7 @@ class PostConversionProcess extends ConversionProcess {
 		$new_filename = $new_path['filename'];
 
 		if ( $new_filename !== $filename ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
 			return rename( $file, $new_file );
 		}
 

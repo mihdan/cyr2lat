@@ -694,13 +694,13 @@ class ConversionTables {
 					'ש' => 'sh',
 					'ת' => 'th',
 				];
-				for ( $code = 0x0590; $code <= 0x05CF; $code ++ ) {
+				for ( $code = 0x0590; $code <= 0x05CF; $code++ ) {
 					$table[ Mbstring::mb_chr( $code ) ] = '';
 				}
-				for ( $code = 0x05F0; $code <= 0x05F5; $code ++ ) {
+				for ( $code = 0x05F0; $code <= 0x05F5; $code++ ) {
 					$table[ Mbstring::mb_chr( $code ) ] = '';
 				}
-				for ( $code = 0xFB1D; $code <= 0xFB4F; $code ++ ) {
+				for ( $code = 0xFB1D; $code <= 0xFB4F; $code++ ) {
 					$table[ Mbstring::mb_chr( $code ) ] = '';
 				}
 				break;

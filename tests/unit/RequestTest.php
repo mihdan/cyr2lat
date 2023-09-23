@@ -257,8 +257,8 @@ class RequestTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction( 'rest_url' )->andReturn( $rest_url );
 		WP_Mock::userFunction( 'trailingslashit' )->andReturnUsing(
-			function ( $string ) {
-				return rtrim( $string, '/' ) . '/';
+			function ( $str ) {
+				return rtrim( $str, '/' ) . '/';
 			}
 		);
 		WP_Mock::userFunction( 'wp_parse_url' )->with( $rest_url, PHP_URL_PATH )->andReturn( $rest_path );
