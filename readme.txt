@@ -221,6 +221,9 @@ Yes you can!
 
 == Changelog ==
 
+= 6.0.5 (09.10.2023) =
+* Fixed displaying file descriptions in the Theme Editor; now in the current locale.
+
 = 6.0.4 (23.09.2023) =
 * Fixed disappeared file descriptions on the Theme File Editor page.
 
