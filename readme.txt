@@ -141,7 +141,7 @@ add_filter( 'ctl_pre_sanitize_filename', 10, 2 );
 
 = How can I allow the plugin to work on the frontend? =
 
-Add similar code to your theme's `functions.php` file:
+Add the following code to your plugin's (or mu-plugin's) main file. This code won't work being added to a theme's functions.php file.
 
 `
 /**
