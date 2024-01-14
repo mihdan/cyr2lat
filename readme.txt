@@ -226,6 +226,7 @@ Yes, you can!
 * Tested with WooCommerce 8.4.
 * Tested with PHP 8.3.
 * Fixed documentation on ctl_allow filter.
+* Fixed improper display of the "rate plugin" message on options.php.
 
 = 6.0.5 (09.10.2023) =
 * Fixed displaying file descriptions in the Theme Editor; now in the current locale.
