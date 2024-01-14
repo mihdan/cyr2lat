@@ -22,7 +22,7 @@
  *
  *
  * WC requires at least: 3.0
- * WC tested up to:      8.1
+ * WC tested up to:      8.4
  */
 
 // phpcs:ignore Generic.Commenting.DocComment.MissingShort
