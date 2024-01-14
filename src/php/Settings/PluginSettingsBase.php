@@ -184,7 +184,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 * @return string|mixed
 	 */
 	public function admin_footer_text( $text ) {
-		if ( ! $this->is_options_screen() ) {
+		if ( ! $this->is_options_screen( [] ) ) {
 			return $text;
 		}
 

@@ -2,8 +2,8 @@
 Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
-Tested up to: 6.3
-Stable tag: 6.0.5
+Tested up to: 6.4
+Stable tag: 6.0.6
 Requires PHP: 7.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -93,7 +93,7 @@ function my_ctl_locale( $locale ) {
 add_filter( 'ctl_locale', 'my_ctl_locale' );
 `
 
-= How can I define own transliteration of titles? =
+= How can I define my own transliteration of titles? =
 
 Add similar code to your theme's `functions.php` file:
 
@@ -116,7 +116,7 @@ function my_ctl_pre_sanitize_title( $result, $title ) {
 add_filter( 'ctl_pre_sanitize_title', 10, 2 );
 `
 
-= How can I define own transliteration of filenames? =
+= How can I define my own transliteration of filenames? =
 
 Add similar code to your theme's `functions.php` file:
 
@@ -141,7 +141,7 @@ add_filter( 'ctl_pre_sanitize_filename', 10, 2 );
 
 = How can I allow the plugin to work on the frontend? =
 
-Add similar code to your theme's `functions.php` file:
+Add the following code to your plugin's (or mu-plugin's) main file. This code won't work being added to a theme's functions.php file.
 
 `
 /**
@@ -199,8 +199,8 @@ wp cyr2lat regenerate [--post_type=<post_type>] [--post_status=<post_status>]
 `
 
 Where
-  `-post_type` is list of post types,
-  `-post_status` is list of post statuses.
+  `-post_type` is a list of post types,
+  `-post_status` is a list of post statuses.
 
 = How can I regenerate thumbnails safely? =
 
@@ -214,12 +214,19 @@ wp media regenerate --skip-plugins=cyr2lat
 
 = Can I contribute? =
 
-Yes you can!
+Yes, you can!
 
 * Join in on our [GitHub repository](https://github.com/mihdan/cyr2lat)
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 6.0.6 (14.01.2024) =
+* Tested with WordPress 6.4.
+* Tested with WooCommerce 8.4.
+* Tested with PHP 8.3.
+* Fixed documentation on ctl_allow filter.
+* Fixed improper display of the "rate plugin" message on options.php.
 
 = 6.0.5 (09.10.2023) =
 * Fixed displaying file descriptions in the Theme Editor; now in the current locale.
@@ -227,7 +234,7 @@ Yes you can!
 = 6.0.4 (23.09.2023) =
 * Fixed disappeared file descriptions on the Theme File Editor page.
 
-* = 6.0.3 (29.07.2023) =
+= 6.0.3 (29.07.2023) =
 * Fixed fatal error with Jetpack sync.
 
 = 6.0.2 (26.07.2023) =
@@ -237,7 +244,7 @@ Yes you can!
 * Fixed fatal error on System Info page with empty options.
 
 = 6.0.0 (26.07.2023) =
-* Dropped support of PHP 5.6. Minimum required PHP version is 7.0 now.
+* Dropped support of PHP 5.6. The Minimum required PHP version is 7.0 now.
 * Tested with WordPress 6.3.
 * Tested with WooCommerce 7.9.
 * Added System Info tab.
@@ -280,7 +287,7 @@ Yes you can!
 = 5.2.5 (19.12.2021) =
 * Tested up to WordPress 5.9 and WooCommerce 6.0.
 * Fix issue with Polylang - do not modify admin language when editing a post.
-* Fix issue with JetPack - fatal error on synchronisation.
+* Fix issue with JetPack - fatal error on synchronization.
 * Fix 404 on archives created with WPML before activation of cyr2lat.
 
 = 5.2.4 (07.09.2021) =
@@ -383,7 +390,7 @@ Yes you can!
 
 = 4.3.3 (20.02.2020) =
 * Reworked main plugin filter
-* Improved performance by minimizing number of calls
+* Improved performance by minimizing the number of calls
 * Updated Georgian table
 * Fixed slug duplication in taxonomies
 * Fixed warnings with WooCommerce when mbstring is not loaded
