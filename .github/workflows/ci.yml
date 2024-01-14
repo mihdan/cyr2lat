@@ -3,62 +3,56 @@ name: Cyr2Lat CI
 on: [ push, pull_request ]
 
 jobs:
-  run:
-    runs-on: ${{ matrix.os }}
-
+  cs_and_tests:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        php-version: [ '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2' ]
+        php-version: [ '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3' ]
+
+    runs-on: ${{ matrix.os }}
 
     name: PHP ${{ matrix.php-version }} on ${{ matrix.os }}
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install PHP
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-        env:
-          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          extensions: json, mysqli, mbstring, zip
 
-      - name: Setup Composer caching
+      - name: Install dependencies with caching
         uses: ramsey/composer-install@v2
 
-      - name: Install dependencies and update PHPUnit
-        run: |
-          composer config github-oauth.github.com ${{ secrets.GITHUB_TOKEN }}
-          composer install
-        env:
-          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Run code sniffer
-        run: vendor/bin/phpcs --colors
+        run: composer phpcs
 
       - name: Run PHPUnit tests
-        if: ${{ matrix.php-version != '7.4' }}
+        if: ${{ matrix.php-version != '8.3' }}
         run: vendor/bin/phpunit
 
       - name: Run PHPUnit tests with coverage
-        if: ${{ matrix.php-version == '7.4' }}
+        if: ${{ matrix.php-version == '8.3' }}
         run: vendor/bin/phpunit --coverage-clover coverage.xml
 
       - name: Run Coveralls for PHPUnit tests
-        if: ${{ matrix.php-version == '7.4' }}
+        if: ${{ matrix.php-version == '8.3' }}
         env:
           COVERALLS_RUN_LOCALLY: true
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: vendor/bin/php-coveralls -v
 
-      - name: Run JEST with coverage and Coveralls
-        if: ${{ matrix.php-version == '8.2' }}
+      - name: Run ESLint, JEST with coverage and Coveralls
+        if: ${{ matrix.php-version == '8.3' }}
         env:
           COVERALLS_RUN_LOCALLY: true
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
+          corepack enable
           yarn set version stable
           yarn
-          yarn run dev
+          yarn dev
+          yarn lint
           yarn run coveralls
