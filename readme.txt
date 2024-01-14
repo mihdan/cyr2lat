@@ -224,6 +224,7 @@ Yes, you can!
 = 6.0.6 (14.01.2024) =
 * Tested with WordPress 6.4.
 * Tested with WooCommerce 8.4.
+* Tested with PHP 8.3.
 * Fixed documentation on ctl_allow filter.
 
 = 6.0.5 (09.10.2023) =
