@@ -221,6 +221,10 @@ Yes, you can!
 
 == Changelog ==
 
+= 6.0.7 (10.02.2024) =
+* Tested with WooCommerce 8.5.
+* Added redirect from the cyrillic post title when creating a new post.
+
 = 6.0.6 (14.01.2024) =
 * Tested with WordPress 6.4.
 * Tested with WooCommerce 8.4.

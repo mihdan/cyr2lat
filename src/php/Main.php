@@ -22,6 +22,7 @@ use Polylang;
 use SitePress;
 use WP_CLI;
 use WP_Error;
+use WP_Post;
 use wpdb;
 use Exception;
 use CyrToLat\Settings\Settings;
@@ -252,6 +253,7 @@ class Main {
 		add_filter( 'sanitize_file_name', [ $this, 'sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 2 );
 		add_filter( 'pre_insert_term', [ $this, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
+		add_filter( 'post_updated', [ $this, 'check_for_changed_slugs' ], 10, 3 );
 
 		if ( ! $this->is_frontend || class_exists( SitePress::class ) ) {
 			add_filter( 'get_terms_args', [ $this, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
@@ -788,6 +790,36 @@ class Main {
 			isset( $this->wpml_languages[ $language_code ] ) ?
 				$this->wpml_languages[ $language_code ]['default_locale'] :
 				null;
+	}
+
+	/**
+	 * Checks for changed slugs for published post objects to save the old slug.
+	 *
+	 * @param int     $post_id     Post ID.
+	 * @param WP_Post $post        The post object.
+	 * @param WP_Post $post_before The previous post object.
+	 *
+	 * @noinspection PhpMissingParamTypeInspection
+	 */
+	public function check_for_changed_slugs( $post_id, $post, $post_before ) {
+		// Don't bother if it hasn't changed.
+		if ( $post->post_name === $post_before->post_name ) {
+			return;
+		}
+
+		// We're only concerned with published, non-hierarchical objects.
+		if ( ! ( 'publish' === $post->post_status || ( 'attachment' === get_post_type( $post ) && 'inherit' === $post->post_status ) ) || is_post_type_hierarchical( $post->post_type ) ) {
+			return;
+		}
+
+		// Modify $post_before->post_name when cyr2lat converted the title.
+		if (
+			empty( $post_before->post_name ) &&
+			$post->post_title !== $post->post_name &&
+			$post->post_name === $this->transliterate( $post->post_title )
+		) {
+			$post_before->post_name = rawurlencode( $post->post_title );
+		}
 	}
 
 	/**

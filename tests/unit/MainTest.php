@@ -32,6 +32,7 @@ use Mockery;
 use PHPUnit\Runner\Version;
 use ReflectionException;
 use WP_Mock;
+use WP_Post;
 use WP_REST_Server;
 use WP_Screen;
 use tad\FunctionMocker\FunctionMocker;
@@ -1650,6 +1651,148 @@ class MainTest extends CyrToLatTestCase {
 			'Existing language code'     => [ 'ru', 'ru_RU' ],
 			'Not existing language code' => [ 'some', null ],
 			'Null language code'         => [ null, null ],
+		];
+	}
+
+	/**
+	 * Test check_for_changed_slugs().
+	 *
+	 * @param WP_Post $post        The post object.
+	 * @param WP_Post $post_before The previous post object.
+	 * @param WP_Post $expected    The expected previous post object.
+	 *
+	 * @return void
+	 * @dataProvider dp_test_check_for_changed_slugs
+	 * @noinspection PhpMissingParamTypeInspection
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_check_for_changed_slugs( $post, $post_before, $expected ) {
+		$post_id = 5;
+
+		$locale     = 'ru_RU';
+		$iso9_table = $this->get_conversion_table( $locale );
+
+		$settings = Mockery::mock( Settings::class );
+		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
+		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
+
+		WP_Mock::userFunction( 'get_post_type' )->with( $post )->andReturn( $post->post_type );
+		WP_Mock::userFunction( 'is_post_type_hierarchical' )->with( $post->post_type )
+			->andReturnUsing(
+				static function ( $post_type ) {
+					return 'page' === $post_type;
+				}
+			);
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'settings', $settings );
+
+		$subject->check_for_changed_slugs( $post_id, $post, $post_before );
+		self::assertEquals( $expected, $post_before );
+	}
+
+	/**
+	 * Data provider for test_check_for_changed_slugs().
+	 *
+	 * @return array
+	 */
+	public static function dp_test_check_for_changed_slugs(): array {
+
+		return [
+			// Not transliterated.
+			'same post_name'              => [
+				(object) [
+					'post_name' => 'q',
+					'post_type' => 'post',
+				],
+				(object) [
+					'post_name' => 'q',
+					'post_type' => 'post',
+				],
+				(object) [
+					'post_name' => 'q',
+					'post_type' => 'post',
+				],
+			],
+			// Transliterated.
+			'some post_status'            => [
+				(object) [
+					'post_name'   => 'j',
+					'post_status' => 'some',
+					'post_type'   => 'post',
+				],
+				(object) [
+					'post_name' => 'й',
+					'post_type' => 'post',
+				],
+				(object) [
+					'post_name' => 'й',
+					'post_type' => 'post',
+				],
+			],
+			'not hierarchical'            => [
+				(object) [
+					'post_name'   => 'j',
+					'post_status' => 'publish',
+					'post_type'   => 'page',
+				],
+				(object) [
+					'post_name' => 'й',
+					'post_type' => 'post',
+				],
+				(object) [
+					'post_name' => 'й',
+					'post_type' => 'post',
+				],
+			],
+			'title not converted'         => [
+				(object) [
+					'post_title'  => 'j',
+					'post_name'   => 'j',
+					'post_status' => 'publish',
+					'post_type'   => 'post',
+				],
+				(object) [
+					'post_name' => '',
+					'post_type' => 'post',
+				],
+				(object) [
+					'post_name' => '',
+					'post_type' => 'post',
+				],
+			],
+			'title not transliterated'    => [
+				(object) [
+					'post_title'  => 'some',
+					'post_name'   => 'some-other',
+					'post_status' => 'publish',
+					'post_type'   => 'post',
+				],
+				(object) [
+					'post_name' => '',
+					'post_type' => 'post',
+				],
+				(object) [
+					'post_name' => '',
+					'post_type' => 'post',
+				],
+			],
+			'cyr2lat converted the title' => [
+				(object) [
+					'post_title'  => 'й',
+					'post_name'   => 'j',
+					'post_status' => 'publish',
+					'post_type'   => 'post',
+				],
+				(object) [
+					'post_name' => '',
+					'post_type' => 'post',
+				],
+				(object) [
+					'post_name' => '%D0%B9',
+					'post_type' => 'post',
+				],
+			],
 		];
 	}
 
