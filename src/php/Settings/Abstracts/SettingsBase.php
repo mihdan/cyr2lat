@@ -478,7 +478,7 @@ abstract class SettingsBase {
 		foreach ( $this->form_fields as $form_field ) {
 			add_settings_section(
 				$form_field['section'],
-				$form_field['title'],
+				$form_field['title'] ?? '',
 				[ $tab, 'section_callback' ],
 				$tab->option_page()
 			);

@@ -226,6 +226,7 @@ Yes, you can!
 * Added redirect from the cyrillic post title when creating a new post.
 * Added description of post types and post statuses on the Converter page.
 * Fixed displaying all file descriptions in the Theme Editor in the current locale.
+* Fixed PHP warning in SettingsBase.
 
 = 6.0.6 (14.01.2024) =
 * Tested with WordPress 6.4.
