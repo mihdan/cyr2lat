@@ -107,7 +107,7 @@ class MainTest extends CyrToLatTestCase {
 		FunctionMocker::replace(
 			'constant',
 			static function ( $name ) use ( $plugin_file ) {
-				return $name === 'CYR_TO_LAT_FILE' ? $plugin_file : '';
+				return 'CYR_TO_LAT_FILE' === $name ? $plugin_file : '';
 			}
 		);
 
