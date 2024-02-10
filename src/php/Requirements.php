@@ -71,7 +71,7 @@ class Requirements {
 			global $wp_file_descriptions;
 
 			$admin_locale = get_locale();
-			load_textdomain( 'default', WP_LANG_DIR . '/admin-' . $admin_locale . '.mo', $admin_locale );
+			load_default_textdomain( $admin_locale );
 
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}

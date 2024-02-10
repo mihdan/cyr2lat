@@ -224,6 +224,7 @@ Yes, you can!
 = 6.0.7 (10.02.2024) =
 * Tested with WooCommerce 8.5.
 * Added redirect from the cyrillic post title when creating a new post.
+* Fixed displaying all file descriptions in the Theme Editor in the current locale.
 
 = 6.0.6 (14.01.2024) =
 * Tested with WordPress 6.4.
