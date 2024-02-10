@@ -65,34 +65,6 @@ class Converter extends PluginSettingsBase {
 	public function init_form_fields() {
 		$this->form_fields = [];
 
-		$default_post_types = [ 'post', 'page', 'nav_menu_item' ];
-
-		$post_types = $default_post_types;
-
-		$filtered_post_types = array_filter( (array) apply_filters( 'ctl_post_types', $post_types ) );
-
-		$this->form_fields['background_post_types'] = [
-			'label'        => __( 'Post Types', 'cyr2lat' ),
-			'section'      => self::SECTION_TYPES_STATUSES,
-			'type'         => 'checkbox',
-			'placeholder'  => '',
-			'helper'       => __( 'Post types included in the conversion.', 'cyr2lat' ),
-			'supplemental' => '',
-			'options'      => [],
-		];
-
-		foreach ( $post_types as $post_type ) {
-			$label = $post_type;
-
-			$this->form_fields['background_post_types']['options'][ $post_type ] = $label;
-		}
-
-		$this->form_fields['background_post_types']['default']  = $default_post_types;
-		$this->form_fields['background_post_types']['disabled'] = array_diff( $default_post_types, $filtered_post_types );
-
-		$default_post_statuses = [ 'publish', 'future', 'private' ];
-		$post_statuses         = [ 'publish', 'future', 'private', 'draft', 'pending' ];
-
 		$this->form_fields['background_post_statuses'] = [
 			'label'        => __( 'Post Statuses', 'cyr2lat' ),
 			'section'      => self::SECTION_TYPES_STATUSES,
@@ -103,13 +75,37 @@ class Converter extends PluginSettingsBase {
 			'options'      => [],
 		];
 
-		foreach ( $post_statuses as $post_status ) {
-			$label = $post_status;
+		$post_status_objects   = get_post_stati( [ 'internal' => false ], 'objects' );
+		$post_stati            = array_keys( $post_status_objects );
+		$default_post_statuses = array_intersect( $post_stati, [ 'publish', 'future', 'private' ] );
+		$array_flip            = array_flip( $default_post_statuses );
+		$post_status_objects   =
+			array_intersect_key( $post_status_objects, $array_flip ) +
+			array_diff_key( $post_status_objects, $array_flip );
 
-			$this->form_fields['background_post_statuses']['options'][ $post_status ] = $label;
+		foreach ( $post_status_objects as $post_status => $post_status_object ) {
+			$this->form_fields['background_post_statuses']['options'][ $post_status ] =
+				// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
+				__( $post_status_object->label ) . ' (' . $post_status . ')';
 		}
 
 		$this->form_fields['background_post_statuses']['default'] = $default_post_statuses;
+	}
+
+	/**
+	 * Get convertible post type objects.
+	 *
+	 * @return array
+	 */
+	private static function get_get_convertible_post_type_objects(): array {
+		return get_post_types(
+			[
+				'public' => true,
+				'name'   => 'nav_menu_item',
+			],
+			'objects',
+			'or'
+		);
 	}
 
 	/**
@@ -118,31 +114,40 @@ class Converter extends PluginSettingsBase {
 	 * @return array
 	 */
 	public static function get_convertible_post_types(): array {
-		$post_types = get_post_types( [ 'public' => true ] );
-
-		return array_merge( $post_types, [ 'nav_menu_item' => 'nav_menu_item' ] );
+		return array_keys( self::get_get_convertible_post_type_objects() );
 	}
 
 	/**
 	 * Init form fields.
 	 */
 	public function delayed_init_form_fields() {
-		$post_types = self::get_convertible_post_types();
+		$this->form_fields['background_post_types'] = [
+			'label'        => __( 'Post Types', 'cyr2lat' ),
+			'section'      => self::SECTION_TYPES_STATUSES,
+			'type'         => 'checkbox',
+			'placeholder'  => '',
+			'helper'       => __( 'Post types included in the conversion.', 'cyr2lat' ),
+			'supplemental' => '',
+			'options'      => [],
+		];
 
+		$post_type_objects   = self::get_get_convertible_post_type_objects();
+		$post_types          = array_keys( $post_type_objects );
+		$default_post_types  = array_intersect( $post_types, [ 'post', 'page', 'nav_menu_item' ] );
+		$array_flip          = array_flip( $default_post_types );
+		$post_type_objects   =
+			array_intersect_key( $post_type_objects, $array_flip ) +
+			array_diff_key( $post_type_objects, $array_flip );
 		$filtered_post_types = array_filter( (array) apply_filters( 'ctl_post_types', $post_types ) );
 
-		$this->form_fields['background_post_types']['options'] = [];
-
-		foreach ( $post_types as $post_type ) {
-			$label = $post_type;
-
-			$this->form_fields['background_post_types']['options'][ $post_type ] = $label;
+		foreach ( $post_type_objects as $post_type => $post_type_object ) {
+			$this->form_fields['background_post_types']['options'][ $post_type ] =
+				// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
+				__( $post_type_object->label ) . ' (' . $post_type . ')';
 		}
 
-		$this->form_fields['background_post_types']['disabled'] = array_diff(
-			$this->form_fields['background_post_types']['default'],
-			$filtered_post_types
-		);
+		$this->form_fields['background_post_types']['default']  = $default_post_types;
+		$this->form_fields['background_post_types']['disabled'] = array_diff( $default_post_types, $filtered_post_types );
 	}
 
 	/**

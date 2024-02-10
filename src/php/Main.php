@@ -146,10 +146,26 @@ class Main {
 	 * @return void
 	 */
 	public function init_all() {
+		$this->load_textdomain();
+
 		$this->init_multilingual();
 		$this->init_classes();
 		$this->init_cli();
 		$this->init_hooks();
+	}
+
+	/**
+	 * Load plugin text domain.
+	 *
+	 * @return void
+	 */
+	public function load_textdomain() {
+		load_default_textdomain();
+		load_plugin_textdomain(
+			'cyr2lat',
+			false,
+			dirname( plugin_basename( constant( 'CYR_TO_LAT_FILE' ) ) ) . '/languages/'
+		);
 	}
 
 	/**

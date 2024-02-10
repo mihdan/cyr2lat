@@ -77,6 +77,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_init_all() {
+		$load_textdomain   = 'load_textdomain';
 		$init_multilingual = 'init_multilingual';
 		$init_classes      = 'init_classes';
 		$init_cli          = 'init_cli';
@@ -85,12 +86,39 @@ class MainTest extends CyrToLatTestCase {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( $load_textdomain )->once();
 		$subject->shouldReceive( $init_multilingual )->once();
 		$subject->shouldReceive( $init_classes )->once();
 		$subject->shouldReceive( $init_cli )->once();
 		$subject->shouldReceive( $init_hooks )->once();
 
 		$subject->init_all();
+	}
+
+	/**
+	 * Test load_textdomain().
+	 *
+	 * @return void
+	 */
+	public function test_load_textdomain() {
+		$plugin_file      = '/var/www/wp-content/plugins/cyr2lat/cyr-to-lat.php';
+		$plugin_base_name = 'cyr2lat/cyr-to-lat.php';
+
+		FunctionMocker::replace(
+			'constant',
+			static function ( $name ) use ( $plugin_file ) {
+				return $name === 'CYR_TO_LAT_FILE' ? $plugin_file : '';
+			}
+		);
+
+		WP_Mock::userFunction( 'plugin_basename' )->with( $plugin_file )->once()->andReturn( $plugin_base_name );
+		WP_Mock::userFunction( 'load_default_textdomain' )->with()->once();
+		WP_Mock::userFunction( 'load_plugin_textdomain' )
+			->with( 'cyr2lat', false, 'cyr2lat/languages/' )
+			->once();
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		$subject->load_textdomain();
 	}
 
 	/**
@@ -414,6 +442,21 @@ class MainTest extends CyrToLatTestCase {
 		WP_Mock::expectActionNotAdded( 'before_woocommerce_init', [ $subject, 'declare_wc_compatibility' ] );
 
 		$subject->$method();
+	}
+
+	/**
+	 * Test settings().
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_settings() {
+		$settings = Mockery::mock( Settings::class );
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		$this->set_protected_property( $subject, 'settings', $settings );
+
+		self::assertSame( $settings, $subject->settings() );
 	}
 
 	/**
