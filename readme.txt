@@ -221,7 +221,7 @@ Yes, you can!
 
 == Changelog ==
 
-= 6.0.7 (10.02.2024) =
+= 6.0.7 (11.02.2024) =
 * Tested with WooCommerce 8.5.
 * Added redirect from the cyrillic post title when creating a new post.
 * Added description of post types and post statuses on the Converter page.
