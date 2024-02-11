@@ -790,9 +790,10 @@ class MainTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_is_wc_product_attribute( string $title, bool $is_product, array $names, bool $expected ) {
-		$method = 'is_wc_product_attribute';
+		$method  = 'is_wc_product_attribute';
 		$subject = $this->get_subject();
-		$this->set_method_accessibility( $subject, $method);
+
+		$this->set_method_accessibility( $subject, $method );
 
 		$attributes = [];
 
