@@ -53,7 +53,7 @@ class MainTest extends CyrToLatTestCase {
 	public function tearDown(): void {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		unset( $GLOBALS['wp_version'], $GLOBALS['wpdb'], $GLOBALS['current_screen'], $_POST, $_GET );
+		unset( $GLOBALS['wp_version'], $GLOBALS['wpdb'], $GLOBALS['current_screen'], $GLOBALS['product'], $_POST, $_GET );
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
@@ -760,7 +760,7 @@ class MainTest extends CyrToLatTestCase {
 		FunctionMocker::replace(
 			'function_exists',
 			static function ( $function_name ) use ( $is_wc ) {
-				if ( 'wc_get_attribute_taxonomies' === $function_name ) {
+				if ( 'WC' === $function_name ) {
 					return $is_wc;
 				}
 
@@ -776,6 +776,53 @@ class MainTest extends CyrToLatTestCase {
 		$subject->shouldReceive( 'transliterate' )->times( $expected );
 
 		$subject->sanitize_title( $title );
+	}
+
+	/**
+	 * Test is_wc_product_attribute().
+	 *
+	 * @param string $title      Title.
+	 * @param bool   $is_product Whether it is a product page.
+	 * @param array  $names      Attribute names.
+	 * @param bool   $expected   Expected result.
+	 *
+	 * @dataProvider dp_test_is_wc_product_attribute
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_is_wc_product_attribute( string $title, bool $is_product, array $names, bool $expected ) {
+		$method = 'is_wc_product_attribute';
+		$subject = $this->get_subject();
+		$this->set_method_accessibility( $subject, $method);
+
+		$attributes = [];
+
+		foreach ( $names as $name ) {
+			$attribute = Mockery::mock( 'WC_Product_Attribute' );
+
+			$attribute->shouldReceive( 'get_name' )->andReturn( $name );
+
+			$attributes[] = $attribute;
+		}
+
+		$product = Mockery::mock( 'WC_Product' );
+		$product->shouldReceive( 'get_attributes' )->andReturn( $attributes );
+		$GLOBALS['product'] = $is_product ? $product : null;
+
+		self::assertSame( $expected, $subject->$method( $title ) );
+	}
+
+	/**
+	 * Data provider for test_is_wc_product_attribute().
+	 *
+	 * @return array
+	 */
+	public function dp_test_is_wc_product_attribute(): array {
+		return [
+			'not a product page' => [ 'атрибут 1', false, [], false ],
+			'no attributes'      => [ 'атрибут 1', true, [], false ],
+			'no matching'        => [ 'атрибут 1', true, [ 'some' ], false ],
+			'matching'           => [ 'атрибут 1', true, [ 'some', 'атрибут 1' ], true ],
+		];
 	}
 
 	/**
