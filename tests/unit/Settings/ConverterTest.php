@@ -163,24 +163,6 @@ class ConverterTest extends CyrToLatTestCase {
 	 */
 	public function test_init_form_fields() {
 		$expected = [
-			'background_post_types'    =>
-				[
-					'label'        => 'Post Types',
-					'section'      => 'types-statuses',
-					'type'         => 'checkbox',
-					'placeholder'  => '',
-					'helper'       => 'Post types included in the conversion.',
-					'supplemental' => '',
-					'options'      =>
-						[
-							'post'          => 'post',
-							'page'          => 'page',
-							'nav_menu_item' => 'nav_menu_item',
-						],
-					'default'      =>
-						[ 'post', 'page', 'nav_menu_item' ],
-					'disabled'     => [],
-				],
 			'background_post_statuses' =>
 				[
 					'label'        => 'Post Statuses',
@@ -191,17 +173,26 @@ class ConverterTest extends CyrToLatTestCase {
 					'supplemental' => '',
 					'options'      =>
 						[
-							'publish' => 'publish',
-							'future'  => 'future',
-							'private' => 'private',
-							'draft'   => 'draft',
-							'pending' => 'pending',
+							'publish' => 'Published (publish)',
+							'future'  => 'Scheduled (future)',
+							'private' => 'Private (private)',
+							'draft'   => 'Draft (draft)',
+							'pending' => 'Pending (pending)',
 						],
 					'default'      =>
 						[ 'publish', 'future', 'private' ],
 				],
 		];
 
+		$post_status_objects = [
+			'publish' => (object) [ 'label' => 'Published' ],
+			'future'  => (object) [ 'label' => 'Scheduled' ],
+			'private' => (object) [ 'label' => 'Private' ],
+			'draft'   => (object) [ 'label' => 'Draft' ],
+			'pending' => (object) [ 'label' => 'Pending' ],
+		];
+
+		WP_Mock::userFunction( 'get_post_stati' )->with( [ 'internal' => false ], 'objects' )->andReturn( $post_status_objects );
 		$mock = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$mock->init_form_fields();
@@ -214,18 +205,28 @@ class ConverterTest extends CyrToLatTestCase {
 	 */
 	public function test_get_convertible_post_types() {
 		$post_types = [
-			'post'       => 'post',
-			'page'       => 'page',
-			'attachment' => 'attachment',
+			'post'          => (object) [ 'post' ],
+			'page'          => (object) [ 'page' ],
+			'attachment'    => (object) [ 'attachment' ],
+			'nav_menu_item' => (object) [ 'nav_menu_item' ],
 		];
 		$expected   = [
-			'post'          => 'post',
-			'page'          => 'page',
-			'attachment'    => 'attachment',
-			'nav_menu_item' => 'nav_menu_item',
+			'post',
+			'page',
+			'attachment',
+			'nav_menu_item',
 		];
 
-		WP_Mock::userFunction( 'get_post_types' )->with( [ 'public' => true ] )->andReturn( $post_types );
+		WP_Mock::userFunction( 'get_post_types' )
+			->with(
+				[
+					'public' => true,
+					'name'   => 'nav_menu_item',
+				],
+				'objects',
+				'or'
+			)
+			->andReturn( $post_types );
 
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
@@ -238,31 +239,20 @@ class ConverterTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_delayed_init_form_fields() {
-		$post_types = [
-			'post'       => 'post',
-			'page'       => 'page',
-			'attachment' => 'attachment',
+		$post_types          = [
+			'post'          => (object) [ 'label' => 'Posts' ],
+			'page'          => (object) [ 'label' => 'Pages' ],
+			'attachment'    => (object) [ 'label' => 'Media' ],
+			'nav_menu_item' => (object) [ 'label' => 'Navigation Menu Items' ],
 		];
-		$expected   = [
-			'background_post_types'    =>
-				[
-					'label'        => 'Post Types',
-					'section'      => 'types-statuses',
-					'type'         => 'checkbox',
-					'placeholder'  => '',
-					'helper'       => 'Post types included in the conversion.',
-					'supplemental' => '',
-					'options'      =>
-						[
-							'post'          => 'post',
-							'page'          => 'page',
-							'attachment'    => 'attachment',
-							'nav_menu_item' => 'nav_menu_item',
-						],
-					'default'      =>
-						[ 'post', 'page', 'nav_menu_item' ],
-					'disabled'     => [],
-				],
+		$post_status_objects = [
+			'publish' => (object) [ 'label' => 'Published' ],
+			'future'  => (object) [ 'label' => 'Scheduled' ],
+			'private' => (object) [ 'label' => 'Private' ],
+			'draft'   => (object) [ 'label' => 'Draft' ],
+			'pending' => (object) [ 'label' => 'Pending' ],
+		];
+		$expected            = [
 			'background_post_statuses' =>
 				[
 					'label'        => 'Post Statuses',
@@ -273,18 +263,52 @@ class ConverterTest extends CyrToLatTestCase {
 					'supplemental' => '',
 					'options'      =>
 						[
-							'publish' => 'publish',
-							'future'  => 'future',
-							'private' => 'private',
-							'draft'   => 'draft',
-							'pending' => 'pending',
+							'publish' => 'Published (publish)',
+							'future'  => 'Scheduled (future)',
+							'private' => 'Private (private)',
+							'draft'   => 'Draft (draft)',
+							'pending' => 'Pending (pending)',
 						],
 					'default'      =>
 						[ 'publish', 'future', 'private' ],
 				],
+			'background_post_types'    =>
+				[
+					'label'        => 'Post Types',
+					'section'      => 'types-statuses',
+					'type'         => 'checkbox',
+					'placeholder'  => '',
+					'helper'       => 'Post types included in the conversion.',
+					'supplemental' => '',
+					'options'      =>
+						[
+							'post'          => 'Posts (post)',
+							'page'          => 'Pages (page)',
+							'nav_menu_item' => 'Navigation Menu Items (nav_menu_item)',
+							'attachment'    => 'Media (attachment)',
+						],
+					'default'      =>
+						[
+							0 => 'post',
+							1 => 'page',
+							3 => 'nav_menu_item',
+						],
+					'disabled'     => [],
+				],
 		];
 
-		WP_Mock::userFunction( 'get_post_types' )->with( [ 'public' => true ] )->andReturn( $post_types );
+		WP_Mock::userFunction( 'get_post_stati' )->with( [ 'internal' => false ], 'objects' )
+			->andReturn( $post_status_objects );
+		WP_Mock::userFunction( 'get_post_types' )
+			->with(
+				[
+					'public' => true,
+					'name'   => 'nav_menu_item',
+				],
+				'objects',
+				'or'
+			)
+			->andReturn( $post_types );
 
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 

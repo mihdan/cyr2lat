@@ -32,6 +32,7 @@ use Mockery;
 use PHPUnit\Runner\Version;
 use ReflectionException;
 use WP_Mock;
+use WP_Post;
 use WP_REST_Server;
 use WP_Screen;
 use tad\FunctionMocker\FunctionMocker;
@@ -52,7 +53,7 @@ class MainTest extends CyrToLatTestCase {
 	public function tearDown(): void {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		unset( $GLOBALS['wp_version'], $GLOBALS['wpdb'], $GLOBALS['current_screen'], $_POST, $_GET );
+		unset( $GLOBALS['wp_version'], $GLOBALS['wpdb'], $GLOBALS['current_screen'], $GLOBALS['product'], $_POST, $_GET );
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
@@ -76,6 +77,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_init_all() {
+		$load_textdomain   = 'load_textdomain';
 		$init_multilingual = 'init_multilingual';
 		$init_classes      = 'init_classes';
 		$init_cli          = 'init_cli';
@@ -84,12 +86,39 @@ class MainTest extends CyrToLatTestCase {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( $load_textdomain )->once();
 		$subject->shouldReceive( $init_multilingual )->once();
 		$subject->shouldReceive( $init_classes )->once();
 		$subject->shouldReceive( $init_cli )->once();
 		$subject->shouldReceive( $init_hooks )->once();
 
 		$subject->init_all();
+	}
+
+	/**
+	 * Test load_textdomain().
+	 *
+	 * @return void
+	 */
+	public function test_load_textdomain() {
+		$plugin_file      = '/var/www/wp-content/plugins/cyr2lat/cyr-to-lat.php';
+		$plugin_base_name = 'cyr2lat/cyr-to-lat.php';
+
+		FunctionMocker::replace(
+			'constant',
+			static function ( $name ) use ( $plugin_file ) {
+				return 'CYR_TO_LAT_FILE' === $name ? $plugin_file : '';
+			}
+		);
+
+		WP_Mock::userFunction( 'plugin_basename' )->with( $plugin_file )->once()->andReturn( $plugin_base_name );
+		WP_Mock::userFunction( 'load_default_textdomain' )->with()->once();
+		WP_Mock::userFunction( 'load_plugin_textdomain' )
+			->with( 'cyr2lat', false, 'cyr2lat/languages/' )
+			->once();
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		$subject->load_textdomain();
 	}
 
 	/**
@@ -416,6 +445,21 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test settings().
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_settings() {
+		$settings = Mockery::mock( Settings::class );
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		$this->set_protected_property( $subject, 'settings', $settings );
+
+		self::assertSame( $settings, $subject->settings() );
+	}
+
+	/**
 	 * Test that sanitize_title() does nothing when title is empty.
 	 */
 	public function test_sanitize_title_empty_title() {
@@ -716,7 +760,7 @@ class MainTest extends CyrToLatTestCase {
 		FunctionMocker::replace(
 			'function_exists',
 			static function ( $function_name ) use ( $is_wc ) {
-				if ( 'wc_get_attribute_taxonomies' === $function_name ) {
+				if ( 'WC' === $function_name ) {
 					return $is_wc;
 				}
 
@@ -732,6 +776,54 @@ class MainTest extends CyrToLatTestCase {
 		$subject->shouldReceive( 'transliterate' )->times( $expected );
 
 		$subject->sanitize_title( $title );
+	}
+
+	/**
+	 * Test is_wc_product_attribute().
+	 *
+	 * @param string $title      Title.
+	 * @param bool   $is_product Whether it is a product page.
+	 * @param array  $names      Attribute names.
+	 * @param bool   $expected   Expected result.
+	 *
+	 * @dataProvider dp_test_is_wc_product_attribute
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_is_wc_product_attribute( string $title, bool $is_product, array $names, bool $expected ) {
+		$method  = 'is_wc_product_attribute';
+		$subject = $this->get_subject();
+
+		$this->set_method_accessibility( $subject, $method );
+
+		$attributes = [];
+
+		foreach ( $names as $name ) {
+			$attribute = Mockery::mock( 'WC_Product_Attribute' );
+
+			$attribute->shouldReceive( 'get_name' )->andReturn( $name );
+
+			$attributes[] = $attribute;
+		}
+
+		$product = Mockery::mock( 'WC_Product' );
+		$product->shouldReceive( 'get_attributes' )->andReturn( $attributes );
+		$GLOBALS['product'] = $is_product ? $product : null;
+
+		self::assertSame( $expected, $subject->$method( $title ) );
+	}
+
+	/**
+	 * Data provider for test_is_wc_product_attribute().
+	 *
+	 * @return array
+	 */
+	public function dp_test_is_wc_product_attribute(): array {
+		return [
+			'not a product page' => [ 'атрибут 1', false, [], false ],
+			'no attributes'      => [ 'атрибут 1', true, [], false ],
+			'no matching'        => [ 'атрибут 1', true, [ 'some' ], false ],
+			'matching'           => [ 'атрибут 1', true, [ 'some', 'атрибут 1' ], true ],
+		];
 	}
 
 	/**
@@ -1650,6 +1742,148 @@ class MainTest extends CyrToLatTestCase {
 			'Existing language code'     => [ 'ru', 'ru_RU' ],
 			'Not existing language code' => [ 'some', null ],
 			'Null language code'         => [ null, null ],
+		];
+	}
+
+	/**
+	 * Test check_for_changed_slugs().
+	 *
+	 * @param WP_Post $post        The post object.
+	 * @param WP_Post $post_before The previous post object.
+	 * @param WP_Post $expected    The expected previous post object.
+	 *
+	 * @return void
+	 * @dataProvider dp_test_check_for_changed_slugs
+	 * @noinspection PhpMissingParamTypeInspection
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_check_for_changed_slugs( $post, $post_before, $expected ) {
+		$post_id = 5;
+
+		$locale     = 'ru_RU';
+		$iso9_table = $this->get_conversion_table( $locale );
+
+		$settings = Mockery::mock( Settings::class );
+		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
+		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
+
+		WP_Mock::userFunction( 'get_post_type' )->with( $post )->andReturn( $post->post_type );
+		WP_Mock::userFunction( 'is_post_type_hierarchical' )->with( $post->post_type )
+			->andReturnUsing(
+				static function ( $post_type ) {
+					return 'page' === $post_type;
+				}
+			);
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'settings', $settings );
+
+		$subject->check_for_changed_slugs( $post_id, $post, $post_before );
+		self::assertEquals( $expected, $post_before );
+	}
+
+	/**
+	 * Data provider for test_check_for_changed_slugs().
+	 *
+	 * @return array
+	 */
+	public static function dp_test_check_for_changed_slugs(): array {
+
+		return [
+			// Not transliterated.
+			'same post_name'              => [
+				(object) [
+					'post_name' => 'q',
+					'post_type' => 'post',
+				],
+				(object) [
+					'post_name' => 'q',
+					'post_type' => 'post',
+				],
+				(object) [
+					'post_name' => 'q',
+					'post_type' => 'post',
+				],
+			],
+			// Transliterated.
+			'some post_status'            => [
+				(object) [
+					'post_name'   => 'j',
+					'post_status' => 'some',
+					'post_type'   => 'post',
+				],
+				(object) [
+					'post_name' => 'й',
+					'post_type' => 'post',
+				],
+				(object) [
+					'post_name' => 'й',
+					'post_type' => 'post',
+				],
+			],
+			'not hierarchical'            => [
+				(object) [
+					'post_name'   => 'j',
+					'post_status' => 'publish',
+					'post_type'   => 'page',
+				],
+				(object) [
+					'post_name' => 'й',
+					'post_type' => 'post',
+				],
+				(object) [
+					'post_name' => 'й',
+					'post_type' => 'post',
+				],
+			],
+			'title not converted'         => [
+				(object) [
+					'post_title'  => 'j',
+					'post_name'   => 'j',
+					'post_status' => 'publish',
+					'post_type'   => 'post',
+				],
+				(object) [
+					'post_name' => '',
+					'post_type' => 'post',
+				],
+				(object) [
+					'post_name' => '',
+					'post_type' => 'post',
+				],
+			],
+			'title not transliterated'    => [
+				(object) [
+					'post_title'  => 'some',
+					'post_name'   => 'some-other',
+					'post_status' => 'publish',
+					'post_type'   => 'post',
+				],
+				(object) [
+					'post_name' => '',
+					'post_type' => 'post',
+				],
+				(object) [
+					'post_name' => '',
+					'post_type' => 'post',
+				],
+			],
+			'cyr2lat converted the title' => [
+				(object) [
+					'post_title'  => 'й',
+					'post_name'   => 'j',
+					'post_status' => 'publish',
+					'post_type'   => 'post',
+				],
+				(object) [
+					'post_name' => '',
+					'post_type' => 'post',
+				],
+				(object) [
+					'post_name' => '%D0%B9',
+					'post_type' => 'post',
+				],
+			],
 		];
 	}
 

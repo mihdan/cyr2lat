@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
 Tested up to: 6.4
-Stable tag: 6.0.6
+Stable tag: 6.0.7
 Requires PHP: 7.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -215,11 +215,19 @@ wp media regenerate --skip-plugins=cyr2lat
 = Can I contribute? =
 
 Yes, you can!
-
+1
 * Join in on our [GitHub repository](https://github.com/mihdan/cyr2lat)
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 6.0.7 (11.02.2024) =
+* Tested with WooCommerce 8.5.
+* Added redirect from the cyrillic post title when creating a new post.
+* Added description of post types and post statuses on the Converter page.
+* Fixed displaying all file descriptions in the Theme Editor in the current locale.
+* Fixed PHP warning in SettingsBase.
+* Fixed output of variative product attributes.
 
 = 6.0.6 (14.01.2024) =
 * Tested with WordPress 6.4.

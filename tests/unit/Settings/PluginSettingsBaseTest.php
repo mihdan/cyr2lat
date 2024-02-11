@@ -34,7 +34,7 @@ class PluginSettingsBaseTest extends CyrToLatTestCase {
 	 */
 	public function test_plugin_basename() {
 		$plugin_file      = '/var/www/wp-content/plugins/cyr2lat/cyr-to-lat.php';
-		$plugin_base_name = 'cyr2lat/cur-to-lat.php';
+		$plugin_base_name = 'cyr2lat/cyr-to-lat.php';
 
 		$subject = Mockery::mock( PluginSettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'plugin_basename';
