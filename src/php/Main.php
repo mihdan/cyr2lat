@@ -326,7 +326,7 @@ class Main {
 			// Make sure we search in the db only once being called from wp_insert_term().
 			$this->is_term = false;
 
-			// Fix case when showing previously created categories in cyrillic with WPML.
+			// Fix a case when showing previously created categories in cyrillic with WPML.
 			if ( $this->is_frontend && class_exists( SitePress::class ) ) {
 				return $title;
 			}
@@ -352,7 +352,7 @@ class Main {
 			}
 		}
 
-		return $this->is_wc_attribute_taxonomy( $title ) ? $title : $this->transliterate( $title );
+		return $this->is_wc_attribute( $title ) ? $title : $this->transliterate( $title );
 	}
 
 	/**
@@ -384,21 +384,55 @@ class Main {
 	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	protected function is_wc_attribute_taxonomy( string $title ): bool {
-		if ( ! function_exists( 'wc_get_attribute_taxonomies' ) ) {
-			return false;
-		}
-
 		$title = str_replace( 'pa_', '', $title );
 
-		$attribute_taxonomies = wc_get_attribute_taxonomies();
-
-		foreach ( $attribute_taxonomies as $attribute_taxonomy ) {
+		foreach ( wc_get_attribute_taxonomies() as $attribute_taxonomy ) {
 			if ( $title === $attribute_taxonomy->attribute_name ) {
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check if title is a product attribute.
+	 *
+	 * @param string $title Title.
+	 *
+	 * @return bool
+	 * @noinspection PhpUndefinedFunctionInspection
+	 */
+	protected function is_wc_product_attribute( string $title ): bool {
+		global $product;
+
+		if ( null === $product ) {
+			return false;
+		}
+
+		foreach ( $product->get_attributes() as $attribute ) {
+			if ( $title === $attribute->get_name() ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check if title is an attribute.
+	 *
+	 * @param string $title Title.
+	 *
+	 * @return bool
+	 * @noinspection PhpUndefinedFunctionInspection
+	 */
+	protected function is_wc_attribute( string $title ): bool {
+		if ( ! function_exists( 'WC' ) ) {
+			return false;
+		}
+
+		return $this->is_wc_attribute_taxonomy( $title ) || $this->is_wc_product_attribute( $title );
 	}
 
 	/**
