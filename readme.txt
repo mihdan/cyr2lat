@@ -227,6 +227,7 @@ Yes, you can!
 * Added description of post types and post statuses on the Converter page.
 * Fixed displaying all file descriptions in the Theme Editor in the current locale.
 * Fixed PHP warning in SettingsBase.
+* Fixed output of variative product attributes.
 
 = 6.0.6 (14.01.2024) =
 * Tested with WordPress 6.4.
