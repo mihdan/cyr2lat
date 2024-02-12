@@ -53,7 +53,7 @@ class MainTest extends CyrToLatTestCase {
 	public function tearDown(): void {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		unset( $GLOBALS['wp_version'], $GLOBALS['wpdb'], $GLOBALS['current_screen'], $GLOBALS['product'], $_POST, $_GET );
+		unset( $GLOBALS['wpdb'], $GLOBALS['current_screen'], $GLOBALS['product'], $_POST, $_GET );
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
@@ -1135,8 +1135,6 @@ class MainTest extends CyrToLatTestCase {
 	 * Test that sanitize_post_name() does nothing if no Block/Gutenberg editor is active
 	 */
 	public function test_sanitize_post_name_without_gutenberg() {
-		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-
 		$data = [ 'something' ];
 
 		WP_Mock::userFunction(
@@ -1146,13 +1144,6 @@ class MainTest extends CyrToLatTestCase {
 				'return' => false,
 			]
 		);
-
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$GLOBALS['wp_version'] = '4.9';
-		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
-
-		FunctionMocker::replace( 'function_exists', true );
-
 		WP_Mock::userFunction(
 			'is_plugin_active',
 			[
@@ -1161,7 +1152,6 @@ class MainTest extends CyrToLatTestCase {
 				'return' => true,
 			]
 		);
-
 		WP_Mock::userFunction(
 			'get_option',
 			[
@@ -1171,8 +1161,45 @@ class MainTest extends CyrToLatTestCase {
 			]
 		);
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$GLOBALS['wp_version'] = '5.0';
+		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+
+		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
+	}
+
+	/**
+	 * Test that sanitize_post_name() does nothing if Disable Gutenberg plugin is active
+	 */
+	public function test_sanitize_post_name_with_disable_gutenberg_plugin() {
+		$data = [ 'something' ];
+
+		WP_Mock::userFunction(
+			'has_filter',
+			[
+				'args'   => [ 'replace_editor', 'gutenberg_init' ],
+				'return' => false,
+			]
+		);
+		WP_Mock::userFunction(
+			'is_plugin_active',
+			[
+				'times'  => 1,
+				'args'   => [ 'classic-editor/classic-editor.php' ],
+				'return' => false,
+			]
+		);
+		WP_Mock::userFunction(
+			'is_plugin_active',
+			[
+				'times'  => 1,
+				'args'   => [ 'disable-gutenberg/disable-gutenberg.php' ],
+				'return' => true,
+			]
+		);
+
+		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+
+		FunctionMocker::replace( 'disable_gutenberg', true );
+
 		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
 	}
 
@@ -1190,9 +1217,6 @@ class MainTest extends CyrToLatTestCase {
 			]
 		);
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$GLOBALS['wp_version'] = '5.0';
-
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		FunctionMocker::replace( 'function_exists', true );
 
@@ -1200,6 +1224,13 @@ class MainTest extends CyrToLatTestCase {
 			'is_plugin_active',
 			[
 				'args'   => [ 'classic-editor/classic-editor.php' ],
+				'return' => false,
+			]
+		);
+		WP_Mock::userFunction(
+			'is_plugin_active',
+			[
+				'args'   => [ 'disable-gutenberg/disable-gutenberg.php' ],
 				'return' => false,
 			]
 		);
@@ -1226,9 +1257,6 @@ class MainTest extends CyrToLatTestCase {
 	 */
 	public function test_sanitize_post_name( array $data, array $expected ) {
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$GLOBALS['wp_version'] = '5.0';
-
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		FunctionMocker::replace( 'function_exists', true );
 
@@ -1236,6 +1264,13 @@ class MainTest extends CyrToLatTestCase {
 			'is_plugin_active',
 			[
 				'args'   => [ 'classic-editor/classic-editor.php' ],
+				'return' => false,
+			]
+		);
+		WP_Mock::userFunction(
+			'is_plugin_active',
+			[
+				'args'   => [ 'disable-gutenberg/disable-gutenberg.php' ],
 				'return' => false,
 			]
 		);

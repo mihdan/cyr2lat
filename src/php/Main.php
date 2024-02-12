@@ -536,48 +536,31 @@ class Main {
 	}
 
 	/**
-	 * Check if Classic Editor plugin is active.
-	 *
-	 * @link https://kagg.eu/how-to-catch-gutenberg/
+	 * Check if the Block Editor is active.
+	 * Must only be used after plugins_loaded action is fired.
 	 *
 	 * @return bool
+	 * @noinspection PhpUndefinedFunctionInspection
 	 */
-	private function is_classic_editor_plugin_active(): bool {
+	private function is_gutenberg_editor_active(): bool {
+		// Gutenberg plugin is installed and activated.
+		// This filter was removed in WP 5.5.
+		if ( has_filter( 'replace_editor', 'gutenberg_init' ) ) {
+			return true;
+		}
+
 		// @codeCoverageIgnoreStart
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
-
 		// @codeCoverageIgnoreEnd
 
-		return is_plugin_active( 'classic-editor/classic-editor.php' );
-	}
-
-	/**
-	 * Check if Block Editor is active.
-	 * Must only be used after plugins_loaded action is fired.
-	 *
-	 * @link https://kagg.eu/how-to-catch-gutenberg/
-	 *
-	 * @return bool
-	 */
-	private function is_gutenberg_editor_active(): bool {
-
-		// Gutenberg plugin is installed and activated.
-		$gutenberg = ! ( false === has_filter( 'replace_editor', 'gutenberg_init' ) );
-
-		// Block editor since 5.0.
-		$block_editor = version_compare( $GLOBALS['wp_version'], '5.0-beta', '>' );
-
-		if ( ! $gutenberg && ! $block_editor ) {
-			return false;
+		if ( is_plugin_active( 'classic-editor/classic-editor.php' ) ) {
+			return in_array( get_option( 'classic-editor-replace' ), [ 'no-replace', 'block' ], true );
 		}
 
-		if ( $this->is_classic_editor_plugin_active() ) {
-			$editor_option       = get_option( 'classic-editor-replace' );
-			$block_editor_active = [ 'no-replace', 'block' ];
-
-			return in_array( $editor_option, $block_editor_active, true );
+		if ( is_plugin_active( 'disable-gutenberg/disable-gutenberg.php' ) ) {
+			return ! disable_gutenberg();
 		}
 
 		return true;
