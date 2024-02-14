@@ -820,11 +820,11 @@ class MainTest extends CyrToLatTestCase {
 				'атрибут 1',
 				true,
 				[
-					'some' => [ 'name' => 'some' ],
+					'some'      => [ 'name' => 'some' ],
 					'атрибут 1' => [ 'name' => 'атрибут 1' ],
 				],
 				true,
-			]
+			],
 		];
 	}
 
