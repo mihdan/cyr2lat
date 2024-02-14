@@ -384,7 +384,7 @@ class Main {
 	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	protected function is_wc_attribute_taxonomy( string $title ): bool {
-		$title = str_replace( 'pa_', '', $title );
+		$title = preg_replace( '/^pa_/', '', $title );
 
 		foreach ( wc_get_attribute_taxonomies() as $attribute_taxonomy ) {
 			if ( $title === $attribute_taxonomy->attribute_name ) {
@@ -396,22 +396,28 @@ class Main {
 	}
 
 	/**
-	 * Check if title is a product attribute.
+	 * Check if title is a product not converted attribute.
 	 *
 	 * @param string $title Title.
 	 *
 	 * @return bool
 	 * @noinspection PhpUndefinedFunctionInspection
 	 */
-	protected function is_wc_product_attribute( string $title ): bool {
+	protected function is_wc_product_not_converted_attribute( string $title ): bool {
+
 		global $product;
 
 		if ( null === $product ) {
 			return false;
 		}
 
-		foreach ( $product->get_attributes() as $attribute ) {
-			if ( $title === $attribute->get_name() ) {
+		// We have to get attributes from postmeta here to see the converted slug.
+		$attributes = (array) get_post_meta( $product->get_id(), '_product_attributes', true );
+
+		foreach ( $attributes as $slug => $attribute ) {
+			$name = $attribute['name'] ?? '';
+
+			if ( $name === $title && sanitize_title_with_dashes( $title ) === $slug ) {
 				return true;
 			}
 		}
@@ -432,7 +438,7 @@ class Main {
 			return false;
 		}
 
-		return $this->is_wc_attribute_taxonomy( $title ) || $this->is_wc_product_attribute( $title );
+		return $this->is_wc_attribute_taxonomy( $title ) || $this->is_wc_product_not_converted_attribute( $title );
 	}
 
 	/**
