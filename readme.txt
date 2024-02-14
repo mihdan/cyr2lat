@@ -223,7 +223,7 @@ Yes, you can!
 
 = 6.0.8 (14.02.2024) =
 * Improved detection of the Gutenberg editor.
-* Fix processing of product attributes.
+* Fixed processing of product attributes.
 
 = 6.0.7 (11.02.2024) =
 * Tested with WooCommerce 8.5.

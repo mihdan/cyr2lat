@@ -407,7 +407,7 @@ class Main {
 
 		global $product;
 
-		if ( null === $product ) {
+		if ( ! is_a( $product, 'WC_Product' ) ) {
 			return false;
 		}
 
