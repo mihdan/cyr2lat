@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, karevn, webvitaly, kaggdesign
 Tags: cyrillic, belorussian, ukrainian, bulgarian, macedonian, georgian, kazakh, latin, l10n, russian, cyr-to-lat, cyr2lat, rustolat, slugs, translations, transliteration
 Requires at least: 5.1
 Tested up to: 6.4
-Stable tag: 6.0.7
+Stable tag: 6.0.8
 Requires PHP: 7.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -220,6 +220,10 @@ Yes, you can!
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 6.0.8 (14.02.2024) =
+* Improved detection of the Gutenberg editor.
+* Fixed processing of product attributes.
 
 = 6.0.7 (11.02.2024) =
 * Tested with WooCommerce 8.5.

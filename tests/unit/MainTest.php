@@ -53,7 +53,7 @@ class MainTest extends CyrToLatTestCase {
 	public function tearDown(): void {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
-		unset( $GLOBALS['wp_version'], $GLOBALS['wpdb'], $GLOBALS['current_screen'], $GLOBALS['product'], $_POST, $_GET );
+		unset( $GLOBALS['wpdb'], $GLOBALS['current_screen'], $GLOBALS['product'], $_POST, $_GET );
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
@@ -779,35 +779,29 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test is_wc_product_attribute().
+	 * Test is_wc_product_not_converted_attribute().
 	 *
 	 * @param string $title      Title.
 	 * @param bool   $is_product Whether it is a product page.
-	 * @param array  $names      Attribute names.
+	 * @param array  $attributes Attribute names.
 	 * @param bool   $expected   Expected result.
 	 *
 	 * @dataProvider dp_test_is_wc_product_attribute
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_is_wc_product_attribute( string $title, bool $is_product, array $names, bool $expected ) {
-		$method  = 'is_wc_product_attribute';
-		$subject = $this->get_subject();
+	public function test_is_wc_product_not_converted_attribute( string $title, bool $is_product, array $attributes, bool $expected ) {
+		$product_id = 5;
+		$method     = 'is_wc_product_not_converted_attribute';
+		$subject    = $this->get_subject();
 
 		$this->set_method_accessibility( $subject, $method );
 
-		$attributes = [];
-
-		foreach ( $names as $name ) {
-			$attribute = Mockery::mock( 'WC_Product_Attribute' );
-
-			$attribute->shouldReceive( 'get_name' )->andReturn( $name );
-
-			$attributes[] = $attribute;
-		}
-
 		$product = Mockery::mock( 'WC_Product' );
-		$product->shouldReceive( 'get_attributes' )->andReturn( $attributes );
+		$product->shouldReceive( 'get_id' )->andReturn( $product_id );
 		$GLOBALS['product'] = $is_product ? $product : null;
+
+		WP_Mock::userFunction( 'get_post_meta' )->with( $product_id, '_product_attributes', true )->andReturn( $attributes );
+		WP_Mock::passthruFunction( 'sanitize_title_with_dashes' );
 
 		self::assertSame( $expected, $subject->$method( $title ) );
 	}
@@ -821,8 +815,16 @@ class MainTest extends CyrToLatTestCase {
 		return [
 			'not a product page' => [ 'атрибут 1', false, [], false ],
 			'no attributes'      => [ 'атрибут 1', true, [], false ],
-			'no matching'        => [ 'атрибут 1', true, [ 'some' ], false ],
-			'matching'           => [ 'атрибут 1', true, [ 'some', 'атрибут 1' ], true ],
+			'no matching'        => [ 'атрибут 1', true, [ 'some' => [ 'name' => 'some' ] ], false ],
+			'matching'           => [
+				'атрибут 1',
+				true,
+				[
+					'some'      => [ 'name' => 'some' ],
+					'атрибут 1' => [ 'name' => 'атрибут 1' ],
+				],
+				true,
+			],
 		];
 	}
 
@@ -1135,8 +1137,6 @@ class MainTest extends CyrToLatTestCase {
 	 * Test that sanitize_post_name() does nothing if no Block/Gutenberg editor is active
 	 */
 	public function test_sanitize_post_name_without_gutenberg() {
-		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-
 		$data = [ 'something' ];
 
 		WP_Mock::userFunction(
@@ -1146,13 +1146,6 @@ class MainTest extends CyrToLatTestCase {
 				'return' => false,
 			]
 		);
-
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$GLOBALS['wp_version'] = '4.9';
-		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
-
-		FunctionMocker::replace( 'function_exists', true );
-
 		WP_Mock::userFunction(
 			'is_plugin_active',
 			[
@@ -1161,7 +1154,6 @@ class MainTest extends CyrToLatTestCase {
 				'return' => true,
 			]
 		);
-
 		WP_Mock::userFunction(
 			'get_option',
 			[
@@ -1171,8 +1163,45 @@ class MainTest extends CyrToLatTestCase {
 			]
 		);
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$GLOBALS['wp_version'] = '5.0';
+		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+
+		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
+	}
+
+	/**
+	 * Test that sanitize_post_name() does nothing if Disable Gutenberg plugin is active
+	 */
+	public function test_sanitize_post_name_with_disable_gutenberg_plugin() {
+		$data = [ 'something' ];
+
+		WP_Mock::userFunction(
+			'has_filter',
+			[
+				'args'   => [ 'replace_editor', 'gutenberg_init' ],
+				'return' => false,
+			]
+		);
+		WP_Mock::userFunction(
+			'is_plugin_active',
+			[
+				'times'  => 1,
+				'args'   => [ 'classic-editor/classic-editor.php' ],
+				'return' => false,
+			]
+		);
+		WP_Mock::userFunction(
+			'is_plugin_active',
+			[
+				'times'  => 1,
+				'args'   => [ 'disable-gutenberg/disable-gutenberg.php' ],
+				'return' => true,
+			]
+		);
+
+		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+
+		FunctionMocker::replace( 'disable_gutenberg', true );
+
 		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
 	}
 
@@ -1190,9 +1219,6 @@ class MainTest extends CyrToLatTestCase {
 			]
 		);
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$GLOBALS['wp_version'] = '5.0';
-
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		FunctionMocker::replace( 'function_exists', true );
 
@@ -1200,6 +1226,13 @@ class MainTest extends CyrToLatTestCase {
 			'is_plugin_active',
 			[
 				'args'   => [ 'classic-editor/classic-editor.php' ],
+				'return' => false,
+			]
+		);
+		WP_Mock::userFunction(
+			'is_plugin_active',
+			[
+				'args'   => [ 'disable-gutenberg/disable-gutenberg.php' ],
 				'return' => false,
 			]
 		);
@@ -1226,9 +1259,6 @@ class MainTest extends CyrToLatTestCase {
 	 */
 	public function test_sanitize_post_name( array $data, array $expected ) {
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$GLOBALS['wp_version'] = '5.0';
-
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		FunctionMocker::replace( 'function_exists', true );
 
@@ -1236,6 +1266,13 @@ class MainTest extends CyrToLatTestCase {
 			'is_plugin_active',
 			[
 				'args'   => [ 'classic-editor/classic-editor.php' ],
+				'return' => false,
+			]
+		);
+		WP_Mock::userFunction(
+			'is_plugin_active',
+			[
+				'args'   => [ 'disable-gutenberg/disable-gutenberg.php' ],
 				'return' => false,
 			]
 		);
