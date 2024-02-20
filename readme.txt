@@ -215,7 +215,7 @@ wp media regenerate --skip-plugins=cyr2lat
 = Can I contribute? =
 
 Yes, you can!
-1
+
 * Join in on our [GitHub repository](https://github.com/mihdan/cyr2lat)
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
