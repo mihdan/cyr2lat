@@ -221,6 +221,9 @@ Yes, you can!
 
 == Changelog ==
 
+= 6.0.9 (XX.XX.2024) =
+* Fixed error on System Info tab when post types or post statuses are not set.
+
 = 6.0.8 (14.02.2024) =
 * Improved detection of the Gutenberg editor.
 * Fixed processing of product attributes.
