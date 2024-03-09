@@ -223,6 +223,7 @@ Yes, you can!
 
 = 6.0.9 (XX.XX.2024) =
 * Tested with WordPress 6.5.
+* Tested with WooCommerce 8.6.
 * Fixed error on System Info tab when post types or post statuses are not set.
 
 = 6.0.8 (14.02.2024) =
