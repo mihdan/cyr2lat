@@ -1,8 +1,8 @@
 === Cyr-To-Lat ===
-Contributors: SergeyBiryukov, kaggdesign, mihdan, karevn, webvitaly
+Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: cyrillic, slugs, translation, transliteration
 Requires at least: 5.1
-Tested up to: 6.4
+Tested up to: 6.5
 Stable tag: 6.0.8
 Requires PHP: 7.0.0
 License: GPLv2 or later
@@ -222,6 +222,7 @@ Yes, you can!
 == Changelog ==
 
 = 6.0.9 (XX.XX.2024) =
+* Tested with WordPress 6.5.
 * Fixed error on System Info tab when post types or post statuses are not set.
 
 = 6.0.8 (14.02.2024) =
