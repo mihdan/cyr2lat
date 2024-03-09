@@ -54,7 +54,7 @@ Sponsored by [Blackfire](https://www.blackfire.io/).
 
 Add this code to your theme's `functions.php` file:
 
-```php
+`
 /**
  * Modify conversion table.
  *
@@ -69,13 +69,13 @@ function my_ctl_table( $table ) {
    return $table;
 }
 add_filter( 'ctl_table', 'my_ctl_table' );
-```
+`
 
 = How can I redefine non-standard locale? =
 
 For instance, if your non-standard locale is uk_UA, you can redefine it to `uk` by adding the following code to your theme's `function.php` file:
 
-```php
+`
 /**
  * Use non-standard locale.
  *
@@ -91,13 +91,13 @@ function my_ctl_locale( $locale ) {
 	return $locale;
 }
 add_filter( 'ctl_locale', 'my_ctl_locale' );
-```
+`
 
 = How can I define my own transliteration of titles? =
 
 Add similar code to your theme's `functions.php` file:
 
-```php
+`
 /**
  * Filter title before sanitizing.
  *
@@ -114,13 +114,13 @@ function my_ctl_pre_sanitize_title( $result, $title ) {
 	return $result;
 }
 add_filter( 'ctl_pre_sanitize_title', 10, 2 );
-```
+`
 
 = How can I define my own transliteration of filenames? =
 
 Add similar code to your theme's `functions.php` file:
 
-```php
+`
 /**
  * Filter filename before sanitizing.
  *
@@ -137,13 +137,13 @@ function my_ctl_pre_sanitize_filename( $result, $filename ) {
 	return $result;
 }
 add_filter( 'ctl_pre_sanitize_filename', 10, 2 );
-```
+`
 
 = How can I allow the plugin to work on the frontend? =
 
 Add the following code to your plugin's (or mu-plugin's) main file. This code won't work being added to a theme's functions.php file.
 
-```php
+`
 /**
  * Filter status allowed Cyr To Lat plugin to work.
  *
@@ -164,13 +164,13 @@ function my_ctl_allow( bool $allowed ): bool {
 }
 
 add_filter( 'ctl_allow', 'my_ctl_allow' );
-```
+`
 
 = How can I limit post types for background conversion? =
 
 Add similar code to your theme's `functions.php` file:
 
-```php
+`
 /**
  * Filter post types allowed for background conversion.
  *
@@ -188,15 +188,15 @@ function my_ctl_post_types( $post_types ) {
 	];
 }
 add_filter( 'ctl_post_types', 'my_ctl_post_types' );
-```
+`
 
 = How can I convert many posts/terms using wp-cli? =
 
 Use the following command in the console:
 
-```shell
+`
 wp cyr2lat regenerate [--post_type=<post_type>] [--post_status=<post_status>]
-```
+`
 
 Where
   `-post_type` is a list of post types,
@@ -208,9 +208,9 @@ Regeneration of thumbnails with the command `wp media regenerate` can break link
 
 To avoid it, deactivate cyr2lat plugin during regeneration:
 
-```shell
+`
 wp media regenerate --skip-plugins=cyr2lat
-```
+`
 
 = Can I contribute? =
 
