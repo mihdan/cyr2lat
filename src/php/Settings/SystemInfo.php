@@ -177,8 +177,8 @@ class SystemInfo extends PluginSettingsBase {
 
 		$data .= $this->header( '--- Post Types and Statuses ---' );
 
-		$post_types    = $settings->get( 'background_post_types' );
-		$post_statuses = $settings->get( 'background_post_statuses' );
+		$post_types    = (array) $settings->get( 'background_post_types', [] );
+		$post_statuses = (array) $settings->get( 'background_post_statuses', [] );
 
 		$data .= $this->data( 'Post types', implode( ', ', $post_types ) );
 		$data .= $this->data( 'Post statuses', implode( ', ', $post_statuses ) );
