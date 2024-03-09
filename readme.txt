@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: cyrillic, slugs, translation, transliteration
 Requires at least: 5.1
 Tested up to: 6.5
-Stable tag: 6.0.8
+Stable tag: 6.1.0
 Requires PHP: 7.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -221,7 +221,7 @@ Yes, you can!
 
 == Changelog ==
 
-= 6.0.9 (XX.XX.2024) =
+= 6.1.0 (09.03.2024) =
 * Tested with WordPress 6.5.
 * Tested with WooCommerce 8.6.
 * Fixed error on System Info tab when post types or post statuses are not set.
