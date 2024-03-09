@@ -54,7 +54,7 @@ Sponsored by [Blackfire](https://www.blackfire.io/).
 
 Add this code to your theme's `functions.php` file:
 
-```php
+```
 /**
  * Modify conversion table.
  *
@@ -75,7 +75,7 @@ add_filter( 'ctl_table', 'my_ctl_table' );
 
 For instance, if your non-standard locale is uk_UA, you can redefine it to `uk` by adding the following code to your theme's `function.php` file:
 
-```php
+`php
 /**
  * Use non-standard locale.
  *
@@ -91,7 +91,7 @@ function my_ctl_locale( $locale ) {
 	return $locale;
 }
 add_filter( 'ctl_locale', 'my_ctl_locale' );
-```
+`
 
 = How can I define my own transliteration of titles? =
 
