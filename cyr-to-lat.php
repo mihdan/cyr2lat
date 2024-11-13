@@ -11,7 +11,7 @@
  * Plugin URI:        https://wordpress.org/plugins/cyr2lat/
  * Description:       Convert Non-Latin characters in post and term slugs to Latin characters. Useful for creating human-readable URLs. Based on the original plugin by Anton Skorobogatov.
  * Version:           6.2.0
- * Requires at least: 5.1
+ * Requires at least: 5.3
  * Requires PHP:      7.2.0
  * Author:            Sergey Biryukov, Mikhail Kobzarev, Igor Gergel
  * Author URI:        https://profiles.wordpress.org/sergeybiryukov/
