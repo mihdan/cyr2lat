@@ -2,8 +2,8 @@
 Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: cyrillic, slugs, translation, transliteration
 Requires at least: 5.1
-Tested up to: 6.5
-Stable tag: 6.1.0
+Tested up to: 6.7
+Stable tag: 6.2.0
 Requires PHP: 7.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
