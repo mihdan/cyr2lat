@@ -221,6 +221,9 @@ Yes, you can!
 
 == Changelog ==
 
+= 6.2.1 (13.11.2024) =
+* Fixed layout of the Converter page.
+
 = 6.2.0 (13.11.2024) =
 * Dropped support for PHP 7.0 and 7.1. The minimum required PHP version is now 7.2.
 * The minimum required WordPress version is now 5.3.
