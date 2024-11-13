@@ -5,6 +5,9 @@
  * @package cyr-to-lat
  */
 
+// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpInternalEntityUsedInspection */
+
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
 
 namespace CyrToLat\Tests\Unit;
@@ -89,9 +92,6 @@ abstract class CyrToLatTestCase extends TestCase {
 
 	/**
 	 * Setup test
-	 *
-	 * @noinspection PhpLanguageLevelInspection
-	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function setUp(): void {
 		FunctionMocker::setUp();
@@ -135,9 +135,6 @@ abstract class CyrToLatTestCase extends TestCase {
 
 	/**
 	 * End test
-	 *
-	 * @noinspection PhpLanguageLevelInspection
-	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function tearDown(): void {
 		WP_Mock::tearDown();
@@ -156,7 +153,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function get_protected_property( $obj, string $property_name ) {
+	protected function get_protected_property( object $obj, string $property_name ) {
 		$reflection_class = new ReflectionClass( $obj );
 
 		$property = $reflection_class->getProperty( $property_name );
@@ -176,7 +173,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function set_protected_property( $obj, string $property_name, $value ) {
+	protected function set_protected_property( object $obj, string $property_name, $value ): void {
 		$reflection_class = new ReflectionClass( $obj );
 
 		$property = $reflection_class->getProperty( $property_name );
@@ -196,7 +193,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @throws ReflectionException Reflection exception.
 	 */
-	protected function set_method_accessibility( $obj, string $method_name, bool $accessible = true ): ReflectionMethod {
+	protected function set_method_accessibility( object $obj, string $method_name, bool $accessible = true ): ReflectionMethod {
 		$reflection_class = new ReflectionClass( $obj );
 
 		$method = $reflection_class->getMethod( $method_name );
@@ -1209,7 +1206,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	protected static function set_defaults( array &$field, string $id ) {
+	protected static function set_defaults( array &$field, string $id ): void {
 		$field = array_merge(
 			[
 				'default'  => '',

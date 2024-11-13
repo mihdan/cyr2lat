@@ -35,9 +35,6 @@ class ConverterTest extends CyrToLatTestCase {
 
 	/**
 	 * End test
-	 *
-	 * @noinspection PhpLanguageLevelInspection
-	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function tearDown(): void {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
@@ -52,7 +49,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException Reflection Exception.
 	 */
-	public function test_constructor() {
+	public function test_constructor(): void {
 		$classname = Converter::class;
 
 		$main          = Mockery::mock( Main::class );
@@ -82,7 +79,7 @@ class ConverterTest extends CyrToLatTestCase {
 	/**
 	 * Test init_hooks()
 	 */
-	public function test_init_hooks() {
+	public function test_init_hooks(): void {
 		$subject = $this->get_subject();
 
 		WP_Mock::expectActionAdded( 'admin_init', [ $subject, 'process_handler' ] );
@@ -106,7 +103,7 @@ class ConverterTest extends CyrToLatTestCase {
 		bool $terms_process_running,
 		bool $posts_process_completed,
 		bool $terms_process_completed
-	) {
+	): void {
 		$main              = Mockery::mock( Main::class );
 		$settings          = Mockery::mock( Settings::class );
 		$process_all_posts = Mockery::mock( PostConversionProcess::class )->shouldAllowMockingProtectedMethods();
@@ -195,7 +192,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_start_conversion
 	 */
-	public function test_start_conversion( bool $convert ) {
+	public function test_start_conversion( bool $convert ): void {
 		$subject = Mockery::mock( Converter::class )->makePartial();
 
 		WP_Mock::passthruFunction( 'check_admin_referer' );
@@ -231,7 +228,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_process_handler
 	 */
-	public function test_process_handler( string $query_arg, string $nonce, bool $verify_nonce ) {
+	public function test_process_handler( string $query_arg, string $nonce, bool $verify_nonce ): void {
 		$subject = Mockery::mock( Converter::class )->makePartial();
 
 		if ( $query_arg ) {
@@ -284,7 +281,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_convert_existing_slugs
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_convert_existing_slugs( $posts, $terms, bool $include_attachment ) {
+	public function test_convert_existing_slugs( $posts, $terms, bool $include_attachment ): void {
 		global $wpdb;
 
 		$main              = Mockery::mock( Main::class );
@@ -420,7 +417,7 @@ class ConverterTest extends CyrToLatTestCase {
 	 * @dataProvider        dp_test_log
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_log( bool $debug ) {
+	public function test_log( bool $debug ): void {
 		$subject = Mockery::mock( Converter::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$message = 'Test message';
 		$method  = 'log';

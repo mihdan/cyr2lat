@@ -20,6 +20,8 @@ class WP_CLI {
 	 * Success function.
 	 *
 	 * @param string $message Message.
+	 *
+	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
 	public static function success( string $message ) {
 	}
@@ -29,6 +31,9 @@ class WP_CLI {
 	 *
 	 * @param string        $name     Name for the command (e.g. "post list" or "site empty").
 	 * @param callable|null $callback Command implementation as a class, function or closure.
+	 *
+	 * @noinspection ReturnTypeCanBeDeclaredInspection
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public static function add_command( string $name, $callback ) {
 	}

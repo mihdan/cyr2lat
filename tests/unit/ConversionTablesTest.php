@@ -19,7 +19,7 @@ class ConversionTablesTest extends CyrToLatTestCase {
 	/**
 	 * Test get()
 	 */
-	public function test_get() {
+	public function test_get(): void {
 		// phpcs:disable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 		$iso9 = [
 			'А' => 'A',
@@ -1287,7 +1287,7 @@ class ConversionTablesTest extends CyrToLatTestCase {
 	/**
 	 * Test get_fix_table_for_mac()
 	 */
-	public function test_get_fix_table_for_mac() {
+	public function test_get_fix_table_for_mac(): void {
 		$fix_table = [
 			'Ё' => urldecode( '%d0%95%cc%88' ),
 			'ё' => urldecode( '%d0%B5%cc%88' ),

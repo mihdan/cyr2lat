@@ -32,9 +32,6 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 
 	/**
 	 * End test
-	 *
-	 * @noinspection PhpLanguageLevelInspection
-	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function tearDown(): void {
 		unset( $GLOBALS['wpdb'] );
@@ -50,7 +47,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_task
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_task( string $post_name, string $transliterated_name ) {
+	public function test_task( string $post_name, string $transliterated_name ): void {
 		global $wpdb;
 
 		$post              = (object) [
@@ -133,7 +130,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_task_for_attachment
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_task_for_attachment( string $post_name, string $transliterated_name ) {
+	public function test_task_for_attachment( string $post_name, string $transliterated_name ): void {
 		global $wpdb;
 
 		$post = (object) [
@@ -218,7 +215,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_rename_attachment_when_no_file() {
+	public function test_rename_attachment_when_no_file(): void {
 		$post_id = 5;
 
 		WP_Mock::userFunction( 'get_attached_file' )->with( $post_id )->andReturn( false );
@@ -245,7 +242,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_rename_attachment
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_rename_attachment( bool $rename, bool $updated ) {
+	public function test_rename_attachment( bool $rename, bool $updated ): void {
 		$post_id             = 5;
 		$file                = '/var/www/test/wp-content/uploads/2020/05/Скамейка.jpg';
 		$transliterated_file = '/var/www/test/wp-content/uploads/2020/05/Skamejka.jpg';
@@ -295,7 +292,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_rename_thumbnails() {
+	public function test_rename_thumbnails(): void {
 		$post_id = 5;
 		$sizes   = [ 'thumbnail', 'medium', 'large' ];
 		$abspath = '/var/www/test/';
@@ -387,7 +384,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_update_attachment_metadata() {
+	public function test_update_attachment_metadata(): void {
 		$attachment_id       = 5;
 		$meta                = [
 			'width'  => 260,
@@ -438,7 +435,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_get_transliterated_file() {
+	public function test_get_transliterated_file(): void {
 		$file                = '/var/www/test/wp-content/uploads/2020/05/Скамейка.jpg';
 		$transliterated_file = '/var/www/test/wp-content/uploads/2020/05/Skamejka.jpg';
 
@@ -459,7 +456,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_rename_file() {
+	public function test_rename_file(): void {
 		$file     = '/var/www/test/wp-content/uploads/2020/05/Скамейка.jpg';
 		$new_file = '/var/www/test/wp-content/uploads/2020/05/Skamejka.jpg';
 
@@ -485,7 +482,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_complete() {
+	public function test_complete(): void {
 		$subject = Mockery::mock( PostConversionProcess::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'log' )->with( 'Post slugs conversion completed.' )->once();
@@ -531,7 +528,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 	 * @throws ReflectionException Reflection exception.
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_filter_post_locale( $wpml_post_language_details, string $locale, string $expected ) {
+	public function test_filter_post_locale( $wpml_post_language_details, string $locale, string $expected ): void {
 		$post = (object) [
 			'ID' => 5,
 		];

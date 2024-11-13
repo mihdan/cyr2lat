@@ -9,7 +9,6 @@
 /** @noinspection PhpUndefinedNamespaceInspection */
 /** @noinspection PhpUndefinedClassInspection */
 /** @noinspection PhpUndefinedMethodInspection */
-/** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 // phpcs:disable WordPress.WP.AlternativeFunctions.json_encode_json_encode
@@ -39,7 +38,7 @@ class SettingsTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_constructor() {
+	public function test_constructor(): void {
 		$class_name = Settings::class;
 
 		$subject = Mockery::mock( $class_name )->makePartial()->shouldAllowMockingProtectedMethods();
@@ -58,7 +57,7 @@ class SettingsTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_and_screen_ids() {
+	public function test_init_and_screen_ids(): void {
 		$screen_id = 'cyr-to-lat';
 
 		Mockery::mock( 'overload:' . Tables::class );
@@ -92,7 +91,7 @@ class SettingsTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_get() {
+	public function test_get(): void {
 		$tables_key      = 'some tables key';
 		$tables_value    = 'some table';
 		$converter_key   = 'some converter key';
@@ -159,7 +158,7 @@ class SettingsTest extends CyrToLatTestCase {
 	/**
 	 * Test get_table()
 	 */
-	public function test_get_table() {
+	public function test_get_table(): void {
 		$subject    = Mockery::mock( Settings::class )->makePartial();
 		$locale     = 'not_existing_locale';
 		$iso9_table = $this->get_conversion_table( $locale );
@@ -192,7 +191,7 @@ class SettingsTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_is_chinese_locale
 	 */
-	public function test_is_chinese_locale( string $locale, bool $expected ) {
+	public function test_is_chinese_locale( string $locale, bool $expected ): void {
 		$subject = Mockery::mock( Settings::class )->makePartial();
 
 		WP_Mock::userFunction(
@@ -231,7 +230,7 @@ class SettingsTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_transpose_chinese_table
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_transpose_chinese_table( $is_chinese_locale, array $table, array $expected ) {
+	public function test_transpose_chinese_table( $is_chinese_locale, array $table, array $expected ): void {
 		$subject = Mockery::mock( Settings::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_chinese_locale' )->andReturn( $is_chinese_locale );
 		$method = 'transpose_chinese_table';

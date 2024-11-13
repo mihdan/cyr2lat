@@ -21,6 +21,7 @@ class WP_REST_Server {
 	 * Instantiates a new instance if none exists already.
 	 *
 	 * @noinspection PhpUnused
+	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
 	public static function get_raw_data() {}
 }

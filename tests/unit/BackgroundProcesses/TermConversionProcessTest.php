@@ -31,9 +31,6 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 
 	/**
 	 * End test
-	 *
-	 * @noinspection PhpLanguageLevelInspection
-	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function tearDown(): void {
 		unset( $GLOBALS['wpdb'] );
@@ -48,7 +45,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_task
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_task( string $term_slug, string $transliterated_slug ) {
+	public function test_task( string $term_slug, string $transliterated_slug ): void {
 		global $wpdb;
 
 		$term = (object) [
@@ -117,7 +114,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_complete() {
+	public function test_complete(): void {
 		$subject = Mockery::mock( TermConversionProcess::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'log' )->with( 'Term slugs conversion completed.' )->once();
@@ -162,7 +159,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_filter_term_locale_with_polylang
 	 * @throws ReflectionException Reflection exception.
 	 */
-	public function test_filter_term_locale_with_polylang( $pll_pll_get_term_language, string $locale, string $expected ) {
+	public function test_filter_term_locale_with_polylang( $pll_pll_get_term_language, string $locale, string $expected ): void {
 		$term = (object) [
 			'taxonomy'         => 'category',
 			'term_taxonomy_id' => 5,
@@ -215,7 +212,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 	 * @throws ReflectionException Reflection exception.
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_filter_term_locale_with_wpml( $wpml_element_language_details, $wpml_active_languages, string $locale, string $expected ) {
+	public function test_filter_term_locale_with_wpml( $wpml_element_language_details, $wpml_active_languages, string $locale, string $expected ): void {
 		$term = (object) [
 			'taxonomy'         => 'category',
 			'term_taxonomy_id' => 5,

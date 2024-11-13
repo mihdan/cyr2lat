@@ -7,7 +7,6 @@
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
 /** @noinspection PhpUndefinedMethodInspection */
-/** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 namespace CyrToLat\Tests\Unit\BackgroundProcesses;
@@ -33,7 +32,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_task() {
+	public function test_task(): void {
 		$subject = Mockery::mock( ConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'task';
 
@@ -47,7 +46,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_complete() {
+	public function test_complete(): void {
 		$subject = Mockery::mock( ConversionProcess::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'clear_scheduled_event' )->once();
@@ -81,7 +80,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_is_process_completed
 	 */
-	public function test_is_process_completed( $transient, bool $expected ) {
+	public function test_is_process_completed( $transient, bool $expected ): void {
 		$main    = Mockery::mock( Main::class );
 		$subject = new ConversionProcess( $main );
 
@@ -125,7 +124,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_is_process_running
 	 */
-	public function test_is_process_running( $transient, bool $expected ) {
+	public function test_is_process_running( $transient, bool $expected ): void {
 		$main    = Mockery::mock( Main::class );
 		$subject = new ConversionProcess( $main );
 
@@ -149,7 +148,7 @@ class ConversionProcessTest extends CyrToLatTestCase {
 	 * @dataProvider        dp_test_log
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_log( bool $debug ) {
+	public function test_log( bool $debug ): void {
 		$subject = Mockery::mock( ConversionProcess::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'log';
 
