@@ -59,7 +59,7 @@ class WPCli extends WP_CLI_Command {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function regenerate( array $args = [], array $assoc_args = [] ) {
+	public function regenerate( array $args = [], array $assoc_args = [] ): void {
 
 		/**
 		 * Notify instance.

@@ -21,7 +21,7 @@ class Converter {
 	/**
 	 * Query arg in url to start conversion.
 	 */
-	const QUERY_ARG = 'cyr-to-lat-convert';
+	public const QUERY_ARG = 'cyr-to-lat-convert';
 
 	/**
 	 * Regex of allowed chars in lower-cased slugs.
@@ -31,7 +31,7 @@ class Converter {
 	 *
 	 * @link https://dev.mysql.com/doc/refman/5.6/en/regexp.html
 	 */
-	const ALLOWED_CHARS_REGEX = "^([a-z0-9\'-._]|%[2-7][0-F])+$";
+	public const ALLOWED_CHARS_REGEX = "^([a-z0-9\'-._]|%[2-7][0-F])+$";
 
 	/**
 	 * Plugin main class.
@@ -90,7 +90,7 @@ class Converter {
 	/**
 	 * Init class hooks.
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'admin_init', [ $this, 'process_handler' ] );
 		add_action( 'admin_init', [ $this, 'conversion_notices' ] );
 	}
@@ -100,7 +100,7 @@ class Converter {
 	 *
 	 * @return void
 	 */
-	public function conversion_notices() {
+	public function conversion_notices(): void {
 		$posts_process_running = $this->process_all_posts->is_processing();
 		$terms_process_running = $this->process_all_terms->is_processing();
 
@@ -142,7 +142,7 @@ class Converter {
 	 *
 	 * @return void
 	 */
-	public function start_conversion() {
+	public function start_conversion(): void {
 		if ( ! isset( $_POST['ctl-convert'] ) ) {
 			return;
 		}
@@ -155,7 +155,7 @@ class Converter {
 	 *
 	 * @return void
 	 */
-	public function process_handler() {
+	public function process_handler(): void {
 		if ( ! isset( $_GET[ self::QUERY_ARG ], $_GET['_wpnonce'] ) ) {
 			return;
 		}
@@ -172,7 +172,7 @@ class Converter {
 	 *
 	 * @param array $args Arguments for query.
 	 */
-	public function convert_existing_slugs( array $args = [] ) {
+	public function convert_existing_slugs( array $args = [] ): void {
 		$this->convert_existing_post_slugs( $args );
 		$this->convert_existing_term_slugs();
 	}
@@ -182,7 +182,7 @@ class Converter {
 	 *
 	 * @param array $args Arguments for query.
 	 */
-	protected function convert_existing_post_slugs( array $args = [] ) {
+	protected function convert_existing_post_slugs( array $args = [] ): void {
 		global $wpdb;
 
 		$post_types    = array_intersect(
@@ -245,7 +245,7 @@ class Converter {
 	/**
 	 * Convert existing term slugs.
 	 */
-	protected function convert_existing_term_slugs() {
+	protected function convert_existing_term_slugs(): void {
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
@@ -286,7 +286,7 @@ class Converter {
 	 *
 	 * @noinspection ForgottenDebugOutputInspection
 	 */
-	protected function log( string $message ) {
+	protected function log( string $message ): void {
 		if ( defined( 'WP_DEBUG_LOG' ) && constant( 'WP_DEBUG_LOG' ) ) {
 			// @phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			error_log( 'Cyr To Lat: ' . $message );

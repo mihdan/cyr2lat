@@ -104,7 +104,7 @@ class Requirements {
 	/**
 	 * Deactivate plugin.
 	 */
-	public function deactivate_plugin() {
+	public function deactivate_plugin(): void {
 		if ( is_plugin_active( plugin_basename( constant( 'CYR_TO_LAT_FILE' ) ) ) ) {
 			deactivate_plugins( plugin_basename( constant( 'CYR_TO_LAT_FILE' ) ) );
 			// phpcs:disable WordPress.Security.NonceVerification.Recommended
@@ -190,7 +190,7 @@ class Requirements {
 	/**
 	 * Try to fix max_input_vars.
 	 */
-	protected function try_to_fix_max_input_vars() {
+	protected function try_to_fix_max_input_vars(): void {
 		$user_ini_filename = $this->get_user_ini_filename();
 
 		$content = $this->wp_filesystem->get_contents( $user_ini_filename );
@@ -238,7 +238,7 @@ class Requirements {
 	/**
 	 * Asl user to increase max_input_vars.
 	 */
-	private function ask_to_increase_max_input_vars() {
+	private function ask_to_increase_max_input_vars(): void {
 		$message = __( 'Please increase max input vars limit up to 1500.', 'cyr2lat' );
 
 		$message .= '<br>';

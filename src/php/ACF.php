@@ -35,7 +35,7 @@ class ACF {
 	/**
 	 * Init class hooks.
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'acf/field_group/admin_enqueue_scripts', [ $this, 'enqueue_script' ] );
 	}
 
@@ -44,7 +44,7 @@ class ACF {
 	 *
 	 * @return void
 	 */
-	public function enqueue_script() {
+	public function enqueue_script(): void {
 		global $cyr_to_lat_plugin;
 
 		$min   = $cyr_to_lat_plugin->min_suffix();
