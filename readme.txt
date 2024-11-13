@@ -1,10 +1,10 @@
 === Cyr-To-Lat ===
 Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: cyrillic, slugs, translation, transliteration
-Requires at least: 5.1
-Tested up to: 6.5
-Stable tag: 6.1.0
-Requires PHP: 7.0.0
+Requires at least: 5.3
+Tested up to: 6.7
+Stable tag: 6.2.0
+Requires PHP: 7.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -220,6 +220,13 @@ Yes, you can!
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 6.2.0 (13.11.2024) =
+* Dropped support for PHP 7.0 and 7.1. The minimum required PHP version is now 7.2.
+* The minimum required WordPress version is now 5.3.
+* Fixed the notice about the _load_textdomain_just_in_time function being called incorrectly.
+* Tested with WordPress 6.7.
+* Tested with WooCommerce 9.4.
 
 = 6.1.0 (09.03.2024) =
 * Tested with WordPress 6.5.

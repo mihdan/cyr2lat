@@ -88,7 +88,7 @@ class PostConversionProcess extends ConversionProcess {
 	 *
 	 * @param int $post_id Post ID.
 	 */
-	protected function rename_attachment( int $post_id ) {
+	protected function rename_attachment( int $post_id ): void {
 		$file = get_attached_file( $post_id );
 
 		if ( $file ) {
@@ -114,7 +114,7 @@ class PostConversionProcess extends ConversionProcess {
 	 *
 	 * @param int $post_id Post ID.
 	 */
-	protected function rename_thumbnails( int $post_id ) {
+	protected function rename_thumbnails( int $post_id ): void {
 		$sizes = get_intermediate_image_sizes();
 
 		foreach ( $sizes as $size ) {
@@ -137,7 +137,7 @@ class PostConversionProcess extends ConversionProcess {
 	 *
 	 * @param int $attachment_id Attachment ID.
 	 */
-	protected function update_attachment_metadata( int $attachment_id ) {
+	protected function update_attachment_metadata( int $attachment_id ): void {
 		$meta = wp_get_attachment_metadata( $attachment_id );
 
 		if ( isset( $meta['file'] ) ) {
@@ -176,7 +176,7 @@ class PostConversionProcess extends ConversionProcess {
 	 *
 	 * @return bool|null
 	 */
-	protected function rename_file( string $file, string $new_file ) {
+	protected function rename_file( string $file, string $new_file ): ?bool {
 		$path     = pathinfo( $file );
 		$new_path = pathinfo( $new_file );
 
@@ -193,6 +193,8 @@ class PostConversionProcess extends ConversionProcess {
 
 	/**
 	 * Complete
+	 *
+	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
 	protected function complete() {
 		parent::complete();

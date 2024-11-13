@@ -7,7 +7,6 @@
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
 /** @noinspection PhpUndefinedMethodInspection */
-/** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 namespace CyrToLat\Tests\Unit\Settings;
@@ -32,7 +31,7 @@ class PluginSettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_plugin_basename() {
+	public function test_plugin_basename(): void {
 		$plugin_file      = '/var/www/wp-content/plugins/cyr2lat/cyr-to-lat.php';
 		$plugin_base_name = 'cyr2lat/cyr-to-lat.php';
 
@@ -54,7 +53,7 @@ class PluginSettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_plugin_url() {
+	public function test_plugin_url(): void {
 		$plugin_url = 'http://test.test/wp-content/plugins/cyr2lat';
 
 		$subject = Mockery::mock( PluginSettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
@@ -73,7 +72,7 @@ class PluginSettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_plugin_version() {
+	public function test_plugin_version(): void {
 		$plugin_version = '1.0.0';
 
 		$subject = Mockery::mock( PluginSettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
@@ -92,7 +91,7 @@ class PluginSettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_settings_link_label() {
+	public function test_settings_link_label(): void {
 		$subject = Mockery::mock( PluginSettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'settings_link_label';
 
@@ -106,7 +105,7 @@ class PluginSettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_settings_link_text() {
+	public function test_settings_link_text(): void {
 		$subject = Mockery::mock( PluginSettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'settings_link_text';
 
@@ -120,7 +119,7 @@ class PluginSettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_text_domain() {
+	public function test_text_domain(): void {
 		$subject = Mockery::mock( PluginSettingsBase::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'text_domain';
 

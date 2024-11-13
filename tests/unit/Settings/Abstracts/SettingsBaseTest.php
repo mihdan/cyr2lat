@@ -7,7 +7,6 @@
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
 /** @noinspection PhpUndefinedMethodInspection */
-/** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
 /** @noinspection PhpUndefinedNamespaceInspection */
 /** @noinspection PhpUndefinedClassInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
@@ -42,7 +41,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_constructor
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_constructor( bool $is_tab ) {
+	public function test_constructor( bool $is_tab ): void {
 		$classname = SettingsBase::class;
 
 		$subject = Mockery::mock( $classname )->makePartial();
@@ -85,7 +84,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_init
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init( bool $is_active, bool $script_debug ) {
+	public function test_init( bool $is_active, bool $script_debug ): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'form_fields' )->once();
@@ -143,7 +142,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	/**
 	 * Test init_hooks().
 	 */
-	public function test_init_hooks() {
+	public function test_init_hooks(): void {
 		$plugin_base_name = 'cyr2lat/cyr-to-lat.php';
 		$option_name      = 'cyr_to_lat_settings';
 
@@ -185,7 +184,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_parent_slug() {
+	public function test_parent_slug(): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 
 		$method = 'parent_slug';
@@ -202,7 +201,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_is_main_menu_page
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_is_main_menu_page( string $parent_slug, bool $expected ) {
+	public function test_is_main_menu_page( string $parent_slug, bool $expected ): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'parent_slug' )->once()->andReturn( $parent_slug );
@@ -229,7 +228,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_tab_name() {
+	public function test_tab_name(): void {
 		$class_name = 'SomeClassName';
 
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
@@ -247,7 +246,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_get_class_name() {
+	public function test_get_class_name(): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 
 		$method = 'get_class_name';
@@ -274,7 +273,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_is_tab() {
+	public function test_is_tab(): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 
 		$method = 'is_tab';
@@ -288,7 +287,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	/**
 	 * Test add_settings_link().
 	 */
-	public function test_add_settings_link() {
+	public function test_add_settings_link(): void {
 		$option_page         = 'cyr-to-lat';
 		$settings_link_label = 'Cyr To Lat Settings';
 		$settings_link_text  = 'Settings';
@@ -319,7 +318,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_init_settings
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_settings( $settings, bool $network_wide ) {
+	public function test_init_settings( $settings, bool $network_wide ): void {
 		$option_name = 'cyr_to_lat_settings';
 
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
@@ -387,7 +386,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_form_fields
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_form_fields( $form_fields, array $expected ) {
+	public function test_form_fields( $form_fields, array $expected ): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
 		$method = 'form_fields';
@@ -431,7 +430,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_add_settings_page
 	 */
-	public function test_add_settings_page( bool $is_main_menu_page ) {
+	public function test_add_settings_page( bool $is_main_menu_page ): void {
 		$parent_slug = 'options-general.php';
 		$page_title  = 'Cyr To Lat';
 		$menu_title  = 'Cyr To Lat';
@@ -473,7 +472,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	/**
 	 * Test settings_base_page().
 	 */
-	public function test_settings_base_page() {
+	public function test_settings_base_page(): void {
 		$page = Mockery::mock( SettingsBase::class );
 		$page->shouldReceive( 'settings_page' )->with()->once();
 
@@ -491,7 +490,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	/**
 	 * Test admin_enqueue_base_scripts().
 	 */
-	public function test_base_admin_enqueue_scripts() {
+	public function test_base_admin_enqueue_scripts(): void {
 		$plugin_url     = 'http://test.test/wp-content/plugins/cyr2lat';
 		$plugin_version = '1.0.0';
 
@@ -525,7 +524,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_setup_sections
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_setup_sections( array $tabs ) {
+	public function test_setup_sections( array $tabs ): void {
 		$tab_option_page = 'cyr-to-lat';
 
 		$tab = Mockery::mock( SettingsBase::class )->makePartial();
@@ -574,7 +573,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	/**
 	 * Test setup_sections() not on options screen.
 	 */
-	public function test_setup_sections_not_on_options_screen() {
+	public function test_setup_sections_not_on_options_screen(): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->andReturn( false );
@@ -584,7 +583,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	/**
 	 * Test setup_tabs_section() not on options screen.
 	 */
-	public function test_setup_tabs_section_not_on_options_screen() {
+	public function test_setup_tabs_section_not_on_options_screen(): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->andReturn( false );
@@ -595,7 +594,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	/**
 	 * Test setup_tabs_section().
 	 */
-	public function test_setup_tabs_section() {
+	public function test_setup_tabs_section(): void {
 		$tab_option_page = 'cyr-to-lat';
 
 		$tab = Mockery::mock( SettingsBase::class )->makePartial();
@@ -624,7 +623,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_tabs_callback() {
+	public function test_tabs_callback(): void {
 		$option_page        = 'cyr-to-lat';
 		$subject_class_name = 'Tables';
 		$subject_page_title = 'Tables';
@@ -682,7 +681,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_is_tab_active
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_is_tab_active( $on_page, $input_tab, $referer_tab, bool $is_tab, string $class_name, bool $expected ) {
+	public function test_is_tab_active( $on_page, $input_tab, $referer_tab, bool $is_tab, string $class_name, bool $expected ): void {
 		$option_page = 'own-option-page';
 		$input_page  = $on_page ? $option_page : 'some-page';
 
@@ -820,7 +819,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_get_tab_name_from_referer
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_get_tab_name_from_referer( bool $doing_ajax, $referer, $expected ) {
+	public function test_get_tab_name_from_referer( bool $doing_ajax, $referer, $expected ): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
 
@@ -928,7 +927,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_get_tabs() {
+	public function test_get_tabs(): void {
 		$tab = Mockery::mock( SettingsBase::class )->makePartial();
 		$tab->shouldAllowMockingProtectedMethods();
 
@@ -945,7 +944,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_get_active_tab() {
+	public function test_get_active_tab(): void {
 		$tab = Mockery::mock( SettingsBase::class )->makePartial();
 		$tab->shouldAllowMockingProtectedMethods();
 
@@ -970,7 +969,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_setup_fields() {
+	public function test_setup_fields(): void {
 		$option_group = 'cyr_to_lat_group';
 		$option_name  = 'cyr_to_lat_settings';
 		$option_page  = 'cyr-to-lat';
@@ -1012,7 +1011,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_setup_fields_with_empty_form_fields() {
+	public function test_setup_fields_with_empty_form_fields(): void {
 		$option_group = 'cyr_to_lat_group';
 		$option_name  = 'cyr_to_lat_settings';
 
@@ -1036,7 +1035,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	/**
 	 * Test setup_fields() not on options screen.
 	 */
-	public function test_setup_fields_not_on_options_screen() {
+	public function test_setup_fields_not_on_options_screen(): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->andReturn( false );
@@ -1057,7 +1056,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_field_callback
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function test_field_callback( array $arguments, string $expected ) {
+	public function test_field_callback( array $arguments, string $expected ): void {
 		$option_name = 'cyr_to_lat_settings';
 
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
@@ -1642,7 +1641,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	/**
 	 * Test field_callback() without field id.
 	 */
-	public function test_field_callback_without_field_id() {
+	public function test_field_callback_without_field_id(): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 
 		$arguments = [];
@@ -1663,7 +1662,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_get
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_get( array $settings, string $key, $empty_value, $expected ) {
+	public function test_get( array $settings, string $key, $empty_value, $expected ): void {
 		$tab = Mockery::mock( SettingsBase::class )->makePartial();
 		$tab->shouldAllowMockingProtectedMethods();
 		$tab->shouldReceive( 'form_fields' )->andReturn( [] );
@@ -1704,7 +1703,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	/**
 	 * Test get() with no settings.
 	 */
-	public function test_get_with_no_settings() {
+	public function test_get_with_no_settings(): void {
 		$settings = self::get_test_settings();
 		$key      = 'iso9';
 		$expected = $settings[ $key ];
@@ -1729,7 +1728,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_field_default
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_field_default( array $field, string $expected ) {
+	public function test_field_default( array $field, string $expected ): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 		$method  = 'field_default';
 		$this->set_method_accessibility( $subject, $method );
@@ -1755,7 +1754,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @return void
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_set_field() {
+	public function test_set_field(): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
 		$this->set_protected_property( $subject, 'form_fields', self::get_test_form_fields() );
@@ -1781,7 +1780,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_update_option
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_update_option( array $settings, string $key, $value, $expected ) {
+	public function test_update_option( array $settings, string $key, $value, $expected ): void {
 		$option_name = 'cyr_to_lat_settings';
 
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
@@ -1836,7 +1835,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_update_option_with_no_settings() {
+	public function test_update_option_with_no_settings(): void {
 		$option_name = 'cyr_to_lat_settings';
 		$settings    = self::get_test_settings();
 		$key         = 'page_title';
@@ -1879,7 +1878,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_pre_update_option_filter
 	 */
-	public function test_pre_update_option_filter( array $form_fields, $value, $old_value, $expected ) {
+	public function test_pre_update_option_filter( array $form_fields, $value, $old_value, $expected ): void {
 		$option_name                   = 'cyr_to_lat_settings';
 		$network_wide                  = '_network_wide';
 		$merged_value                  = array_merge( $old_value, $value );
@@ -2055,7 +2054,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	/**
 	 * Test load_plugin_textdomain().
 	 */
-	public function test_load_plugin_text_domain() {
+	public function test_load_plugin_text_domain(): void {
 		$text_domain      = 'cyr2lat';
 		$plugin_base_name = 'cyr2lat/cyr-to-lat.php';
 
@@ -2079,7 +2078,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_is_options_screen
 	 */
-	public function test_is_options_screen( $current_screen, bool $is_main_menu_page, bool $expected ) {
+	public function test_is_options_screen( $current_screen, bool $is_main_menu_page, bool $expected ): void {
 		$screen_id      = 'settings_page_cyr-to-lat';
 		$main_screen_id = 'toplevel_page_cyr-to-lat';
 
@@ -2116,7 +2115,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	/**
 	 * Test is_options_screen() when get_current_screen() does not exist.
 	 */
-	public function test_is_options_screen_when_get_current_screen_does_not_exist() {
+	public function test_is_options_screen_when_get_current_screen_does_not_exist(): void {
 		FunctionMocker::replace(
 			'function_exists',
 			static function ( $func ) {

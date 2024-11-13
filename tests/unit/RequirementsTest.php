@@ -7,7 +7,6 @@
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
 /** @noinspection PhpUndefinedClassInspection */
-/** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
@@ -33,8 +32,6 @@ class RequirementsTest extends CyrToLatTestCase {
 
 	/**
 	 * Tear down.
-	 *
-	 * @noinspection PhpLanguageLevelInspection
 	 */
 	public function tearDown(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -48,7 +45,7 @@ class RequirementsTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException Reflection Exception.
 	 */
-	public function test_constructor() {
+	public function test_constructor(): void {
 		$classname = Requirements::class;
 
 		$settings = Mockery::mock( Settings::class );
@@ -100,7 +97,7 @@ class RequirementsTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException Reflection Exception.
 	 */
-	public function test_constructor_when_NO_wp_filesystem_is_available() {
+	public function test_constructor_when_NO_wp_filesystem_is_available(): void {
 		$classname = Requirements::class;
 
 		$settings = Mockery::mock( Settings::class );
@@ -136,7 +133,7 @@ class RequirementsTest extends CyrToLatTestCase {
 	/**
 	 * Test if are_requirements_met() returns true when requirements met.
 	 */
-	public function test_requirements_met() {
+	public function test_requirements_met(): void {
 		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'screen_ids' )->with()->andReturn( [ 'settings_page_cyr-to-lat' ] );
 
@@ -181,7 +178,7 @@ class RequirementsTest extends CyrToLatTestCase {
 	/**
 	 * Test if are_requirements_met() returns false when php requirements not met.
 	 */
-	public function test_php_requirements_not_met() {
+	public function test_php_requirements_not_met(): void {
 		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'screen_ids' )->with()->andReturn( [ 'settings_page_cyr-to-lat' ] );
 
@@ -248,7 +245,7 @@ class RequirementsTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_vars_requirements_not_met
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_vars_requirements_not_met( bool $within_timeout, string $content, string $expected ) {
+	public function test_vars_requirements_not_met( bool $within_timeout, string $content, string $expected ): void {
 		$max_input_vars              = $this->cyr_to_lat_required_max_input_vars - 1;
 		$user_ini_filename           = '.user.ini';
 		$user_ini_filename_with_path = ABSPATH . 'wp-admin/' . $user_ini_filename;
@@ -381,7 +378,7 @@ class RequirementsTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_vars_requirements_not_met_and_filesystem_not_available() {
+	public function test_vars_requirements_not_met_and_filesystem_not_available(): void {
 		$max_input_vars    = $this->cyr_to_lat_required_max_input_vars - 1;
 		$user_ini_filename = '.user.ini';
 		$ini_ttl           = 300;
@@ -445,7 +442,7 @@ class RequirementsTest extends CyrToLatTestCase {
 	/**
 	 * Test deactivate_plugin().
 	 */
-	public function test_deactivate_plugin() {
+	public function test_deactivate_plugin(): void {
 		$settings = Mockery::mock( Settings::class );
 		$ids      = [ 'settings_page_cyr-to-lat' ];
 		$settings->shouldReceive( 'screen_ids' )->with()->andReturn( $ids );
@@ -482,7 +479,7 @@ class RequirementsTest extends CyrToLatTestCase {
 	/**
 	 * Test deactivate_plugin() when it is not active.
 	 */
-	public function test_deactivate_plugin_when_it_is_not_active() {
+	public function test_deactivate_plugin_when_it_is_not_active(): void {
 		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'screen_ids' )->with()->andReturn( [ 'settings_page_cyr-to-lat' ] );
 

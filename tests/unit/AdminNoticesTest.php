@@ -24,7 +24,7 @@ class AdminNoticesTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException Reflection Exception.
 	 */
-	public function test_constructor() {
+	public function test_constructor(): void {
 		$classname = AdminNotices::class;
 
 		// Get mock, without the constructor being called.
@@ -42,7 +42,7 @@ class AdminNoticesTest extends CyrToLatTestCase {
 	/**
 	 * Test add_notice() and show_notices()
 	 */
-	public function test_add_and_show_notices() {
+	public function test_add_and_show_notices(): void {
 		$expected = '			<div class="notice">
 				<p>
 					<strong>
@@ -79,7 +79,7 @@ class AdminNoticesTest extends CyrToLatTestCase {
 	/**
 	 * Test add_notice() and show_notices() when page is not allowed
 	 */
-	public function test_show_notices_when_page_is_not_allowed() {
+	public function test_show_notices_when_page_is_not_allowed(): void {
 		$page_slug = 'some_page';
 
 		WP_Mock::userFunction( 'get_current_screen' )->andReturn( null );
@@ -98,7 +98,7 @@ class AdminNoticesTest extends CyrToLatTestCase {
 	/**
 	 * Test add_notice() and show_notices() when page is allowed
 	 */
-	public function test_show_notices_when_page_is_allowed() {
+	public function test_show_notices_when_page_is_allowed(): void {
 		$expected = '			<div class="notice">
 				<p>
 					<strong>

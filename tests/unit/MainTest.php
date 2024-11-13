@@ -9,7 +9,7 @@
 /** @noinspection PhpUndefinedNamespaceInspection */
 /** @noinspection PhpUndefinedClassInspection */
 /** @noinspection PhpUndefinedMethodInspection */
-/** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
+/** @noinspection PhpInternalEntityUsedInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
@@ -47,8 +47,6 @@ class MainTest extends CyrToLatTestCase {
 
 	/**
 	 * End test
-	 *
-	 * @noinspection PhpLanguageLevelInspection
 	 */
 	public function tearDown(): void {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
@@ -63,7 +61,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_init() {
+	public function test_init(): void {
 		$subject = new Main();
 
 		WP_Mock::expectActionAdded( 'plugins_loaded', [ $subject, 'init_all' ], - PHP_INT_MAX );
@@ -76,7 +74,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_init_all() {
+	public function test_init_all(): void {
 		$load_textdomain   = 'load_textdomain';
 		$init_multilingual = 'init_multilingual';
 		$init_classes      = 'init_classes';
@@ -100,7 +98,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_load_textdomain() {
+	public function test_load_textdomain(): void {
 		$plugin_file      = '/var/www/wp-content/plugins/cyr2lat/cyr-to-lat.php';
 		$plugin_base_name = 'cyr2lat/cyr-to-lat.php';
 
@@ -131,7 +129,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_init_multilingual
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_multilingual( bool $polylang, bool $sitepress ) {
+	public function test_init_multilingual( bool $polylang, bool $sitepress ): void {
 		$wpml_locale = 'en_US';
 
 		FunctionMocker::replace(
@@ -205,7 +203,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
-	public function test_init_classes() {
+	public function test_init_classes(): void {
 		$frontend = false;
 
 		// Test when requirements are met.
@@ -273,7 +271,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
-	public function test_init_cli() {
+	public function test_init_cli(): void {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
 
@@ -308,7 +306,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
-	public function test_init_cli_with_cli_error() {
+	public function test_init_cli_with_cli_error(): void {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_cli' )->andReturn( true );
 
@@ -340,7 +338,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @return void
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_cli_when_not_in_cli() {
+	public function test_init_cli_when_not_in_cli(): void {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_cli' )->andReturn( false );
 
@@ -362,7 +360,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_init_hooks
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_hooks( bool $sitepress, bool $frontend ) {
+	public function test_init_hooks( bool $sitepress, bool $frontend ): void {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_allowed' )->andReturn( true );
 
@@ -419,7 +417,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_hooks_when_not_allowed() {
+	public function test_init_hooks_when_not_allowed(): void {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_allowed' )->andReturn( false );
 
@@ -449,7 +447,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_settings() {
+	public function test_settings(): void {
 		$settings = Mockery::mock( Settings::class );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -462,7 +460,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test that sanitize_title() does nothing when title is empty.
 	 */
-	public function test_sanitize_title_empty_title() {
+	public function test_sanitize_title_empty_title(): void {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		$title = '';
@@ -473,7 +471,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test that sanitize_title() does nothing when context is 'query'
 	 */
-	public function test_sanitize_title_query_context() {
+	public function test_sanitize_title_query_context(): void {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		$title     = 'some title';
@@ -486,7 +484,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test that sanitize_title() does nothing on pre_term_slug filter with Polylang or SitePress.
 	 */
-	public function test_sanitize_title_pre_term_slug() {
+	public function test_sanitize_title_pre_term_slug(): void {
 		$subject = Mockery::mock( Main::class )->makePartial();
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( true );
 
@@ -513,7 +511,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test that sanitize_title() returns ctl_pre_sanitize_title filter value if set
 	 */
-	public function test_sanitize_title_filter_set() {
+	public function test_sanitize_title_filter_set(): void {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		$title          = 'some title';
@@ -534,7 +532,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_sanitize_title
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_sanitize_title( string $title, string $expected ) {
+	public function test_sanitize_title( string $title, string $expected ): void {
 		$subject = $this->get_subject();
 
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
@@ -594,7 +592,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_sanitize_title_for_insert_term
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_sanitize_title_for_insert_term( string $title, $term, string $expected ) {
+	public function test_sanitize_title_for_insert_term( string $title, $term, string $expected ): void {
 		global $wpdb;
 
 		$taxonomy     = 'taxonomy';
@@ -665,7 +663,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_sanitize_title_for_get_terms
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_sanitize_title_for_get_terms( string $title, string $term, array $taxonomies, string $prepared_taxonomies, string $expected ) {
+	public function test_sanitize_title_for_get_terms( string $title, string $term, array $taxonomies, string $prepared_taxonomies, string $expected ): void {
 		global $wpdb;
 
 		$subject = $this->get_subject();
@@ -722,7 +720,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_sanitize_title_for_frontend() {
+	public function test_sanitize_title_for_frontend(): void {
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'is_frontend', true );
 
@@ -756,7 +754,7 @@ class MainTest extends CyrToLatTestCase {
 		bool $is_wc,
 		$attribute_taxonomies,
 		int $expected
-	) {
+	): void {
 		FunctionMocker::replace(
 			'function_exists',
 			static function ( $function_name ) use ( $is_wc ) {
@@ -789,7 +787,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_is_wc_product_attribute
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_is_wc_product_not_converted_attribute( string $title, bool $is_product, array $attributes, bool $expected ) {
+	public function test_is_wc_product_not_converted_attribute( string $title, bool $is_product, array $attributes, bool $expected ): void {
 		$product_id = 5;
 		$method     = 'is_wc_product_not_converted_attribute';
 		$subject    = $this->get_subject();
@@ -867,7 +865,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_woocommerce_before_template_part_filter() {
+	public function test_woocommerce_before_template_part_filter(): void {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
@@ -880,7 +878,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_woocommerce_after_template_part_filter() {
+	public function test_woocommerce_after_template_part_filter(): void {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		WP_Mock::userFunction( 'remove_filter' )
@@ -898,7 +896,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_transliterate
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_transliterate( string $str, string $expected ) {
+	public function test_transliterate( string $str, string $expected ): void {
 		$subject = $this->get_subject();
 
 		$settings = $this->get_protected_property( $subject, 'settings' );
@@ -947,7 +945,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 * @dataProvider dp_test_split_chinese_string
 	 */
-	public function test_split_chinese_string( string $str, string $expected ) {
+	public function test_split_chinese_string( string $str, string $expected ): void {
 		$locale = 'zh_CN';
 		$table  = $this->get_conversion_table( $locale );
 		$table  = $this->transpose_chinese_table( $table );
@@ -989,7 +987,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test that sanitize_filename() returns ctl_pre_sanitize_filename filter value if set
 	 */
-	public function test_pre_sanitize_filename_filter_set() {
+	public function test_pre_sanitize_filename_filter_set(): void {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		$filename     = 'filename.jpg';
@@ -1011,7 +1009,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_sanitize_filename
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_sanitize_filename( string $filename, string $expected ) {
+	public function test_sanitize_filename( string $filename, string $expected ): void {
 		WP_Mock::userFunction(
 			'seems_utf8',
 			[
@@ -1091,7 +1089,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @return void
 	 * @dataProvider dp_test_min_suffix
 	 */
-	public function test_min_suffix( bool $defined, bool $script_debug, string $expected ) {
+	public function test_min_suffix( bool $defined, bool $script_debug, string $expected ): void {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		FunctionMocker::replace(
@@ -1136,7 +1134,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test that sanitize_post_name() does nothing if no Block/Gutenberg editor is active
 	 */
-	public function test_sanitize_post_name_without_gutenberg() {
+	public function test_sanitize_post_name_without_gutenberg(): void {
 		$data = [ 'something' ];
 
 		WP_Mock::userFunction(
@@ -1171,7 +1169,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test that sanitize_post_name() does nothing if Disable Gutenberg plugin is active
 	 */
-	public function test_sanitize_post_name_with_disable_gutenberg_plugin() {
+	public function test_sanitize_post_name_with_disable_gutenberg_plugin(): void {
 		$data = [ 'something' ];
 
 		WP_Mock::userFunction(
@@ -1208,7 +1206,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test that sanitize_post_name() does nothing if current screen is not post edit screen
 	 */
-	public function test_sanitize_post_name_not_post_edit_screen() {
+	public function test_sanitize_post_name_not_post_edit_screen(): void {
 		$data = [ 'something' ];
 
 		WP_Mock::userFunction(
@@ -1257,7 +1255,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_sanitize_post_name
 	 */
-	public function test_sanitize_post_name( array $data, array $expected ) {
+	public function test_sanitize_post_name( array $data, array $expected ): void {
 
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		FunctionMocker::replace( 'function_exists', true );
@@ -1329,7 +1327,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test pll_locale_filter() with REST.
 	 */
-	public function test_pll_locale_filter_with_rest() {
+	public function test_pll_locale_filter_with_rest(): void {
 		$locale     = 'en_US';
 		$pll_locale = 'ru';
 		$data       = '';
@@ -1373,7 +1371,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test pll_locale_filter() on frontend.
 	 */
-	public function test_pll_locale_filter_on_frontend() {
+	public function test_pll_locale_filter_on_frontend(): void {
 		$locale = 'en_US';
 
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -1388,7 +1386,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_pll_locale_filter_on_backend_get() {
+	public function test_pll_locale_filter_on_backend_get(): void {
 		$locale = 'en_US';
 
 		$request = Mockery::mock( Request::class );
@@ -1407,7 +1405,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_pll_locale_filter_with_classic_editor_and_post_id() {
+	public function test_pll_locale_filter_with_classic_editor_and_post_id(): void {
 		$locale     = 'en_US';
 		$pll_locale = 'ru';
 		$post_id    = 23;
@@ -1451,7 +1449,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_pll_locale_filter_with_classic_editor_and_pll_post_id() {
+	public function test_pll_locale_filter_with_classic_editor_and_pll_post_id(): void {
 		$locale     = 'en_US';
 		$pll_locale = 'ru';
 		$post_id    = 23;
@@ -1495,7 +1493,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_pll_locale_filter_with_classic_editor_and_post() {
+	public function test_pll_locale_filter_with_classic_editor_and_post(): void {
 		$locale     = 'en_US';
 		$pll_locale = 'ru';
 		$post_id    = 23;
@@ -1539,7 +1537,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_pll_locale_filter_with_term() {
+	public function test_pll_locale_filter_with_term(): void {
 		$locale           = 'en_US';
 		$pll_locale       = 'ru';
 		$term_lang_choice = 92;
@@ -1592,7 +1590,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_wpml_locale_filter() {
+	public function test_wpml_locale_filter(): void {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		$locale = 'en_US';
@@ -1613,7 +1611,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_get_wpml_locale( string $language_code, $expected ) {
+	public function test_get_wpml_locale( string $language_code, $expected ): void {
 		$languages = [
 			'be' =>
 				[
@@ -1706,7 +1704,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_wpml_language_has_switched( $language_code, $expected ) {
+	public function test_wpml_language_has_switched( $language_code, $expected ): void {
 		$languages = [
 			'be' =>
 				[
@@ -1794,7 +1792,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @noinspection PhpMissingParamTypeInspection
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_check_for_changed_slugs( $post, $post_before, $expected ) {
+	public function test_check_for_changed_slugs( $post, $post_before, $expected ): void {
 		$post_id = 5;
 
 		$locale     = 'ru_RU';
@@ -1931,7 +1929,7 @@ class MainTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_declare_wc_compatibility
 	 */
-	public function test_declare_wc_compatibility( bool $feature_util ) {
+	public function test_declare_wc_compatibility( bool $feature_util ): void {
 		FunctionMocker::replace(
 			'constant',
 			static function ( $name ) {
@@ -1990,7 +1988,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_prepare_in
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_prepare_in( $items, $format, string $expected ) {
+	public function test_prepare_in( $items, $format, string $expected ): void {
 		global $wpdb;
 
 		$items    = (array) $items;

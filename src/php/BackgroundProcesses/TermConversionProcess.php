@@ -80,6 +80,8 @@ class TermConversionProcess extends ConversionProcess {
 
 	/**
 	 * Complete
+	 *
+	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
 	protected function complete() {
 		parent::complete();

@@ -26,9 +26,6 @@ class ACFTest extends CyrToLatTestCase {
 
 	/**
 	 * Tear down.
-	 *
-	 * @noinspection PhpLanguageLevelInspection
-	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function tearDown(): void {
 		unset( $GLOBALS['cyr_to_lat_plugin'] );
@@ -40,7 +37,7 @@ class ACFTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException Reflection Exception.
 	 */
-	public function test_constructor() {
+	public function test_constructor(): void {
 		$classname = ACF::class;
 
 		$settings = Mockery::mock( Settings::class );
@@ -60,7 +57,7 @@ class ACFTest extends CyrToLatTestCase {
 	/**
 	 * Test init_hooks()
 	 */
-	public function test_init_hooks() {
+	public function test_init_hooks(): void {
 		$settings = Mockery::mock( Settings::class );
 		$subject  = new ACF( $settings );
 
@@ -75,7 +72,7 @@ class ACFTest extends CyrToLatTestCase {
 	/**
 	 * Test enqueue_script()
 	 */
-	public function test_enqueue_script() {
+	public function test_enqueue_script(): void {
 		$table  = [ 'я' => 'ya' ];
 		$object = [ 'table' => $table ];
 

@@ -20,17 +20,17 @@ class Tables extends PluginSettingsBase {
 	/**
 	 * Admin script handle.
 	 */
-	const HANDLE = 'cyr-to-lat-tables';
+	public const HANDLE = 'cyr-to-lat-tables';
 
 	/**
 	 * Script localization object.
 	 */
-	const OBJECT = 'Cyr2LatTablesObject';
+	public const OBJECT = 'Cyr2LatTablesObject';
 
 	/**
 	 * Save table ajax action.
 	 */
-	const SAVE_TABLE_ACTION = 'cyr-to-lat-save-table';
+	public const SAVE_TABLE_ACTION = 'cyr-to-lat-save-table';
 
 	/**
 	 * Served locales.
@@ -60,7 +60,7 @@ class Tables extends PluginSettingsBase {
 	/**
 	 * Init class hooks.
 	 */
-	protected function init_hooks() {
+	protected function init_hooks(): void {
 		parent::init_hooks();
 
 		add_action( 'wp_ajax_' . self::SAVE_TABLE_ACTION, [ $this, 'save_table' ] );
@@ -78,7 +78,7 @@ class Tables extends PluginSettingsBase {
 	/**
 	 * Init locales.
 	 */
-	protected function init_locales() {
+	protected function init_locales(): void {
 		if ( ! empty( $this->locales ) ) {
 			return;
 		}
@@ -113,7 +113,7 @@ class Tables extends PluginSettingsBase {
 	/**
 	 * Init form fields.
 	 */
-	public function init_form_fields() {
+	public function init_form_fields(): void {
 		$this->init_locales();
 
 		$current_locale = $this->get_current_locale();
@@ -138,7 +138,7 @@ class Tables extends PluginSettingsBase {
 	 *
 	 * @param array $arguments Section arguments.
 	 */
-	public function section_callback( array $arguments ) {
+	public function section_callback( array $arguments ): void {
 		$locale = str_replace( '_section', '', $arguments['id'] );
 
 		if ( $this->get_current_locale() === $locale ) {
@@ -149,7 +149,7 @@ class Tables extends PluginSettingsBase {
 	/**
 	 * Enqueue class scripts.
 	 */
-	public function admin_enqueue_scripts() {
+	public function admin_enqueue_scripts(): void {
 		wp_enqueue_script(
 			self::HANDLE,
 			constant( 'CYR_TO_LAT_URL' ) . '/assets/js/apps/tables.js',
@@ -181,7 +181,7 @@ class Tables extends PluginSettingsBase {
 	 *
 	 * @return void
 	 */
-	public function save_table() {
+	public function save_table(): void {
 		// Run a security check.
 		if ( ! check_ajax_referer( self::SAVE_TABLE_ACTION, 'nonce', false ) ) {
 			wp_send_json_error( esc_html__( 'Your session has expired. Please reload the page.', 'cyr2lat' ) );

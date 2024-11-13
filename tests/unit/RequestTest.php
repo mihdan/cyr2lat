@@ -24,9 +24,6 @@ class RequestTest extends CyrToLatTestCase {
 
 	/**
 	 * Tear down the test.
-	 *
-	 * @noinspection PhpLanguageLevelInspection
-	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function tearDown(): void {
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -46,7 +43,7 @@ class RequestTest extends CyrToLatTestCase {
 	 * @return void
 	 * @dataProvider dp_test_is_allowed
 	 */
-	public function test_is_allowed( bool $frontend, bool $post, bool $cli, bool $expected ) {
+	public function test_is_allowed( bool $frontend, bool $post, bool $cli, bool $expected ): void {
 		$subject = Mockery::mock( Request::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_frontend' )->with()->andReturn( $frontend );
 		$subject->shouldReceive( 'is_post' )->with()->andReturn( $post );
@@ -84,7 +81,7 @@ class RequestTest extends CyrToLatTestCase {
 	 *
 	 * @dataProvider dp_test_is_frontend
 	 */
-	public function test_is_frontend( bool $ajax, bool $admin, bool $cli, bool $rest, bool $expected ) {
+	public function test_is_frontend( bool $ajax, bool $admin, bool $cli, bool $rest, bool $expected ): void {
 		WP_Mock::userFunction( 'wp_doing_ajax' )->with()->andReturn( $ajax );
 		WP_Mock::userFunction( 'is_admin' )->with()->andReturn( $admin );
 
@@ -131,7 +128,7 @@ class RequestTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_is_cli
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function test_is_cli( $defined, $constant, $expected ) {
+	public function test_is_cli( $defined, $constant, $expected ): void {
 		FunctionMocker::replace( 'defined', $defined );
 
 		FunctionMocker::replace( 'constant', $constant );
@@ -157,7 +154,7 @@ class RequestTest extends CyrToLatTestCase {
 	/**
 	 * Test is_rest() when no request_uri.
 	 */
-	public function test_is_rest_no_request_uri() {
+	public function test_is_rest_no_request_uri(): void {
 		$subject = new Request();
 
 		self::assertFalse( $subject->is_rest() );
@@ -166,7 +163,7 @@ class RequestTest extends CyrToLatTestCase {
 	/**
 	 * Test is_rest(), case 1.
 	 */
-	public function test_is_rest_case_1() {
+	public function test_is_rest_case_1(): void {
 		$subject = new Request();
 
 		$_SERVER['REQUEST_URI'] = '/wp-json/wp/v2/some-route';
@@ -191,7 +188,7 @@ class RequestTest extends CyrToLatTestCase {
 	/**
 	 * Test is_rest(), case 2.
 	 */
-	public function test_is_rest_case_2() {
+	public function test_is_rest_case_2(): void {
 		$subject = new Request();
 
 		$_SERVER['REQUEST_URI'] = '/wp-json/wp/v2/some-route';
@@ -213,7 +210,7 @@ class RequestTest extends CyrToLatTestCase {
 	/**
 	 * Test is_rest(), case 3 and 4.
 	 */
-	public function test_is_rest_case_3_and_4() {
+	public function test_is_rest_case_3_and_4(): void {
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$GLOBALS['wp_rewrite'] = Mockery::mock( 'WP_Rewrite' );
 
@@ -246,7 +243,7 @@ class RequestTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_get_rest_route( string $current_path, string $expected ) {
+	public function test_get_rest_route( string $current_path, string $expected ): void {
 		$current_url = 'https://test.test' . $current_path;
 
 		$rest_path = '/wp-json';
@@ -286,7 +283,7 @@ class RequestTest extends CyrToLatTestCase {
 	/**
 	 * Test is_post().
 	 */
-	public function test_is_post() {
+	public function test_is_post(): void {
 		WP_Mock::passthruFunction( 'wp_unslash' );
 
 		$subject = new Request();

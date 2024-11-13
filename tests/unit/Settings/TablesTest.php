@@ -7,7 +7,6 @@
 
 // phpcs:disable Generic.Commenting.DocComment.MissingShort
 /** @noinspection PhpUndefinedMethodInspection */
-/** @noinspection PhpArrayShapeAttributeCanBeAddedInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
 // phpcs:disable PHPCompatibility.FunctionDeclarations.NewReturnTypeDeclarations.voidFound
@@ -33,9 +32,6 @@ class TablesTest extends CyrToLatTestCase {
 
 	/**
 	 * Tear down.
-	 *
-	 * @noinspection PhpLanguageLevelInspection
-	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function tearDown(): void {
 		unset( $GLOBALS['cyr_to_lat_plugin'] );
@@ -45,7 +41,7 @@ class TablesTest extends CyrToLatTestCase {
 	/**
 	 * Test screen_id().
 	 */
-	public function test_screen_id() {
+	public function test_screen_id(): void {
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( 'settings_page_cyr-to-lat', $subject->screen_id() );
@@ -56,7 +52,7 @@ class TablesTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_option_group() {
+	public function test_option_group(): void {
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'option_group';
 
@@ -70,7 +66,7 @@ class TablesTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_option_page() {
+	public function test_option_page(): void {
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'option_page';
 
@@ -84,7 +80,7 @@ class TablesTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_option_name() {
+	public function test_option_name(): void {
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'option_name';
 
@@ -98,7 +94,7 @@ class TablesTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_page_title() {
+	public function test_page_title(): void {
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'page_title';
 
@@ -112,7 +108,7 @@ class TablesTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_menu_title() {
+	public function test_menu_title(): void {
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'menu_title';
 
@@ -126,7 +122,7 @@ class TablesTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_section_title() {
+	public function test_section_title(): void {
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'section_title';
 
@@ -140,7 +136,7 @@ class TablesTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_parent_slug() {
+	public function test_parent_slug(): void {
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 		$method  = 'parent_slug';
 
@@ -154,7 +150,7 @@ class TablesTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_locales() {
+	public function test_init_locales(): void {
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		$method = $this->set_method_accessibility( $subject, 'init_locales' );
@@ -188,7 +184,7 @@ class TablesTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_form_fields() {
+	public function test_init_form_fields(): void {
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		FunctionMocker::replace(
@@ -391,7 +387,7 @@ class TablesTest extends CyrToLatTestCase {
 	/**
 	 * Test settings_page()
 	 */
-	public function test_settings_page() {
+	public function test_settings_page(): void {
 		$admin_url    = 'http://test.test/wp-admin/options.php';
 		$option_page  = 'cyr-to-lat';
 		$option_group = 'cyr_to_lat_group';
@@ -429,7 +425,7 @@ class TablesTest extends CyrToLatTestCase {
 	/**
 	 * Test section_callback()
 	 */
-	public function test_section_callback() {
+	public function test_section_callback(): void {
 		$locale = 'iso9';
 
 		WP_Mock::userFunction( 'get_locale' )->andReturn( $locale );
@@ -452,7 +448,7 @@ class TablesTest extends CyrToLatTestCase {
 	/**
 	 * Test admin_enqueue_scripts().
 	 */
-	public function test_admin_enqueue_scripts() {
+	public function test_admin_enqueue_scripts(): void {
 		$plugin_url     = 'http://test.test/wp-content/plugins/cyr-to-lat';
 		$plugin_version = '1.0.0';
 		$admin_url      = 'http://test.test/wp-admin/options.php';

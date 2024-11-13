@@ -23,9 +23,6 @@ class PluginFileTest extends CyrToLatTestCase {
 
 	/**
 	 * Tear down.
-	 *
-	 * @noinspection PhpLanguageLevelInspection
-	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function tearDown(): void {
 		unset( $GLOBALS['cyr_to_lat_plugin'] );
@@ -38,7 +35,7 @@ class PluginFileTest extends CyrToLatTestCase {
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
-	public function test_main_plugin_file() {
+	public function test_main_plugin_file(): void {
 		$plugin_dir_url         = 'http://test.test/wp-content/plugins/cyr2lat/';
 		$plugin_dir_url_unslash = rtrim( $plugin_dir_url, '/' );
 
@@ -114,7 +111,7 @@ class PluginFileTest extends CyrToLatTestCase {
 	/**
 	 * Test that readme.txt contains proper stable tag.
 	 */
-	public function test_readme_txt() {
+	public function test_readme_txt(): void {
 		$expected    = [
 			'stable_tag' => CYR_TO_LAT_TEST_VERSION,
 		];

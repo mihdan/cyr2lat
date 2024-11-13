@@ -36,10 +36,12 @@ class WPCLITest extends CyrToLatTestCase {
 	 * @dataProvider        dp_test_regenerate
 	 * @noinspection        PhpRedundantOptionalArgumentInspection
 	 */
-	public function test_regenerate( $args, $assoc_args, $convert_params ) {
+	public function test_regenerate( array $args, array $assoc_args, array $convert_params ): void {
 		$converter = Mockery::mock( Converter::class );
 
-		$subject = Mockery::mock( WPCli::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( WPCli::class, [ $converter ] )->makePartial();
+
+		$subject->shouldAllowMockingProtectedMethods();
 
 		$notify = Mockery::mock( Bar::class );
 		$notify->shouldReceive( 'tick' );
@@ -90,10 +92,12 @@ class WPCLITest extends CyrToLatTestCase {
 	/**
 	 * Test make_progress_bar()
 	 */
-	public function test_make_progress_bar() {
+	public function test_make_progress_bar(): void {
 		$converter = Mockery::mock( Converter::class );
 
-		$subject = Mockery::mock( WPCli::class, [ $converter ] )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = Mockery::mock( WPCli::class, [ $converter ] )->makePartial();
+
+		$subject->shouldAllowMockingProtectedMethods();
 
 		$notify = Mockery::Mock( Bar::class );
 

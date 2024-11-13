@@ -5,6 +5,9 @@
  * @package cyr-to-lat
  */
 
+// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpInternalEntityUsedInspection */
+
 namespace CyrToLat;
 
 use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
