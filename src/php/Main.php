@@ -160,6 +160,8 @@ class Main {
 	 * @return void
 	 */
 	public function load_textdomain() {
+		add_filter( 'doing_it_wrong_trigger_error', [ $this, 'doing_it_wrong_trigger_error' ], 10, 4 );
+
 		load_default_textdomain();
 		load_plugin_textdomain(
 			'cyr2lat',
@@ -188,6 +190,25 @@ class Main {
 
 			add_action( 'wpml_language_has_switched', [ $this, 'wpml_language_has_switched' ], 10, 3 );
 		}
+	}
+
+	/**
+	 * Filter for _doing_it_wrong() calls.
+	 *
+	 * @param bool|mixed $trigger       Whether to trigger the error for _doing_it_wrong() calls. Default true.
+	 * @param string     $function_name The function that was called.
+	 * @param string     $message       A message explaining what has been done incorrectly.
+	 * @param string     $version       The version of WordPress where the message was added.
+	 *
+	 * @return bool
+	 */
+	public function doing_it_wrong_trigger_error( $trigger, string $function_name, string $message, string $version ): bool {
+
+		if ( '_load_textdomain_just_in_time' === $function_name && false !== strpos( $message, '<code>cyr2lat</code>' ) ) {
+			return false;
+		}
+
+		return (bool) $trigger;
 	}
 
 	/**
