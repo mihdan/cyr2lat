@@ -56,19 +56,24 @@
 	display: inline;
 	border: none;
 	box-shadow: none;
+	width: 2.3611rem;
+	height: 1.25rem;
 	margin: 0 4px 0 0;
 	min-width: 0;
-	width: 0;
+	margin-block-start: -0.125rem;
+	margin-inline-end: 0.5rem;
+	margin-block-end: 0;
+	margin-inline-start: 0;
 }
 
 #ctl-options table tr td input[type="checkbox"]::before {
 	background: no-repeat url('../images/checkbox-off.svg');
+	background-size: cover;
 	margin: 0;
-	width: 2.4792rem;
-	height: 1.3125rem;
+	width: 2.3611rem;
+	height: 1.25rem;
 	content: '';
 	display: inline-block;
-	float: left;
 }
 
 #ctl-options table tr td input[type="checkbox"]:checked::before {

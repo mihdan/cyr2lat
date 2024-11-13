@@ -86,7 +86,7 @@ class Converter extends PluginSettingsBase {
 		foreach ( $post_status_objects as $post_status => $post_status_object ) {
 			$this->form_fields['background_post_statuses']['options'][ $post_status ] =
 				// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
-				__( $post_status_object->label ) . ' (' . $post_status . ')';
+				__( $post_status_object->label, 'cyr2lat' ) . ' (' . $post_status . ')';
 		}
 
 		$this->form_fields['background_post_statuses']['default'] = $default_post_statuses;
@@ -143,7 +143,7 @@ class Converter extends PluginSettingsBase {
 		foreach ( $post_type_objects as $post_type => $post_type_object ) {
 			$this->form_fields['background_post_types']['options'][ $post_type ] =
 				// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
-				__( $post_type_object->label ) . ' (' . $post_type . ')';
+				__( $post_type_object->label, 'cyr2lat' ) . ' (' . $post_type . ')';
 		}
 
 		$this->form_fields['background_post_types']['default']  = $default_post_types;

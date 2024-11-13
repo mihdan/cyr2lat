@@ -11,6 +11,7 @@
 	padding: 0;
 	margin: 0;
 	position: relative;
+	width: 100%;
 }
 
 /* Section Post Types and Statuses */
@@ -27,15 +28,11 @@
 
 .ctl-section-types-statuses + table tbody tr th {
 	padding: 0 0 10px 0;
+	width: auto;
 }
 
 .ctl-section-types-statuses + table tbody tr td input {
 	width: 100%;
-}
-
-#ctl-options fieldset + .helper::before {
-	transform: translate(25px, -0.8em);
-	top: 50%;
 }
 
 #ctl-options table tbody tr th {
@@ -43,17 +40,14 @@
 }
 
 #ctl-options fieldset + .helper::before {
-	transform: translate(200px, -1.9em);
 	top: 0;
-	left: 0;
-	right: unset;
+	transform: translate(0, -1.9em);
 }
 
 #ctl-options fieldset + .helper .helper-content {
 	top: 0;
-	left: 0;
-	right: unset;
-	transform: translate(calc(200px - 100% + 1.2em), -6.6em);
+	right: 0;
+	transform: translate(0.1em, -5.7em);
 	min-width: 200px;
 }
 
