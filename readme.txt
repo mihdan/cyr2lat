@@ -224,6 +224,7 @@ Yes, you can!
 = 6.2.0 (13.11.2024) =
 * Dropped support for PHP 7.0 and 7.1. The minimum required PHP version is now 7.2.
 * The minimum required WordPress version is now 5.3.
+* Fixed the notice about the _load_textdomain_just_in_time function being called incorrectly.
 * Tested with WordPress 6.7.
 * Tested with WooCommerce 9.4.
 
