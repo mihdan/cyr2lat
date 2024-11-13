@@ -130,7 +130,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	/**
 	 * Setup settings fields.
 	 */
-	public function setup_fields() {
+	public function setup_fields(): void {
 		$prefix = $this->option_page() . '-' . static::section_title() . '-';
 
 		foreach ( $this->form_fields as $key => $form_field ) {
@@ -145,7 +145,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	/**
 	 * Show settings page.
 	 */
-	public function settings_page() {
+	public function settings_page(): void {
 		?>
 		<h1 class="ctl-settings-header">
 			<img
@@ -182,6 +182,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	 * @param string|mixed $text Footer text.
 	 *
 	 * @return string|mixed
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function admin_footer_text( $text ) {
 		if ( ! $this->is_options_screen( [] ) ) {

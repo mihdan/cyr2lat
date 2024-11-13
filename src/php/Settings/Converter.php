@@ -19,17 +19,17 @@ class Converter extends PluginSettingsBase {
 	/**
 	 * Admin script handle.
 	 */
-	const HANDLE = 'cyr-to-lat-converter';
+	public const HANDLE = 'cyr-to-lat-converter';
 
 	/**
 	 * Converter nonce.
 	 */
-	const NONCE = 'cyr-to-lat-converter-nonce';
+	public const NONCE = 'cyr-to-lat-converter-nonce';
 
 	/**
 	 * Post types and statuses section id.
 	 */
-	const SECTION_TYPES_STATUSES = 'types-statuses';
+	private const SECTION_TYPES_STATUSES = 'types-statuses';
 
 	/**
 	 * Get page title.
@@ -52,7 +52,7 @@ class Converter extends PluginSettingsBase {
 	/**
 	 * Init class hooks.
 	 */
-	protected function init_hooks() {
+	protected function init_hooks(): void {
 		parent::init_hooks();
 
 		add_action( 'in_admin_header', [ $this, 'in_admin_header' ] );
@@ -62,7 +62,7 @@ class Converter extends PluginSettingsBase {
 	/**
 	 * Empty method. Do stuff in the delayed_init_form_fields.
 	 */
-	public function init_form_fields() {
+	public function init_form_fields(): void {
 		$this->form_fields = [];
 
 		$this->form_fields['background_post_statuses'] = [
@@ -120,7 +120,7 @@ class Converter extends PluginSettingsBase {
 	/**
 	 * Init form fields.
 	 */
-	public function delayed_init_form_fields() {
+	public function delayed_init_form_fields(): void {
 		$this->form_fields['background_post_types'] = [
 			'label'        => __( 'Post Types', 'cyr2lat' ),
 			'section'      => self::SECTION_TYPES_STATUSES,
@@ -156,7 +156,7 @@ class Converter extends PluginSettingsBase {
 	 *
 	 * @return void
 	 */
-	public function delayed_init_settings() {
+	public function delayed_init_settings(): void {
 		$this->delayed_init_form_fields();
 
 		$this->init_settings();
@@ -165,7 +165,7 @@ class Converter extends PluginSettingsBase {
 	/**
 	 * Show settings page.
 	 */
-	public function settings_page() {
+	public function settings_page(): void {
 		parent::settings_page();
 
 		?>
@@ -184,7 +184,7 @@ class Converter extends PluginSettingsBase {
 	 *
 	 * @param array $arguments Section arguments.
 	 */
-	public function section_callback( array $arguments ) {
+	public function section_callback( array $arguments ): void {
 		if ( self::SECTION_TYPES_STATUSES === $arguments['id'] ) {
 			?>
 			<h2 class="title">
@@ -215,7 +215,7 @@ class Converter extends PluginSettingsBase {
 	 *
 	 * @return void
 	 */
-	private function print_section_header( string $id, string $title ) {
+	private function print_section_header( string $id, string $title ): void {
 		?>
 		<h3 class="ctl-section-<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $title ); ?></h3>
 		<?php
@@ -226,7 +226,7 @@ class Converter extends PluginSettingsBase {
 	 *
 	 * @return void
 	 */
-	public function in_admin_header() {
+	public function in_admin_header(): void {
 		if ( ! $this->is_options_screen() ) {
 			return;
 		}
@@ -278,7 +278,7 @@ class Converter extends PluginSettingsBase {
 	/**
 	 * Enqueue class scripts.
 	 */
-	public function admin_enqueue_scripts() {
+	public function admin_enqueue_scripts(): void {
 		wp_enqueue_script(
 			self::HANDLE,
 			constant( 'CYR_TO_LAT_URL' ) . '/assets/js/apps/converter.js',

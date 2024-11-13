@@ -19,12 +19,12 @@ abstract class SettingsBase {
 	/**
 	 * Admin script handle.
 	 */
-	const HANDLE = 'ctl-settings-base';
+	public const HANDLE = 'ctl-settings-base';
 
 	/**
 	 * Network-wide option suffix.
 	 */
-	const NETWORK_WIDE = '_network_wide';
+	public const NETWORK_WIDE = '_network_wide';
 
 	/**
 	 * Form fields.
@@ -148,7 +148,7 @@ abstract class SettingsBase {
 	 *
 	 * @param array $arguments Arguments.
 	 */
-	abstract public function section_callback( array $arguments );
+	abstract public function section_callback( array $arguments ): void;
 
 	/**
 	 * Get text domain.
@@ -178,7 +178,7 @@ abstract class SettingsBase {
 	/**
 	 * Init class.
 	 */
-	public function init() {
+	public function init(): void {
 		$this->min_prefix = defined( 'SCRIPT_DEBUG' ) && constant( 'SCRIPT_DEBUG' ) ? '' : '.min';
 
 		$this->form_fields();
@@ -192,7 +192,7 @@ abstract class SettingsBase {
 	/**
 	 * Init class hooks.
 	 */
-	protected function init_hooks() {
+	protected function init_hooks(): void {
 		add_action( 'plugins_loaded', [ $this, 'load_plugin_textdomain' ] );
 
 		add_filter(
@@ -212,7 +212,7 @@ abstract class SettingsBase {
 	/**
 	 * Init form fields.
 	 */
-	public function init_form_fields() {
+	public function init_form_fields(): void {
 		$this->form_fields = [];
 	}
 
@@ -295,7 +295,7 @@ abstract class SettingsBase {
 	 * and make sure the $settings array is either the default
 	 * or the settings stored in the database.
 	 */
-	protected function init_settings() {
+	protected function init_settings(): void {
 		$network_wide = get_site_option( $this->option_name() . self::NETWORK_WIDE, [] );
 
 		if ( empty( $network_wide ) ) {
@@ -372,7 +372,7 @@ abstract class SettingsBase {
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	protected function set_defaults( array &$field, string $id ) {
+	protected function set_defaults( array &$field, string $id ): void {
 		$field = wp_parse_args(
 			$field,
 			[
@@ -391,7 +391,7 @@ abstract class SettingsBase {
 	 *
 	 * @return void
 	 */
-	public function add_settings_page() {
+	public function add_settings_page(): void {
 		if ( $this->is_main_menu_page() ) {
 			add_menu_page(
 				$this->page_title(),
@@ -417,7 +417,7 @@ abstract class SettingsBase {
 	/**
 	 * Invoke relevant settings_page() basing on tabs.
 	 */
-	public function settings_base_page() {
+	public function settings_base_page(): void {
 		echo '<div class="wrap">';
 
 		$this->get_active_tab()->settings_page();
@@ -428,7 +428,7 @@ abstract class SettingsBase {
 	/**
 	 * Enqueue scripts in admin.
 	 */
-	public function admin_enqueue_scripts() {
+	public function admin_enqueue_scripts(): void {
 	}
 
 	/**
@@ -437,7 +437,7 @@ abstract class SettingsBase {
 	 *
 	 * @return void
 	 */
-	public function base_admin_enqueue_scripts() {
+	public function base_admin_enqueue_scripts(): void {
 		if ( ! $this->is_options_screen() ) {
 			return;
 		}
@@ -457,7 +457,7 @@ abstract class SettingsBase {
 	 *
 	 * @return void
 	 */
-	public function setup_sections() {
+	public function setup_sections(): void {
 		if ( ! $this->is_options_screen() ) {
 			return;
 		}
@@ -490,7 +490,7 @@ abstract class SettingsBase {
 	 *
 	 * @return void
 	 */
-	public function setup_tabs_section() {
+	public function setup_tabs_section(): void {
 		if ( ! $this->is_options_screen() ) {
 			return;
 		}
@@ -508,7 +508,7 @@ abstract class SettingsBase {
 	/**
 	 * Show tabs.
 	 */
-	public function tabs_callback() {
+	public function tabs_callback(): void {
 		?>
 		<div class="ctl-settings-tabs">
 			<?php
@@ -527,7 +527,7 @@ abstract class SettingsBase {
 	 *
 	 * @param SettingsBase $tab Tabs of the current settings page.
 	 */
-	private function tab_link( SettingsBase $tab ) {
+	private function tab_link( SettingsBase $tab ): void {
 		$url    = menu_page_url( $this->option_page(), false );
 		$url    = add_query_arg( 'tab', strtolower( $tab->get_class_name() ), $url );
 		$active = $this->is_tab_active( $tab ) ? ' active' : '';
@@ -637,7 +637,7 @@ abstract class SettingsBase {
 	 *
 	 * @return void
 	 */
-	public function setup_fields() {
+	public function setup_fields(): void {
 		if ( ! $this->is_options_screen() ) {
 			return;
 		}
@@ -665,7 +665,7 @@ abstract class SettingsBase {
 	 *
 	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function print_text_field( array $arguments ) {
+	private function print_text_field( array $arguments ): void {
 		$value        = $this->get( $arguments['field_id'] );
 		$autocomplete = '';
 		$lp_ignore    = 'false';
@@ -696,7 +696,7 @@ abstract class SettingsBase {
 	 *
 	 * @noinspection PhpUnusedPrivateMethodInspection
 	 */
-	private function print_number_field( array $arguments ) {
+	private function print_number_field( array $arguments ): void {
 		$value = $this->get( $arguments['field_id'] );
 		$min   = $arguments['min'];
 		$max   = $arguments['max'];
@@ -723,8 +723,9 @@ abstract class SettingsBase {
 	 * @param array $arguments Field arguments.
 	 *
 	 * @noinspection PhpUnusedPrivateMethodInspection
+	 * @noinspection HtmlUnknownAttribute
 	 */
-	private function print_textarea_field( array $arguments ) {
+	private function print_textarea_field( array $arguments ): void {
 		$value = $this->get( $arguments['field_id'] );
 
 		printf(
@@ -744,8 +745,9 @@ abstract class SettingsBase {
 	 *
 	 * @noinspection PhpUnusedPrivateMethodInspection
 	 * @noinspection HtmlUnknownAttribute
+	 * @noinspection HtmlWrongAttributeValue
 	 */
-	private function print_checkbox_field( array $arguments ) {
+	private function print_checkbox_field( array $arguments ): void {
 		$value = (array) $this->get( $arguments['field_id'] );
 
 		if ( empty( $arguments['options'] ) || ! is_array( $arguments['options'] ) ) {
@@ -810,8 +812,9 @@ abstract class SettingsBase {
 	 *
 	 * @noinspection PhpUnusedPrivateMethodInspection
 	 * @noinspection HtmlUnknownAttribute
+	 * @noinspection HtmlWrongAttributeValue
 	 */
-	private function print_radio_field( array $arguments ) {
+	private function print_radio_field( array $arguments ): void {
 		$value = $this->get( $arguments['field_id'] );
 
 		if ( empty( $arguments['options'] ) || ! is_array( $arguments['options'] ) ) {
@@ -877,7 +880,7 @@ abstract class SettingsBase {
 	 * @noinspection PhpUnusedPrivateMethodInspection
 	 * @noinspection HtmlUnknownAttribute
 	 */
-	private function print_select_field( array $arguments ) {
+	private function print_select_field( array $arguments ): void {
 		$value = $this->get( $arguments['field_id'] );
 
 		if ( empty( $arguments['options'] ) || ! is_array( $arguments['options'] ) ) {
@@ -928,7 +931,7 @@ abstract class SettingsBase {
 	 * @noinspection PhpUnusedPrivateMethodInspection
 	 * @noinspection HtmlUnknownAttribute
 	 */
-	private function print_multiple_select_field( array $arguments ) {
+	private function print_multiple_select_field( array $arguments ): void {
 		$value = $this->get( $arguments['field_id'] );
 
 		if ( empty( $arguments['options'] ) || ! is_array( $arguments['options'] ) ) {
@@ -983,8 +986,9 @@ abstract class SettingsBase {
 	 * @param array $arguments Field arguments.
 	 *
 	 * @noinspection PhpUnusedPrivateMethodInspection
+	 * @noinspection HtmlUnknownAttribute
 	 */
-	private function print_table_field( array $arguments ) {
+	private function print_table_field( array $arguments ): void {
 		$value = $this->get( $arguments['field_id'] );
 
 		if ( ! is_array( $value ) ) {
@@ -1031,7 +1035,7 @@ abstract class SettingsBase {
 	 *
 	 * @param array $arguments Field arguments.
 	 */
-	public function field_callback( array $arguments ) {
+	public function field_callback( array $arguments ): void {
 		if ( empty( $arguments['field_id'] ) ) {
 			return;
 		}
@@ -1138,7 +1142,7 @@ abstract class SettingsBase {
 	 * @param string $key   Setting name.
 	 * @param mixed  $value Setting value.
 	 */
-	public function update_option( string $key, $value ) {
+	public function update_option( string $key, $value ): void {
 		if ( empty( $this->settings ) ) {
 			$this->init_settings();
 		}
@@ -1194,7 +1198,7 @@ abstract class SettingsBase {
 	 *
 	 * @return void
 	 */
-	public function load_plugin_textdomain() {
+	public function load_plugin_textdomain(): void {
 		load_plugin_textdomain(
 			$this->text_domain(),
 			false,
@@ -1238,7 +1242,7 @@ abstract class SettingsBase {
 	 *
 	 * @return void
 	 */
-	private function print_helper( string $helper ) {
+	private function print_helper( string $helper ): void {
 		if ( ! $helper ) {
 			return;
 		}
@@ -1256,7 +1260,7 @@ abstract class SettingsBase {
 	 *
 	 * @return void
 	 */
-	private function print_supplemental( string $supplemental ) {
+	private function print_supplemental( string $supplemental ): void {
 		if ( ! $supplemental ) {
 			return;
 		}
