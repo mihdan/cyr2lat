@@ -1258,20 +1258,12 @@ class MainTest extends CyrToLatTestCase {
 	public function test_sanitize_post_name( array $data, array $expected ): void {
 
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-		FunctionMocker::replace( 'function_exists', true );
 
 		WP_Mock::userFunction(
-			'is_plugin_active',
+			'has_filter',
 			[
-				'args'   => [ 'classic-editor/classic-editor.php' ],
-				'return' => false,
-			]
-		);
-		WP_Mock::userFunction(
-			'is_plugin_active',
-			[
-				'args'   => [ 'disable-gutenberg/disable-gutenberg.php' ],
-				'return' => false,
+				'args'   => [ 'replace_editor', 'gutenberg_init' ],
+				'return' => true,
 			]
 		);
 

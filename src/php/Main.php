@@ -557,11 +557,11 @@ class Main {
 			return true;
 		}
 
-		// @codeCoverageIgnoreStart
 		if ( ! function_exists( 'is_plugin_active' ) ) {
+			// @codeCoverageIgnoreStart
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
+			// @codeCoverageIgnoreEnd
 		}
-		// @codeCoverageIgnoreEnd
 
 		if ( is_plugin_active( 'classic-editor/classic-editor.php' ) ) {
 			return in_array( get_option( 'classic-editor-replace' ), [ 'no-replace', 'block' ], true );

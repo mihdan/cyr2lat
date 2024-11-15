@@ -7,6 +7,8 @@
 
 // phpcs:ignoreFile Generic.Files.OneObjectStructurePerFile.MultipleFound
 
+// @codeCoverageIgnoreStart
+
 namespace CyrToLat {
 	/**
 	 * The removed class helps prevent fatal errors for clients
@@ -216,3 +218,5 @@ namespace Cyr_To_Lat\Settings\Abstracts {
 		const DEPRECATED = '6.0.0';
 	}
 }
+
+// @codeCoverageIgnoreEnd
