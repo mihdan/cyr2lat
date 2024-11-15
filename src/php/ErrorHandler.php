@@ -32,7 +32,7 @@ class ErrorHandler {
 	 * @return void
 	 */
 	private function init_hooks(): void {
-		// Suppress the _load_textdomain_just_in_time() notices related the WPForms.
+		// Suppress the _load_textdomain_just_in_time() notices related the plugin.
 		add_action( 'doing_it_wrong_run', [ $this,'action_doing_it_wrong_run' ], 0, 3 );
 		add_action( 'doing_it_wrong_run', [ $this,'action_doing_it_wrong_run' ], 20, 3 );
 		add_filter( 'doing_it_wrong_trigger_error', [ $this, 'filter_doing_it_wrong_trigger_error' ], 10, 4 );
@@ -55,7 +55,7 @@ class ErrorHandler {
 		$function_name = (string) $function_name;
 		$message       = (string) $message;
 
-		if ( ! class_exists( 'QM_Collectors' ) || ! $this->is_just_in_time_for_wpforms_domain( $function_name, $message ) ) {
+		if ( ! class_exists( 'QM_Collectors' ) || ! $this->is_just_in_time_for_plugin_domain( $function_name, $message ) ) {
 			return;
 		}
 
@@ -97,18 +97,18 @@ class ErrorHandler {
 		$function_name = (string) $function_name;
 		$message       = (string) $message;
 
-		return $this->is_just_in_time_for_wpforms_domain( $function_name, $message ) ? false : $trigger;
+		return $this->is_just_in_time_for_plugin_domain( $function_name, $message ) ? false : $trigger;
 	}
 
 	/**
-	 * Whether it is the just_in_time_error for plugin-related domains.
+	 * Whether it is the just_in_time_error for plugin-related domain.
 	 *
 	 * @param string $function_name Function name.
 	 * @param string $message       Message.
 	 *
 	 * @return bool
 	 */
-	private function is_just_in_time_for_wpforms_domain( string $function_name, string $message ): bool {
+	private function is_just_in_time_for_plugin_domain( string $function_name, string $message ): bool {
 		return '_load_textdomain_just_in_time' === $function_name && false !== strpos( $message, '<code>cyr2lat</code>' );
 	}
 }
