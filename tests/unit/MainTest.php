@@ -21,6 +21,7 @@ use CyrToLat\AdminNotices;
 use CyrToLat\BackgroundProcesses\PostConversionProcess;
 use CyrToLat\BackgroundProcesses\TermConversionProcess;
 use CyrToLat\Converter;
+use CyrToLat\ErrorHandler;
 use CyrToLat\Main;
 use CyrToLat\Request;
 use CyrToLat\Requirements;
@@ -209,6 +210,9 @@ class MainTest extends CyrToLatTestCase {
 		// Test when requirements are met.
 		$requirements_met = true;
 
+		$error_handler = Mockery::mock( 'overload:' . ErrorHandler::class );
+		$error_handler->shouldReceive( 'init' );
+
 		$request = Mockery::mock( 'overload:' . Request::class );
 		$request->shouldReceive( 'is_frontend' )->with()->andReturnUsing(
 			function () use ( &$frontend ) {
@@ -231,10 +235,11 @@ class MainTest extends CyrToLatTestCase {
 		Mockery::mock( 'overload:' . Converter::class );
 		Mockery::mock( 'overload:' . ACF::class );
 
-		$subject = new Main();
-		$method  = 'init_classes';
+		$subject = Mockery::mock( Main::class )->makePartial();
 
-		$subject->$method();
+		$subject->shouldAllowMockingProtectedMethods();
+
+		$subject->init_classes();
 
 		self::assertInstanceOf( Request::class, $this->get_protected_property( $subject, 'request' ) );
 		self::assertInstanceOf( Settings::class, $this->get_protected_property( $subject, 'settings' ) );
@@ -248,9 +253,11 @@ class MainTest extends CyrToLatTestCase {
 		// Test when requirements are not met.
 		$requirements_met = false;
 
-		$subject = new Main();
+		$subject = Mockery::mock( Main::class )->makePartial();
 
-		$subject->$method();
+		$subject->shouldAllowMockingProtectedMethods();
+
+		$subject->init_classes();
 
 		self::assertInstanceOf( Request::class, $this->get_protected_property( $subject, 'request' ) );
 		self::assertInstanceOf( Settings::class, $this->get_protected_property( $subject, 'settings' ) );

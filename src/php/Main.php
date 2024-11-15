@@ -195,7 +195,7 @@ class Main {
 	 *
 	 * @return void
 	 */
-	public function init_classes(): void {
+	protected function init_classes(): void {
 		( new ErrorHandler() )->init();
 
 		$this->request  = new Request();
