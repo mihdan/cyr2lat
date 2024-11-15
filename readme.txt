@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: cyrillic, slugs, translation, transliteration
 Requires at least: 5.3
 Tested up to: 6.7
-Stable tag: 6.2.0
+Stable tag: 6.2.1
 Requires PHP: 7.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -220,6 +220,10 @@ Yes, you can!
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 6.2.1 (13.11.2024) =
+* Fixed layout of the Converter page.
+* Fixed issues reported by Plugin Check Plugin.
 
 = 6.2.0 (13.11.2024) =
 * Dropped support for PHP 7.0 and 7.1. The minimum required PHP version is now 7.2.
