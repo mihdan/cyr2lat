@@ -160,8 +160,6 @@ class Main {
 	 * @return void
 	 */
 	public function load_textdomain(): void {
-		add_filter( 'doing_it_wrong_trigger_error', [ $this, 'doing_it_wrong_trigger_error' ], 10, 4 );
-
 		load_default_textdomain();
 		load_plugin_textdomain(
 			'cyr2lat',
@@ -193,31 +191,13 @@ class Main {
 	}
 
 	/**
-	 * Filter for _doing_it_wrong() calls.
-	 *
-	 * @param bool|mixed $trigger       Whether to trigger the error for _doing_it_wrong() calls. Default true.
-	 * @param string     $function_name The function that was called.
-	 * @param string     $message       A message explaining what has been done incorrectly.
-	 * @param string     $version       The version of WordPress where the message was added.
-	 *
-	 * @return bool
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function doing_it_wrong_trigger_error( $trigger, string $function_name, string $message, string $version ): bool {
-
-		if ( '_load_textdomain_just_in_time' === $function_name && false !== strpos( $message, '<code>cyr2lat</code>' ) ) {
-			return false;
-		}
-
-		return (bool) $trigger;
-	}
-
-	/**
 	 * Init other classes.
 	 *
 	 * @return void
 	 */
-	public function init_classes(): void {
+	protected function init_classes(): void {
+		( new ErrorHandler() )->init();
+
 		$this->request  = new Request();
 		$this->settings = new Settings(
 			[
@@ -577,11 +557,11 @@ class Main {
 			return true;
 		}
 
-		// @codeCoverageIgnoreStart
 		if ( ! function_exists( 'is_plugin_active' ) ) {
+			// @codeCoverageIgnoreStart
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
+			// @codeCoverageIgnoreEnd
 		}
-		// @codeCoverageIgnoreEnd
 
 		if ( is_plugin_active( 'classic-editor/classic-editor.php' ) ) {
 			return in_array( get_option( 'classic-editor-replace' ), [ 'no-replace', 'block' ], true );
