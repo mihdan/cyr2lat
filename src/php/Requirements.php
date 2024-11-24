@@ -56,7 +56,7 @@ class Requirements {
 	 *
 	 * @noinspection PhpUnusedLocalVariableInspection
 	 */
-	public function __construct( Settings $settings, AdminNotices $admin_notices, WP_Filesystem_Direct $wp_filesystem = null ) {
+	public function __construct( Settings $settings, AdminNotices $admin_notices, ?WP_Filesystem_Direct $wp_filesystem = null ) {
 		$this->settings   = $settings;
 		$this->screen_ids = [ 'screen_ids' => $this->settings->screen_ids() ];
 

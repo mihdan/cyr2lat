@@ -1,3 +1,7 @@
+= 6.2.3 (24.11.2024) =
+* Fixed deprecation error with PHP 8.4.
+* Tested with PHP 8.4.
+
 = 6.2.2 (15.11.2024) =
 * Fixed _load_textdomain_just_in_time notice with WordPress 6.7.
 * Some translations were empty with WordPress 6.5+.
