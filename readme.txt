@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: cyrillic, slugs, translation, transliteration
 Requires at least: 5.3
 Tested up to: 6.7
-Stable tag: 6.2.2
+Stable tag: 6.2.3
 Requires PHP: 7.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -220,6 +220,10 @@ Yes, you can!
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 6.2.3 (24.11.2024) =
+* Fixed deprecation error with PHP 8.4.
+* Tested with PHP 8.4.
 
 = 6.2.2 (15.11.2024) =
 * Fixed _load_textdomain_just_in_time notice with WordPress 6.7.
