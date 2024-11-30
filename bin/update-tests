@@ -71,7 +71,7 @@ git checkout -- $TEST_DIR
 
 if [[ $PHP_UNIT == '6.5' || $PHP_UNIT == '7.5' ]]; then
   echo "Preparing tests for phpunit-$PHP_UNIT"
-  find $TEST_DIR -type f -exec sed -i "s/: void / /g" {} \;
+  find $TEST_DIR -type f -exec sed -i "s/: void//g" {} \;
 fi
 
 exit 0
