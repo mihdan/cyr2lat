@@ -30,22 +30,22 @@ jobs:
         run: composer phpcs
 
       - name: Run PHPUnit tests
-        if: ${{ matrix.php-version != '8.3' }}
+        if: ${{ matrix.php-version != '8.4' }}
         run: vendor/bin/phpunit
 
       - name: Run PHPUnit tests with coverage
-        if: ${{ matrix.php-version == '8.3' }}
+        if: ${{ matrix.php-version == '8.4' }}
         run: vendor/bin/phpunit --coverage-clover coverage.xml
 
       - name: Run Coveralls for PHPUnit tests
-        if: ${{ matrix.php-version == '8.3' }}
+        if: ${{ matrix.php-version == '8.4' }}
         env:
           COVERALLS_RUN_LOCALLY: true
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: vendor/bin/php-coveralls -v
 
       - name: Run ESLint, JEST with coverage and Coveralls
-        if: ${{ matrix.php-version == '8.3' }}
+        if: ${{ matrix.php-version == '8.4' }}
         env:
           COVERALLS_RUN_LOCALLY: true
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
