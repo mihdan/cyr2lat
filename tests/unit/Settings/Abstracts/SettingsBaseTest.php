@@ -538,7 +538,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 
 		$form_fields = self::get_test_form_fields();
 
-		$form_fields['iso9']['title'] = 'Some Section Title';
+		$form_fields['ISO9']['title'] = 'Some Section Title';
 
 		$this->set_protected_property( $subject, 'form_fields', $form_fields );
 		$this->set_protected_property( $subject, 'tabs', $tabs );
@@ -1597,20 +1597,20 @@ class SettingsBaseTest extends CyrToLatTestCase {
 			'Table with non-array value' => [
 				[
 					'label'        => 'ISO9 Table',
-					'section'      => 'iso9_section',
+					'section'      => 'ISO9_section',
 					'type'         => 'table',
 					'placeholder'  => '',
 					'helper'       => '',
 					'supplemental' => '',
 					'default'      => 'some string',
-					'field_id'     => 'iso9',
+					'field_id'     => 'ISO9',
 				],
 				'',
 			],
 			'Table'                      => [
 				[
 					'label'        => 'ISO9 Table',
-					'section'      => 'iso9_section',
+					'section'      => 'ISO9_section',
 					'type'         => 'table',
 					'placeholder'  => '',
 					'helper'       => '',
@@ -1619,19 +1619,19 @@ class SettingsBaseTest extends CyrToLatTestCase {
 						'ю' => 'yu',
 						'я' => 'ya',
 					],
-					'field_id'     => 'iso9',
+					'field_id'     => 'ISO9',
 					'disabled'     => false,
 				],
 				'<fieldset >' .
 				'<div class="ctl-table-cell">' .
-				'<label for="iso9-0">ю</label>' .
-				'<input name="cyr_to_lat_settings[iso9][ю]"' .
-				' id="iso9-0" type="text" placeholder="" value="yu" class="regular-text" />' .
+				'<label for="ISO9-0">ю</label>' .
+				'<input name="cyr_to_lat_settings[ISO9][ю]"' .
+				' id="ISO9-0" type="text" placeholder="" value="yu" class="regular-text" />' .
 				'</div>' .
 				'<div class="ctl-table-cell">' .
-				'<label for="iso9-1">я</label>' .
-				'<input name="cyr_to_lat_settings[iso9][я]"' .
-				' id="iso9-1" type="text" placeholder="" value="ya" class="regular-text" />' .
+				'<label for="ISO9-1">я</label>' .
+				'<input name="cyr_to_lat_settings[ISO9][я]"' .
+				' id="ISO9-1" type="text" placeholder="" value="ya" class="regular-text" />' .
 				'</div>' .
 				'</fieldset>',
 			],
@@ -1690,7 +1690,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 
 		return [
 			'Empty key'        => [ self::get_test_settings(), '', null, '' ],
-			'Some key'         => [ self::get_test_settings(), 'iso9', null, $test_data['iso9'] ],
+			'Some key'         => [ self::get_test_settings(), 'ISO9', null, $test_data['ISO9'] ],
 			'Non-existent key' => [
 				self::get_test_settings(),
 				'non-existent-key',
@@ -1705,7 +1705,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 */
 	public function test_get_with_no_settings(): void {
 		$settings = self::get_test_settings();
-		$key      = 'iso9';
+		$key      = 'ISO9';
 		$expected = $settings[ $key ];
 
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
@@ -1763,10 +1763,10 @@ class SettingsBaseTest extends CyrToLatTestCase {
 		$value     = 'Some title';
 
 		self::assertFalse( $subject->set_field( 'non_existent_field', $field_key, $value ) );
-		self::assertTrue( $subject->set_field( 'iso9', $field_key, $value ) );
+		self::assertTrue( $subject->set_field( 'ISO9', $field_key, $value ) );
 
 		$form_fields = $this->get_protected_property( $subject, 'form_fields' );
-		self::assertSame( $value, $form_fields['iso9'][ $field_key ] );
+		self::assertSame( $value, $form_fields['ISO9'][ $field_key ] );
 	}
 
 	/**
@@ -2024,11 +2024,11 @@ class SettingsBaseTest extends CyrToLatTestCase {
 					'bel' => [ 'Б' => 'B1' ],
 				],
 				[
-					'iso9' => [ 'Б' => 'B' ],
+					'ISO9' => [ 'Б' => 'B' ],
 					'bel'  => [ 'Б' => 'B' ],
 				],
 				[
-					'iso9'          => [ 'Б' => 'B' ],
+					'ISO9'          => [ 'Б' => 'B' ],
 					'bel'           => [ 'Б' => 'B1' ],
 					'_network_wide' => [],
 				],
@@ -2040,11 +2040,11 @@ class SettingsBaseTest extends CyrToLatTestCase {
 					'_network_wide' => [ 'on' ],
 				],
 				[
-					'iso9' => [ 'Б' => 'B' ],
+					'ISO9' => [ 'Б' => 'B' ],
 					'bel'  => [ 'Б' => 'B' ],
 				],
 				[
-					'iso9' => [ 'Б' => 'B' ],
+					'ISO9' => [ 'Б' => 'B' ],
 					'bel'  => [ 'Б' => 'B' ],
 				],
 			],

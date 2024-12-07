@@ -224,7 +224,7 @@
 ## 3.7 (12.04.2019)
 * Added Belorussian, Macedonian, Kazakh tables
 * Fixed bug with MariaDB during old slug conversion
-* Fixed not saving of user modifications in default iso9 table
+* Fixed not saving of user modifications in default ISO9 table
 
 ## 3.6.5 (11.02.2019)
 * Added queues for background slug conversion process

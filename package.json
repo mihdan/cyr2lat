@@ -43,7 +43,9 @@
       "Cyr2LatTablesObject": {
         "ajaxUrl": "http://test.test/wp-admin/admin-ajax.php",
         "action": "cyr-to-lat-save-table",
-        "nonce": "some-nonce"
+        "nonce": "some-nonce",
+        "ctlLocale": "ru_RU",
+        "localeWarning": "Active table \"{active_table}\" does not match the current site locale: \"ru_RU\". The \"ISO9\" table will be used for transliteration."
       }
     }
   },

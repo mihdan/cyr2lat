@@ -221,6 +221,9 @@ Yes, you can!
 
 == Changelog ==
 
+= 6.3.0 (XX.XX.2024) =
+* Added warning message on the Tables page when active table does not match the site locale.
+
 = 6.2.3 (24.11.2024) =
 * Fixed deprecation error with PHP 8.4.
 * Tested with PHP 8.4.
