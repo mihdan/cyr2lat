@@ -45,7 +45,7 @@ jobs:
         run: vendor/bin/php-coveralls -v
 
       - name: Run ESLint, JEST with coverage and Coveralls
-        if: ${{ matrix.php-version == '8.4' }}
+        if: ${{ matrix.php-version == '8.3' }}
         env:
           COVERALLS_RUN_LOCALLY: true
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
