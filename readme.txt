@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: cyrillic, slugs, translation, transliteration
 Requires at least: 5.3
 Tested up to: 6.7
-Stable tag: 6.2.3
+Stable tag: 6.3.0
 Requires PHP: 7.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -221,7 +221,7 @@ Yes, you can!
 
 == Changelog ==
 
-= 6.3.0 (XX.XX.2024) =
+= 6.3.0 (22.12.2024) =
 * Added warning message on the Tables page when active table does not match the site locale.
 * Removed fix for translation after WordPress 6.5+ due to performance issues.
 
