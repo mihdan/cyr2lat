@@ -203,7 +203,7 @@ class Settings implements SettingsInterface {
 		$locale = (string) apply_filters( 'ctl_locale', get_locale() );
 		$table  = $this->get( $locale );
 		if ( empty( $table ) ) {
-			$table = $this->get( 'iso9' );
+			$table = $this->get( 'ISO9' );
 		}
 
 		return $this->transpose_chinese_table( $table );

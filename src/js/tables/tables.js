@@ -8,6 +8,8 @@
  * @param Cyr2LatTablesObject.ajaxUrl
  * @param Cyr2LatTablesObject.action
  * @param Cyr2LatTablesObject.nonce
+ * @param Cyr2LatTablesObject.ctlLocale
+ * @param Cyr2LatTablesObject.localeWarning
  */
 
 class Tables {
@@ -45,6 +47,7 @@ class Tables {
 		this.hideTables();
 		this.bindEvents();
 		this.setSubmitStatus();
+		this.checkLocale();
 	}
 
 	/**
@@ -154,6 +157,25 @@ class Tables {
 	 */
 	setSubmitStatus() {
 		this.submitButton.disabled = ! this.isActiveTableChanged();
+	}
+
+	/**
+	 * Check locale and show warning message.
+	 */
+	checkLocale() {
+		let ctlLocale = Cyr2LatTablesObject.ctlLocale;
+		ctlLocale = ctlLocale === 'ru_RU' ? 'ISO9' : ctlLocale;
+
+		const activeLocale = this.getActiveTableLocale();
+
+		if ( activeLocale !== ctlLocale ) {
+			this.showMessage(
+				this.warningMessage,
+				Cyr2LatTablesObject.localeWarning.replace( '{active_table}', activeLocale )
+			);
+		} else {
+			this.clearMessage( this.warningMessage );
+		}
 	}
 
 	/**
@@ -271,6 +293,16 @@ class Tables {
 	}
 
 	/**
+	 * Get active table locale.
+	 *
+	 * @return {string} Active table locale.
+	 */
+	getActiveTableLocale() {
+		const tableClass = this.getActiveTable().querySelector( 'tr' ).classList[ 0 ];
+		return tableClass.replace( 'cyr-to-lat-tables-', '' ).replace( '-', '_' );
+	}
+
+	/**
 	 * Add wrapper.
 	 */
 	addWrapper() {
@@ -302,6 +334,7 @@ class Tables {
 	addMessageLines() {
 		this.successMessage = this.addMessageLine( 'ctl-success' );
 		this.errorMessage = this.addMessageLine( 'ctl-error' );
+		this.warningMessage = this.addMessageLine( 'ctl-warning' );
 	}
 
 	/**
@@ -447,6 +480,7 @@ class Tables {
 				tables[ index ].classList.add( this.ACTIVE_TABLE_CLASS );
 
 				this.setSubmitStatus();
+				this.checkLocale();
 
 				return false;
 			};

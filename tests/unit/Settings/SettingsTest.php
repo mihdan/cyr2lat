@@ -164,7 +164,7 @@ class SettingsTest extends CyrToLatTestCase {
 		$iso9_table = $this->get_conversion_table( $locale );
 
 		$subject->shouldReceive( 'get' )->with( $locale )->andReturn( '' );
-		$subject->shouldReceive( 'get' )->with( 'iso9' )->andReturn( $iso9_table );
+		$subject->shouldReceive( 'get' )->with( 'ISO9' )->andReturn( $iso9_table );
 
 		WP_Mock::userFunction(
 			'get_locale',

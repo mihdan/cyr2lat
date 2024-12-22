@@ -29,7 +29,7 @@
 	display: none;
 }
 
-#ctl-success, #ctl-error {
+#ctl-success, #ctl-error, #ctl-warning {
 	max-height: 0;
 	color: #fff;
 	font-size: 14px;
@@ -42,11 +42,15 @@
 }
 
 #ctl-error {
+	background: #d63638;
+}
+
+#ctl-warning {
 	background: #FF9800;
 }
 
-#ctl-success.active, #ctl-error.active {
-	padding: 10px 25px;
+#ctl-success.active, #ctl-error.active, #ctl-warning.active {
+	padding: 10px 15px;
 	max-height: 34px;
 	height: 14px;
 	line-height: 14px;

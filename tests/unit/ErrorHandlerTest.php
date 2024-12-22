@@ -46,24 +46,13 @@ class ErrorHandlerTest extends CyrToLatTestCase {
 		$subject = new ErrorHandler();
 
 		switch ( $wp_version ) {
-			case '5.5':
+			case '5.3':
 				WP_Mock::expectActionNotAdded( 'doing_it_wrong_run', [ $subject, 'action_doing_it_wrong_run' ] );
 				WP_Mock::expectActionNotAdded( 'doing_it_wrong_run', [ $subject, 'action_doing_it_wrong_run' ] );
 				WP_Mock::expectFilterNotAdded(
 					'doing_it_wrong_trigger_error',
 					[ $subject, 'filter_doing_it_wrong_trigger_error' ]
 				);
-				WP_Mock::expectFilterNotAdded( 'gettext', [ $subject, 'filter_gettext' ], 10, 3 );
-				break;
-
-			case '6.5':
-				WP_Mock::expectActionNotAdded( 'doing_it_wrong_run', [ $subject, 'action_doing_it_wrong_run' ] );
-				WP_Mock::expectActionNotAdded( 'doing_it_wrong_run', [ $subject, 'action_doing_it_wrong_run' ] );
-				WP_Mock::expectFilterNotAdded(
-					'doing_it_wrong_trigger_error',
-					[ $subject, 'filter_doing_it_wrong_trigger_error' ]
-				);
-				WP_Mock::expectFilterAdded( 'gettext', [ $subject, 'filter_gettext' ], 10, 3 );
 				break;
 
 			case '6.7':
@@ -75,7 +64,6 @@ class ErrorHandlerTest extends CyrToLatTestCase {
 					10,
 					4
 				);
-				WP_Mock::expectFilterAdded( 'gettext', [ $subject, 'filter_gettext' ], 10, 3 );
 				break;
 
 			default:
@@ -93,8 +81,7 @@ class ErrorHandlerTest extends CyrToLatTestCase {
 	public function dp_test_init(): array {
 
 		return [
-			'WP 5.5' => [ '5.5' ],
-			'WP 6.5' => [ '6.5' ],
+			'WP 5.3' => [ '5.3' ],
 			'WP 6.7' => [ '6.7' ],
 		];
 	}
@@ -181,23 +168,6 @@ class ErrorHandlerTest extends CyrToLatTestCase {
 			'Current priority = 20'                => [ true, true, $qm_collector_doing_it_wrong, 20 ],
 			'Wrong current priority'               => [ true, true, $qm_collector_doing_it_wrong, 10 ],
 		];
-	}
-
-	/**
-	 * Test filter_gettext().
-	 *
-	 * @return void
-	 */
-	public function test_filter_gettext(): void {
-		$subject = new ErrorHandler();
-
-		$translation = 'some_translation';
-		$text        = 'some_text';
-
-		self::assertSame( '', $subject->filter_gettext( '', $text, 'some_text_domain' ) );
-		self::assertSame( $translation, $subject->filter_gettext( $translation, $text, 'some_text_domain' ) );
-		self::assertSame( $translation, $subject->filter_gettext( $translation, $text, 'cyr2lat' ) );
-		self::assertSame( $text, $subject->filter_gettext( '', $text, 'cyr2lat' ) );
 	}
 
 	/**

@@ -1070,16 +1070,16 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @return array
 	 */
-	protected static function get_test_form_fields( string $locale = 'iso9' ): array {
+	protected static function get_test_form_fields( string $locale = 'ISO9' ): array {
 		$form_fields = [
-			'iso9'  => [
+			'ISO9'  => [
 				'label'        => 'ISO9 Table',
-				'section'      => 'iso9_section',
+				'section'      => 'ISO9_section',
 				'type'         => 'table',
 				'placeholder'  => '',
 				'helper'       => '',
 				'supplemental' => '',
-				'default'      => [ 'iso9' ],
+				'default'      => [ 'ISO9' ],
 			],
 			'bel'   => [
 				'label'        => 'bel Table',
@@ -1182,7 +1182,7 @@ abstract class CyrToLatTestCase extends TestCase {
 			],
 		];
 
-		$locale = isset( $form_fields[ $locale ] ) ? $locale : 'iso9';
+		$locale = isset( $form_fields[ $locale ] ) ? $locale : 'ISO9';
 
 		$form_fields[ $locale ]['label'] .= '<br>(current)';
 
@@ -1227,7 +1227,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 */
 	protected static function get_test_settings(): array {
 		return [
-			'iso9'  => [ 'iso9' ],
+			'ISO9'  => [ 'ISO9' ],
 			'bel'   => [ 'bel' ],
 			'uk'    => [ 'uk' ],
 			'bg_BG' => [ 'bg_BG' ],

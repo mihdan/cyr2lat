@@ -150,7 +150,6 @@ class SystemInfo extends PluginSettingsBase {
 		)[0];
 		$locales        = $tables->get_locales();
 		$current_locale = $tables->get_current_locale();
-		$current_locale = 'iso9' === $current_locale ? 'ISO9' : $current_locale;
 
 		$data .= $this->data( 'Version', CYR_TO_LAT_VERSION );
 		$data .= $this->data( 'Site locale', get_locale() );
@@ -166,7 +165,7 @@ class SystemInfo extends PluginSettingsBase {
 				continue;
 			}
 
-			$table_name = 'iso9' === $key ? 'ISO9' : $key;
+			$table_name = $key;
 
 			$data .= $this->header( "--- $table_name table customization ---" );
 

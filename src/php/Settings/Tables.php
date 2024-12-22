@@ -84,7 +84,7 @@ class Tables extends PluginSettingsBase {
 		}
 
 		$this->locales = [
-			'iso9'  => __( 'Default', 'cyr2lat' ) . '<br>ISO9',
+			'ISO9'  => __( 'Default', 'cyr2lat' ) . '<br>ISO9',
 			'bel'   => __( 'Belarusian', 'cyr2lat' ) . '<br>bel',
 			'uk'    => __( 'Ukrainian', 'cyr2lat' ) . '<br>uk',
 			'bg_BG' => __( 'Bulgarian', 'cyr2lat' ) . '<br>bg_BG',
@@ -105,9 +105,9 @@ class Tables extends PluginSettingsBase {
 	 * @return string
 	 */
 	public function get_current_locale(): string {
-		$current_locale = (string) apply_filters( 'ctl_locale', get_locale() );
+		$ctl_locale = $this->get_ctl_locale();
 
-		return array_key_exists( $current_locale, $this->locales ) ? $current_locale : 'iso9';
+		return array_key_exists( $ctl_locale, $this->locales ) ? $ctl_locale : 'ISO9';
 	}
 
 	/**
@@ -162,9 +162,16 @@ class Tables extends PluginSettingsBase {
 			self::HANDLE,
 			self::OBJECT,
 			[
-				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-				'action'  => self::SAVE_TABLE_ACTION,
-				'nonce'   => wp_create_nonce( self::SAVE_TABLE_ACTION ),
+				'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
+				'action'        => self::SAVE_TABLE_ACTION,
+				'nonce'         => wp_create_nonce( self::SAVE_TABLE_ACTION ),
+				'ctlLocale'     => $this->get_ctl_locale(),
+				'localeWarning' => sprintf(
+				/* translators: 1: Site locale. Do not touch text in {} */
+					__( 'Active table "{active_table}" does not match the current site locale: "%1$s". The "%2$s" table will be used for transliteration.', 'cyr2lat' ),
+					$this->get_ctl_locale(),
+					$this->get_current_locale()
+				),
 			]
 		);
 
@@ -210,5 +217,14 @@ class Tables extends PluginSettingsBase {
 		}
 
 		wp_send_json_success( esc_html__( 'Options saved.', 'cyr2lat' ) );
+	}
+
+	/**
+	 * Get Cyr To Lat locale.
+	 *
+	 * @return string
+	 */
+	protected function get_ctl_locale(): string {
+		return (string) apply_filters( 'ctl_locale', get_locale() );
 	}
 }

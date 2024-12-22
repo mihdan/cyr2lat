@@ -157,7 +157,7 @@ class TablesTest extends CyrToLatTestCase {
 		$method->invoke( $subject );
 
 		$expected = [
-			'iso9'  => 'Default<br>ISO9',
+			'ISO9'  => 'Default<br>ISO9',
 			'bel'   => 'Belarusian<br>bel',
 			'uk'    => 'Ukrainian<br>uk',
 			'bg_BG' => 'Bulgarian<br>bg_BG',
@@ -214,25 +214,25 @@ class TablesTest extends CyrToLatTestCase {
 					case 'zh_CN':
 						return [ 'zh_CN' ];
 					default:
-						return [ 'iso9' ];
+						return [ 'ISO9' ];
 				}
 			}
 		);
 
-		WP_Mock::userFunction( 'get_locale' )->with()->andReturn( 'iso9' );
+		WP_Mock::userFunction( 'get_locale' )->with()->andReturn( 'ISO9' );
 
 		$expected = [
-			'iso9'  =>
+			'ISO9'  =>
 				[
 					'title'        => 'Default<br>ISO9<br>(current)',
-					'section'      => 'iso9_section',
+					'section'      => 'ISO9_section',
 					'type'         => 'table',
 					'placeholder'  => '',
 					'helper'       => '',
 					'supplemental' => '',
 					'default'      =>
 						[
-							0 => 'iso9',
+							0 => 'ISO9',
 						],
 				],
 			'bel'   =>
@@ -426,7 +426,7 @@ class TablesTest extends CyrToLatTestCase {
 	 * Test section_callback()
 	 */
 	public function test_section_callback(): void {
-		$locale = 'iso9';
+		$locale = 'ISO9';
 
 		WP_Mock::userFunction( 'get_locale' )->andReturn( $locale );
 
@@ -449,6 +449,10 @@ class TablesTest extends CyrToLatTestCase {
 	 * Test admin_enqueue_scripts().
 	 */
 	public function test_admin_enqueue_scripts(): void {
+		$locale = 'ISO9';
+
+		WP_Mock::userFunction( 'get_locale' )->andReturn( $locale );
+
 		$plugin_url     = 'http://test.test/wp-content/plugins/cyr-to-lat';
 		$plugin_version = '1.0.0';
 		$admin_url      = 'http://test.test/wp-admin/options.php';
@@ -461,6 +465,8 @@ class TablesTest extends CyrToLatTestCase {
 		$subject = Mockery::mock( Tables::class )->makePartial();
 		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_options_screen' )->with()->andReturn( true );
+
+		WP_Mock::expectFilter( 'ctl_locale', $locale );
 
 		FunctionMocker::replace(
 			'constant',
@@ -498,9 +504,11 @@ class TablesTest extends CyrToLatTestCase {
 				Tables::HANDLE,
 				Tables::OBJECT,
 				[
-					'ajaxUrl' => $admin_url,
-					'action'  => Tables::SAVE_TABLE_ACTION,
-					'nonce'   => $nonce,
+					'ajaxUrl'       => $admin_url,
+					'action'        => Tables::SAVE_TABLE_ACTION,
+					'nonce'         => $nonce,
+					'ctlLocale'     => 'ISO9',
+					'localeWarning' => 'Active table "{active_table}" does not match the current site locale: "ISO9". The "ISO9" table will be used for transliteration.',
 				]
 			)
 			->once();

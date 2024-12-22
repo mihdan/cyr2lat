@@ -24,17 +24,17 @@ function getTables() {
     <h2>ISO9 Table</h2>
     <table class="form-table">
         <tbody>
-        <tr>
+        <tr class="cyr-to-lat-tables-ISO9">
             <th scope="row">ISO9 Table</th>
             <td>
             	<fieldset>
                 <div class="ctl-table-cell">
-                    <label for="iso9-0">А</label>
-                    <input name="cyr_to_lat_settings[iso9][А]" id="iso9-0" type="text" placeholder="" value="A" class="regular-text">
+                    <label for="ISO9-0">А</label>
+                    <input name="cyr_to_lat_settings[ISO9][А]" id="ISO9-0" type="text" placeholder="" value="A" class="regular-text">
                 </div>
                 <div class="ctl-table-cell">
-                    <label for="iso9-1">Б</label>
-                    <input name="cyr_to_lat_settings[iso9][Б]" id="iso9-1" type="text" placeholder="" value="B" class="regular-text">
+                    <label for="ISO9-1">Б</label>
+                    <input name="cyr_to_lat_settings[ISO9][Б]" id="ISO9-1" type="text" placeholder="" value="B" class="regular-text">
                 </div>
                 </fieldset>
             </td>
@@ -45,7 +45,7 @@ function getTables() {
     <div id="ctl-current"></div>
     <table class="form-table">
         <tbody>
-        <tr>
+        <tr class="cyr-to-lat-tables-bel">
             <th scope="row">bel Table</th>
             <td>
             	<fieldset>
@@ -65,7 +65,7 @@ function getTables() {
     <h2>uk Table</h2>
     <table class="form-table">
         <tbody>
-        <tr>
+        <tr class="cyr-to-lat-tables-uk">
             <th scope="row">uk Table</th>
             <td>
             	<fieldset>
@@ -101,7 +101,7 @@ function getActiveForm() {
 <form action="http://test.test/wp-admin/options.php" method="post">
     <table class="form-table ctl-table active">
         <tbody>
-        <tr>
+        <tr class="cyr-to-lat-tables-bel">
             <th scope="row">bel Table</th>
             <td>
                 <div class="ctl-table-cell">

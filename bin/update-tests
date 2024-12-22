@@ -50,7 +50,7 @@ elif [[ $PHP_VERSION == '7.1' ]]; then
   PHP_UNIT='7.5'
 elif [[ $PHP_VERSION == '7.2' ]]; then
   PHP_UNIT='8.5'
-elif [[ $PHP_VERSION == '7.3' || $PHP_VERSION == '7.4' || $PHP_VERSION == '8.0' || $PHP_VERSION == '8.1' || $PHP_VERSION == '8.2' || $PHP_VERSION == '8.3' ]]; then
+elif [[ $PHP_VERSION == '7.3' || $PHP_VERSION == '7.4' || $PHP_VERSION == '8.0' || $PHP_VERSION == '8.1' || $PHP_VERSION == '8.2' || $PHP_VERSION == '8.3' || $PHP_VERSION == '8.4' ]]; then
   PHP_UNIT='9.5'
 fi
 
@@ -71,7 +71,7 @@ git checkout -- $TEST_DIR
 
 if [[ $PHP_UNIT == '6.5' || $PHP_UNIT == '7.5' ]]; then
   echo "Preparing tests for phpunit-$PHP_UNIT"
-  find $TEST_DIR -type f -exec sed -i "s/: void / /g" {} \;
+  find $TEST_DIR -type f -exec sed -i "s/: void//g" {} \;
 fi
 
 exit 0
