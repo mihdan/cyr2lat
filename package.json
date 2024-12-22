@@ -53,14 +53,14 @@
     "node": ">=20.18.0",
     "npm": ">=10.9.0"
   },
-  "packageManager": "yarn@4.5.1",
+  "packageManager": "yarn@4.5.3",
   "dependencies": {
     "@wordpress/hooks": "^4.11.0"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
-    "@wordpress/eslint-plugin": "^21.4.0",
+    "@wordpress/eslint-plugin": "^22.0.0",
     "babel-loader": "^9.2.1",
     "coveralls": "^3.1.1",
     "css-loader": "^7.1.2",
@@ -71,15 +71,15 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-fetch-mock": "^3.0.3",
     "mini-css-extract-plugin": "^2.9.2",
-    "prettier": "^3.3.3",
-    "terser-webpack-plugin": "^5.3.10",
-    "webpack": "^5.96.1",
-    "webpack-cli": "^5.1.4",
+    "prettier": "^3.4.2",
+    "terser-webpack-plugin": "^5.3.11",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1",
     "webpack-remove-empty-scripts": "^1.0.4"
   },
   "overrides": {
     "@cypress/request": "^3.0.1",
-    "ip": "2.0.1",
+    "ip": "^2.0.1",
     "tough-cookie": "^4.1.3"
   }
 }
