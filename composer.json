@@ -64,6 +64,9 @@
     ],
     "files": [
       "src/php/includes/deprecated.php"
+    ],
+    "exclude-from-classmap": [
+      "src/php/includes/deprecated.php"
     ]
   },
   "autoload-dev": {
