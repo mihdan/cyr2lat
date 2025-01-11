@@ -78,13 +78,7 @@
       "CyrToLat\\Tests\\Unit\\": "tests/unit"
     }
   },
-  "bin": [
-    "bin/update-tests"
-  ],
   "scripts": {
-    "pre-update-cmd": "update-tests",
-    "update-tests": "update-tests",
-    "revert-tests": "update-tests revert",
     "phpcs": "vendor/bin/phpcs --colors --standard=phpcs.xml",
     "unit": "vendor/bin/phpunit"
   }
