@@ -221,6 +221,9 @@ Yes, you can!
 
 == Changelog ==
 
+= 6.4.0 (03.05.2025) =
+* Fixed the layout of messages on the Tables page.
+
 = 6.3.0 (22.12.2024) =
 * Added warning message on the Tables page when active table does not match the site locale.
 * Removed fix for translation after WordPress 6.5+ due to performance issues.

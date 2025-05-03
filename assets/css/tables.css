@@ -51,8 +51,7 @@
 
 #ctl-success.active, #ctl-error.active, #ctl-warning.active {
 	padding: 10px 15px;
-	max-height: 34px;
-	height: 14px;
+	max-height: 100%;
 	line-height: 14px;
 	margin-top: 15px;
 }
