@@ -2,9 +2,9 @@
 Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: cyrillic, slugs, translation, transliteration
 Requires at least: 5.3
-Tested up to: 6.7
+Tested up to: 6.8
 Stable tag: 6.3.0
-Requires PHP: 7.2.0
+Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -220,6 +220,11 @@ Yes, you can!
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
 == Changelog ==
+
+= 6.4.0 (03.05.2025) =
+* Fixed the layout of messages on the Tables page.
+* Tested with WordPress 6.8.
+* Tested with WooCommerce 9.8.
 
 = 6.3.0 (22.12.2024) =
 * Added warning message on the Tables page when active table does not match the site locale.
