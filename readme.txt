@@ -3,7 +3,7 @@ Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: cyrillic, slugs, translation, transliteration
 Requires at least: 5.3
 Tested up to: 6.8
-Stable tag: 6.3.0
+Stable tag: 6.4.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -221,7 +221,7 @@ Yes, you can!
 
 == Changelog ==
 
-= 6.4.0 (03.05.2025) =
+= 6.4.1 (03.05.2025) =
 * Fixed the layout of messages on the Tables page.
 * Tested with WordPress 6.8.
 * Tested with WooCommerce 9.8.
