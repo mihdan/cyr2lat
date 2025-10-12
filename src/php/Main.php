@@ -306,13 +306,9 @@ class Main {
 
 		if (
 			! $title ||
-			// Fixed bug with `_wp_old_slug` redirect.
+			// Fix the bug with `_wp_old_slug` redirect.
 			'query' === $context ||
-			// Transliterate on pre_term_slug with Polylang and WPML only.
-			(
-				doing_filter( 'pre_term_slug' ) &&
-				! ( class_exists( 'Polylang' ) || class_exists( 'SitePress' ) )
-			)
+			! $this->transliterate_on_pre_term_slug_filter( (string) $title )
 		) {
 			return $title;
 		}
@@ -904,5 +900,25 @@ class Main {
 		}
 
 		return $prepared_in;
+	}
+
+	/**
+	 * Check if we should transliterate the tag on pre_term_slug filter.
+	 *
+	 * @param string $title Title.
+	 *
+	 * @return bool
+	 */
+	protected function transliterate_on_pre_term_slug_filter( string $title ): bool {
+		global $wp_query;
+
+		$tag_var = $wp_query->query_vars['tag'] ?? null;
+
+		return ! (
+			$tag_var === $title &&
+			doing_filter( 'pre_term_slug' ) &&
+			// Transliterate on pre_term_slug with Polylang and WPML only.
+			! ( class_exists( 'Polylang' ) || class_exists( 'SitePress' ) )
+		);
 	}
 }

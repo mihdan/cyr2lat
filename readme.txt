@@ -221,6 +221,9 @@ Yes, you can!
 
 == Changelog ==
 
+= 6.5.0 =
+* Fixed transliteration of tags during editing.
+
 = 6.4.1 (03.05.2025) =
 * Fixed the layout of messages on the Tables page.
 * Tested with WordPress 6.8.
