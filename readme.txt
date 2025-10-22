@@ -221,7 +221,7 @@ Yes, you can!
 
 == Changelog ==
 
-= 6.5.0 =
+= 6.5.0 (XX.XX.2025) =
 * Fixed transliteration of tags during editing.
 
 = 6.4.1 (03.05.2025) =

@@ -7,7 +7,7 @@ if [ ! -f readme.txt ]; then
 fi
 
 # Determine the latest changelog version in readme.txt
-latest_version=$(sed -n 's/^= \([0-9]\+\.[0-9]\+\.[0-9]\+\) =$/\1/p' readme.txt | head -n 1)
+latest_version=$(sed -n 's/^= \([0-9]\+\.[0-9]\+\.[0-9]\+\( ([^)]\+)\)\?\) =$/\1/p' readme.txt | head -n 1)
 
 if [ -z "$latest_version" ]; then
   echo "No latest version found in readme.txt!"
@@ -15,11 +15,11 @@ if [ -z "$latest_version" ]; then
 fi
 
 # Get the latest changelog section from readme.txt
-latest_section=$(sed -n "/^= $latest_version =$/,/^= [0-9]\+\.[0-9]\+\.[0-9]\+ =$/ { /^= [0-9]\+\.[0-9]\+\.[0-9]\+ =$/!p; }" readme.txt)
+latest_section=$(sed -n "/^= $latest_version =$/,/^= [0-9]\+\.[0-9]\+\.[0-9]\+\( ([^)]\+)\)\? =$/ { /^= [0-9]\+\.[0-9]\+\.[0-9]\+\( ([^)]\+)\)\? =$/!p; }" readme.txt)
 latest_section="= ${latest_version} =\n${latest_section}\n"
 
 # Remove the latest changelog section from changelog.txt
-sed -i "/^= $latest_version =$/,/^= [0-9]\+\.[0-9]\+\.[0-9]\+ =$/ {/^= $latest_version =$/d; /^= [0-9]\+\.[0-9]\+\.[0-9]\+ =$/!d;}" changelog.txt
+sed -i "/^= $latest_version =$/,/^= [0-9]\+\.[0-9]\+\.[0-9]\+\( ([^)]\+)\)\? =$/ {/^= $latest_version =$/d; /^= [0-9]\+\.[0-9]\+\.[0-9]\+\( ([^)]\+)\)\? =$/!d;}" changelog.txt
 
 # Append the latest changelog section from readme.txt to changelog.txt
 { echo -e "$latest_section"; cat changelog.txt; } > temp.txt && mv temp.txt changelog.txt
