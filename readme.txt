@@ -219,6 +219,10 @@ Yes, you can!
 * Join in on our [GitHub repository](https://github.com/mihdan/cyr2lat)
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
+= Where do I report security bugs found in this plugin? =
+
+Please report security bugs found in the source code of the undefined plugin through the [Patchstack Vulnerability Disclosure  Program](https://patchstack.com/database/vdp/b6b7bcdc-2668-4aed-9226-8e3b5e809ab0). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+
 == Changelog ==
 
 = 6.4.1 (03.05.2025) =
