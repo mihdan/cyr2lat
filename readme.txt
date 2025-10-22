@@ -223,7 +223,6 @@ Yes, you can!
 
 = 6.5.0 (XX.XX.2025) =
 * Fixed transliteration of tags during editing.
-* test1
 
 = 6.4.1 (03.05.2025) =
 * Fixed the layout of messages on the Tables page.
