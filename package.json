@@ -79,6 +79,7 @@
   },
   "overrides": {
     "@cypress/request": "^3.0.8",
+    "form-data": "^2.5.5",
     "ip": "^2.0.1",
     "tough-cookie": "^5.1.2"
   }
