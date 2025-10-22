@@ -144,7 +144,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	}
 
 	/**
-	 * Get an object protected property.
+	 * Get a protected property of an object.
 	 *
 	 * @param object $obj           Object.
 	 * @param string $property_name Property name.
@@ -165,7 +165,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	}
 
 	/**
-	 * Set an object protected property.
+	 * Set a protected property of an object.
 	 *
 	 * @param object $obj           Object.
 	 * @param string $property_name Property name.
@@ -183,7 +183,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	}
 
 	/**
-	 * Set an object protected method accessibility.
+	 * Set protected method accessibility of an object.
 	 *
 	 * @param object $obj         Object.
 	 * @param string $method_name Property name.
@@ -211,9 +211,10 @@ abstract class CyrToLatTestCase extends TestCase {
 	 * @param int|string $index_key  Optional. Field from the object to use as keys for the new array.
 	 *                               Default null.
 	 *
-	 * @return array Array of found values. If `$index_key` is set, an array of found values with keys
-	 *               corresponding to `$index_key`. If `$index_key` is null, array keys from the original
-	 *               `$input_list` will be preserved in the results.
+	 * @return array Array of found values.
+	 *               If `$index_key` is set, an array of found values with keys corresponding to `$index_key`.
+	 *               If `$index_key` is null, array keys from the original `$input_list` will be preserved in the
+	 *               results.
 	 */
 	protected function wp_list_pluck( $input_list, $field, $index_key = null ): array {
 		if ( ! is_array( $input_list ) ) {
@@ -232,9 +233,9 @@ abstract class CyrToLatTestCase extends TestCase {
 	 * @param int|string $index_key  Optional. Field from the element to use as keys for the new array.
 	 *                               Default null.
 	 *
-	 * @return array Array of found values. If `$index_key` is set, an array of found values with keys
-	 *               corresponding to `$index_key`. If `$index_key` is null, array keys from the original
-	 *               `$list` will be preserved in the results.
+	 * @return array Array of found values.
+	 *               If `$index_key` is set, an array of found values with keys corresponding to `$index_key`.
+	 *               If `$index_key` is null, array keys from the original `$list` will be preserved in the results.
 	 */
 	private function pluck( array $input_list, $field, $index_key = null ): array {
 		$output   = $input_list;
@@ -286,7 +287,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	}
 
 	/**
-	 * Get conversion table by locale.
+	 * Get a conversion table by locale.
 	 *
 	 * @link https://ru.wikipedia.org/wiki/ISO_9
 	 *
@@ -294,7 +295,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 *
 	 * @return array
 	 */
-	protected function get_conversion_table( string $locale = '' ): array {
+	protected function get_conversion_table( string $locale = '' ): array { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 		$table = [
 			'А' => 'A',
 			'Б' => 'B',
@@ -1241,8 +1242,8 @@ abstract class CyrToLatTestCase extends TestCase {
 	 * Retrieve metadata from a file.
 	 *
 	 * Searches for metadata in the first 8 KB of a file, such as a plugin or theme.
-	 * Each piece of metadata must be on its own line. Fields can not span multiple
-	 * lines, the value will get cut at the end of the first line.
+	 * Each piece of metadata must be on its own line.
+	 * Fields cannot span multiple lines, the value will get cut at the end of the first line.
 	 *
 	 * If the file data is not within that first 8 KB, then the author should correct
 	 * their plugin file and move the data headers to the top.
@@ -1256,7 +1257,7 @@ abstract class CyrToLatTestCase extends TestCase {
 	 * @param string $context         Optional. If specified adds filter hook {@see 'extra_$context_headers'}.
 	 *                                Default empty.
 	 *
-	 * @return string[] Array of file header values keyed by header name.
+	 * @return string[] Array of file header values keyed by the header name.
 	 */
 	protected function get_file_data( string $file, array $default_headers, string $context = '' ): array {
 		// We don't need to write to the file, so just open for reading.
@@ -1268,7 +1269,7 @@ abstract class CyrToLatTestCase extends TestCase {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fread
 			$file_data = fread( $fp, 8 * KB_IN_BYTES );
 
-			// PHP will close file handle, but we are good citizens.
+			// PHP will close a file handle, but we are good citizens.
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			fclose( $fp );
 		} else {
