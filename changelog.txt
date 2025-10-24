@@ -1,3 +1,15 @@
+= 6.5.0 (24.10.2025) =
+* Fixed transliteration of tags during editing.
+
+= 6.4.1 (03.05.2025) =
+* Fixed the layout of messages on the Tables page.
+* Tested with WordPress 6.8.
+* Tested with WooCommerce 9.8.
+
+= 6.3.0 (22.12.2024) =
+* Added a warning message on the Tables page when the active table does not match the site locale.
+* Removed fix for translation after WordPress 6.5+ due to performance issues.
+
 = 6.2.3 (24.11.2024) =
 * Fixed deprecation error with PHP 8.4.
 * Tested with PHP 8.4.
@@ -20,7 +32,7 @@
 = 6.1.0 (09.03.2024) =
 * Tested with WordPress 6.5.
 * Tested with WooCommerce 8.6.
-* Fixed error on System Info tab when post types or post statuses are not set.
+* Fixed error on the System Info tab when post types or post statuses are not set.
 
 = 6.0.8 (14.02.2024) =
 * Improved detection of the Gutenberg editor.
@@ -31,15 +43,15 @@
 * Added redirect from the cyrillic post title when creating a new post.
 * Added description of post types and post statuses on the Converter page.
 * Fixed displaying all file descriptions in the Theme Editor in the current locale.
-* Fixed PHP warning in SettingsBase.
-* Fixed output of variable product attributes.
+* Fixed PHP warning in the SettingsBase.
+* Fixed the output of variable product attributes.
 
 = 6.0.6 (14.01.2024) =
 * Tested with WordPress 6.4.
 * Tested with WooCommerce 8.4.
 * Tested with PHP 8.3.
 * Fixed documentation on ctl_allow filter.
-* Fixed improper display of the "rate plugin" message on options.php.
+* Fixed the improper display of the "rate plugin" message on options.php.
 
 = 6.0.5 (09.10.2023) =
 * Fixed displaying file descriptions in the Theme Editor; now in the current locale.

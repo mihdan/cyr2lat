@@ -20,7 +20,7 @@ use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 class ConversionTables {
 
 	/**
-	 * Get conversion table by locale.
+	 * Get a conversion table by locale.
 	 *
 	 * @link https://ru.wikipedia.org/wiki/ISO_9
 	 *
@@ -28,7 +28,7 @@ class ConversionTables {
 	 *
 	 * @return array
 	 */
-	public static function get( string $locale = '' ): array {
+	public static function get( string $locale = '' ): array { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 		switch ( $locale ) {
 			// Belorussian.
 			case 'bel':
@@ -1203,7 +1203,7 @@ class ConversionTables {
 
 	/**
 	 * Get fix table for macOS.
-	 * On macOS, files containing characters in the table, are sometimes encoded improperly.
+	 * On macOS, files containing characters in the table are sometimes encoded improperly.
 	 *
 	 * @return array
 	 */

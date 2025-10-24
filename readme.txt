@@ -3,8 +3,8 @@ Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: cyrillic, slugs, translation, transliteration
 Requires at least: 5.3
 Tested up to: 6.8
-Stable tag: 6.4.1
 Requires PHP: 7.2
+Stable tag: 6.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,7 +15,7 @@ Convert Non-Latin characters in post, page and term slugs to Latin characters.
 Converts Cyrillic characters in post, page and term slugs to Latin characters. Useful for creating human-readable URLs.
 
 = Features =
-* The only plugin with fully editable transliteration table. Allows to add/remove and edit pairs like 'Я' => 'Ya', or even 'Пиво' => 'Beer'
+* The only plugin with a fully editable transliteration table. Allows to add/remove and edit pairs like 'Я' => 'Ya', or even 'Пиво' => 'Beer'
 * Converts any number of existing post, page and term slugs in background processes
 * Saves existing post and page permalinks integrity
 * Performs transliteration of attachment file names
@@ -45,7 +45,7 @@ Sponsored by [Blackfire](https://www.blackfire.io/).
 
 == Installation ==
 
-1. Upload `cyr2lat` folder to the `/wp-content/plugins/` directory.
+1. Upload the ` cyr2lat ` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Frequently Asked Questions ==
@@ -206,7 +206,7 @@ Where
 
 Regeneration of thumbnails with the command `wp media regenerate` can break links in old posts as file names become transliterated.
 
-To avoid it, deactivate cyr2lat plugin during regeneration:
+To avoid it, deactivate the cyr2lat plugin during regeneration:
 
 `
 wp media regenerate --skip-plugins=cyr2lat
@@ -219,7 +219,14 @@ Yes, you can!
 * Join in on our [GitHub repository](https://github.com/mihdan/cyr2lat)
 * Join in on our [Telegram Group](https://t.me/cyr2lat)
 
+= Where do I report security bugs found in this plugin? =
+
+Please report security bugs found in the source code of the undefined plugin through the [Patchstack Vulnerability Disclosure  Program](https://patchstack.com/database/vdp/b6b7bcdc-2668-4aed-9226-8e3b5e809ab0). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+
 == Changelog ==
+
+= 6.5.0 (24.10.2025) =
+* Fixed transliteration of tags during editing.
 
 = 6.4.1 (03.05.2025) =
 * Fixed the layout of messages on the Tables page.
@@ -227,7 +234,7 @@ Yes, you can!
 * Tested with WooCommerce 9.8.
 
 = 6.3.0 (22.12.2024) =
-* Added warning message on the Tables page when active table does not match the site locale.
+* Added a warning message on the Tables page when the active table does not match the site locale.
 * Removed fix for translation after WordPress 6.5+ due to performance issues.
 
 = 6.2.3 (24.11.2024) =
@@ -252,7 +259,7 @@ Yes, you can!
 = 6.1.0 (09.03.2024) =
 * Tested with WordPress 6.5.
 * Tested with WooCommerce 8.6.
-* Fixed error on System Info tab when post types or post statuses are not set.
+* Fixed error on the System Info tab when post types or post statuses are not set.
 
 = 6.0.8 (14.02.2024) =
 * Improved detection of the Gutenberg editor.
@@ -263,15 +270,15 @@ Yes, you can!
 * Added redirect from the cyrillic post title when creating a new post.
 * Added description of post types and post statuses on the Converter page.
 * Fixed displaying all file descriptions in the Theme Editor in the current locale.
-* Fixed PHP warning in SettingsBase.
-* Fixed output of variable product attributes.
+* Fixed PHP warning in the SettingsBase.
+* Fixed the output of variable product attributes.
 
 = 6.0.6 (14.01.2024) =
 * Tested with WordPress 6.4.
 * Tested with WooCommerce 8.4.
 * Tested with PHP 8.3.
 * Fixed documentation on ctl_allow filter.
-* Fixed improper display of the "rate plugin" message on options.php.
+* Fixed the improper display of the "rate plugin" message on options.php.
 
 = 6.0.5 (09.10.2023) =
 * Fixed displaying file descriptions in the Theme Editor; now in the current locale.

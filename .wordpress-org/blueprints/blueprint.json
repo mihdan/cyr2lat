@@ -1,0 +1,10 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "landingPage": "/wp-admin/options-general.php?page=cyr-to-lat",
+  "plugins": [
+    "cyr2lat"
+  ],
+  "features": {
+    "networking": true
+  }
+}

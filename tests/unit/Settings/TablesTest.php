@@ -184,7 +184,7 @@ class TablesTest extends CyrToLatTestCase {
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_form_fields(): void {
+	public function test_init_form_fields(): void { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 		$subject = Mockery::mock( Tables::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		FunctionMocker::replace(
