@@ -489,7 +489,7 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test that sanitize_title() does nothing on pre_term_slug filter with Polylang or SitePress.
+	 * Test that sanitize_title() does nothing on pre_term_slug filter without Polylang and SitePress.
 	 */
 	public function test_sanitize_title_pre_term_slug(): void {
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -512,7 +512,16 @@ class MainTest extends CyrToLatTestCase {
 
 		$title = 'some title';
 
+		// Simulate tag query context to trigger pre_term_slug early return in sanitize_title().
+		global $wp_query;
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wp_query = (object) [ 'query_vars' => [ 'tag' => $title ] ];
+
 		self::assertSame( $title, $subject->sanitize_title( $title ) );
+
+		// Cleanup global to avoid side effects in other tests.
+		unset( $wp_query );
 	}
 
 	/**
