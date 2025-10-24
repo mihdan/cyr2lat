@@ -4,7 +4,7 @@ Tags: cyrillic, slugs, translation, transliteration
 Requires at least: 5.3
 Tested up to: 6.8
 Requires PHP: 7.2
-Stable tag: 6.4.1
+Stable tag: 6.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -225,7 +225,7 @@ Please report security bugs found in the source code of the undefined plugin thr
 
 == Changelog ==
 
-= 6.5.0 (XX.XX.2025) =
+= 6.5.0 (24.10.2025) =
 * Fixed transliteration of tags during editing.
 
 = 6.4.1 (03.05.2025) =
