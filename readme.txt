@@ -226,6 +226,7 @@ Please report security bugs found in the source code of the undefined plugin thr
 == Changelog ==
 
 = 6.6.0 (30.11.2025) =
+* Fixed the deprecated function message in Main.php with WordPress 6.9.
 * Tested with PHP 8.4.
 * Tested with WordPress 6.9.
 * Tested with WooCommerce 10.3.

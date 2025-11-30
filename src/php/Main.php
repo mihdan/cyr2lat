@@ -451,15 +451,18 @@ class Main {
 	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
 	public function sanitize_filename( $filename, $filename_raw ) {
+		global $wp_version;
+
 		$pre = apply_filters( 'ctl_pre_sanitize_filename', false, $filename );
 
 		if ( false !== $pre ) {
-			return $pre;
+			return (string) $pre;
 		}
 
 		$filename = (string) $filename;
+		$is_utf8  = version_compare( $wp_version, '6.9-RC1', '>=' ) ? 'wp_is_valid_utf8' : 'seems_utf8';
 
-		if ( seems_utf8( $filename ) ) {
+		if ( $is_utf8( $filename ) ) {
 			$filename = (string) Mbstring::mb_strtolower( $filename );
 		}
 
