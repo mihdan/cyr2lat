@@ -2,9 +2,9 @@
 Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: cyrillic, slugs, translation, transliteration
 Requires at least: 5.3
-Tested up to: 6.8
+Tested up to: 6.9
 Requires PHP: 7.2
-Stable tag: 6.5.0
+Stable tag: 6.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -224,6 +224,12 @@ Yes, you can!
 Please report security bugs found in the source code of the undefined plugin through the [Patchstack Vulnerability Disclosure  Program](https://patchstack.com/database/vdp/b6b7bcdc-2668-4aed-9226-8e3b5e809ab0). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
 
 == Changelog ==
+
+= 6.6.0 (30.11.2025) =
+* Fixed the deprecated function message in Main.php with WordPress 6.9.
+* Tested with PHP 8.4.
+* Tested with WordPress 6.9.
+* Tested with WooCommerce 10.3.
 
 = 6.5.0 (24.10.2025) =
 * Fixed transliteration of tags during editing.

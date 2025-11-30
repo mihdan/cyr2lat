@@ -1,3 +1,9 @@
+= 6.6.0 (30.11.2025) =
+* Fixed the deprecated function message in Main.php with WordPress 6.9.
+* Tested with PHP 8.4.
+* Tested with WordPress 6.9.
+* Tested with WooCommerce 10.3.
+
 = 6.5.0 (24.10.2025) =
 * Fixed transliteration of tags during editing.
 
