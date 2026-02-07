@@ -75,7 +75,7 @@
     "prettier": "^3.7.3",
     "terser-webpack-plugin": "^5.3.14",
     "typescript": "^5.9.3",
-    "webpack": "^5.103.0",
+    "webpack": "^5.104.1",
     "webpack-cli": "^6.0.1",
     "webpack-remove-empty-scripts": "^1.1.1"
   },
