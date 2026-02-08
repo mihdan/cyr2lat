@@ -12,7 +12,7 @@ use CyrToLat\Settings\Abstracts\SettingsBase;
 /**
  * Class PluginSettingsBase
  *
- * Extends general SettingsBase suitable for any plugin with current plugin related methods.
+ * Extends general SettingsBase suitable for any plugin with current plugin-related methods.
  */
 abstract class PluginSettingsBase extends SettingsBase {
 
@@ -74,7 +74,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	}
 
 	/**
-	 * Get plugin base name.
+	 * Get a plugin base name.
 	 *
 	 * @return string
 	 */
@@ -143,7 +143,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	}
 
 	/**
-	 * Show settings page.
+	 * Show the settings page.
 	 */
 	public function settings_page(): void {
 		?>
@@ -177,7 +177,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	}
 
 	/**
-	 * When user is on the plugin admin page, display footer text that graciously asks them to rate us.
+	 * When a user is on the plugin admin page, display footer text that graciously asks them to rate us.
 	 *
 	 * @param string|mixed $text Footer text.
 	 *
@@ -216,7 +216,7 @@ abstract class PluginSettingsBase extends SettingsBase {
 	}
 
 	/**
-	 * Show plugin version in the update footer.
+	 * Show the plugin version in the update footer.
 	 *
 	 * @param string|mixed $content The content that will be printed.
 	 *
