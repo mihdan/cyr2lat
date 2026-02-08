@@ -12,11 +12,11 @@ Convert Non-Latin characters in post, page and term slugs to Latin characters.
 
 == Description ==
 
-Converts Cyrillic characters in post, page and term slugs to Latin characters. Useful for creating human-readable URLs.
+Converts Cyrillic characters in post, page, and term slugs to Latin characters. Useful for creating human-readable URLs.
 
 = Features =
-* The only plugin with a fully editable transliteration table. Allows to add/remove and edit pairs like 'Я' => 'Ya', or even 'Пиво' => 'Beer'
-* Converts any number of existing post, page and term slugs in background processes
+* The only plugin with a fully editable transliteration table. Allows adding/removing and editing pairs like 'Я' => 'Ya', or even 'Пиво' => 'Beer'
+* Converts any number of existing post, page, and term slugs in background processes
 * Saves existing post and page permalinks integrity
 * Performs transliteration of attachment file names
 * The plugin supports Russian, Belorussian, Ukrainian, Bulgarian, Macedonian, Serbian, Greek, Armenian, Georgian, Kazakh, Hebrew, and Chinese characters
@@ -221,9 +221,12 @@ Yes, you can!
 
 = Where do I report security bugs found in this plugin? =
 
-Please report security bugs found in the source code of the undefined plugin through the [Patchstack Vulnerability Disclosure  Program](https://patchstack.com/database/vdp/b6b7bcdc-2668-4aed-9226-8e3b5e809ab0). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+Please report security bugs found in the source code of the undefined plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/b6b7bcdc-2668-4aed-9226-8e3b5e809ab0). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
 
 == Changelog ==
+
+= 6.7.0 () =
+* Fixed a fatal error occurred with WP-CLI in a rare case.
 
 = 6.6.0 (30.11.2025) =
 * Fixed the deprecated function message in Main.php with WordPress 6.9.

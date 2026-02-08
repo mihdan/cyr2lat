@@ -24,7 +24,6 @@ use WP_CLI;
 use WP_Error;
 use WP_Post;
 use wpdb;
-use Exception;
 use CyrToLat\Settings\Settings;
 use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 
@@ -150,7 +149,6 @@ class Main {
 
 		$this->init_multilingual();
 		$this->init_classes();
-		$this->init_cli();
 		$this->init_hooks();
 	}
 
@@ -231,30 +229,6 @@ class Main {
 	}
 
 	/**
-	 * Init in CLI mode.
-	 *
-	 * @return void
-	 */
-	protected function init_cli(): void {
-		if ( ! $this->request->is_cli() ) {
-			return;
-		}
-
-		$this->cli = new WPCli( $this->converter );
-
-		try {
-			/**
-			 * Method WP_CLI::add_command() accepts a class as callable.
-			 *
-			 * @noinspection PhpParamsInspection
-			 */
-			WP_CLI::add_command( 'cyr2lat', $this->cli );
-		} catch ( Exception $ex ) {
-			return;
-		}
-	}
-
-	/**
 	 * Init hooks.
 	 */
 	protected function init_hooks(): void {
@@ -278,6 +252,26 @@ class Main {
 		}
 
 		add_action( 'before_woocommerce_init', [ $this, 'declare_wc_compatibility' ] );
+
+		if ( $this->request->is_cli() ) {
+			add_action( 'cli_init', [ $this, 'action_cli_init' ] );
+		}
+	}
+
+	/**
+	 * Action cli init.
+	 *
+	 * @return void
+	 */
+	public function action_cli_init(): void {
+		$this->cli = new WPCli( $this->converter );
+
+		/**
+		 * Method WP_CLI::add_command() accepts a class as callable.
+		 *
+		 * @noinspection PhpParamsInspection
+		 */
+		WP_CLI::add_command( 'cyr2lat', $this->cli );
 	}
 
 	/**
