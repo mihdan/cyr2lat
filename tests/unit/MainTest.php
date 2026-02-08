@@ -1632,7 +1632,7 @@ class MainTest extends CyrToLatTestCase {
 
 		$this->set_method_accessibility( $subject, $method );
 
-		self::assertNull( $this->get_protected_property( $subject, 'wpml_languages' ) );
+		self::assertSame( [], $this->get_protected_property( $subject, 'wpml_languages' ) );
 
 		self::assertSame( $expected, $subject->$method() );
 
