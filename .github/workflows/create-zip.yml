@@ -1,0 +1,77 @@
+name: Create zip
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  build-zip:
+    name: New zip file
+    runs-on: ubuntu-latest
+
+    # Security: 1. Check for [zip] tag. 2. Check if the user is authorized.
+    if: |
+      (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[zip]')) &&
+      contains(fromJson('["kagg-design", "mihdan"]'), github.actor)
+
+    env:
+      SLUG: "cyr2lat"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies with caching
+        uses: ramsey/composer-install@v3
+
+      - name: Install JS packages
+        run: |
+          corepack enable
+          yarn set version stable
+          yarn
+          yarn prod
+
+      - name: Get version from PHP file
+        id: get_version
+        shell: bash
+        run: |
+          VERSION=$(grep -oP "const CYR_TO_LAT_VERSION = '\K[^']+" cyr-to-lat.php)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Create zip file
+        id: make_zip
+        shell: bash
+        run: |
+          echo "➤ Creating target directory..."
+          mkdir -p trunk/${SLUG}
+          echo "➤ Copying files..."
+          rsync -rc --exclude-from="$GITHUB_WORKSPACE/.distignore" "$GITHUB_WORKSPACE/" trunk/${SLUG}/ --delete --delete-excluded
+          echo "➤ Generating zip file..."
+          cd trunk
+          zip -r "${{ github.workspace }}/${{ env.SLUG }}.${{ env.VERSION }}.zip" .
+          echo "zip-path=${GITHUB_WORKSPACE}/${SLUG}.${VERSION}.zip" >> "${GITHUB_OUTPUT}"
+          echo "✓ Zip file generated!"
+
+      - name: Create pre-release (published) and upload asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ github.workspace }}/${{ env.SLUG }}.${{ env.VERSION }}.zip
+          draft: false
+          prerelease: true
+          tag_name: v${{ env.VERSION }}
+          name: "v${{ env.VERSION }} (build ${{ github.run_number }})"
+          body: |
+            Automated pre-release for testing.
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Print pre-release URL
+        run: |
+          echo "Pre-release URL:"
+          echo "https://github.com/${{ github.repository }}/releases/download/v${{ env.VERSION }}/${{ env.SLUG }}.${{ env.VERSION }}.zip"
