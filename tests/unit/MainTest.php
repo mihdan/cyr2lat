@@ -703,6 +703,81 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test is_wc_attribute().
+	 *
+	 * @param bool $is_wc_attribute_taxonomy              Whether attribute taxonomy is WC attribute taxonomy.
+	 * @param bool $is_local_attribute                    Whether attribute is local attribute.
+	 * @param bool $is_wc_product_not_converted_attribute Whether attribute is WC product not converted attribute.
+	 *
+	 * @return void
+	 * @throws ReflectionException ReflectionException.
+	 * @dataProvider dp_test_is_wc_attribute
+	 */
+	public function test_is_wc_attribute(
+		bool $is_wc_attribute_taxonomy,
+		bool $is_local_attribute,
+		bool $is_wc_product_not_converted_attribute
+	): void {
+		FunctionMocker::replace(
+			'function_exists',
+			static function ( $function_name ) {
+				return 'WC' === $function_name;
+			}
+		);
+
+		$subject = $this->get_subject();
+
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'is_wc_attribute_taxonomy' )->andReturn( $is_wc_attribute_taxonomy );
+		$subject->shouldReceive( 'is_local_attribute' )->andReturn( $is_local_attribute );
+		$subject->shouldReceive( 'is_wc_product_not_converted_attribute' )->andReturn( $is_wc_product_not_converted_attribute );
+		$subject->shouldAllowMockingProtectedMethods();
+
+		$expected = $is_wc_attribute_taxonomy || $is_local_attribute || $is_wc_product_not_converted_attribute;
+
+		self::assertSame( $expected, $subject->is_wc_attribute( 'some attribute' ) );
+	}
+
+	/**
+	 * Data provider for test_is_wc_attribute().
+	 *
+	 * @return array[]
+	 */
+	public function dp_test_is_wc_attribute(): array {
+		return [
+			[ false, false, false ],
+			[ false, false, true ],
+			[ false, true, false ],
+			[ false, true, true ],
+			[ true, false, false ],
+			[ true, false, true ],
+			[ true, true, false ],
+			[ true, true, true ],
+		];
+	}
+
+	/**
+	 * Test is_wc_attribute() without WC.
+	 *
+	 * @return void
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_is_wc_attribute_without_wc(): void {
+		FunctionMocker::replace(
+			'function_exists',
+			static function ( $function_name ) {
+				return 'WC' !== $function_name;
+			}
+		);
+
+		$subject = $this->get_subject();
+
+		$subject->shouldAllowMockingProtectedMethods();
+
+		self::assertFalse( $subject->is_wc_attribute( 'some attribute' ) );
+	}
+
+	/**
 	 * Test sanitize_title() for term WC attribute taxonomy
 	 *
 	 * @param string     $title                Title.
