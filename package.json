@@ -79,11 +79,12 @@
     "webpack-cli": "^6.0.1",
     "webpack-remove-empty-scripts": "^1.1.1"
   },
-  "overrides": {
+  "resolutions": {
     "@cypress/request": "^3.0.10",
     "ip": "^2.0.1",
     "js-yaml": "^4.1.1",
     "punycode": "^2.3.1",
+    "qs": "^6.14.1",
     "tar": "^7.5.7",
     "tough-cookie": "^5.1.2"
   }
