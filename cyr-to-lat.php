@@ -11,8 +11,8 @@
  * Plugin URI:        https://kagg.eu/cyr-to-lat/
  * Description:       Convert Non-Latin characters in post and term slugs to Latin characters. Useful for creating human-readable URLs. Based on the original plugin by Anton Skorobogatov.
  * Version:           6.7.0-RC1
- * Requires at least: 5.3
- * Requires PHP:      7.2
+ * Requires at least: 6.0
+ * Requires PHP:      7.4
  * Author:            Sergey Biryukov, Mikhail Kobzarev, Igor Gergel
  * Author URI:        https://profiles.wordpress.org/sergeybiryukov/
  * License:           GPL v2 or later
@@ -72,7 +72,7 @@ const CYR_TO_LAT_TERM_CONVERSION_ACTION = 'term_conversion_action';
 /**
  * Minimum required php version.
  */
-const CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION = '7.2';
+const CYR_TO_LAT_MINIMUM_PHP_REQUIRED_VERSION = '7.4';
 
 /**
  * Minimum required max_input_vars value.

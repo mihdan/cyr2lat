@@ -1,9 +1,9 @@
 === Cyr-To-Lat ===
 Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: cyrillic, slugs, translation, transliteration
-Requires at least: 5.3
+Requires at least: 6.0
 Tested up to: 6.9
-Requires PHP: 7.2
+Requires PHP: 7.4
 Stable tag: 6.7.0-RC1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -226,6 +226,8 @@ Please report security bugs found in the source code of the undefined plugin thr
 == Changelog ==
 
 = 6.7.0 () =
+* The minimum required PHP version is now 7.4.
+* The minimum required WordPress version is now 6.0.
 * Fixed a fatal error occurred with WP-CLI in a rare case.
 
 = 6.6.0 (30.11.2025) =
