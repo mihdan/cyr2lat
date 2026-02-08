@@ -394,12 +394,50 @@ class Main {
 	}
 
 	/**
+	 * Check if the title is a local attribute.
+	 *
+	 * @param string $title Title.
+	 *
+	 * @return bool
+	 */
+	protected function is_local_attribute( string $title ): bool {
+		// Global attribute.
+		if ( 0 === strpos( $title, 'pa_' ) ) {
+			return false;
+		}
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		$action = isset( $_POST['action'] )
+			? sanitize_text_field( wp_unslash( $_POST['action'] ) )
+			: '';
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+		// Not the 'save attributes' action.
+		if ( 'woocommerce_save_attributes' !== $action ) {
+			return false;
+		}
+
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		$data = isset( $_POST['data'] )
+			? filter_input( INPUT_POST, 'data', FILTER_SANITIZE_URL )
+			: '';
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+		wp_parse_str( urldecode( $data ), $attributes );
+
+		$attribute_names = $attributes['attribute_names'] ?? [];
+
+		return in_array( $title, $attribute_names, true );
+	}
+
+	/**
 	 * Check if title is a product not converted attribute.
 	 *
 	 * @param string $title Title.
 	 *
 	 * @return bool
 	 * @noinspection PhpUndefinedFunctionInspection
+	 * @noinspection PhpUndefinedMethodInspection
 	 */
 	protected function is_wc_product_not_converted_attribute( string $title ): bool {
 
@@ -436,7 +474,11 @@ class Main {
 			return false;
 		}
 
-		return $this->is_wc_attribute_taxonomy( $title ) || $this->is_wc_product_not_converted_attribute( $title );
+		return (
+			$this->is_wc_attribute_taxonomy( $title ) ||
+			$this->is_local_attribute( $title ) ||
+			$this->is_wc_product_not_converted_attribute( $title )
+		);
 	}
 
 	/**
@@ -460,7 +502,7 @@ class Main {
 		}
 
 		$filename = (string) $filename;
-		$is_utf8  = version_compare( $wp_version, '6.9-RC1', '>=' ) ? 'wp_is_valid_utf8' : 'seems_utf8';
+		$is_utf8  = version_compare( (string) $wp_version, '6.9-RC1', '>=' ) ? 'wp_is_valid_utf8' : 'seems_utf8';
 
 		if ( $is_utf8( $filename ) ) {
 			$filename = (string) Mbstring::mb_strtolower( $filename );
