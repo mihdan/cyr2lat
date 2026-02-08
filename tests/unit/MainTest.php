@@ -64,7 +64,7 @@ class MainTest extends CyrToLatTestCase {
 	public function test_init(): void {
 		$subject = new Main();
 
-		WP_Mock::expectActionAdded( 'plugins_loaded', [ $subject, 'init_all' ], - PHP_INT_MAX );
+		WP_Mock::expectActionAdded( 'plugins_loaded', [ $subject, 'init_all' ], -PHP_INT_MAX );
 
 		$subject->init();
 	}
@@ -160,7 +160,7 @@ class MainTest extends CyrToLatTestCase {
 		if ( $sitepress ) {
 			$subject->shouldReceive( 'get_wpml_locale' )->andReturn( $wpml_locale );
 
-			WP_Mock::expectFilterAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ], - PHP_INT_MAX );
+			WP_Mock::expectFilterAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ], -PHP_INT_MAX );
 			WP_Mock::expectActionAdded(
 				'wpml_language_has_switched',
 				[ $subject, 'wpml_language_has_switched' ],
@@ -383,8 +383,14 @@ class MainTest extends CyrToLatTestCase {
 		$this->set_protected_property( $subject, 'request', $request );
 		$this->set_protected_property( $subject, 'is_frontend', false );
 
-		WP_Mock::expectFilterNotAdded( 'woocommerce_before_template_part', [ $subject, 'woocommerce_before_template_part_filter' ] );
-		WP_Mock::expectFilterNotAdded( 'woocommerce_after_template_part', [ $subject, 'woocommerce_after_template_part_filter' ] );
+		WP_Mock::expectFilterNotAdded(
+			'woocommerce_before_template_part',
+			[ $subject, 'woocommerce_before_template_part_filter' ]
+		);
+		WP_Mock::expectFilterNotAdded(
+			'woocommerce_after_template_part',
+			[ $subject, 'woocommerce_after_template_part_filter' ]
+		);
 		WP_Mock::expectFilterNotAdded( 'sanitize_title', [ $subject, 'sanitize_title' ] );
 		WP_Mock::expectFilterNotAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ] );
 		WP_Mock::expectFilterNotAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ] );
@@ -730,7 +736,8 @@ class MainTest extends CyrToLatTestCase {
 		$subject->shouldAllowMockingProtectedMethods();
 		$subject->shouldReceive( 'is_wc_attribute_taxonomy' )->andReturn( $is_wc_attribute_taxonomy );
 		$subject->shouldReceive( 'is_local_attribute' )->andReturn( $is_local_attribute );
-		$subject->shouldReceive( 'is_wc_product_not_converted_attribute' )->andReturn( $is_wc_product_not_converted_attribute );
+		$subject->shouldReceive( 'is_wc_product_not_converted_attribute' )
+			->andReturn( $is_wc_product_not_converted_attribute );
 		$subject->shouldAllowMockingProtectedMethods();
 
 		$expected = $is_wc_attribute_taxonomy || $is_local_attribute || $is_wc_product_not_converted_attribute;
@@ -817,6 +824,98 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test is_local_attribute().
+	 *
+	 * @param string $title    Title.
+	 * @param array  $post     POST data.
+	 * @param bool   $expected Expected result.
+	 *
+	 * @dataProvider dp_test_is_local_attribute
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_is_local_attribute(
+		string $title,
+		array $post,
+		bool $expected
+	): void {
+		$data = $post['data'];
+
+		$subject = $this->get_subject();
+
+		$subject->shouldAllowMockingProtectedMethods();
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$_POST = $post;
+
+		WP_Mock::passthruFunction( 'sanitize_text_field' );
+		WP_Mock::passthruFunction( 'wp_unslash' );
+		$subject->shouldReceive( 'wp_parse_str' )->andReturnUsing(
+			static function ( $input_string ) {
+				parse_str( (string) $input_string, $result );
+
+				return $result;
+			}
+		);
+
+		FunctionMocker::replace(
+			'filter_input',
+			static function ( $type, $var_name, $filter ) use ( $data ) {
+				if ( INPUT_POST === $type && 'data' === $var_name && FILTER_SANITIZE_URL === $filter ) {
+					return $data;
+				}
+
+				return null;
+			}
+		);
+
+		$subject->shouldAllowMockingProtectedMethods();
+
+		self::assertSame( $expected, $subject->is_local_attribute( $title ) );
+	}
+
+	/**
+	 * Data provider for test_is_local_attribute().
+	 *
+	 * @return array
+	 */
+	public static function dp_test_is_local_attribute(): array {
+		return [
+			'global attribute'       => [
+				'pa_color',
+				[
+					'action' => 'woocommerce_save_attributes',
+					'data'   => 'attribute_names%5B0%5D=color',
+				],
+				false,
+			],
+			'wrong action'           => [
+				'color',
+				[
+					'action' => 'other_action',
+					'data'   => 'attribute_names%5B0%5D=color',
+				],
+				false,
+			],
+			'not in attribute names' => [
+				'color',
+				[
+					'action' => 'woocommerce_save_attributes',
+					'data'   => 'attribute_names%5B0%5D=size',
+				],
+				false,
+			],
+			'in attribute names'     => [
+				'color',
+				[
+					'action' => 'woocommerce_save_attributes',
+					'data'   => 'attribute_names%5B0%5D=color',
+				],
+				true,
+			],
+		];
+	}
+
+	/**
 	 * Test is_wc_product_not_converted_attribute().
 	 *
 	 * @param string $title      Title.
@@ -838,7 +937,8 @@ class MainTest extends CyrToLatTestCase {
 		$product->shouldReceive( 'get_id' )->andReturn( $product_id );
 		$GLOBALS['product'] = $is_product ? $product : null;
 
-		WP_Mock::userFunction( 'get_post_meta' )->with( $product_id, '_product_attributes', true )->andReturn( $attributes );
+		WP_Mock::userFunction( 'get_post_meta' )->with( $product_id, '_product_attributes', true )
+			->andReturn( $attributes );
 		WP_Mock::passthruFunction( 'sanitize_title_with_dashes' );
 
 		self::assertSame( $expected, $subject->$method( $title ) );

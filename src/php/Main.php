@@ -413,18 +413,33 @@ class Main {
 			return false;
 		}
 
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
-		$data = isset( $_POST['data'] )
-			? filter_input( INPUT_POST, 'data', FILTER_SANITIZE_URL )
-			: '';
-		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$data = isset( $_POST['data'] ) ? filter_input( INPUT_POST, 'data', FILTER_SANITIZE_URL ) : '';
 
-		wp_parse_str( urldecode( $data ), $attributes );
+		$attributes = $this->wp_parse_str( urldecode( $data ) );
 
 		$attribute_names = $attributes['attribute_names'] ?? [];
 
 		return in_array( $title, $attribute_names, true );
 	}
+
+	// @codeCoverageIgnoreStart
+
+	/**
+	 * Polyfill of the wp_parse_str().
+	 * Added for test reasons.
+	 *
+	 * @param string $input_string Input string.
+	 *
+	 * @return array
+	 */
+	protected function wp_parse_str( string $input_string ): array {
+		wp_parse_str( $input_string, $result );
+
+		return $result;
+	}
+
+	// @codeCoverageIgnoreEnd
 
 	/**
 	 * Check if title is a product not converted attribute.
