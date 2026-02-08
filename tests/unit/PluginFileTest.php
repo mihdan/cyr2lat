@@ -30,7 +30,7 @@ class PluginFileTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test main file.
+	 * Test the main file.
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
@@ -102,14 +102,14 @@ class PluginFileTest extends CyrToLatTestCase {
 
 		self::assertSame( $expected, $plugin_headers );
 
-		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_VERSION', CYR_TO_LAT_TEST_VERSION ] );
-		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_FILE', PLUGIN_MAIN_FILE ] );
-		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_PATH', dirname( PLUGIN_MAIN_FILE ) ] );
+		self::assertSame( CYR_TO_LAT_TEST_VERSION, constant( 'CYR_TO_LAT_VERSION' ) );
+		self::assertSame( PLUGIN_MAIN_FILE, constant( 'CYR_TO_LAT_FILE' ) );
+		self::assertSame( dirname( PLUGIN_MAIN_FILE ), constant( 'CYR_TO_LAT_PATH' ) );
 		$define->wasCalledWithOnce( [ 'CYR_TO_LAT_URL', $plugin_dir_url_unslash ] );
 	}
 
 	/**
-	 * Test that readme.txt contains proper stable tag.
+	 * Test that readme.txt contains a proper stable tag.
 	 */
 	public function test_readme_txt(): void {
 		$expected    = [
