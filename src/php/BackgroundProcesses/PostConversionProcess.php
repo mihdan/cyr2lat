@@ -18,16 +18,16 @@ class PostConversionProcess extends ConversionProcess {
 	/**
 	 * Site locale.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	private $locale;
+	private ?string $locale;
 
 	/**
 	 * Current post to convert.
 	 *
 	 * @var stdClass
 	 */
-	private $post;
+	private stdClass $post;
 
 	/**
 	 * Process action name
@@ -154,7 +154,7 @@ class PostConversionProcess extends ConversionProcess {
 	}
 
 	/**
-	 * Get transliterated filename with path.
+	 * Get a transliterated filename with a path.
 	 *
 	 * @param string $file Filename.
 	 *
@@ -168,7 +168,7 @@ class PostConversionProcess extends ConversionProcess {
 	}
 
 	/**
-	 * Rename file.
+	 * Rename a file.
 	 * Return false if rename failed.
 	 *
 	 * @param string $file     Full filename.
@@ -210,7 +210,7 @@ class PostConversionProcess extends ConversionProcess {
 	 * @return string|mixed
 	 */
 	public function filter_post_locale() {
-		// This is common filter for WPML and Polylang, since Polylang supports wpml_post_language_details filter.
+		// This is a common filter for WPML and Polylang, since Polylang supports the wpml_post_language_details filter.
 		$wpml_post_language_details = apply_filters( 'wpml_post_language_details', false, $this->post->ID );
 
 		return $wpml_post_language_details['locale'] ?? $this->locale;

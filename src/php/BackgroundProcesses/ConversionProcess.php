@@ -27,7 +27,7 @@ class ConversionProcess extends WP_Background_Process {
 	 *
 	 * @var Main
 	 */
-	protected $main;
+	protected Main $main;
 
 	/**
 	 * ConversionProcess constructor
@@ -56,6 +56,8 @@ class ConversionProcess extends WP_Background_Process {
 
 	/**
 	 * Complete
+	 *
+	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
 	protected function complete() {
 		parent::complete();
@@ -64,7 +66,7 @@ class ConversionProcess extends WP_Background_Process {
 	}
 
 	/**
-	 * Check if process is completed.
+	 * Check if the process is completed.
 	 * Delete relevant transient.
 	 */
 	public function is_process_completed(): bool {
