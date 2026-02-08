@@ -24,28 +24,28 @@ class Requirements {
 	 *
 	 * @var Settings
 	 */
-	protected $settings;
+	protected Settings $settings;
 
 	/**
 	 * Admin notices.
 	 *
 	 * @var AdminNotices
 	 */
-	protected $admin_notices;
+	protected AdminNotices $admin_notices;
 
 	/**
 	 * WP file system direct.
 	 *
-	 * @var WP_Filesystem_Direct
+	 * @var WP_Filesystem_Direct|null
 	 */
-	protected $wp_filesystem;
+	protected ?WP_Filesystem_Direct $wp_filesystem = null;
 
 	/**
 	 * Restrict notices to Cyr To Lat settings admin screens.
 	 *
 	 * @var array
 	 */
-	protected $screen_ids;
+	protected array $screen_ids;
 
 	/**
 	 * Requirements constructor.
@@ -65,8 +65,8 @@ class Requirements {
 		// @codeCoverageIgnoreStart
 		if ( ! function_exists( 'WP_Filesystem' ) ) {
 			/**
-			 * Make the scope of $wp_file_descriptions global,
-			 * so that when wp-admin/includes/file.php assigns to it, it is adjusting the global variable as intended.
+			 * Make the scope of $wp_file_descriptions global so that when wp-admin/includes/file.php assigns to it,
+			 * it is adjusting the global variable as intended.
 			 */
 			global $wp_file_descriptions;
 

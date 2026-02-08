@@ -24,7 +24,7 @@ class Converter {
 	public const QUERY_ARG = 'cyr-to-lat-convert';
 
 	/**
-	 * Regex of allowed chars in lower-cased slugs.
+	 * Regex allowed chars in lower-cased slugs.
 	 *
 	 * Allowed chars are a-z, 0-9, [.apostrophe.], [.hyphen.], [.period.], [.underscore.],
 	 * or any url-encoded character in the range \x20-x7F.
@@ -38,35 +38,35 @@ class Converter {
 	 *
 	 * @var Main
 	 */
-	protected $main;
+	protected Main $main;
 
 	/**
 	 * Plugin settings class.
 	 *
 	 * @var Settings
 	 */
-	protected $settings;
+	protected Settings $settings;
 
 	/**
 	 * Background process to convert posts.
 	 *
 	 * @var PostConversionProcess
 	 */
-	protected $process_all_posts;
+	protected PostConversionProcess $process_all_posts;
 
 	/**
 	 * Background process to convert terms.
 	 *
 	 * @var TermConversionProcess
 	 */
-	protected $process_all_terms;
+	protected TermConversionProcess $process_all_terms;
 
 	/**
 	 * Admin notices.
 	 *
 	 * @var AdminNotices
 	 */
-	protected $admin_notices;
+	protected AdminNotices $admin_notices;
 
 	/**
 	 * Converter constructor.
@@ -77,7 +77,13 @@ class Converter {
 	 * @param TermConversionProcess $process_all_terms Term conversion process.
 	 * @param AdminNotices          $admin_notices     Admin notices.
 	 */
-	public function __construct( Main $main, Settings $settings, PostConversionProcess $process_all_posts, TermConversionProcess $process_all_terms, AdminNotices $admin_notices ) {
+	public function __construct(
+		Main $main,
+		Settings $settings,
+		PostConversionProcess $process_all_posts,
+		TermConversionProcess $process_all_terms,
+		AdminNotices $admin_notices
+	) {
 		$this->main              = $main;
 		$this->settings          = $settings;
 		$this->process_all_posts = $process_all_posts;

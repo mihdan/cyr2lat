@@ -32,7 +32,7 @@ class WPCli extends WP_CLI_Command {
 	 *
 	 * @var Converter
 	 */
-	private $converter;
+	private Converter $converter;
 
 	/**
 	 * WP_CLI constructor.
