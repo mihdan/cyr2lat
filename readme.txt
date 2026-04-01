@@ -2,7 +2,7 @@
 Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: cyrillic, slugs, translation, transliteration
 Requires at least: 6.0
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 6.7.0
 License: GPLv2 or later
@@ -225,11 +225,12 @@ Please report security bugs found in the source code of the undefined plugin thr
 
 == Changelog ==
 
-= 6.7.0 (08.02.2026) =
+= 6.7.0 (01.04.2026) =
 * The minimum required PHP version is now 7.4.
 * The minimum required WordPress version is now 6.0.
 * Fixed a fatal error occurred with WP-CLI in a rare case.
 * Fixed transliteration of WC local attributes.
+* Tested with WordPress 7.0.
 
 = 6.6.0 (30.11.2025) =
 * Fixed the deprecated function message in Main.php with WordPress 6.9.
