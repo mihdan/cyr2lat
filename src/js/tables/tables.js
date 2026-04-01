@@ -153,14 +153,14 @@ class Tables {
 	}
 
 	/**
-	 * Set status of submit button.
+	 * Set status of Submit button.
 	 */
 	setSubmitStatus() {
 		this.submitButton.disabled = ! this.isActiveTableChanged();
 	}
 
 	/**
-	 * Check locale and show warning message.
+	 * Check locale and show a warning message.
 	 */
 	checkLocale() {
 		let ctlLocale = Cyr2LatTablesObject.ctlLocale;
@@ -382,7 +382,7 @@ class Tables {
 	}
 
 	/**
-	 * Add new cell to the active table.
+	 * Add a new cell to the active table.
 	 */
 	addCell() {
 		let lastCell = this.getLastCell();
@@ -613,7 +613,7 @@ class Tables {
 	}
 
 	/**
-	 * Replace input name according to the new label value.
+	 * Replace the input name according to the new label value.
 	 *
 	 * @param {Element} input    Input
 	 * @param {string}  newValue New label value

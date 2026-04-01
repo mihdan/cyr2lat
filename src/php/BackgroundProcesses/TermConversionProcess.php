@@ -18,16 +18,16 @@ class TermConversionProcess extends ConversionProcess {
 	/**
 	 * Site locale.
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	private $locale;
+	private ?string $locale;
 
 	/**
 	 * Current term to convert.
 	 *
 	 * @var stdClass
 	 */
-	private $term;
+	private stdClass $term;
 
 	/**
 	 * Process action name

@@ -46,7 +46,7 @@ class ErrorHandlerTest extends CyrToLatTestCase {
 		$subject = new ErrorHandler();
 
 		switch ( $wp_version ) {
-			case '5.3':
+			case '6.0':
 				WP_Mock::expectActionNotAdded( 'doing_it_wrong_run', [ $subject, 'action_doing_it_wrong_run' ] );
 				WP_Mock::expectActionNotAdded( 'doing_it_wrong_run', [ $subject, 'action_doing_it_wrong_run' ] );
 				WP_Mock::expectFilterNotAdded(
@@ -81,7 +81,7 @@ class ErrorHandlerTest extends CyrToLatTestCase {
 	public function dp_test_init(): array {
 
 		return [
-			'WP 5.3' => [ '5.3' ],
+			'WP 6.0' => [ '6.0' ],
 			'WP 6.7' => [ '6.7' ],
 		];
 	}

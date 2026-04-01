@@ -32,7 +32,7 @@ class WPCli extends WP_CLI_Command {
 	 *
 	 * @var Converter
 	 */
-	private $converter;
+	private Converter $converter;
 
 	/**
 	 * WP_CLI constructor.
@@ -55,7 +55,7 @@ class WPCli extends WP_CLI_Command {
 	 * @subcommand regenerate
 	 *
 	 * @param array $args       Arguments.
-	 * @param array $assoc_args Arguments in associative array.
+	 * @param array $assoc_args Arguments in an associative array.
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -88,7 +88,7 @@ class WPCli extends WP_CLI_Command {
 	}
 
 	/**
-	 * Make progress bar.
+	 * Make a progress bar.
 	 *
 	 * @return Bar|NoOp
 	 */

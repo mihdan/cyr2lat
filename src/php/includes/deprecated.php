@@ -13,7 +13,7 @@ namespace CyrToLat {
 	/**
 	 * The removed class helps prevent fatal errors for clients
 	 * that use some of the classes we are about to remove.
-	 * Use the class extending instead of class_alias function.
+	 * Use the class extending instead of the class_alias function.
 	 *
 	 * @since 6.0.0
 	 */

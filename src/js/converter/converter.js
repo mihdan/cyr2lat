@@ -53,7 +53,7 @@ class Converter {
 	}
 
 	/**
-	 * Hide confirmation popup.
+	 * Hide the confirmation popup.
 	 */
 	hideConfirmPopup() {
 		this.confirmPopup.style.display = 'none';

@@ -15,7 +15,7 @@ use WP_Rewrite;
 class Request {
 
 	/**
-	 * Is allowed request for plugin to work.
+	 * Whether it is allowed request for the plugin to work.
 	 *
 	 * @return bool
 	 */
@@ -43,13 +43,13 @@ class Request {
 	 * @return bool
 	 */
 	public function is_cli(): bool {
-		return defined( 'WP_CLI' ) && constant( 'WP_CLI' );
+		return defined( 'WP_CLI' ) && constant( 'WP_CLI' ) && class_exists( 'WP_CLI', false );
 	}
 
 	/**
 	 * Checks if the current request is a WP REST API request.
 	 *
-	 * Case #1: After WP_REST_Request initialisation
+	 * Case #1: After WP_REST_Request initialization
 	 * Case #2: Support "plain" permalink settings
 	 * Case #3: It can happen that WP_Rewrite is not yet initialized,
 	 *          so do this (wp-settings.php)
@@ -89,8 +89,8 @@ class Request {
 	}
 
 	/**
-	 * Get REST route.
-	 * Returns route if it is a REST request, otherwise empty string.
+	 * Get the REST route.
+	 * Returns a route if it is a REST request, otherwise an empty string.
 	 *
 	 * @return string
 	 */
@@ -104,7 +104,7 @@ class Request {
 	}
 
 	/**
-	 * If current request is POST.
+	 * If the current request is POST.
 	 *
 	 * @return bool
 	 */

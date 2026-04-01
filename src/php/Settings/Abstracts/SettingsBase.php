@@ -12,7 +12,7 @@ namespace CyrToLat\Settings\Abstracts;
  *
  * This is an abstract class to create the settings page in any plugin.
  * It uses WordPress Settings API and general output of fields of any type.
- * Similar approach is used in many plugins, including WooCommerce.
+ * A similar approach is used in many plugins, including WooCommerce.
  */
 abstract class SettingsBase {
 
@@ -29,30 +29,30 @@ abstract class SettingsBase {
 	/**
 	 * Form fields.
 	 *
-	 * @var array
+	 * @var array|null
 	 */
-	protected $form_fields = [];
+	protected ?array $form_fields = null;
 
 	/**
 	 * Plugin options.
 	 *
-	 * @var array
+	 * @var array|null
 	 */
-	protected $settings;
+	protected ?array $settings = null;
 
 	/**
 	 * Tabs of this settings page.
 	 *
-	 * @var array
+	 * @var array|null
 	 */
-	protected $tabs;
+	protected ?array $tabs = null;
 
 	/**
 	 * Prefix for minified files.
 	 *
 	 * @var string
 	 */
-	protected $min_prefix;
+	protected string $min_prefix = '';
 
 	/**
 	 * Get screen id.
@@ -83,7 +83,7 @@ abstract class SettingsBase {
 	abstract protected function option_name(): string;
 
 	/**
-	 * Get plugin base name.
+	 * Get a plugin base name.
 	 *
 	 * @return string
 	 */
@@ -227,7 +227,7 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Is this the main menu page.
+	 * Is this the main menu page?
 	 *
 	 * @return bool
 	 */
@@ -247,7 +247,7 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Get class name without namespace.
+	 * Get a class name without a namespace.
 	 *
 	 * @return string
 	 */
@@ -258,7 +258,7 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Is this a tab.
+	 * Is this a tab?
 	 *
 	 * @return bool
 	 */
@@ -268,7 +268,7 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Add link to plugin setting page on plugins page.
+	 * Add a link to plugin setting page on plugins page.
 	 *
 	 * @param array|mixed $actions An array of plugin action links.
 	 *                             By default, this can include 'activate', 'deactivate', and 'delete'.
@@ -289,7 +289,7 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Initialise Settings.
+	 * Initialize Settings.
 	 *
 	 * Store all settings in a single database entry
 	 * and make sure the $settings array is either the default
@@ -299,13 +299,13 @@ abstract class SettingsBase {
 		$network_wide = get_site_option( $this->option_name() . self::NETWORK_WIDE, [] );
 
 		if ( empty( $network_wide ) ) {
-			$this->settings = get_option( $this->option_name(), null );
+			$settings = get_option( $this->option_name(), null );
 		} else {
-			$this->settings = get_site_option( $this->option_name(), null );
+			$settings = get_site_option( $this->option_name(), null );
 		}
 
-		$settings_exist                       = is_array( $this->settings );
-		$this->settings                       = (array) $this->settings;
+		$settings_exist                       = is_array( $settings );
+		$this->settings                       = (array) $settings;
 		$form_fields                          = $this->form_fields();
 		$network_wide_setting                 = array_key_exists( self::NETWORK_WIDE, $this->settings ) ?
 			$this->settings[ self::NETWORK_WIDE ] :
@@ -331,9 +331,9 @@ abstract class SettingsBase {
 	/**
 	 * Get all form fields.
 	 *
-	 * @return mixed
+	 * @return array
 	 */
-	protected function all_form_fields() {
+	protected function all_form_fields(): array {
 		$form_fields[] = $this->form_fields();
 		$tabs          = $this->tabs ?: [];
 
@@ -387,7 +387,7 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Add settings page to the menu.
+	 * Add a settings page to the menu.
 	 *
 	 * @return void
 	 */
@@ -523,9 +523,11 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Show tab link.
+	 * Show the tab link.
 	 *
 	 * @param SettingsBase $tab Tabs of the current settings page.
+	 *
+	 * @noinspection SelfClassReferencingInspection
 	 */
 	private function tab_link( SettingsBase $tab ): void {
 		$url    = menu_page_url( $this->option_page(), false );
@@ -540,11 +542,12 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Check if tab is active.
+	 * Check if the tab is active.
 	 *
 	 * @param SettingsBase $tab Tab of the current settings page.
 	 *
 	 * @return bool
+	 * @noinspection SelfClassReferencingInspection
 	 */
 	protected function is_tab_active( SettingsBase $tab ): bool {
 		$current_page_name = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
@@ -567,7 +570,7 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Get page and tab names from referer.
+	 * Get page and tab names from the referer.
 	 *
 	 * @return array
 	 */
@@ -616,11 +619,11 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Get active tab.
+	 * Get an active tab.
 	 *
 	 * @return SettingsBase
 	 */
-	protected function get_active_tab(): SettingsBase {
+	protected function get_active_tab(): self {
 		if ( ! empty( $this->tabs ) ) {
 			foreach ( $this->tabs as $tab ) {
 				if ( $this->is_tab_active( $tab ) ) {
@@ -659,7 +662,7 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Print text/password field.
+	 * Print the text / password field.
 	 *
 	 * @param array $arguments Field arguments.
 	 *
@@ -739,7 +742,7 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Print checkbox field.
+	 * Print the checkbox field.
 	 *
 	 * @param array $arguments Field arguments.
 	 *

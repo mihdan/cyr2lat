@@ -19,7 +19,7 @@ class ACF {
 	 *
 	 * @var Settings
 	 */
-	private $settings;
+	private Settings $settings;
 
 	/**
 	 * ACF constructor.
@@ -40,7 +40,7 @@ class ACF {
 	}
 
 	/**
-	 * Enqueue script in ACF field group page.
+	 * Enqueue script in the ACF field group page.
 	 *
 	 * @return void
 	 */

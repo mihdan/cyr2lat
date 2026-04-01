@@ -28,7 +28,6 @@ use CyrToLat\Requirements;
 use CyrToLat\Settings\Settings;
 use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 use CyrToLat\WPCli;
-use Exception;
 use Mockery;
 use PHPUnit\Runner\Version;
 use ReflectionException;
@@ -65,7 +64,7 @@ class MainTest extends CyrToLatTestCase {
 	public function test_init(): void {
 		$subject = new Main();
 
-		WP_Mock::expectActionAdded( 'plugins_loaded', [ $subject, 'init_all' ], - PHP_INT_MAX );
+		WP_Mock::expectActionAdded( 'plugins_loaded', [ $subject, 'init_all' ], -PHP_INT_MAX );
 
 		$subject->init();
 	}
@@ -79,7 +78,6 @@ class MainTest extends CyrToLatTestCase {
 		$load_textdomain   = 'load_textdomain';
 		$init_multilingual = 'init_multilingual';
 		$init_classes      = 'init_classes';
-		$init_cli          = 'init_cli';
 		$init_hooks        = 'init_hooks';
 
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -88,7 +86,6 @@ class MainTest extends CyrToLatTestCase {
 		$subject->shouldReceive( $load_textdomain )->once();
 		$subject->shouldReceive( $init_multilingual )->once();
 		$subject->shouldReceive( $init_classes )->once();
-		$subject->shouldReceive( $init_cli )->once();
 		$subject->shouldReceive( $init_hooks )->once();
 
 		$subject->init_all();
@@ -163,7 +160,7 @@ class MainTest extends CyrToLatTestCase {
 		if ( $sitepress ) {
 			$subject->shouldReceive( 'get_wpml_locale' )->andReturn( $wpml_locale );
 
-			WP_Mock::expectFilterAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ], - PHP_INT_MAX );
+			WP_Mock::expectFilterAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ], -PHP_INT_MAX );
 			WP_Mock::expectActionAdded(
 				'wpml_language_has_switched',
 				[ $subject, 'wpml_language_has_switched' ],
@@ -271,105 +268,47 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test init_cli()
+	 * Test action_cli_init()
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 *
 	 * @runInSeparateProcess
 	 * @preserveGlobalState disabled
 	 */
-	public function test_init_cli(): void {
-		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_cli' )->andReturn( true );
+	public function test_action_cli_init(): void {
+		$converter = Mockery::mock( Converter::class );
 
 		Mockery::mock( 'overload:' . WPCli::class );
 
 		$add_command = FunctionMocker::replace(
-			'\WP_CLI::add_command'
+			'WP_CLI::add_command'
 		);
 
 		$subject = Mockery::mock( Main::class )->makePartial();
-		$subject->shouldAllowMockingProtectedMethods();
 
-		$method = 'init_cli';
+		$this->set_protected_property( $subject, 'converter', $converter );
 
-		$this->set_protected_property( $subject, 'request', $request );
-		$this->set_method_accessibility( $subject, $method );
-
-		$subject->$method();
-
-		$cli = $this->get_protected_property( $subject, 'cli' );
-		self::assertInstanceOf( WPCli::class, $cli );
-
-		$add_command->wasCalledWithOnce( [ 'cyr2lat', $cli ] );
-	}
-
-	/**
-	 * Test init() with CLI when CLI throws an Exception
-	 *
-	 * @throws ReflectionException ReflectionException.
-	 * @noinspection ThrowRawExceptionInspection
-	 *
-	 * @runInSeparateProcess
-	 * @preserveGlobalState disabled
-	 */
-	public function test_init_cli_with_cli_error(): void {
-		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_cli' )->andReturn( true );
-
-		$subject = Mockery::mock( Main::class )->makePartial();
-		$method  = 'init_cli';
-
-		$this->set_protected_property( $subject, 'request', $request );
-		$this->set_method_accessibility( $subject, $method );
-
-		Mockery::mock( 'overload:' . WPCli::class );
-
-		$add_command = FunctionMocker::replace(
-			'\WP_CLI::add_command',
-			static function () {
-				throw new Exception();
-			}
-		);
-
-		$subject->$method();
+		$subject->action_cli_init();
 
 		$cli = $this->get_protected_property( $subject, 'cli' );
 
 		$add_command->wasCalledWithOnce( [ 'cyr2lat', $cli ] );
-	}
-
-	/**
-	 * Test init_cli() when not in CLI.
-	 *
-	 * @return void
-	 * @throws ReflectionException ReflectionException.
-	 */
-	public function test_init_cli_when_not_in_cli(): void {
-		$request = Mockery::mock( Request::class );
-		$request->shouldReceive( 'is_cli' )->andReturn( false );
-
-		$subject = Mockery::mock( Main::class )->makePartial();
-		$method  = 'init_cli';
-
-		$this->set_protected_property( $subject, 'request', $request );
-		$this->set_method_accessibility( $subject, $method );
-
-		$subject->$method();
 	}
 
 	/**
 	 * Test init_hooks()
 	 *
 	 * @param boolean $sitepress WPML is active.
-	 * @param boolean $frontend  It is frontend.
+	 * @param boolean $frontend  It is a frontend request.
+	 * @param boolean $is_cli    It is a CLI request.
 	 *
 	 * @dataProvider dp_test_init_hooks
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_init_hooks( bool $sitepress, bool $frontend ): void {
+	public function test_init_hooks( bool $sitepress, bool $frontend, bool $is_cli ): void {
 		$request = Mockery::mock( Request::class );
 		$request->shouldReceive( 'is_allowed' )->andReturn( true );
+		$request->shouldReceive( 'is_cli' )->andReturn( $is_cli );
 
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$method  = 'init_hooks';
@@ -402,6 +341,12 @@ class MainTest extends CyrToLatTestCase {
 
 		WP_Mock::expectActionAdded( 'before_woocommerce_init', [ $subject, 'declare_wc_compatibility' ] );
 
+		if ( $is_cli ) {
+			WP_Mock::expectActionAdded( 'cli_init', [ $subject, 'action_cli_init' ] );
+		} else {
+			WP_Mock::expectActionNotAdded( 'cli_init', [ $subject, 'action_cli_init' ] );
+		}
+
 		$subject->$method();
 	}
 
@@ -412,10 +357,14 @@ class MainTest extends CyrToLatTestCase {
 	 */
 	public static function dp_test_init_hooks(): array {
 		return [
-			[ false, false ],
-			[ false, true ],
-			[ true, false ],
-			[ true, true ],
+			[ false, false, false ],
+			[ false, false, true ],
+			[ false, true, false ],
+			[ false, true, true ],
+			[ true, false, false ],
+			[ true, false, true ],
+			[ true, true, false ],
+			[ true, true, true ],
 		];
 	}
 
@@ -434,8 +383,14 @@ class MainTest extends CyrToLatTestCase {
 		$this->set_protected_property( $subject, 'request', $request );
 		$this->set_protected_property( $subject, 'is_frontend', false );
 
-		WP_Mock::expectFilterNotAdded( 'woocommerce_before_template_part', [ $subject, 'woocommerce_before_template_part_filter' ] );
-		WP_Mock::expectFilterNotAdded( 'woocommerce_after_template_part', [ $subject, 'woocommerce_after_template_part_filter' ] );
+		WP_Mock::expectFilterNotAdded(
+			'woocommerce_before_template_part',
+			[ $subject, 'woocommerce_before_template_part_filter' ]
+		);
+		WP_Mock::expectFilterNotAdded(
+			'woocommerce_after_template_part',
+			[ $subject, 'woocommerce_after_template_part_filter' ]
+		);
 		WP_Mock::expectFilterNotAdded( 'sanitize_title', [ $subject, 'sanitize_title' ] );
 		WP_Mock::expectFilterNotAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ] );
 		WP_Mock::expectFilterNotAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ] );
@@ -465,7 +420,7 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test that sanitize_title() does nothing when title is empty.
+	 * Test that sanitize_title() does nothing when the title is empty.
 	 */
 	public function test_sanitize_title_empty_title(): void {
 		$subject = Mockery::mock( Main::class )->makePartial();
@@ -520,7 +475,7 @@ class MainTest extends CyrToLatTestCase {
 
 		self::assertSame( $title, $subject->sanitize_title( $title ) );
 
-		// Cleanup global to avoid side effects in other tests.
+		// Clean up global to avoid side effects in other tests.
 		unset( $wp_query );
 	}
 
@@ -754,10 +709,86 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test is_wc_attribute().
+	 *
+	 * @param bool $is_wc_attribute_taxonomy              Whether attribute taxonomy is WC attribute taxonomy.
+	 * @param bool $is_local_attribute                    Whether attribute is local attribute.
+	 * @param bool $is_wc_product_not_converted_attribute Whether attribute is WC product not converted attribute.
+	 *
+	 * @return void
+	 * @throws ReflectionException ReflectionException.
+	 * @dataProvider dp_test_is_wc_attribute
+	 */
+	public function test_is_wc_attribute(
+		bool $is_wc_attribute_taxonomy,
+		bool $is_local_attribute,
+		bool $is_wc_product_not_converted_attribute
+	): void {
+		FunctionMocker::replace(
+			'function_exists',
+			static function ( $function_name ) {
+				return 'WC' === $function_name;
+			}
+		);
+
+		$subject = $this->get_subject();
+
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'is_wc_attribute_taxonomy' )->andReturn( $is_wc_attribute_taxonomy );
+		$subject->shouldReceive( 'is_local_attribute' )->andReturn( $is_local_attribute );
+		$subject->shouldReceive( 'is_wc_product_not_converted_attribute' )
+			->andReturn( $is_wc_product_not_converted_attribute );
+		$subject->shouldAllowMockingProtectedMethods();
+
+		$expected = $is_wc_attribute_taxonomy || $is_local_attribute || $is_wc_product_not_converted_attribute;
+
+		self::assertSame( $expected, $subject->is_wc_attribute( 'some attribute' ) );
+	}
+
+	/**
+	 * Data provider for test_is_wc_attribute().
+	 *
+	 * @return array[]
+	 */
+	public function dp_test_is_wc_attribute(): array {
+		return [
+			[ false, false, false ],
+			[ false, false, true ],
+			[ false, true, false ],
+			[ false, true, true ],
+			[ true, false, false ],
+			[ true, false, true ],
+			[ true, true, false ],
+			[ true, true, true ],
+		];
+	}
+
+	/**
+	 * Test is_wc_attribute() without WC.
+	 *
+	 * @return void
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_is_wc_attribute_without_wc(): void {
+		FunctionMocker::replace(
+			'function_exists',
+			static function ( $function_name ) {
+				return 'WC' !== $function_name;
+			}
+		);
+
+		$subject = $this->get_subject();
+
+		$subject->shouldAllowMockingProtectedMethods();
+
+		self::assertFalse( $subject->is_wc_attribute( 'some attribute' ) );
+	}
+
+	/**
 	 * Test sanitize_title() for term WC attribute taxonomy
 	 *
 	 * @param string     $title                Title.
-	 * @param bool       $is_wc                Is WooCommerce active.
+	 * @param bool       $is_wc                Whether WooCommerce is active.
 	 * @param array|null $attribute_taxonomies Attribute Taxonomies.
 	 * @param int        $expected             Expected result.
 	 *
@@ -783,6 +814,8 @@ class MainTest extends CyrToLatTestCase {
 		);
 
 		WP_Mock::userFunction( 'wc_get_attribute_taxonomies' )->with()->andReturn( $attribute_taxonomies );
+		WP_Mock::userFunction( 'doing_action' )->andReturn( false );
+		WP_Mock::userFunction( 'did_action' )->andReturn( false );
 
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
@@ -790,6 +823,101 @@ class MainTest extends CyrToLatTestCase {
 		$subject->shouldReceive( 'transliterate' )->times( $expected );
 
 		$subject->sanitize_title( $title );
+	}
+
+	/**
+	 * Test is_local_attribute().
+	 *
+	 * @param string $title    Title.
+	 * @param array  $post     POST data.
+	 * @param bool   $expected Expected result.
+	 *
+	 * @dataProvider dp_test_is_local_attribute
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_is_local_attribute(
+		string $title,
+		array $post,
+		bool $expected
+	): void {
+		$subject = $this->get_subject();
+
+		$subject->shouldAllowMockingProtectedMethods();
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$_POST = $post;
+
+		WP_Mock::passthruFunction( 'sanitize_text_field' );
+		WP_Mock::passthruFunction( 'wp_unslash' );
+		$subject->shouldReceive( 'wp_parse_str' )->andReturnUsing(
+			static function ( $input_string ) {
+				parse_str( (string) $input_string, $result );
+
+				return $result;
+			}
+		);
+		WP_Mock::userFunction( 'doing_action' )->andReturn( false );
+
+		FunctionMocker::replace(
+			'filter_input',
+			static function ( $type, $var_name, $filter ) use ( $post ) {
+				if ( INPUT_POST === $type && 'action' === $var_name && FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter ) {
+					return $post['action'];
+				}
+
+				if ( INPUT_POST === $type && 'data' === $var_name && FILTER_SANITIZE_URL === $filter ) {
+					return $post['data'];
+				}
+
+				return null;
+			}
+		);
+
+		$subject->shouldAllowMockingProtectedMethods();
+
+		self::assertSame( $expected, $subject->is_local_attribute( $title ) );
+	}
+
+	/**
+	 * Data provider for test_is_local_attribute().
+	 *
+	 * @return array
+	 */
+	public static function dp_test_is_local_attribute(): array {
+		return [
+			'global attribute'       => [
+				'pa_color',
+				[
+					'action' => 'woocommerce_save_attributes',
+					'data'   => 'attribute_names%5B0%5D=color',
+				],
+				false,
+			],
+			'wrong action'           => [
+				'color',
+				[
+					'action' => 'other_action',
+					'data'   => 'attribute_names%5B0%5D=color',
+				],
+				false,
+			],
+			'not in attribute names' => [
+				'color',
+				[
+					'action' => 'woocommerce_save_attributes',
+					'data'   => 'attribute_names%5B0%5D=size',
+				],
+				false,
+			],
+			'in attribute names'     => [
+				'color',
+				[
+					'action' => 'woocommerce_save_attributes',
+					'data'   => 'attribute_names%5B0%5D=color',
+				],
+				true,
+			],
+		];
 	}
 
 	/**
@@ -814,7 +942,8 @@ class MainTest extends CyrToLatTestCase {
 		$product->shouldReceive( 'get_id' )->andReturn( $product_id );
 		$GLOBALS['product'] = $is_product ? $product : null;
 
-		WP_Mock::userFunction( 'get_post_meta' )->with( $product_id, '_product_attributes', true )->andReturn( $attributes );
+		WP_Mock::userFunction( 'get_post_meta' )->with( $product_id, '_product_attributes', true )
+			->andReturn( $attributes );
 		WP_Mock::passthruFunction( 'sanitize_title_with_dashes' );
 
 		self::assertSame( $expected, $subject->$method( $title ) );
@@ -1220,7 +1349,7 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test that sanitize_post_name() does nothing if current screen is not post edit screen
+	 * Test that sanitize_post_name() does nothing if the current screen is not post edit screen
 	 */
 	public function test_sanitize_post_name_not_post_edit_screen(): void {
 		$data = [ 'something' ];
@@ -1371,13 +1500,13 @@ class MainTest extends CyrToLatTestCase {
 		$data = '{"lang":"' . $pll_locale . '"}';
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 
-		// Test that result is cached.
+		// Test that a result is cached.
 		FunctionMocker::replace( 'defined' );
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 	}
 
 	/**
-	 * Test pll_locale_filter() on frontend.
+	 * Test pll_locale_filter() on the frontend.
 	 */
 	public function test_pll_locale_filter_on_frontend(): void {
 		$locale = 'en_US';
@@ -1409,7 +1538,7 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test pll_locale_filter() with classic editor and post_id.
+	 * Test pll_locale_filter() with the classic editor and post_id.
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
@@ -1447,13 +1576,13 @@ class MainTest extends CyrToLatTestCase {
 
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 
-		// Test that result is cached.
+		// Test that a result is cached.
 		FunctionMocker::replace( 'filter_input' );
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 	}
 
 	/**
-	 * Test pll_locale_filter() with classic editor and pll_post_id.
+	 * Test pll_locale_filter() with the classic editor and pll_post_id.
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
@@ -1491,13 +1620,13 @@ class MainTest extends CyrToLatTestCase {
 
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 
-		// Test that result is cached.
+		// Test that a result is cached.
 		FunctionMocker::replace( 'filter_input' );
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 	}
 
 	/**
-	 * Test pll_locale_filter() with classic editor and post.
+	 * Test pll_locale_filter() with the classic editor and post.
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
@@ -1535,7 +1664,7 @@ class MainTest extends CyrToLatTestCase {
 
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 
-		// Test that result is cached.
+		// Test that a result is cached.
 		FunctionMocker::replace( 'filter_input' );
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 	}
@@ -1588,7 +1717,7 @@ class MainTest extends CyrToLatTestCase {
 
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 
-		// Test that result is cached.
+		// Test that a result is cached.
 		FunctionMocker::replace( 'filter_input' );
 		self::assertSame( $pll_locale, $subject->pll_locale_filter( $locale ) );
 	}
@@ -1683,7 +1812,7 @@ class MainTest extends CyrToLatTestCase {
 
 		$this->set_method_accessibility( $subject, $method );
 
-		self::assertNull( $this->get_protected_property( $subject, 'wpml_languages' ) );
+		self::assertSame( [], $this->get_protected_property( $subject, 'wpml_languages' ) );
 
 		self::assertSame( $expected, $subject->$method() );
 
@@ -2039,7 +2168,7 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Get test subject
+	 * Get a test subject
 	 *
 	 * @return Mockery\Mock
 	 * @throws ReflectionException ReflectionException.
@@ -2078,7 +2207,7 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Transpose Chinese table.
 	 *
-	 * Chinese tables are stored in different way, to show them compact.
+	 * Chinese tables are stored in different ways to show them compact.
 	 *
 	 * @param array $table Table.
 	 *

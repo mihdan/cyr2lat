@@ -163,7 +163,7 @@ class Converter extends PluginSettingsBase {
 	}
 
 	/**
-	 * Show settings page.
+	 * Show the settings page.
 	 */
 	public function settings_page(): void {
 		parent::settings_page();

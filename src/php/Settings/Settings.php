@@ -17,7 +17,7 @@ use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 /**
  * Class Settings
  *
- * The central point to get settings from.
+ * This class is the central point to get settings from.
  */
 class Settings implements SettingsInterface {
 
@@ -26,21 +26,21 @@ class Settings implements SettingsInterface {
 	 *
 	 * @var array
 	 */
-	protected $menu_pages_classes;
+	protected array $menu_pages_classes = [];
 
 	/**
 	 * Menu pages and tabs in one flat array.
 	 *
 	 * @var array
 	 */
-	protected $tabs = [];
+	protected array $tabs = [];
 
 	/**
 	 * Screen ids of pages and tabs.
 	 *
 	 * @var array
 	 */
-	private $screen_ids = [];
+	private array $screen_ids = [];
 
 	/**
 	 * Settings constructor.
@@ -48,7 +48,7 @@ class Settings implements SettingsInterface {
 	 * @param array $menu_pages_classes Menu pages.
 	 */
 	public function __construct( array $menu_pages_classes = [] ) {
-		// Allow to specify $menu_pages_classes item as one class, not an array.
+		// Allow specifying the $ menu_pages_classes item as one class, not an array.
 		$this->menu_pages_classes = $menu_pages_classes;
 
 		$this->init();
@@ -61,7 +61,7 @@ class Settings implements SettingsInterface {
 		foreach ( $this->menu_pages_classes as $menu_page_classes ) {
 			$tab_classes = (array) $menu_page_classes;
 
-			// Allow to specify menu page as one class, without tabs.
+			// Allow specifying the menu page as one class, without tabs.
 			$page_class  = $tab_classes[0];
 			$tab_classes = array_slice( $tab_classes, 1 );
 
@@ -150,7 +150,7 @@ class Settings implements SettingsInterface {
 	}
 
 	/**
-	 * Check whether option value is 'on' or just non-empty.
+	 * Check whether the option value is 'on' or just non-empty.
 	 *
 	 * @param string $key Setting name.
 	 *
@@ -210,7 +210,7 @@ class Settings implements SettingsInterface {
 	}
 
 	/**
-	 * Is current locale a Chinese one.
+	 * Is the current locale Chinese?
 	 *
 	 * @return bool
 	 */
@@ -223,7 +223,7 @@ class Settings implements SettingsInterface {
 	/**
 	 * Transpose Chinese table.
 	 *
-	 * Chinese tables are stored in different way, to show them compact.
+	 * Chinese tables are stored in different ways to show them compact.
 	 *
 	 * @param array $table Table.
 	 *

@@ -37,7 +37,7 @@ class Tables extends PluginSettingsBase {
 	 *
 	 * @var array
 	 */
-	protected $locales = [];
+	protected array $locales = [];
 
 	/**
 	 * Get page title.
