@@ -126,7 +126,7 @@ class Main {
 	protected array $wpml_languages = [];
 
 	/**
-	 * Current request is frontend.
+	 * The current request is frontend.
 	 *
 	 * @var bool|null
 	 */
@@ -277,7 +277,7 @@ class Main {
 	}
 
 	/**
-	 * Get Settings instance.
+	 * Get a Settings instance.
 	 *
 	 * @return Settings
 	 */
@@ -404,13 +404,11 @@ class Main {
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 
-		$action = isset( $_POST['action'] )
-			? sanitize_text_field( wp_unslash( $_POST['action'] ) )
-			: '';
+		$action = (string) filter_input( INPUT_POST, 'action', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
 		// The `save attributes` action.
 		if ( 'woocommerce_save_attributes' === $action ) {
-			$data            = isset( $_POST['data'] ) ? filter_input( INPUT_POST, 'data', FILTER_SANITIZE_URL ) : '';
+			$data            = (string) filter_input( INPUT_POST, 'data', FILTER_SANITIZE_URL );
 			$attributes      = $this->wp_parse_str( urldecode( $data ) );
 			$attribute_names = $attributes['attribute_names'] ?? [];
 
@@ -672,7 +670,7 @@ class Main {
 			return $data;
 		}
 
-		// Run code only on post edit screen.
+		// Run code only on post-edit screen.
 		if ( ! ( $current_screen && 'post' === $current_screen->base ) ) {
 			return $data;
 		}
@@ -711,7 +709,7 @@ class Main {
 	}
 
 	/**
-	 * Filters the terms query arguments.
+	 * Filters the term query arguments.
 	 *
 	 * @param array|mixed $args       An array of get_terms() arguments.
 	 * @param string[]    $taxonomies An array of taxonomy names.
