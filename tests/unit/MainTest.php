@@ -814,6 +814,7 @@ class MainTest extends CyrToLatTestCase {
 		);
 
 		WP_Mock::userFunction( 'wc_get_attribute_taxonomies' )->with()->andReturn( $attribute_taxonomies );
+		WP_Mock::userFunction( 'doing_action' )->andReturn( false );
 
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
@@ -856,6 +857,7 @@ class MainTest extends CyrToLatTestCase {
 				return $result;
 			}
 		);
+		WP_Mock::userFunction( 'doing_action' )->andReturn( false );
 
 		FunctionMocker::replace(
 			'filter_input',

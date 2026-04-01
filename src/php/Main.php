@@ -403,24 +403,45 @@ class Main {
 		}
 
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
+
 		$action = isset( $_POST['action'] )
 			? sanitize_text_field( wp_unslash( $_POST['action'] ) )
 			: '';
-		// phpcs:enable WordPress.Security.NonceVerification.Missing
 
-		// Not the 'save attributes' action.
-		if ( 'woocommerce_save_attributes' !== $action ) {
-			return false;
+		// The `save attributes` action.
+		if ( 'woocommerce_save_attributes' === $action ) {
+			$data            = isset( $_POST['data'] ) ? filter_input( INPUT_POST, 'data', FILTER_SANITIZE_URL ) : '';
+			$attributes      = $this->wp_parse_str( urldecode( $data ) );
+			$attribute_names = $attributes['attribute_names'] ?? [];
+
+			return in_array( $title, $attribute_names, true );
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$data = isset( $_POST['data'] ) ? filter_input( INPUT_POST, 'data', FILTER_SANITIZE_URL ) : '';
+		// The `edit post` action.
+		if ( 'editpost' === $action ) {
+			$attribute_names = array_map(
+				'sanitize_text_field',
+				(array) wp_unslash( $_POST['attribute_names'] ?? [] )
+			);
 
-		$attributes = $this->wp_parse_str( urldecode( $data ) );
+			return in_array( $title, $attribute_names, true );
+		}
 
-		$attribute_names = $attributes['attribute_names'] ?? [];
+		if ( doing_action( 'woocommerce_variable_add_to_cart' ) ) {
+			$attributes = $GLOBALS['product']->get_attributes();
 
-		return in_array( $title, $attribute_names, true );
+			$encoded_attr_name = strtolower( rawurlencode( mb_strtolower( $title ) ) );
+
+			if ( isset( $attributes[ $encoded_attr_name ] ) ) {
+				return true;
+			}
+		}
+
+		$encoded_attr_name = rawurlencode( mb_strtolower( 'attribute_' . $title ) );
+
+		return isset( $_POST[ $encoded_attr_name ] ) || isset( $_POST[ strtolower( $encoded_attr_name ) ] );
+
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 
 	// @codeCoverageIgnoreStart
