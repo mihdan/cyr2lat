@@ -435,9 +435,18 @@ class Main {
 			if ( isset( $attributes[ $encoded_attr_name ] ) ) {
 				return true;
 			}
+
+			return false;
 		}
 
-		$encoded_attr_name = rawurlencode( mb_strtolower( 'attribute_' . $title ) );
+		if ( did_action( 'woocommerce_load_cart_from_session' ) ) {
+			return true;
+		}
+
+		$attr_name = str_replace( 'attribute_', '', mb_strtolower( $title ) );
+		$attr_name = 'attribute_' . $attr_name;
+
+		$encoded_attr_name = rawurlencode( $attr_name );
 
 		return isset( $_POST[ $encoded_attr_name ] ) || isset( $_POST[ strtolower( $encoded_attr_name ) ] );
 
