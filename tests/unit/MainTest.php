@@ -840,8 +840,6 @@ class MainTest extends CyrToLatTestCase {
 		array $post,
 		bool $expected
 	): void {
-		$data = $post['data'];
-
 		$subject = $this->get_subject();
 
 		$subject->shouldAllowMockingProtectedMethods();
@@ -862,9 +860,13 @@ class MainTest extends CyrToLatTestCase {
 
 		FunctionMocker::replace(
 			'filter_input',
-			static function ( $type, $var_name, $filter ) use ( $data ) {
+			static function ( $type, $var_name, $filter ) use ( $post ) {
+				if ( INPUT_POST === $type && 'action' === $var_name && FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter ) {
+					return $post['action'];
+				}
+
 				if ( INPUT_POST === $type && 'data' === $var_name && FILTER_SANITIZE_URL === $filter ) {
-					return $data;
+					return $post['data'];
 				}
 
 				return null;
