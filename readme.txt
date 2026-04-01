@@ -221,7 +221,18 @@ Yes, you can!
 
 = Where do I report security bugs found in this plugin? =
 
-Please report security bugs found in the source code of the undefined plugin through the [Patchstack Vulnerability Disclosure Program](https://patchstack.com/database/vdp/b6b7bcdc-2668-4aed-9226-8e3b5e809ab0). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
+Please report security vulnerabilities by email to:
+
+**security@kagg.eu**
+
+When reporting a vulnerability, please include as much information as possible to help us reproduce and investigate the issue, such as:
+
+- A clear description of the vulnerability
+- Steps to reproduce
+- Proof-of-concept or exploit code (if available)
+- Affected versions
+
+We will review your report and respond as quickly as possible.
 
 == Changelog ==
 
