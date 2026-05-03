@@ -53,13 +53,10 @@ jobs:
 
       - name: Run ESLint, JEST with coverage and Coveralls
         if: ${{ matrix.php-version == '8.4' }}
-        env:
-          COVERALLS_RUN_LOCALLY: true
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
           corepack enable
           yarn set version stable
           yarn
           yarn dev
           yarn lint
-          yarn run coveralls
+          yarn jest
