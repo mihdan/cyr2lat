@@ -59,7 +59,7 @@ class Request {
 	 * @return bool
 	 * @author matzeeable
 	 */
-	public static function is_rest(): bool {
+	public function is_rest(): bool {
 		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
 			return false;
 		}
