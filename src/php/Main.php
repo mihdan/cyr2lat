@@ -406,6 +406,10 @@ class Main {
 
 		$action = (string) filter_input( INPUT_POST, 'action', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
+		if ( 'woocommerce_do_ajax_product_import' === $action ) {
+			return false;
+		}
+
 		// The `save attributes` action.
 		if ( 'woocommerce_save_attributes' === $action ) {
 			$data            = (string) filter_input( INPUT_POST, 'data', FILTER_SANITIZE_URL );

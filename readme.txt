@@ -238,6 +238,7 @@ We will review your report and respond as quickly as possible.
 
 = 6.8.0 (XX.XX.2026) =
 * Fixed returning unexpected results by REST API in some cases.
+* Fixed import of WooCommerce products.
 
 = 6.7.0 (01.04.2026) =
 * The minimum required PHP version is now 7.4.
