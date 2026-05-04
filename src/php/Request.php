@@ -99,21 +99,6 @@ class Request {
 	}
 
 	/**
-	 * Get the REST route.
-	 * Returns a route if it is a REST request, otherwise an empty string.
-	 *
-	 * @return string
-	 */
-	protected function get_rest_route(): string {
-		$current_path = (string) wp_parse_url( trailingslashit( add_query_arg( [] ) ), PHP_URL_PATH );
-		$rest_path    = (string) wp_parse_url( trailingslashit( rest_url() ), PHP_URL_PATH );
-
-		$is_rest = 0 === strpos( $current_path, $rest_path );
-
-		return $is_rest ? substr( $current_path, strlen( $rest_path ) ) : '';
-	}
-
-	/**
 	 * If the current request is POST.
 	 *
 	 * @return bool

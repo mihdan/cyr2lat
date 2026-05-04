@@ -230,53 +230,6 @@ class RequestTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test get_rest_route().
-	 *
-	 * @param string $current_path Current path.
-	 * @param string $expected     Expected.
-	 *
-	 * @dataProvider dp_test_get_rest_route
-	 *
-	 * @throws ReflectionException ReflectionException.
-	 */
-	public function test_get_rest_route( string $current_path, string $expected ): void {
-		$current_url = 'https://test.test' . $current_path;
-
-		$rest_path = '/wp-json';
-		$rest_url  = 'https://test.test' . $rest_path . '/';
-
-		WP_Mock::userFunction( 'add_query_arg' )->with( [] )->andReturn( $current_url );
-		WP_Mock::userFunction( 'wp_parse_url' )->with( $current_url . '/', PHP_URL_PATH )->andReturn( $current_path );
-
-		WP_Mock::userFunction( 'rest_url' )->andReturn( $rest_url );
-		WP_Mock::userFunction( 'trailingslashit' )->andReturnUsing(
-			function ( $str ) {
-				return rtrim( $str, '/' ) . '/';
-			}
-		);
-		WP_Mock::userFunction( 'wp_parse_url' )->with( $rest_url, PHP_URL_PATH )->andReturn( $rest_path );
-
-		$subject = Mockery::mock( Request::class )->makePartial();
-		$method  = 'get_rest_route';
-
-		$this->set_method_accessibility( $subject, $method );
-
-		self::assertSame( $expected, $subject->$method() );
-	}
-
-	/**
-	 * Data provider for it_gets_rest_route.
-	 *
-	 * @return array
-	 */
-	public static function dp_test_get_rest_route(): array {
-		return [
-			'rest request' => [ '/wp-json/wp/v2/posts', '/wp/v2/posts' ],
-			'some request' => [ '/some-request', '' ],
-		];
-	}
-
-	/**
 	 * Test is_post().
 	 */
 	public function test_is_post(): void {
