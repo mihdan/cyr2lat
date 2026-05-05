@@ -8,6 +8,7 @@
 namespace CyrToLat\Tests\Unit\Transliteration;
 
 use CyrToLat\Settings\Settings;
+use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use CyrToLat\Transliteration\SlugContext;
 use CyrToLat\Transliteration\Transliterator;
@@ -55,6 +56,42 @@ class TransliteratorTest extends CyrToLatTestCase {
 		$subject = $this->create_subject();
 
 		self::assertSame( '', $subject->transliterate_with_table( '', [ 'я' => 'ya' ] ) );
+	}
+
+	/**
+	 * Test transliterate_with_table() with default ISO9 behavior.
+	 *
+	 * @return void
+	 */
+	public function test_transliterate_with_default_iso9_table(): void {
+		$subject = $this->create_subject();
+		$table   = $this->get_conversion_table( 'ru_RU' );
+
+		self::assertSame(
+			'ABVGDEYOZHZIJIKLMNOPRSTUFHCZCHSHSHHYEYUYAYEFHYH',
+			$subject->transliterate_with_table(
+				'АБВГДЕЁЖЗИЙІКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯѢѲѴ',
+				$table
+			)
+		);
+	}
+
+	/**
+	 * Test transliterate_with_table() preserves bad multibyte content.
+	 *
+	 * @return void
+	 */
+	public function test_transliterate_with_table_preserves_bad_multibyte_content(): void {
+		$subject               = $this->create_subject();
+		$bad_multibyte_content = pack( 'C*', ...array_slice( unpack( 'C*', 'я' ), 1 ) );
+
+		self::assertSame(
+			$bad_multibyte_content,
+			$subject->transliterate_with_table(
+				$bad_multibyte_content,
+				$this->get_conversion_table( 'ru_RU' )
+			)
+		);
 	}
 
 	/**
@@ -120,6 +157,40 @@ class TransliteratorTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test transliterate_with_table() applies Chinese splitting.
+	 *
+	 * @return void
+	 */
+	public function test_transliterate_with_table_applies_chinese_splitting(): void {
+		$table = $this->get_conversion_table( 'zh_CN' );
+		$table = $this->transpose_chinese_table( $table );
+
+		$subject = $this->create_subject( true );
+
+		self::assertSame(
+			'-Wo--Shi--E--Luo--Si--Ren-',
+			$subject->transliterate_with_table( '我是俄罗斯人', $table )
+		);
+	}
+
+	/**
+	 * Test split_chinese_string() does not split non-Chinese locales.
+	 *
+	 * @return void
+	 */
+	public function test_split_chinese_string_returns_original_for_non_chinese_locale(): void {
+		$table = $this->get_conversion_table( 'zh_CN' );
+		$table = $this->transpose_chinese_table( $table );
+
+		$subject = $this->create_subject();
+
+		self::assertSame(
+			'我是俄罗斯人',
+			$subject->split_chinese_string( '我是俄罗斯人', $table )
+		);
+	}
+
+	/**
 	 * Data provider for test_split_chinese_string().
 	 *
 	 * @return array
@@ -144,7 +215,8 @@ class TransliteratorTest extends CyrToLatTestCase {
 	/**
 	 * Create a test subject.
 	 *
-	 * @param bool $is_chinese_locale Whether current locale is Chinese.
+	 * @param bool  $is_chinese_locale Whether current locale is Chinese.
+	 * @param array $table             Conversion table.
 	 *
 	 * @return Transliterator
 	 */
@@ -169,7 +241,7 @@ class TransliteratorTest extends CyrToLatTestCase {
 	private function transpose_chinese_table( array $table ): array {
 		$transposed_table = [];
 		foreach ( $table as $key => $item ) {
-			$hieroglyphs = mb_str_split( $item );
+			$hieroglyphs = Mbstring::mb_str_split( $item );
 			foreach ( $hieroglyphs as $hieroglyph ) {
 				$transposed_table[ $hieroglyph ] = $key;
 			}

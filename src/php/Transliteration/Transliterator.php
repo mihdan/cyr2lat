@@ -71,7 +71,7 @@ class Transliterator {
 	 * @return string
 	 */
 	public function split_chinese_string( string $str, array $table ): string {
-		if ( ! $this->settings->is_chinese_locale() || mb_strlen( $str ) < 4 ) {
+		if ( ! $this->settings->is_chinese_locale() || Mbstring::mb_strlen( $str ) < 4 ) {
 			return $str;
 		}
 

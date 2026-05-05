@@ -75,4 +75,57 @@ class SlugContextTest extends CyrToLatTestCase {
 		self::assertSame( 'rest', SlugContext::SOURCE_REST );
 		self::assertSame( 'cli', SlugContext::SOURCE_CLI );
 	}
+
+	/**
+	 * Test common context examples.
+	 *
+	 * @param string $type        Context type.
+	 * @param string $source      Context source.
+	 * @param string $object_type Object type.
+	 *
+	 * @return void
+	 * @dataProvider dp_test_common_context_examples
+	 */
+	public function test_common_context_examples( string $type, string $source, string $object_type ): void {
+		$subject = new SlugContext( $type, $source, null, $object_type );
+
+		self::assertSame( $type, $subject->type() );
+		self::assertSame( $source, $subject->source() );
+		self::assertSame( $object_type, $subject->object_type() );
+	}
+
+	/**
+	 * Data provider for test_common_context_examples().
+	 *
+	 * @return array
+	 */
+	public static function dp_test_common_context_examples(): array {
+		return [
+			'term admin'             => [
+				SlugContext::TYPE_TERM,
+				SlugContext::SOURCE_ADMIN,
+				'category',
+			],
+			'filename ajax'          => [
+				SlugContext::TYPE_FILENAME,
+				SlugContext::SOURCE_AJAX,
+				'attachment',
+			],
+			'global attribute cli'   => [
+				SlugContext::TYPE_WC_GLOBAL_ATTRIBUTE,
+				SlugContext::SOURCE_CLI,
+				'pa_color',
+			],
+			'local attribute admin'  => [
+				SlugContext::TYPE_WC_LOCAL_ATTRIBUTE,
+				SlugContext::SOURCE_ADMIN,
+				'product',
+			],
+			'variation attribute UI' => [
+				SlugContext::TYPE_WC_VARIATION_ATTRIBUTE,
+				SlugContext::SOURCE_FRONTEND,
+				'product_variation',
+			],
+		];
+	}
 }
