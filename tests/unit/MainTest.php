@@ -623,6 +623,90 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test that sanitize_title() preserves an existing URL-encoded term slug.
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_sanitize_title_preserves_existing_encoded_term_slug(): void {
+		global $wpdb;
+
+		$title        = 'й';
+		$encoded_slug = rawurlencode( $title );
+		$taxonomy     = 'category';
+		$prepared_tax = '\'' . $taxonomy . '\'';
+
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
+		WP_Mock::userFunction( 'is_wp_error' )->with( $title )->andReturn( false );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, $title )->reply( false );
+
+		$subject->shouldReceive( 'prepare_in' )->once()->with( [ $taxonomy ] )->andReturn( $prepared_tax );
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wpdb                = Mockery::mock( wpdb::class );
+		$wpdb->terms         = 'wp_terms';
+		$wpdb->term_taxonomy = 'wp_term_taxonomy';
+
+		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
+							ON t.term_id = tt.term_id
+							WHERE t.slug = %s";
+		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
+							ON t.term_id = tt.term_id
+							WHERE t.slug = " . $encoded_slug;
+		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
+
+		$wpdb->shouldReceive( 'prepare' )->once()->with( $request, $encoded_slug )->andReturn( $prepared_request );
+		$wpdb->shouldReceive( 'get_var' )->once()->with( $sql )->andReturn( $encoded_slug );
+
+		$subject->pre_insert_term_filter( $title, $taxonomy );
+
+		self::assertSame( $encoded_slug, $subject->sanitize_title( $title ) );
+	}
+
+	/**
+	 * Test that sanitize_title() transliterates a new term when no encoded slug exists.
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_sanitize_title_transliterates_new_term_when_encoded_slug_does_not_exist(): void {
+		global $wpdb;
+
+		$title        = 'й';
+		$encoded_slug = rawurlencode( $title );
+		$taxonomy     = 'category';
+		$prepared_tax = '\'' . $taxonomy . '\'';
+
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
+		WP_Mock::userFunction( 'is_wp_error' )->with( $title )->andReturn( false );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, $title )->reply( false );
+
+		$subject->shouldReceive( 'prepare_in' )->once()->with( [ $taxonomy ] )->andReturn( $prepared_tax );
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wpdb                = Mockery::mock( wpdb::class );
+		$wpdb->terms         = 'wp_terms';
+		$wpdb->term_taxonomy = 'wp_term_taxonomy';
+
+		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
+							ON t.term_id = tt.term_id
+							WHERE t.slug = %s";
+		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
+							ON t.term_id = tt.term_id
+							WHERE t.slug = " . $encoded_slug;
+		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
+
+		$wpdb->shouldReceive( 'prepare' )->once()->with( $request, $encoded_slug )->andReturn( $prepared_request );
+		$wpdb->shouldReceive( 'get_var' )->once()->with( $sql )->andReturn( '' );
+
+		$subject->pre_insert_term_filter( $title, $taxonomy );
+
+		self::assertSame( 'j', $subject->sanitize_title( $title ) );
+	}
+
+	/**
 	 * Test sanitize_title() for get_terms
 	 *
 	 * @param string $title               Title to sanitize.
@@ -823,6 +907,102 @@ class MainTest extends CyrToLatTestCase {
 		$subject->shouldReceive( 'transliterate' )->times( $expected );
 
 		$subject->sanitize_title( $title );
+	}
+
+	/**
+	 * Test that sanitize_title() preserves WooCommerce global attribute taxonomy names.
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_sanitize_title_preserves_wc_global_attribute_taxonomy_name(): void {
+		$title = 'pa_цвет';
+
+		FunctionMocker::replace(
+			'function_exists',
+			static function ( $function_name ) {
+				if ( 'WC' === $function_name ) {
+					return true;
+				}
+
+				return null;
+			}
+		);
+
+		WP_Mock::userFunction( 'wc_get_attribute_taxonomies' )->with()->andReturn(
+			[
+				(object) [
+					'attribute_id'      => '9',
+					'attribute_name'    => 'цвет',
+					'attribute_label'   => 'Цвет',
+					'attribute_type'    => 'select',
+					'attribute_orderby' => 'menu_order',
+					'attribute_public'  => '1',
+				],
+			]
+		);
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, $title )->reply( false );
+
+		$subject = $this->get_subject();
+
+		self::assertSame( $title, $subject->sanitize_title( $title ) );
+	}
+
+	/**
+	 * Test that sanitize_title() preserves WooCommerce local attribute names during AJAX attribute save.
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_sanitize_title_preserves_wc_local_attribute_name_during_ajax_save(): void {
+		$title = 'цвет';
+		$post  = [
+			'action' => 'woocommerce_save_attributes',
+			'data'   => 'attribute_names%5B0%5D=%D1%86%D0%B2%D0%B5%D1%82',
+		];
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$_POST = $post;
+
+		FunctionMocker::replace(
+			'function_exists',
+			static function ( $function_name ) {
+				if ( 'WC' === $function_name ) {
+					return true;
+				}
+
+				return null;
+			}
+		);
+		FunctionMocker::replace(
+			'filter_input',
+			static function ( $type, $var_name, $filter ) use ( $post ) {
+				if ( INPUT_POST === $type && 'action' === $var_name && FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter ) {
+					return $post['action'];
+				}
+
+				if ( INPUT_POST === $type && 'data' === $var_name && FILTER_SANITIZE_URL === $filter ) {
+					return $post['data'];
+				}
+
+				return null;
+			}
+		);
+
+		WP_Mock::userFunction( 'wc_get_attribute_taxonomies' )->with()->andReturn( [] );
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, $title )->reply( false );
+
+		$subject = $this->get_subject();
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'wp_parse_str' )->andReturnUsing(
+			static function ( $input_string ) {
+				parse_str( (string) $input_string, $result );
+
+				return $result;
+			}
+		);
+
+		self::assertSame( $title, $subject->sanitize_title( $title ) );
 	}
 
 	/**
@@ -1826,7 +2006,7 @@ class MainTest extends CyrToLatTestCase {
 	 */
 	public static function dp_test_wpml_locale_filter(): array {
 		return [
-			'Existing language code, return from wpml' => [ 'ru', 'ru_RU' ],
+			'Existing language code, return from WPML' => [ 'ru', 'ru_RU' ],
 			'Not existing language code, return null'  => [ 'some', null ],
 		];
 	}
