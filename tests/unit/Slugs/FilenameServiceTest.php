@@ -72,6 +72,24 @@ class FilenameServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test sanitize_filename() returns ctl_pre_sanitize_filename filter value if set.
+	 *
+	 * @return void
+	 */
+	public function test_pre_sanitize_filename_filter_set(): void {
+		$filename            = 'filename.jpg';
+		$filtered_filename   = 'filtered-filename.jpg';
+		$transliterator      = Mockery::mock( Transliterator::class );
+		$transliterator->shouldNotReceive( 'transliterate' );
+
+		$subject = new FilenameService( $transliterator );
+
+		WP_Mock::onFilter( 'ctl_pre_sanitize_filename' )->with( false, $filename )->reply( $filtered_filename );
+
+		self::assertSame( $filtered_filename, $subject->sanitize_filename( $filename, '' ) );
+	}
+
+	/**
 	 * Create test subject.
 	 *
 	 * @param array $table Conversion table.
