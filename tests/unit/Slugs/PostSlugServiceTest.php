@@ -113,4 +113,50 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 
 		self::assertSame( $data, $subject->filter_post_data( $data ) );
 	}
+
+	/**
+	 * Test filter_post_data() skips transient post saves.
+	 *
+	 * @param array $data Post data.
+	 *
+	 * @return void
+	 * @dataProvider dp_test_filter_post_data_skips_transient_post_saves
+	 */
+	public function test_filter_post_data_skips_transient_post_saves( array $data ): void {
+		$subject = new PostSlugService();
+
+		self::assertSame( $data, $subject->filter_post_data( $data ) );
+	}
+
+	/**
+	 * Data provider for test_filter_post_data_skips_transient_post_saves().
+	 *
+	 * @return array
+	 */
+	public static function dp_test_filter_post_data_skips_transient_post_saves(): array {
+		return [
+			'auto-draft'      => [
+				[
+					'post_name'   => '',
+					'post_title'  => 'й',
+					'post_status' => 'auto-draft',
+				],
+			],
+			'revision status' => [
+				[
+					'post_name'   => '',
+					'post_title'  => 'й',
+					'post_status' => 'revision',
+				],
+			],
+			'revision type'   => [
+				[
+					'post_name'   => '',
+					'post_title'  => 'й',
+					'post_status' => 'inherit',
+					'post_type'   => 'revision',
+				],
+			],
+		];
+	}
 }

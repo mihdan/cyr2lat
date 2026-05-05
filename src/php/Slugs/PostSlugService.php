@@ -31,7 +31,7 @@ class PostSlugService {
 		if (
 			empty( $data['post_name'] ) &&
 			! empty( $data['post_title'] ) &&
-			! $this->is_skipped_post_data( $data )
+			! $this->is_skipped_post_data( $data, $postarr )
 		) {
 			$data['post_name'] = sanitize_title( $data['post_title'] );
 		}
@@ -39,7 +39,7 @@ class PostSlugService {
 		if (
 			! empty( $data['post_name'] ) &&
 			$this->has_non_ascii_chars( (string) $data['post_name'] ) &&
-			! $this->is_skipped_post_data( $data )
+			! $this->is_skipped_post_data( $data, $postarr )
 		) {
 			$data['post_name'] = sanitize_title( $data['post_name'] );
 		}
@@ -50,12 +50,32 @@ class PostSlugService {
 	/**
 	 * Whether post data should be skipped.
 	 *
-	 * @param array $data Post data.
+	 * @param array       $data    Post data.
+	 * @param array|mixed $postarr Original post array.
 	 *
 	 * @return bool
 	 */
-	private function is_skipped_post_data( array $data ): bool {
-		return in_array( $data['post_status'] ?? '', [ 'auto-draft', 'revision' ], true );
+	private function is_skipped_post_data( array $data, $postarr = [] ): bool {
+		if ( in_array( $data['post_status'] ?? '', [ 'auto-draft', 'revision' ], true ) ) {
+			return true;
+		}
+
+		if ( 'revision' === ( $data['post_type'] ?? '' ) ) {
+			return true;
+		}
+
+		$postarr = (array) $postarr;
+		$post_id = (int) ( $postarr['ID'] ?? $data['ID'] ?? 0 );
+
+		if ( $post_id <= 0 ) {
+			return false;
+		}
+
+		if ( function_exists( 'wp_is_post_autosave' ) && wp_is_post_autosave( $post_id ) ) {
+			return true;
+		}
+
+		return function_exists( 'wp_is_post_revision' ) && (bool) wp_is_post_revision( $post_id );
 	}
 
 	/**
