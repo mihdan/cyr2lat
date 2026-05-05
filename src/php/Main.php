@@ -19,6 +19,7 @@ use CyrToLat\Settings\Converter as SettingsConverter;
 use CyrToLat\Settings\SystemInfo as SettingsSystemInfo;
 use CyrToLat\Settings\Tables as SettingsTables;
 use CyrToLat\Slugs\FilenameService;
+use CyrToLat\Slugs\PostSlugService;
 use CyrToLat\Transliteration\Transliterator;
 use JsonException;
 use Polylang;
@@ -624,25 +625,7 @@ class Main {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function sanitize_post_name( $data, $postarr = [], $unsanitized_postarr = [], bool $update = false ) {
-		global $current_screen;
-
-		if ( ! $this->is_gutenberg_editor_active() ) {
-			return $data;
-		}
-
-		// Run code only on post-edit screen.
-		if ( ! ( $current_screen && 'post' === $current_screen->base ) ) {
-			return $data;
-		}
-
-		if (
-			! $data['post_name'] && $data['post_title'] &&
-			! in_array( $data['post_status'], [ 'auto-draft', 'revision' ], true )
-		) {
-			$data['post_name'] = sanitize_title( $data['post_title'] );
-		}
-
-		return $data;
+		return ( new PostSlugService() )->filter_post_data( $data, $postarr, $unsanitized_postarr, $update );
 	}
 
 	/**

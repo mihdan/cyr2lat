@@ -24,6 +24,29 @@ class PostSlugService {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function filter_post_data( $data, $postarr = [], $unsanitized_postarr = [], bool $update = false ) {
+		if ( ! is_array( $data ) ) {
+			return $data;
+		}
+
+		if (
+			empty( $data['post_name'] ) &&
+			! empty( $data['post_title'] ) &&
+			! $this->is_skipped_post_data( $data )
+		) {
+			$data['post_name'] = sanitize_title( $data['post_title'] );
+		}
+
 		return $data;
+	}
+
+	/**
+	 * Whether post data should be skipped.
+	 *
+	 * @param array $data Post data.
+	 *
+	 * @return bool
+	 */
+	private function is_skipped_post_data( array $data ): bool {
+		return in_array( $data['post_status'] ?? '', [ 'auto-draft', 'revision' ], true );
 	}
 }

@@ -1462,30 +1462,6 @@ class MainTest extends CyrToLatTestCase {
 	public function test_sanitize_post_name_without_gutenberg(): void {
 		$data = [ 'something' ];
 
-		WP_Mock::userFunction(
-			'has_filter',
-			[
-				'args'   => [ 'replace_editor', 'gutenberg_init' ],
-				'return' => false,
-			]
-		);
-		WP_Mock::userFunction(
-			'is_plugin_active',
-			[
-				'times'  => 1,
-				'args'   => [ 'classic-editor/classic-editor.php' ],
-				'return' => true,
-			]
-		);
-		WP_Mock::userFunction(
-			'get_option',
-			[
-				'times'  => 1,
-				'args'   => [ 'classic-editor-replace' ],
-				'return' => 'replace',
-			]
-		);
-
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
@@ -1497,33 +1473,7 @@ class MainTest extends CyrToLatTestCase {
 	public function test_sanitize_post_name_with_disable_gutenberg_plugin(): void {
 		$data = [ 'something' ];
 
-		WP_Mock::userFunction(
-			'has_filter',
-			[
-				'args'   => [ 'replace_editor', 'gutenberg_init' ],
-				'return' => false,
-			]
-		);
-		WP_Mock::userFunction(
-			'is_plugin_active',
-			[
-				'times'  => 1,
-				'args'   => [ 'classic-editor/classic-editor.php' ],
-				'return' => false,
-			]
-		);
-		WP_Mock::userFunction(
-			'is_plugin_active',
-			[
-				'times'  => 1,
-				'args'   => [ 'disable-gutenberg/disable-gutenberg.php' ],
-				'return' => true,
-			]
-		);
-
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-
-		FunctionMocker::replace( 'disable_gutenberg', true );
 
 		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
 	}
