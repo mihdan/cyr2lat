@@ -9,8 +9,10 @@ namespace CyrToLat\Tests\Unit\Transliteration;
 
 use CyrToLat\Settings\Settings;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use CyrToLat\Transliteration\SlugContext;
 use CyrToLat\Transliteration\Transliterator;
 use Mockery;
+use WP_Mock;
 
 /**
  * Class TransliteratorTest
@@ -25,22 +27,22 @@ class TransliteratorTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_transliterate(): void {
-		$subject = $this->create_subject();
+		$table   = [
+			'П' => 'P',
+			'р' => 'r',
+			'и' => 'i',
+			'в' => 'v',
+			'е' => 'e',
+			'т' => 't',
+			'м' => 'm',
+		];
+		$subject = $this->create_subject( false, $table );
+
+		WP_Mock::expectFilter( 'ctl_table', $table );
 
 		self::assertSame(
 			'Privet, mir!',
-			$subject->transliterate(
-				'Привет, мир!',
-				[
-					'П' => 'P',
-					'р' => 'r',
-					'и' => 'i',
-					'в' => 'v',
-					'е' => 'e',
-					'т' => 't',
-					'м' => 'm',
-				]
-			)
+			$subject->transliterate( 'Привет, мир!' )
 		);
 	}
 
@@ -52,7 +54,7 @@ class TransliteratorTest extends CyrToLatTestCase {
 	public function test_transliterate_with_empty_string(): void {
 		$subject = $this->create_subject();
 
-		self::assertSame( '', $subject->transliterate( '', [ 'я' => 'ya' ] ) );
+		self::assertSame( '', $subject->transliterate_with_table( '', [ 'я' => 'ya' ] ) );
 	}
 
 	/**
@@ -66,8 +68,38 @@ class TransliteratorTest extends CyrToLatTestCase {
 
 		self::assertSame(
 			'YO',
-			$subject->transliterate( urldecode( '%d0%95%cc%88' ), $table )
+			$subject->transliterate_with_table( urldecode( '%d0%95%cc%88' ), $table )
 		);
+	}
+
+	/**
+	 * Test transliterate() uses the filtered table.
+	 *
+	 * @return void
+	 */
+	public function test_transliterate_uses_filtered_table(): void {
+		$default_table  = [ 'я' => 'ya' ];
+		$filtered_table = [ 'я' => 'ja' ];
+		$subject        = $this->create_subject( false, $default_table );
+
+		WP_Mock::onFilter( 'ctl_table' )->with( $default_table )->reply( $filtered_table );
+
+		self::assertSame( 'ja', $subject->transliterate( 'я' ) );
+	}
+
+	/**
+	 * Test transliterate() accepts a context without changing current behavior.
+	 *
+	 * @return void
+	 */
+	public function test_transliterate_accepts_context(): void {
+		$table   = [ 'я' => 'ya' ];
+		$subject = $this->create_subject( false, $table );
+		$context = new SlugContext( SlugContext::TYPE_POST, SlugContext::SOURCE_REST );
+
+		WP_Mock::expectFilter( 'ctl_table', $table );
+
+		self::assertSame( 'ya', $subject->transliterate( 'я', $context ) );
 	}
 
 	/**
@@ -116,9 +148,13 @@ class TransliteratorTest extends CyrToLatTestCase {
 	 *
 	 * @return Transliterator
 	 */
-	private function create_subject( bool $is_chinese_locale = false ): Transliterator {
+	private function create_subject( bool $is_chinese_locale = false, array $table = [] ): Transliterator {
 		$settings = Mockery::mock( Settings::class );
 		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( $is_chinese_locale );
+
+		if ( $table ) {
+			$settings->shouldReceive( 'get_table' )->andReturn( $table );
+		}
 
 		return new Transliterator( $settings );
 	}

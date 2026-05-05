@@ -584,9 +584,7 @@ class Main {
 	 * @return string
 	 */
 	public function transliterate( string $str ): string {
-		$table = (array) apply_filters( 'ctl_table', $this->settings->get_table() );
-
-		return ( new Transliterator( $this->settings ) )->transliterate( $str, $table );
+		return ( new Transliterator( $this->settings ) )->transliterate( $str );
 	}
 
 	/**

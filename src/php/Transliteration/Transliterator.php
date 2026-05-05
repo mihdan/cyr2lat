@@ -33,14 +33,29 @@ class Transliterator {
 	}
 
 	/**
-	 * Transliterate string using a table.
+	 * Transliterate string using the active table.
 	 *
-	 * @param string $str   String.
-	 * @param array  $table Conversion table.
+	 * @param string           $str     String.
+	 * @param SlugContext|null $context Slug context.
 	 *
 	 * @return string
 	 */
-	public function transliterate( string $str, array $table ): string {
+	public function transliterate( string $str, ?SlugContext $context = null ): string {
+		$table = (array) apply_filters( 'ctl_table', $this->settings->get_table() );
+
+		return $this->transliterate_with_table( $str, $table, $context );
+	}
+
+	/**
+	 * Transliterate string using a provided table.
+	 *
+	 * @param string           $str     String.
+	 * @param array            $table   Conversion table.
+	 * @param SlugContext|null $context Slug context.
+	 *
+	 * @return string
+	 */
+	public function transliterate_with_table( string $str, array $table, ?SlugContext $context = null ): string {
 		$str = $this->fix_mac_string( $str, $table );
 		$str = $this->split_chinese_string( $str, $table );
 
