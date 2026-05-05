@@ -78,6 +78,7 @@
     ],
     "psr-4": {
       "CyrToLat\\": "src/php",
+      "CyrToLat\\Tests\\Integration\\": "tests/integration",
       "CyrToLat\\Tests\\Unit\\": "tests/unit"
     }
   },
