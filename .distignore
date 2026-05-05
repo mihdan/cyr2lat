@@ -35,6 +35,7 @@
 /.make
 /.wordpress-org
 /.yarn
+/docs
 /node_modules
 /src/js
 /tests
