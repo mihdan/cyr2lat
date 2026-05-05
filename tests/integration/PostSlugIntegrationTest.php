@@ -16,6 +16,8 @@ use WP_UnitTestCase;
  */
 class PostSlugIntegrationTest extends WP_UnitTestCase {
 
+	private const CPT = 'cyr2lat_book';
+
 	/**
 	 * Set up the allowed request context required for backend slug hooks.
 	 *
@@ -23,6 +25,14 @@ class PostSlugIntegrationTest extends WP_UnitTestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
+
+		register_post_type(
+			self::CPT,
+			[
+				'public' => true,
+				'label'  => 'Books',
+			]
+		);
 
 		set_current_screen( 'post' );
 		cyr_to_lat()->init_all();
@@ -34,6 +44,8 @@ class PostSlugIntegrationTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function tearDown(): void {
+		unregister_post_type( self::CPT );
+
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		unset( $GLOBALS['current_screen'] );
 
@@ -68,6 +80,86 @@ class PostSlugIntegrationTest extends WP_UnitTestCase {
 		);
 
 		self::assertSame( 'j', $filtered['post_name'] );
+	}
+
+	/**
+	 * Test that wp_insert_post() creates a post slug from Cyrillic title.
+	 *
+	 * @return void
+	 */
+	public function test_wp_insert_post_creates_post_slug_from_cyrillic_title(): void {
+		$post_id = wp_insert_post(
+			[
+				'post_type'   => 'post',
+				'post_status' => 'publish',
+				'post_title'  => 'й',
+			],
+			true
+		);
+
+		$this->assertNotWPError( $post_id );
+		self::assertSame( 'j', get_post( $post_id )->post_name );
+	}
+
+	/**
+	 * Test that wp_insert_post() creates a page slug from Cyrillic title.
+	 *
+	 * @return void
+	 */
+	public function test_wp_insert_post_creates_page_slug_from_cyrillic_title(): void {
+		$post_id = wp_insert_post(
+			[
+				'post_type'   => 'page',
+				'post_status' => 'publish',
+				'post_title'  => 'й',
+			],
+			true
+		);
+
+		$this->assertNotWPError( $post_id );
+		self::assertSame( 'j', get_post( $post_id )->post_name );
+	}
+
+	/**
+	 * Test that wp_insert_post() creates a custom post type slug from Cyrillic title.
+	 *
+	 * @return void
+	 */
+	public function test_wp_insert_post_creates_custom_post_type_slug_from_cyrillic_title(): void {
+		$post_id = wp_insert_post(
+			[
+				'post_type'   => self::CPT,
+				'post_status' => 'publish',
+				'post_title'  => 'й',
+			],
+			true
+		);
+
+		$this->assertNotWPError( $post_id );
+		self::assertSame( 'j', get_post( $post_id )->post_name );
+	}
+
+	/**
+	 * Test that wp_insert_post() creates a product slug from Cyrillic title when WooCommerce is available.
+	 *
+	 * @return void
+	 */
+	public function test_wp_insert_post_creates_product_slug_from_cyrillic_title_when_available(): void {
+		if ( ! post_type_exists( 'product' ) ) {
+			self::markTestSkipped( 'WooCommerce product post type is not registered.' );
+		}
+
+		$post_id = wp_insert_post(
+			[
+				'post_type'   => 'product',
+				'post_status' => 'publish',
+				'post_title'  => 'й',
+			],
+			true
+		);
+
+		$this->assertNotWPError( $post_id );
+		self::assertSame( 'j', get_post( $post_id )->post_name );
 	}
 
 	/**
