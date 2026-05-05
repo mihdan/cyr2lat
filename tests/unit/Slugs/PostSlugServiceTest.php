@@ -97,4 +97,20 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 
 		self::assertSame( 'j', $filtered['post_name'] );
 	}
+
+	/**
+	 * Test filter_post_data() preserves manual Latin post_name.
+	 *
+	 * @return void
+	 */
+	public function test_filter_post_data_preserves_manual_latin_post_name(): void {
+		$subject = new PostSlugService();
+		$data    = [
+			'post_name'   => 'manual-slug',
+			'post_title'  => 'й',
+			'post_status' => 'publish',
+		];
+
+		self::assertSame( $data, $subject->filter_post_data( $data ) );
+	}
 }
