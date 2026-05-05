@@ -77,9 +77,9 @@ class FilenameServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_pre_sanitize_filename_filter_set(): void {
-		$filename            = 'filename.jpg';
-		$filtered_filename   = 'filtered-filename.jpg';
-		$transliterator      = Mockery::mock( Transliterator::class );
+		$filename          = 'filename.jpg';
+		$filtered_filename = 'filtered-filename.jpg';
+		$transliterator    = Mockery::mock( Transliterator::class );
 		$transliterator->shouldNotReceive( 'transliterate' );
 
 		$subject = new FilenameService( $transliterator );

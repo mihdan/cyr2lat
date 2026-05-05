@@ -86,6 +86,15 @@ class FilenameIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that macOS decomposed Cyrillic filenames are normalized before transliteration.
+	 *
+	 * @return void
+	 */
+	public function test_sanitize_file_name_transliterates_macos_decomposed_filename(): void {
+		self::assertSame( 'yo.jpg', sanitize_file_name( urldecode( '%d0%95%cc%88' ) . '.jpg' ) );
+	}
+
+	/**
 	 * Test that ctl_pre_sanitize_filename can short-circuit the plugin result.
 	 *
 	 * @return void
