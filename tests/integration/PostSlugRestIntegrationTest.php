@@ -172,9 +172,9 @@ class PostSlugRestIntegrationTest extends WP_Test_REST_TestCase {
 			]
 		);
 
-		self::assertSame( '', $draft['slug'] );
+		self::assertSame( 'j', $draft['slug'] );
 		self::assertSame( 'j', $draft['generated_slug'] );
-		self::assertSame( '', get_post( $draft['id'] )->post_name );
+		self::assertSame( 'j', get_post( $draft['id'] )->post_name );
 
 		$published = $this->dispatch_successful_request(
 			'POST',
@@ -212,6 +212,26 @@ class PostSlugRestIntegrationTest extends WP_Test_REST_TestCase {
 
 		self::assertSame( 'j', $data['slug'] );
 		self::assertSame( 'j', get_post( $post_id )->post_name );
+	}
+
+	/**
+	 * Test creating a post via REST with an explicit Cyrillic slug.
+	 *
+	 * @return void
+	 */
+	public function test_rest_create_transliterates_explicit_cyrillic_slug(): void {
+		$data = $this->dispatch_successful_request(
+			'POST',
+			'/wp/v2/posts',
+			[
+				'title'  => 'Title',
+				'slug'   => 'й',
+				'status' => 'publish',
+			]
+		);
+
+		self::assertSame( 'j', $data['slug'] );
+		self::assertSame( 'j', get_post( $data['id'] )->post_name );
 	}
 
 	/**
