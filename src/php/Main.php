@@ -19,6 +19,7 @@ use CyrToLat\Settings\Converter as SettingsConverter;
 use CyrToLat\Settings\SystemInfo as SettingsSystemInfo;
 use CyrToLat\Settings\Tables as SettingsTables;
 use CyrToLat\Slugs\FilenameService;
+use CyrToLat\Slugs\OldSlugRedirectService;
 use CyrToLat\Slugs\PostSlugService;
 use CyrToLat\Transliteration\Transliterator;
 use JsonException;
@@ -867,24 +868,8 @@ class Main {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function check_for_changed_slugs( $post_id, $post, $post_before ): void {
-		// Don't bother if it hasn't changed.
-		if ( $post->post_name === $post_before->post_name ) {
-			return;
-		}
-
-		// We're only concerned with published, non-hierarchical objects.
-		if ( ! ( 'publish' === $post->post_status || ( 'attachment' === get_post_type( $post ) && 'inherit' === $post->post_status ) ) || is_post_type_hierarchical( $post->post_type ) ) {
-			return;
-		}
-
-		// Modify $post_before->post_name when cyr2lat converted the title.
-		if (
-			empty( $post_before->post_name ) &&
-			$post->post_title !== $post->post_name &&
-			$post->post_name === $this->transliterate( $post->post_title )
-		) {
-			$post_before->post_name = rawurlencode( $post->post_title );
-		}
+		$service = new OldSlugRedirectService( new Transliterator( $this->settings ) );
+		$service->check_for_changed_slugs( (int) $post_id, $post, $post_before );
 	}
 
 	/**
