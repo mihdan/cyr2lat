@@ -10,7 +10,7 @@ Draft for review.
 
 ## Epic
 
-Epic 1 - Behavior capture before refactor.
+Epic 1 – Behavior capture before refactor.
 
 ## Goal
 
@@ -46,7 +46,7 @@ Use the existing unit test infrastructure to document the direct behavior of `Ma
 
 These tests are intentionally close to the method because the first refactor risk is moving logic out of `Main` while preserving return values, filter calls, guards, and current branching.
 
-### Layer 2 - WordPress integration coverage
+### Layer 2 – WordPress integration coverage
 
 Use the standard WordPress PHPUnit integration test suite for integration coverage. Do not introduce Codeception for the 7.0 integration layer.
 
@@ -131,8 +131,8 @@ Use named data provider cases where practical.
 - Existing tests still pass.
 - New/updated tests fail if `Main::sanitize_title()` stops preserving any documented legacy behavior.
 - The test names clearly describe the behavior being protected.
-- The tests avoid relying on real WordPress, WooCommerce, WPML, or Polylang installs; use the repository's existing mocks and stubs.
-- Integration-test scenarios required for this behavior are either implemented where infrastructure already exists or explicitly captured as follow-up tasks with the needed bootstrap/environment notes.
+- The tests avoid relying on real WordPress, WooCommerce, WPML, or Polylang installations; use the repository's existing mocks and stubs.
+- Integration-test scenarios required for this behavior are either implemented where infrastructure already exists or explicitly captured as follow-up tasks with the necessary bootstrap/environment notes.
 - Any integration bootstrap notes keep local DB credentials and the local test database name out of tracked files.
 - Production source files are unchanged unless a test-only compatibility adjustment is absolutely required and justified in the PR/task notes.
 

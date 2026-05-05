@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         bootstrap="tests/integration/bootstrap.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         beStrictAboutTestsThatDoNotTestAnything="false"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd">
+    <!--
+        Local WordPress test database settings must stay outside this repository.
+        Configure WP_PHPUNIT__TESTS_CONFIG in your local environment. That local
+        wp-tests-config.php file should hold DB settings or read them from env vars.
+    -->
+    <coverage>
+        <include>
+            <directory suffix=".php">src/php</directory>
+            <file>cyr-to-lat.php</file>
+        </include>
+        <exclude>
+            <directory>tests</directory>
+            <directory>vendor</directory>
+        </exclude>
+    </coverage>
+    <testsuites>
+        <testsuite name="cyr2lat-integration-tests">
+            <directory suffix="Test.php">tests/integration</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
