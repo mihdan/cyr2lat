@@ -1313,7 +1313,7 @@ class MainTest extends CyrToLatTestCase {
 	 * Test that sanitize_filename() returns ctl_pre_sanitize_filename filter value if set
 	 */
 	public function test_pre_sanitize_filename_filter_set(): void {
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$subject = $this->get_subject();
 
 		$filename     = 'filename.jpg';
 		$filename_raw = '';

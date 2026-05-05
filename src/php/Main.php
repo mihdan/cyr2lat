@@ -18,6 +18,7 @@ use CyrToLat\BackgroundProcesses\TermConversionProcess;
 use CyrToLat\Settings\Converter as SettingsConverter;
 use CyrToLat\Settings\SystemInfo as SettingsSystemInfo;
 use CyrToLat\Settings\Tables as SettingsTables;
+use CyrToLat\Slugs\FilenameService;
 use CyrToLat\Transliteration\Transliterator;
 use JsonException;
 use Polylang;
@@ -28,7 +29,6 @@ use WP_Error;
 use WP_Post;
 use wpdb;
 use CyrToLat\Settings\Settings;
-use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 
 /**
  * Class Main
@@ -537,22 +537,16 @@ class Main {
 	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
 	public function sanitize_filename( $filename, $filename_raw ) {
-		global $wp_version;
+		return $this->filename_service()->sanitize_filename( $filename, $filename_raw );
+	}
 
-		$pre = apply_filters( 'ctl_pre_sanitize_filename', false, $filename );
-
-		if ( false !== $pre ) {
-			return (string) $pre;
-		}
-
-		$filename = (string) $filename;
-		$is_utf8  = version_compare( (string) $wp_version, '6.9-RC1', '>=' ) ? 'wp_is_valid_utf8' : 'seems_utf8';
-
-		if ( $is_utf8( $filename ) ) {
-			$filename = (string) Mbstring::mb_strtolower( $filename );
-		}
-
-		return $this->transliterate( $filename );
+	/**
+	 * Get filename service.
+	 *
+	 * @return FilenameService
+	 */
+	private function filename_service(): FilenameService {
+		return new FilenameService( new Transliterator( $this->settings ) );
 	}
 
 	/**
