@@ -7,19 +7,19 @@ No `install-wp-tests.sh` script is required.
 ## Local Environment Rules
 
 - Do not use a shared `wp-tests` database from another project.
-- Do not commit a test database name, database user, database password, or local database host.
-- Keep local DB settings in a local `wp-tests-config.php` file or local environment variables.
+- Local defaults live in `tests/integration/_config/params.local.php`.
+- CI defaults live in `tests/integration/_config/params.github-actions.php`.
+- The default local database is `cyr2lat-7-tests`.
 
 ## Required Local Inputs
 
-- `WP_PHPUNIT__TESTS_CONFIG` should point to a local `wp-tests-config.php` file.
+- `WP_PHPUNIT__TESTS_CONFIG` is optional. By default, the bootstrap uses `tests/integration/wp-tests-config.php`.
 - `WP_TESTS_DIR` is optional and only needed when using an external WordPress test library instead of the Composer package.
 - `WP_TESTS_CONFIG_FILE_PATH` is supported as a compatibility alias for `WP_PHPUNIT__TESTS_CONFIG`.
 - WooCommerce-dependent tests expect WooCommerce to be installed as `wp-content/plugins/woocommerce/woocommerce.php` inside the WordPress installation used by the integration test config.
 
-The local `wp-tests-config.php` should use a project-specific database for this repository.
-Use `tests/integration/wp-tests-config.example.php` as a placeholder-only starting point, but keep the real file outside the repository.
-Set `CYR2LAT_TEST_WORDPRESS_DIR` in that local config to the WordPress installation that contains the required plugins.
+For local runs, set `WP_ROOT_PATH` in `tests/integration/_config/params.local.php` to the WordPress installation that contains the required plugins.
+To use a private config file without editing tracked params, set `CYR2LAT_TEST_PARAMS` to that file.
 
 ## Run
 

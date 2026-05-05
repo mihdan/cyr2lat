@@ -29,8 +29,8 @@ $uses_wp_phpunit_dir = $tests_dir === $composer_tests_dir;
 
 unset( $composer_tests_dir );
 
-if ( ! $tests_config && file_exists( 'C:/tmp/cyr2lat-wp-tests-config.php' ) ) {
-	$tests_config = 'C:/tmp/cyr2lat-wp-tests-config.php';
+if ( ! $tests_config && file_exists( $project_root . '/tests/integration/wp-tests-config.php' ) ) {
+	$tests_config = $project_root . '/tests/integration/wp-tests-config.php';
 }
 
 $tests_dir = rtrim( (string) $tests_dir, '/\\' );

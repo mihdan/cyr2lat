@@ -24,7 +24,8 @@ This task establishes the integration lane only. It does not yet add full post, 
 - Do not use `install-wp-tests.sh`.
 - Do not add Codeception.
 - Do not add acceptance/browser infrastructure.
-- Keep local DB details out of tracked files.
+- Use tracked WordPress PHPUnit config files modeled after the existing hCaptcha Codeception params split.
+- Use `tests/integration/_config/params.local.php` for local defaults and `tests/integration/_config/params.github-actions.php` for CI defaults.
 - Use a project-specific local test database, not a shared `wp-tests` database from another project.
 
 ## Implemented Files
@@ -33,25 +34,26 @@ This task establishes the integration lane only. It does not yet add full post, 
 - `composer.json`
 - `phpunit.integration.xml`
 - `tests/integration/bootstrap.php`
+- `tests/integration/wp-tests-config.php`
+- `tests/integration/_config/params.php`
+- `tests/integration/_config/params.local.php`
+- `tests/integration/_config/params.github-actions.php`
+- `tests/integration/_config/params.example.php`
 - `tests/integration/PluginLoadedTest.php`
 - `tests/integration/README.md`
-- `tests/integration/wp-tests-config.example.php`
 
 ## Local Environment Rules
 
-- Do not commit the test database name.
-- Do not commit the database user.
-- Do not commit the database password.
-- Do not commit the local database host.
-- Keep DB settings in a local `wp-tests-config.php` or local environment variables.
-- Point `WP_PHPUNIT__TESTS_CONFIG` to the local `wp-tests-config.php`.
+- Keep local integration defaults in `tests/integration/_config/params.local.php`.
+- Keep CI integration defaults in `tests/integration/_config/params.github-actions.php`.
+- Override with `CYR2LAT_TEST_PARAMS` or `WP_PHPUNIT__TESTS_CONFIG` only when a machine needs a private config.
 
 ## Acceptance Criteria
 
 - `composer integration` exists.
-- `phpunit.integration.xml` is tracked and contains no DB credentials.
+- `phpunit.integration.xml` is tracked and delegates WordPress PHPUnit config discovery to the integration bootstrap.
 - `wp-phpunit/wp-phpunit` and `yoast/phpunit-polyfills` are available as dev dependencies.
-- The repository may include placeholder-only config examples, but no real local DB values.
+- The repository includes local and CI integration test params.
 - The integration bootstrap loads the plugin through the WordPress test-suite lifecycle.
 - A first smoke integration test verifies that `cyr_to_lat()` is available and returns `CyrToLat\Main`.
 - Unit tests and coding standards still pass.

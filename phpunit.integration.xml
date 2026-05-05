@@ -8,9 +8,8 @@
          beStrictAboutTestsThatDoNotTestAnything="false"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd">
     <!--
-        Local WordPress test database settings must stay outside this repository.
-        Configure WP_PHPUNIT__TESTS_CONFIG in your local environment. That local
-        wp-tests-config.php file should hold DB settings or read them from env vars.
+        By default, tests/integration/bootstrap.php uses tests/integration/wp-tests-config.php.
+        Override WP_PHPUNIT__TESTS_CONFIG only when a different local config is needed.
     -->
     <coverage>
         <include>
