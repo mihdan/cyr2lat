@@ -16,11 +16,12 @@ Epic 1 - Behavior capture before refactor.
 
 Add behavior coverage for the current WooCommerce global attribute creation behavior and registered global attribute guard in `Main::sanitize_title()`.
 
-The WooCommerce integration test class uses a reusable `PluginWPTestCase` layer that activates the configured real WordPress plugin for the test class and deactivates it after the class. The WooCommerce test configures `woocommerce/woocommerce.php` and uses WooCommerce-specific setup for tables and initialization. It uses WooCommerce from `WP_PLUGIN_DIR` when present, or an external local checkout from `CYR2LAT_WC_PLUGIN_FILE` / `C:/laragon/www/test/wp-content/plugins/woocommerce/woocommerce.php` for the local integration environment. Full WooCommerce CRUD/API coverage remains a later Epic 7 task.
+The WooCommerce integration test class uses a reusable `PluginWPTestCase` layer that activates the configured real WordPress plugin for the test class and deactivates it after the class. The WooCommerce test configures only the relative plugin path `woocommerce/woocommerce.php` and uses WooCommerce-specific setup for tables and initialization. WooCommerce must be installed under the `WP_PLUGIN_DIR` of the WordPress integration test installation, both locally and in CI. Full WooCommerce CRUD/API coverage remains a later Epic 7 task.
 
 ## Scope
 
 - Verify that WooCommerce is loaded as a real plugin for WooCommerce integration tests when available.
+- Use WooCommerce from the WordPress integration test installation via `woocommerce/woocommerce.php`; do not use repository-local absolute WooCommerce paths.
 - Verify that `wc_create_attribute()` with a Cyrillic name reaches WordPress' `sanitize_title` filter and currently stores the transliterated global attribute slug.
 - Verify that `wc_create_attribute()` with an explicit Cyrillic slug reaches WordPress' `sanitize_title` filter and currently stores the transliterated global attribute slug.
 - Verify that `wc_create_attribute()` preserves an explicit Latin/manual slug.

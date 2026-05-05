@@ -22,13 +22,6 @@ abstract class PluginWPTestCase extends WP_UnitTestCase {
 	protected static string $plugin = '';
 
 	/**
-	 * External plugin file path used when the plugin is not under WP_PLUGIN_DIR.
-	 *
-	 * @var string
-	 */
-	protected static string $plugin_file = '';
-
-	/**
 	 * Plugins activated by this test case layer.
 	 *
 	 * @var array<string, bool>
@@ -48,13 +41,6 @@ abstract class PluginWPTestCase extends WP_UnitTestCase {
 	 * @var array<string, string>
 	 */
 	protected static array $plugin_skip_messages = [];
-
-	/**
-	 * Whether plugins can be activated by WordPress' activate_plugin().
-	 *
-	 * @var array<string, bool>
-	 */
-	protected static array $use_wordpress_activation = [];
 
 	/**
 	 * Tear down after class.
@@ -134,23 +120,10 @@ abstract class PluginWPTestCase extends WP_UnitTestCase {
 			return;
 		}
 
-		$target_file = trailingslashit( WP_PLUGIN_DIR ) . static::$plugin;
-
-		if ( file_exists( $target_file ) ) {
-			static::$plugin_file                             = $target_file;
-			static::$use_wordpress_activation[ $plugin_key ] = true;
-
-			return;
-		}
-
-		if ( ! static::$plugin_file || ! file_exists( static::$plugin_file ) ) {
+		if ( ! file_exists( trailingslashit( WP_PLUGIN_DIR ) . static::$plugin ) ) {
 			static::$plugin_available[ $plugin_key ]     = false;
-			static::$plugin_skip_messages[ $plugin_key ] = 'Plugin file is not available in the local integration test environment.';
-
-			return;
+			static::$plugin_skip_messages[ $plugin_key ] = 'Plugin is not installed in the WordPress integration test environment.';
 		}
-
-		static::$use_wordpress_activation[ $plugin_key ] = false;
 	}
 
 	/**
@@ -160,44 +133,13 @@ abstract class PluginWPTestCase extends WP_UnitTestCase {
 	 */
 	protected static function activate_configured_plugin(): void {
 		$plugin_key = static::plugin_key();
+		$result     = activate_plugin( static::$plugin );
 
-		if ( static::$use_wordpress_activation[ $plugin_key ] ?? false ) {
-			$result = activate_plugin( static::$plugin );
+		if ( is_wp_error( $result ) ) {
+			static::$plugin_available[ $plugin_key ]     = false;
+			static::$plugin_skip_messages[ $plugin_key ] = $result->get_error_message();
 
-			if ( is_wp_error( $result ) ) {
-				static::$plugin_available[ $plugin_key ]     = false;
-				static::$plugin_skip_messages[ $plugin_key ] = $result->get_error_message();
-
-				self::markTestSkipped( static::$plugin_skip_messages[ $plugin_key ] );
-			}
-
-			return;
+			self::markTestSkipped( static::$plugin_skip_messages[ $plugin_key ] );
 		}
-
-		static::activate_external_plugin();
-	}
-
-	/**
-	 * Activate an external local plugin checkout for this test process.
-	 *
-	 * @return void
-	 */
-	protected static function activate_external_plugin(): void {
-		require_once static::$plugin_file;
-
-		$active_plugins = (array) get_option( 'active_plugins', [] );
-
-		if ( in_array( static::$plugin, $active_plugins, true ) ) {
-			return;
-		}
-
-		do_action( 'activate_plugin', static::$plugin, false );
-		do_action( 'activate_' . static::$plugin, false );
-
-		$active_plugins[] = static::$plugin;
-		sort( $active_plugins );
-		update_option( 'active_plugins', $active_plugins );
-
-		do_action( 'activated_plugin', static::$plugin, false );
 	}
 }

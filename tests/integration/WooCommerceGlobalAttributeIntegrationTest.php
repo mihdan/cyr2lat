@@ -26,20 +26,11 @@ class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
 	protected static string $plugin = 'woocommerce/woocommerce.php';
 
 	/**
-	 * WooCommerce plugin file used when it is not under WP_PLUGIN_DIR.
-	 *
-	 * @var string
-	 */
-	protected static string $plugin_file = 'C:/laragon/www/test/wp-content/plugins/woocommerce/woocommerce.php';
-
-	/**
 	 * Set up an allowed admin request context.
 	 *
 	 * @return void
 	 */
 	public function setUp(): void {
-		static::configure_woocommerce_plugin_file();
-
 		parent::setUp();
 
 		if ( ! function_exists( 'WC' ) || ! function_exists( 'wc_create_attribute' ) ) {
@@ -193,19 +184,6 @@ class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
 		self::assertTrue( $attribute_taxonomy_filter_was_called );
 
 		remove_filter( 'woocommerce_attribute_taxonomies', $spy );
-	}
-
-	/**
-	 * Configure an external WooCommerce plugin file from local env when present.
-	 *
-	 * @return void
-	 */
-	private static function configure_woocommerce_plugin_file(): void {
-		$plugin_file = getenv( 'CYR2LAT_WC_PLUGIN_FILE' );
-
-		if ( $plugin_file ) {
-			static::$plugin_file = $plugin_file;
-		}
 	}
 
 	/**
