@@ -1,4 +1,4 @@
-# Task 01: Capture current `Main::sanitize_title()` behavior
+# Task 01.01: Capture current `Main::sanitize_title()` behavior
 
 ## Status
 
