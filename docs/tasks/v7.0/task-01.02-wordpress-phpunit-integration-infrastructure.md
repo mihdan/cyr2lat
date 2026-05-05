@@ -32,6 +32,7 @@ This task establishes the integration lane only. It does not yet add full post, 
 
 - `.gitignore`
 - `composer.json`
+- `.github/workflows/ci.yml`
 - `phpunit.integration.xml`
 - `tests/integration/bootstrap.php`
 - `tests/integration/wp-tests-config.php`
@@ -54,6 +55,7 @@ This task establishes the integration lane only. It does not yet add full post, 
 - `phpunit.integration.xml` is tracked and delegates WordPress PHPUnit config discovery to the integration bootstrap.
 - `wp-phpunit/wp-phpunit` and `yoast/phpunit-polyfills` are available as dev dependencies.
 - The repository includes local and CI integration test params.
+- GitHub Actions installs WordPress and WooCommerce before running `composer integration`.
 - The integration bootstrap loads the plugin through the WordPress test-suite lifecycle.
 - A first smoke integration test verifies that `cyr_to_lat()` is available and returns `CyrToLat\Main`.
 - Unit tests and coding standards still pass.

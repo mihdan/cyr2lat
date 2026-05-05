@@ -21,6 +21,11 @@ No `install-wp-tests.sh` script is required.
 For local runs, set `WP_ROOT_PATH` in `tests/integration/_config/params.local.php` to the WordPress installation that contains the required plugins.
 To use a private config file without editing tracked params, set `CYR2LAT_TEST_PARAMS` to that file.
 
+## CI
+
+GitHub Actions checks out the plugin into `wordpress/wp-content/plugins/cyr2lat`, installs WordPress with WP-CLI, installs WooCommerce into that WordPress test site, and then runs `composer integration`.
+The CI params file reads the workflow `DB_*` environment variables and falls back to `root`/`root` with the project-specific `cyr2lat-7-tests` database.
+
 ## Run
 
 ```bash

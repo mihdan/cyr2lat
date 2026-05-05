@@ -11,6 +11,20 @@ jobs:
         os: [ ubuntu-latest ]
         php-version: [ '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5' ]
 
+    env:
+      wp-directory: wordpress
+      wp-plugin-directory: wordpress/wp-content/plugins/cyr2lat
+      DB_HOST: localhost
+      DB_NAME: cyr2lat-7-tests
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_TABLE_PREFIX: wptests_
+      WP_URL: https://test.test
+      WP_DOMAIN: test.test
+      WP_ADMIN_USERNAME: admin
+      WP_ADMIN_PASSWORD: admin
+      WP_ADMIN_EMAIL: admin@test.test
+
     runs-on: ${{ matrix.os }}
 
     name: PHP ${{ matrix.php-version }} on ${{ matrix.os }}
@@ -18,6 +32,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          path: ${{ env.wp-plugin-directory }}
 
       - name: Update changelog
         if: ${{ matrix.php-version == '8.5' }}
@@ -32,27 +48,69 @@ jobs:
 
       - name: Install dependencies with caching
         uses: ramsey/composer-install@v3
+        with:
+          working-directory: ${{ env.wp-plugin-directory }}
 
       - name: Run code sniffer
+        working-directory: ${{ env.wp-plugin-directory }}
         run: composer phpcs
 
       - name: Run unit tests
         if: ${{ matrix.php-version != '8.5' }}
+        working-directory: ${{ env.wp-plugin-directory }}
         run: vendor/bin/phpunit
 
       - name: Run PHPUnit tests with coverage
         if: ${{ matrix.php-version == '8.5' }}
+        working-directory: ${{ env.wp-plugin-directory }}
         run: vendor/bin/phpunit --coverage-clover coverage.xml
 
       - name: Run Coveralls for PHPUnit tests
         if: ${{ matrix.php-version == '8.5' }}
+        working-directory: ${{ env.wp-plugin-directory }}
         env:
           COVERALLS_RUN_LOCALLY: true
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: vendor/bin/php-coveralls -v
 
+      - name: Install WP CLI
+        run: |
+          WPCLI_VERSION=2.12.0
+          curl -fsSL -o wp-cli.phar "https://github.com/wp-cli/wp-cli/releases/download/v${WPCLI_VERSION}/wp-cli-${WPCLI_VERSION}.phar"
+          curl -fsSL -o wp-cli.phar.sha256 "https://github.com/wp-cli/wp-cli/releases/download/v${WPCLI_VERSION}/wp-cli-${WPCLI_VERSION}.phar.sha256"
+          echo "$(cat wp-cli.phar.sha256)  wp-cli.phar" | sha256sum -c -
+          chmod +x wp-cli.phar
+          mkdir -p wp-cli
+          sudo mv wp-cli.phar wp-cli/wp
+          echo "$GITHUB_WORKSPACE/wp-cli" >> "$GITHUB_PATH"
+
+      - name: Start mysql
+        run: |
+          echo '[mysqld]' | sudo tee -a /etc/mysql/my.cnf
+          echo 'default_authentication_plugin=mysql_native_password' | sudo tee -a /etc/mysql/my.cnf
+          sudo systemctl start mysql
+          mysql -e "ALTER USER '${{ env.DB_USER }}'@'${{ env.DB_HOST }}' IDENTIFIED WITH mysql_native_password BY '${{ env.DB_PASSWORD }}'" -uroot -proot 2>/dev/null
+          mysql -e 'FLUSH PRIVILEGES' -uroot -proot 2>/dev/null
+
+      - name: Install WordPress
+        working-directory: ${{ env.wp-directory }}
+        run: |
+          wp core download
+          wp config create --dbname="${{ env.DB_NAME }}" --dbuser="${{ env.DB_USER }}" --dbpass="${{ env.DB_PASSWORD }}" --dbhost="${{ env.DB_HOST }}" --dbprefix="${{ env.DB_TABLE_PREFIX }}"
+          wp db create
+          wp core install --url="${{ env.WP_URL }}" --title="Test" --admin_user="${{ env.WP_ADMIN_USERNAME }}" --admin_password="${{ env.WP_ADMIN_PASSWORD }}" --admin_email="${{ env.WP_ADMIN_EMAIL }}" --skip-email
+
+      - name: Install WooCommerce
+        working-directory: ${{ env.wp-directory }}
+        run: wp plugin install woocommerce
+
+      - name: Run integration tests
+        working-directory: ${{ env.wp-plugin-directory }}
+        run: composer integration
+
       - name: Run ESLint, JEST with coverage and Coveralls
         if: ${{ matrix.php-version == '8.4' }}
+        working-directory: ${{ env.wp-plugin-directory }}
         run: |
           corepack enable
           yarn set version stable
