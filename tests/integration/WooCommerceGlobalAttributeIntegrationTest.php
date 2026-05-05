@@ -8,6 +8,7 @@
 namespace CyrToLat\Tests\Integration;
 
 use WC_Cache_Helper;
+use WC_Install;
 
 /**
  * Class WooCommerceGlobalAttributeIntegrationTest
@@ -15,7 +16,21 @@ use WC_Cache_Helper;
  * @group integration
  * @group woocommerce
  */
-class WooCommerceGlobalAttributeIntegrationTest extends WooCommerceIntegrationTestCase {
+class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
+
+	/**
+	 * WooCommerce plugin path relative to WP_PLUGIN_DIR.
+	 *
+	 * @var string
+	 */
+	protected static string $plugin = 'woocommerce/woocommerce.php';
+
+	/**
+	 * WooCommerce plugin file used when it is not under WP_PLUGIN_DIR.
+	 *
+	 * @var string
+	 */
+	protected static string $plugin_file = 'C:/laragon/www/test/wp-content/plugins/woocommerce/woocommerce.php';
 
 	/**
 	 * Set up an allowed admin request context.
@@ -23,7 +38,16 @@ class WooCommerceGlobalAttributeIntegrationTest extends WooCommerceIntegrationTe
 	 * @return void
 	 */
 	public function setUp(): void {
+		static::configure_woocommerce_plugin_file();
+
 		parent::setUp();
+
+		if ( ! function_exists( 'WC' ) || ! function_exists( 'wc_create_attribute' ) ) {
+			self::markTestSkipped( 'WooCommerce is not loaded in the integration test environment.' );
+		}
+
+		$this->install_woocommerce_tables();
+		$this->init_woocommerce();
 
 		set_current_screen( 'edit-tags' );
 		$this->delete_woocommerce_attribute_taxonomies();
@@ -169,6 +193,42 @@ class WooCommerceGlobalAttributeIntegrationTest extends WooCommerceIntegrationTe
 		self::assertTrue( $attribute_taxonomy_filter_was_called );
 
 		remove_filter( 'woocommerce_attribute_taxonomies', $spy );
+	}
+
+	/**
+	 * Configure an external WooCommerce plugin file from local env when present.
+	 *
+	 * @return void
+	 */
+	private static function configure_woocommerce_plugin_file(): void {
+		$plugin_file = getenv( 'CYR2LAT_WC_PLUGIN_FILE' );
+
+		if ( $plugin_file ) {
+			static::$plugin_file = $plugin_file;
+		}
+	}
+
+	/**
+	 * Install WooCommerce database tables needed by wc_create_attribute().
+	 *
+	 * @return void
+	 */
+	private function install_woocommerce_tables(): void {
+		if ( class_exists( WC_Install::class ) ) {
+			WC_Install::create_tables();
+			update_option( 'woocommerce_version', WC()->version );
+		}
+	}
+
+	/**
+	 * Initialize WooCommerce after activation in the already bootstrapped WordPress test process.
+	 *
+	 * @return void
+	 */
+	private function init_woocommerce(): void {
+		if ( ! did_action( 'woocommerce_init' ) ) {
+			WC()->init();
+		}
 	}
 
 	/**

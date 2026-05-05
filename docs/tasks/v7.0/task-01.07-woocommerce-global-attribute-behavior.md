@@ -16,11 +16,11 @@ Epic 1 - Behavior capture before refactor.
 
 Add behavior coverage for the current WooCommerce global attribute creation behavior and registered global attribute guard in `Main::sanitize_title()`.
 
-The WooCommerce integration test class uses a dedicated `WooCommerceIntegrationTestCase` layer that activates the real WooCommerce plugin for the test class and deactivates it after the class. The layer uses `woocommerce/woocommerce.php` from `WP_PLUGIN_DIR` when present, or an external local WooCommerce checkout from `CYR2LAT_WC_PLUGIN_FILE` / `C:/laragon/www/test/wp-content/plugins/woocommerce/woocommerce.php` for the local integration environment. Full WooCommerce CRUD/API coverage remains a later Epic 7 task.
+The WooCommerce integration test class uses a reusable `PluginWPTestCase` layer that activates the configured real WordPress plugin for the test class and deactivates it after the class. The WooCommerce test configures `woocommerce/woocommerce.php` and uses WooCommerce-specific setup for tables and initialization. It uses WooCommerce from `WP_PLUGIN_DIR` when present, or an external local checkout from `CYR2LAT_WC_PLUGIN_FILE` / `C:/laragon/www/test/wp-content/plugins/woocommerce/woocommerce.php` for the local integration environment. Full WooCommerce CRUD/API coverage remains a later Epic 7 task.
 
 ## Scope
 
-- Verify that WooCommerce is loaded as a real plugin for isolated WooCommerce integration tests when available.
+- Verify that WooCommerce is loaded as a real plugin for WooCommerce integration tests when available.
 - Verify that `wc_create_attribute()` with a Cyrillic name reaches WordPress' `sanitize_title` filter and currently stores the transliterated global attribute slug.
 - Verify that `wc_create_attribute()` with an explicit Cyrillic slug reaches WordPress' `sanitize_title` filter and currently stores the transliterated global attribute slug.
 - Verify that `wc_create_attribute()` preserves an explicit Latin/manual slug.
@@ -29,14 +29,14 @@ The WooCommerce integration test class uses a dedicated `WooCommerceIntegrationT
 ## Implemented Files
 
 - `tests/integration/bootstrap.php`
-- `tests/integration/WooCommerceIntegrationTestCase.php`
+- `tests/integration/PluginWPTestCase.php`
 - `tests/integration/WooCommerceGlobalAttributeIntegrationTest.php`
 
 ## Acceptance Criteria
 
 - Tests use WordPress' `sanitize_title()` filter path instead of calling `Main::sanitize_title()` directly.
 - Tests use real WooCommerce `wc_create_attribute()` for global attribute creation.
-- Tests load WooCommerce through a reusable integration test case layer instead of process-level isolation or local stubs.
+- Tests load WooCommerce through a reusable plugin integration test case layer instead of process-level isolation or local stubs.
 - Tests skip when WooCommerce is not available in the local integration environment.
 - Tests do not add Codeception or Playwright.
 - Unit tests and coding standards still pass.
