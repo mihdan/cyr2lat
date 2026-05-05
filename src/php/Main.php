@@ -573,22 +573,7 @@ class Main {
 	 * @return string
 	 */
 	protected function split_chinese_string( string $str, array $table ): string {
-		if ( ! $this->settings->is_chinese_locale() || mb_strlen( $str ) < 4 ) {
-			return $str;
-		}
-
-		$chars = Mbstring::mb_str_split( $str );
-		$str   = '';
-
-		foreach ( $chars as $char ) {
-			if ( isset( $table[ $char ] ) ) {
-				$str .= '-' . $char . '-';
-			} else {
-				$str .= $char;
-			}
-		}
-
-		return $str;
+		return ( new Transliterator( $this->settings ) )->split_chinese_string( $str, $table );
 	}
 
 	/**
@@ -601,9 +586,7 @@ class Main {
 	public function transliterate( string $str ): string {
 		$table = (array) apply_filters( 'ctl_table', $this->settings->get_table() );
 
-		$str = $this->split_chinese_string( $str, $table );
-
-		return ( new Transliterator() )->transliterate( $str, $table );
+		return ( new Transliterator( $this->settings ) )->transliterate( $str, $table );
 	}
 
 	/**
