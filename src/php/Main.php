@@ -246,7 +246,7 @@ class Main {
 
 		add_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9, 3 );
 		add_filter( 'sanitize_file_name', [ $this, 'sanitize_filename' ], 10, 2 );
-		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 2 );
+		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 4 );
 		add_filter( 'pre_insert_term', [ $this, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
 		add_filter( 'post_updated', [ $this, 'check_for_changed_slugs' ], 10, 3 );
 
@@ -615,13 +615,15 @@ class Main {
 	/**
 	 * Gutenberg support
 	 *
-	 * @param array|mixed $data    An array of slashed post data.
-	 * @param array|mixed $postarr An array of sanitized, but otherwise unmodified post data.
+	 * @param array|mixed $data                An array of slashed post data.
+	 * @param array|mixed $postarr             An array of sanitized, but otherwise unmodified post data.
+	 * @param array|mixed $unsanitized_postarr An array of slashed yet unsanitized and unprocessed post data.
+	 * @param bool        $update              Whether this is an existing post update.
 	 *
 	 * @return array|mixed
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function sanitize_post_name( $data, $postarr = [] ) {
+	public function sanitize_post_name( $data, $postarr = [], $unsanitized_postarr = [], bool $update = false ) {
 		global $current_screen;
 
 		if ( ! $this->is_gutenberg_editor_active() ) {
