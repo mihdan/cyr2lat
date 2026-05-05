@@ -773,6 +773,7 @@ For any future WooCommerce attribute migration tool:
 ### Epic 1 — Behavior capture before refactor
 
 - [ ] Add tests documenting current `Main::sanitize_title()` behavior.
+- [ ] Add integration tests infrastructure.
 - [ ] Add tests for post slug generation through `wp_insert_post_data`.
 - [ ] Add REST integration tests for Gutenberg/block-editor save paths.
 - [ ] Add tests for term slug generation through `pre_insert_term` / `sanitize_title` interaction.
