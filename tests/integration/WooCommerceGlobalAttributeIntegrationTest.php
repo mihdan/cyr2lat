@@ -8,37 +8,24 @@
 namespace CyrToLat\Tests\Integration;
 
 use WC_Cache_Helper;
-use WC_Install;
-use WP_UnitTestCase;
 
 /**
  * Class WooCommerceGlobalAttributeIntegrationTest
  *
  * @group integration
  * @group woocommerce
- *
- * @runTestsInSeparateProcesses
- * @preserveGlobalState disabled
  */
-class WooCommerceGlobalAttributeIntegrationTest extends WP_UnitTestCase {
+class WooCommerceGlobalAttributeIntegrationTest extends WooCommerceIntegrationTestCase {
 
 	/**
-	 * Set up an allowed admin request context with real WooCommerce loaded.
+	 * Set up an allowed admin request context.
 	 *
 	 * @return void
 	 */
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->load_woocommerce();
-
-		if ( ! function_exists( 'WC' ) || ! function_exists( 'wc_create_attribute' ) ) {
-			self::markTestSkipped( 'WooCommerce is not loaded in the integration test environment.' );
-		}
-
 		set_current_screen( 'edit-tags' );
-		$this->install_woocommerce_tables();
-		WC()->init();
 		$this->delete_woocommerce_attribute_taxonomies();
 		$this->reset_woocommerce_attribute_taxonomies();
 		cyr_to_lat()->init_all();
@@ -182,38 +169,6 @@ class WooCommerceGlobalAttributeIntegrationTest extends WP_UnitTestCase {
 		self::assertTrue( $attribute_taxonomy_filter_was_called );
 
 		remove_filter( 'woocommerce_attribute_taxonomies', $spy );
-	}
-
-	/**
-	 * Load the real WooCommerce plugin for this isolated test process.
-	 *
-	 * @return void
-	 */
-	private function load_woocommerce(): void {
-		if ( function_exists( 'WC' ) ) {
-			return;
-		}
-
-		$plugin_file = getenv( 'CYR2LAT_WC_PLUGIN_FILE' );
-		$plugin_file = $plugin_file && file_exists( $plugin_file )
-			? $plugin_file
-			: 'C:/laragon/www/test/wp-content/plugins/woocommerce/woocommerce.php';
-
-		if ( file_exists( $plugin_file ) ) {
-			require_once $plugin_file;
-		}
-	}
-
-	/**
-	 * Install WooCommerce database tables needed by wc_create_attribute().
-	 *
-	 * @return void
-	 */
-	private function install_woocommerce_tables(): void {
-		if ( class_exists( 'WC_Install' ) ) {
-			WC_Install::create_tables();
-			update_option( 'woocommerce_version', WC()->version );
-		}
 	}
 
 	/**

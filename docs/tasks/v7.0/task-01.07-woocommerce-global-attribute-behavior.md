@@ -16,7 +16,7 @@ Epic 1 - Behavior capture before refactor.
 
 Add behavior coverage for the current WooCommerce global attribute creation behavior and registered global attribute guard in `Main::sanitize_title()`.
 
-The WooCommerce integration test class loads a local real WooCommerce plugin in isolated processes from `CYR2LAT_WC_PLUGIN_FILE` when set, or from `C:/laragon/www/test/wp-content/plugins/woocommerce/woocommerce.php` when present. Full WooCommerce CRUD/API coverage remains a later Epic 7 task.
+The WooCommerce integration test class uses a dedicated `WooCommerceIntegrationTestCase` layer that activates the real WooCommerce plugin for the test class and deactivates it after the class. The layer uses `woocommerce/woocommerce.php` from `WP_PLUGIN_DIR` when present, or an external local WooCommerce checkout from `CYR2LAT_WC_PLUGIN_FILE` / `C:/laragon/www/test/wp-content/plugins/woocommerce/woocommerce.php` for the local integration environment. Full WooCommerce CRUD/API coverage remains a later Epic 7 task.
 
 ## Scope
 
@@ -29,12 +29,14 @@ The WooCommerce integration test class loads a local real WooCommerce plugin in 
 ## Implemented Files
 
 - `tests/integration/bootstrap.php`
+- `tests/integration/WooCommerceIntegrationTestCase.php`
 - `tests/integration/WooCommerceGlobalAttributeIntegrationTest.php`
 
 ## Acceptance Criteria
 
 - Tests use WordPress' `sanitize_title()` filter path instead of calling `Main::sanitize_title()` directly.
 - Tests use real WooCommerce `wc_create_attribute()` for global attribute creation.
+- Tests load WooCommerce through a reusable integration test case layer instead of process-level isolation or local stubs.
 - Tests skip when WooCommerce is not available in the local integration environment.
 - Tests do not add Codeception or Playwright.
 - Unit tests and coding standards still pass.
