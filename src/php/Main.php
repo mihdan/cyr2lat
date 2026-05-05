@@ -565,27 +565,6 @@ class Main {
 	}
 
 	/**
-	 * Fix string encoding on macOS.
-	 *
-	 * @param string $str   String.
-	 * @param array  $table Conversion table.
-	 *
-	 * @return string
-	 */
-	private function fix_mac_string( string $str, array $table ): string {
-		$fix_table = ConversionTables::get_fix_table_for_mac();
-
-		$fix = [];
-		foreach ( $fix_table as $key => $value ) {
-			if ( isset( $table[ $key ] ) ) {
-				$fix[ $value ] = $table[ $key ];
-			}
-		}
-
-		return strtr( $str, $fix );
-	}
-
-	/**
 	 * Split Chinese string by hyphens.
 	 *
 	 * @param string $str   String.
@@ -622,7 +601,6 @@ class Main {
 	public function transliterate( string $str ): string {
 		$table = (array) apply_filters( 'ctl_table', $this->settings->get_table() );
 
-		$str = $this->fix_mac_string( $str, $table );
 		$str = $this->split_chinese_string( $str, $table );
 
 		return ( new Transliterator() )->transliterate( $str, $table );

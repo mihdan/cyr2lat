@@ -52,4 +52,19 @@ class TransliteratorTest extends CyrToLatTestCase {
 
 		self::assertSame( '', $subject->transliterate( '', [ 'я' => 'ya' ] ) );
 	}
+
+	/**
+	 * Test transliterate() fixes macOS decomposed Cyrillic characters.
+	 *
+	 * @return void
+	 */
+	public function test_transliterate_fixes_mac_string(): void {
+		$subject = new Transliterator();
+		$table   = $this->get_conversion_table( 'ru_RU' );
+
+		self::assertSame(
+			'YO',
+			$subject->transliterate( urldecode( '%d0%95%cc%88' ), $table )
+		);
+	}
 }
