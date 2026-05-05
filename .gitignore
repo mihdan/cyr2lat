@@ -12,6 +12,9 @@ vendor/
 *.lock
 !yarn.lock
 .DS_Store
+.env
+.env.*
+!.env.example
 .phpcs.cache
 .phpunit.result.cache
 .pnp.*
