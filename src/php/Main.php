@@ -18,6 +18,7 @@ use CyrToLat\BackgroundProcesses\TermConversionProcess;
 use CyrToLat\Settings\Converter as SettingsConverter;
 use CyrToLat\Settings\SystemInfo as SettingsSystemInfo;
 use CyrToLat\Settings\Tables as SettingsTables;
+use CyrToLat\Transliteration\Transliterator;
 use JsonException;
 use Polylang;
 use SitePress;
@@ -624,7 +625,7 @@ class Main {
 		$str = $this->fix_mac_string( $str, $table );
 		$str = $this->split_chinese_string( $str, $table );
 
-		return strtr( $str, $table );
+		return ( new Transliterator() )->transliterate( $str, $table );
 	}
 
 	/**
