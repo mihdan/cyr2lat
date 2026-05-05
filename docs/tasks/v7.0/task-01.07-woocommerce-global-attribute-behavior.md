@@ -14,29 +14,29 @@ Epic 1 - Behavior capture before refactor.
 
 ## Goal
 
-Add behavior coverage for the current WooCommerce global attribute guard in `Main::sanitize_title()`.
+Add behavior coverage for the current WooCommerce global attribute creation behavior and registered global attribute guard in `Main::sanitize_title()`.
 
-The local WordPress integration environment does not currently include WooCommerce, so this task uses isolated minimal WooCommerce function stubs instead of adding WooCommerce as a required dependency. Full WooCommerce CRUD/API coverage remains a later Epic 7 task.
+The WooCommerce integration test class loads a local real WooCommerce plugin in isolated processes from `CYR2LAT_WC_PLUGIN_FILE` when set, or from `C:/laragon/www/test/wp-content/plugins/woocommerce/woocommerce.php` when present. Full WooCommerce CRUD/API coverage remains a later Epic 7 task.
 
 ## Scope
 
-- Verify that a registered global attribute taxonomy key such as `pa_цвет` is not transliterated by Cyr-To-Lat.
-- Verify that a registered global attribute name such as `цвет` is not transliterated by Cyr-To-Lat.
-- Verify that an unregistered Cyrillic value still transliterates normally.
-- Verify that an already-Latin registered global attribute taxonomy key is preserved.
-
-Because the tests call WordPress' real `sanitize_title()`, WordPress core still applies its own percent-encoding after Cyr-To-Lat declines to transliterate a registered Cyrillic attribute.
+- Verify that WooCommerce is loaded as a real plugin for isolated WooCommerce integration tests when available.
+- Verify that `wc_create_attribute()` with a Cyrillic name reaches WordPress' `sanitize_title` filter and currently stores the transliterated global attribute slug.
+- Verify that `wc_create_attribute()` with an explicit Cyrillic slug reaches WordPress' `sanitize_title` filter and currently stores the transliterated global attribute slug.
+- Verify that `wc_create_attribute()` preserves an explicit Latin/manual slug.
+- Verify that a registered global attribute taxonomy key such as `pa_czvet`, produced from a real WooCommerce global attribute, is checked against the WooCommerce attribute registry and preserved by Cyr-To-Lat.
 
 ## Implemented Files
 
-- `tests/integration/fixtures/woocommerce-global-functions.php`
+- `tests/integration/bootstrap.php`
 - `tests/integration/WooCommerceGlobalAttributeIntegrationTest.php`
 
 ## Acceptance Criteria
 
 - Tests use WordPress' `sanitize_title()` filter path instead of calling `Main::sanitize_title()` directly.
-- WooCommerce stubs are isolated from the rest of the integration suite.
-- Tests do not add Codeception, Playwright, or WooCommerce as required dependencies.
+- Tests use real WooCommerce `wc_create_attribute()` for global attribute creation.
+- Tests skip when WooCommerce is not available in the local integration environment.
+- Tests do not add Codeception or Playwright.
 - Unit tests and coding standards still pass.
 
 ## Verification
