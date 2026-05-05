@@ -71,4 +71,30 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 
 		self::assertSame( $data, $subject->filter_post_data( $data ) );
 	}
+
+	/**
+	 * Test filter_post_data() normalizes explicit Cyrillic post_name.
+	 *
+	 * @return void
+	 */
+	public function test_filter_post_data_normalizes_explicit_cyrillic_post_name(): void {
+		$subject = new PostSlugService();
+		$data    = [
+			'post_name'   => 'й',
+			'post_title'  => 'Title',
+			'post_status' => 'publish',
+		];
+
+		WP_Mock::userFunction(
+			'sanitize_title',
+			[
+				'args'   => [ 'й' ],
+				'return' => 'j',
+			]
+		);
+
+		$filtered = $subject->filter_post_data( $data );
+
+		self::assertSame( 'j', $filtered['post_name'] );
+	}
 }

@@ -36,6 +36,14 @@ class PostSlugService {
 			$data['post_name'] = sanitize_title( $data['post_title'] );
 		}
 
+		if (
+			! empty( $data['post_name'] ) &&
+			$this->has_non_ascii_chars( (string) $data['post_name'] ) &&
+			! $this->is_skipped_post_data( $data )
+		) {
+			$data['post_name'] = sanitize_title( $data['post_name'] );
+		}
+
 		return $data;
 	}
 
@@ -48,5 +56,16 @@ class PostSlugService {
 	 */
 	private function is_skipped_post_data( array $data ): bool {
 		return in_array( $data['post_status'] ?? '', [ 'auto-draft', 'revision' ], true );
+	}
+
+	/**
+	 * Whether the value contains non-ASCII characters.
+	 *
+	 * @param string $value Value.
+	 *
+	 * @return bool
+	 */
+	private function has_non_ascii_chars( string $value ): bool {
+		return (bool) preg_match( '/[^\x00-\x7F]/', $value );
 	}
 }
