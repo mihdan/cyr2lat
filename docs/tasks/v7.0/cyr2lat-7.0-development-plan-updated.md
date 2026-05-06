@@ -765,9 +765,10 @@ For any future WooCommerce attribute migration tool:
 - Require explicit admin action.
 - Show backup warning.
 - Dry-run first.
-- List affected products, variations, terms, lookup tables, and taxonomies.
+- In dry-run output, list affected products, variations, terms, WooCommerce attribute taxonomy rows, lookup tables, layered navigation data, and taxonomies.
 - Process in small batches.
 - Provide rollback metadata where realistic.
+- Keep the workflow separate from the existing post/term background converter.
 
 ## 8. Proposed Junie task breakdown
 
@@ -863,7 +864,7 @@ For any future WooCommerce attribute migration tool:
 - [x] Ensure background term converter uses `TermSlugService`.
 - [x] Preserve `ctl_post_types`.
 - [x] Decide whether WooCommerce attributes need a separate converter page section.
-- [ ] Add dry-run mode proposal for future attribute migrations.
+- [x] Add dry-run mode proposal for future attribute migrations.
 
 ### Epic 11 — Browser tests decision
 
