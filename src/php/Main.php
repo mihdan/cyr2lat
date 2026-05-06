@@ -345,7 +345,7 @@ class Main {
 			return $term;
 		}
 
-		return $this->is_wc_attribute( $title ) ? $title : $this->transliterate( $title );
+		return $this->is_wc_attribute( $title ) ? $title : strtolower( $this->transliterate( $title ) );
 	}
 
 	/**
@@ -365,6 +365,10 @@ class Main {
 	 * @return void
 	 */
 	public function woocommerce_after_template_part_filter(): void {
+		if ( $this->request->is_allowed() ) {
+			return;
+		}
+
 		remove_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9 );
 	}
 

@@ -844,7 +844,7 @@ For any future WooCommerce attribute migration tool:
 - [x] Support AJAX attribute save flow.
 - [x] Support full product save flow.
 - [x] Support WooCommerce REST/API product save flow.
-- [ ] Support frontend add-to-cart and cart session loading without broad `sanitize_title`.
+- [x] Support frontend add-to-cart and cart session loading without broad `sanitize_title`.
 - [ ] Add WooCommerce CRUD/API integration tests.
 
 ### Epic 9 — Legacy bridge reduction

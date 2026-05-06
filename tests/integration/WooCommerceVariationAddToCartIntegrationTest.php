@@ -117,11 +117,11 @@ class WooCommerceVariationAddToCartIntegrationTest extends PluginWPTestCase {
 	}
 
 	/**
-	 * Test current behavior: WooCommerce frontend add-to-cart rejects the rendered local attribute request key.
+	 * Test frontend add-to-cart accepts the rendered local attribute request key and survives session reload.
 	 *
 	 * @return void
 	 */
-	public function test_frontend_add_to_cart_currently_rejects_rendered_cyrillic_local_attribute_key(): void {
+	public function test_frontend_add_to_cart_accepts_rendered_cyrillic_local_attribute_key_and_session_reload(): void {
 		[ $product_id, $variation_id ] = $this->create_variable_product_with_cyrillic_local_attribute();
 		$request_key                   = $this->get_rendered_variation_attribute_request_key( $product_id );
 
@@ -138,10 +138,23 @@ class WooCommerceVariationAddToCartIntegrationTest extends PluginWPTestCase {
 		WC_Form_Handler::add_to_cart_action( false );
 
 		self::assertSame( 'attribute_czvet', $request_key );
-		self::assertSame( 1, wc_notice_count( 'error' ) );
-		$error_notices = wc_get_notices( 'error' );
-		self::assertSame( 'Цвет is a required field', $error_notices[0]['notice'] );
-		self::assertSame( 0, WC()->cart->get_cart_contents_count() );
+		self::assertSame( 0, wc_notice_count( 'error' ) );
+		self::assertEquals( 1, WC()->cart->get_cart_contents_count() );
+
+		$cart_item = $this->first_cart_item();
+
+		self::assertSame( $product_id, $cart_item['product_id'] );
+		self::assertSame( $variation_id, $cart_item['variation_id'] );
+		self::assertSame( 'Красный', $cart_item['variation']['attribute_czvet'] );
+
+		$this->reload_cart_from_session();
+
+		self::assertEquals( 1, WC()->cart->get_cart_contents_count() );
+
+		$cart_item = $this->first_cart_item();
+
+		self::assertSame( $variation_id, $cart_item['variation_id'] );
+		self::assertSame( 'Красный', $cart_item['variation']['attribute_czvet'] );
 	}
 
 	/**
@@ -187,6 +200,44 @@ class WooCommerceVariationAddToCartIntegrationTest extends PluginWPTestCase {
 		wc_load_cart();
 		WC()->cart->empty_cart();
 		wc_clear_notices();
+	}
+
+	/**
+	 * Reload cart from the WooCommerce session handler.
+	 *
+	 * @return void
+	 */
+	private function reload_cart_from_session(): void {
+		WC()->session->set( 'cart', WC()->cart->get_cart_for_session() );
+		WC()->cart->set_cart_contents( [] );
+
+		$this->cart_session()->get_cart_from_session();
+	}
+
+	/**
+	 * Get first cart item.
+	 *
+	 * @return array
+	 */
+	private function first_cart_item(): array {
+		$cart_items = WC()->cart->get_cart();
+
+		self::assertNotEmpty( $cart_items );
+
+		return reset( $cart_items );
+	}
+
+	/**
+	 * Get WooCommerce cart session handler.
+	 *
+	 * @return object
+	 */
+	private function cart_session() {
+		$getter = function () {
+			return $this->session;
+		};
+
+		return $getter->call( WC()->cart );
 	}
 
 	/**
