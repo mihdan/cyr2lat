@@ -869,7 +869,7 @@ For any future WooCommerce attribute migration tool:
 ### Epic 11 — Browser tests decision
 
 - [x] Do not add Playwright as a required dependency for 7.0.
-- [ ] Do not add Codeception as a required dependency for 7.0.
+- [x] Do not add Codeception as a required dependency for 7.0.
 - [ ] Use the standard WordPress PHPUnit integration suite for integration tests.
 - [ ] Document that Gutenberg coverage is provided by REST integration tests.
 - [ ] Document that WooCommerce coverage is provided by WooCommerce CRUD/API/admin-handler integration tests.

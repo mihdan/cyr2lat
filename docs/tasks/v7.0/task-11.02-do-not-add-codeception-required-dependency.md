@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned.
+Done.
 
 ## Parent plan
 
@@ -32,8 +32,13 @@ Keep Codeception out of the required 7.0 dependency set and avoid adding an acce
 
 ## Verification
 
-- Pending implementation.
+- Passed with the implementation commit:
+  - Documentation-only task; no build or PHPUnit run required.
+  - `vendor\bin\phpcs --standard=phpcs.xml docs\tasks\v7.0\task-11.02-do-not-add-codeception-required-dependency.md docs\tasks\v7.0\cyr2lat-7.0-development-plan-updated.md`
 
 ## Implementation notes
 
-- Pending implementation.
+- `composer.json` does not list Codeception as a project dependency.
+- No Codeception suite, bootstrap, command, or CI job was added for 7.0.
+- Existing Codeception references come from installed vendor package metadata/tests, not from Cyr-To-Lat required release infrastructure.
+- Required 7.0 integration coverage remains on WordPress PHPUnit and WooCommerce integration tests.
