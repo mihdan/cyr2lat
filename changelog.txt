@@ -1,3 +1,11 @@
+= 7.0.0 (XX.XX.2026) =
+* Refactored slug handling into explicit services for posts, terms, filenames, WooCommerce attributes, variation attributes, background conversion, and WP-CLI paths.
+* Improved Gutenberg coverage through REST/backend slug handling.
+* Improved WooCommerce support for product, taxonomy, global attribute, local attribute, variation, frontend cart, REST/API, and admin save flows.
+* Added the `ctl_enable_legacy_sanitize_title_bridge` compatibility filter for broad legacy `sanitize_title` behavior.
+* Documented that existing WooCommerce attributes are not automatically migrated in 7.0; future migration work must be a separate dry-run-first workflow.
+* Documented the backend-first testing strategy without required Codeception or Playwright release dependencies.
+
 = 6.8.0 (XX.XX.2026) =
 * Fixed returning unexpected results by REST API in some cases.
 * Fixed import of WooCommerce products.
