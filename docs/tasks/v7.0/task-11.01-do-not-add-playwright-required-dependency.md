@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned.
+Done.
 
 ## Parent plan
 
@@ -32,8 +32,13 @@ Keep Playwright out of the required 7.0 dependency set unless a UI-only regressi
 
 ## Verification
 
-- Pending implementation.
+- Passed with the implementation commit:
+  - Documentation-only task; no build or PHPUnit run required.
+  - `vendor\bin\phpcs --standard=phpcs.xml docs\tasks\v7.0\task-11.01-do-not-add-playwright-required-dependency.md docs\tasks\v7.0\cyr2lat-7.0-development-plan-updated.md`
 
 ## Implementation notes
 
-- Pending implementation.
+- `composer.json` does not list Playwright as a project dependency.
+- No Playwright package, browser download step, or CI browser job was added for 7.0.
+- The only current lock-file reference is `eslint-plugin-playwright`, which is an ESLint package reference rather than required Playwright browser-test infrastructure.
+- Required 7.0 coverage remains backend-first through unit, WordPress PHPUnit integration, REST, and WooCommerce integration tests.
