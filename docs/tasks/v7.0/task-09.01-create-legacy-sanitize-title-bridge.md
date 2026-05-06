@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned.
+Implemented.
 
 ## Parent plan
 
@@ -29,3 +29,14 @@ Introduce a dedicated bridge boundary for the remaining broad `sanitize_title` f
 - `Main` can delegate broad `sanitize_title` handling through the bridge.
 - Existing broad `sanitize_title` behavior remains unchanged before later Epic 9 reductions.
 - The service boundary is covered by targeted tests.
+
+## Implemented Files
+
+- `src/php/Slugs/LegacySanitizeTitleBridge.php`
+- `tests/unit/Slugs/LegacySanitizeTitleBridgeTest.php`
+
+## Verification
+
+- To be run with the implementation commit:
+  - `vendor\bin\phpunit tests\unit\Slugs\LegacySanitizeTitleBridgeTest.php`
+  - `vendor\bin\phpcs --standard=phpcs.xml src\php\Slugs\LegacySanitizeTitleBridge.php tests\unit\Slugs\LegacySanitizeTitleBridgeTest.php docs\tasks\v7.0\task-09.01-create-legacy-sanitize-title-bridge.md`
