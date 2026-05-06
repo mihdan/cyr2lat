@@ -26,6 +26,13 @@ class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
 	protected static string $plugin = 'woocommerce/woocommerce.php';
 
 	/**
+	 * Registered attribute taxonomies created by tests.
+	 *
+	 * @var string[]
+	 */
+	private array $registered_attribute_taxonomies = [];
+
+	/**
 	 * Set up an allowed admin request context.
 	 *
 	 * @return void
@@ -52,6 +59,26 @@ class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
 	 * @return void
 	 */
 	public function tearDown(): void {
+		foreach ( $this->registered_attribute_taxonomies as $taxonomy ) {
+			$term_ids = get_terms(
+				[
+					'taxonomy'   => $taxonomy,
+					'hide_empty' => false,
+					'fields'     => 'ids',
+				]
+			);
+
+			if ( ! is_wp_error( $term_ids ) ) {
+				foreach ( $term_ids as $term_id ) {
+					wp_delete_term( (int) $term_id, $taxonomy );
+				}
+			}
+
+			unregister_taxonomy( $taxonomy );
+		}
+
+		$this->registered_attribute_taxonomies = [];
+
 		$this->delete_woocommerce_attribute_taxonomies();
 		$this->reset_woocommerce_attribute_taxonomies();
 
@@ -291,6 +318,57 @@ class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
 	}
 
 	/**
+	 * Test that a global attribute term receives a transliterated slug from a Cyrillic name.
+	 *
+	 * @return void
+	 */
+	public function test_global_attribute_term_uses_sanitize_title_for_cyrillic_name(): void {
+		$taxonomy = $this->register_global_attribute_taxonomy();
+		$term     = wp_insert_term( 'й', $taxonomy );
+
+		$this->assertNotWPError( $term );
+		self::assertSame( 'j', get_term( $term['term_id'], $taxonomy )->slug );
+	}
+
+	/**
+	 * Test that a global attribute term normalizes an explicit Cyrillic slug.
+	 *
+	 * @return void
+	 */
+	public function test_global_attribute_term_transliterates_explicit_cyrillic_slug(): void {
+		$taxonomy = $this->register_global_attribute_taxonomy();
+		$term     = wp_insert_term(
+			'Manual',
+			$taxonomy,
+			[
+				'slug' => 'й',
+			]
+		);
+
+		$this->assertNotWPError( $term );
+		self::assertSame( 'j', get_term( $term['term_id'], $taxonomy )->slug );
+	}
+
+	/**
+	 * Test that a global attribute term preserves an explicit Latin slug.
+	 *
+	 * @return void
+	 */
+	public function test_global_attribute_term_preserves_explicit_latin_slug(): void {
+		$taxonomy = $this->register_global_attribute_taxonomy();
+		$term     = wp_insert_term(
+			'Manual',
+			$taxonomy,
+			[
+				'slug' => 'manual-slug',
+			]
+		);
+
+		$this->assertNotWPError( $term );
+		self::assertSame( 'manual-slug', get_term( $term['term_id'], $taxonomy )->slug );
+	}
+
+	/**
 	 * Install WooCommerce database tables needed by wc_create_attribute().
 	 *
 	 * @return void
@@ -333,6 +411,38 @@ class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
 	private function reset_woocommerce_attribute_taxonomies(): void {
 		delete_transient( 'wc_attribute_taxonomies' );
 		WC_Cache_Helper::invalidate_cache_group( 'woocommerce-attributes' );
+	}
+
+	/**
+	 * Register a WooCommerce global attribute taxonomy for term tests.
+	 *
+	 * @return string
+	 */
+	private function register_global_attribute_taxonomy(): string {
+		$attribute_id = wc_create_attribute(
+			[
+				'name' => 'Цвет',
+			]
+		);
+		$this->assertNotWPError( $attribute_id );
+		self::assertIsInt( $attribute_id );
+
+		$attribute = $this->get_woocommerce_attribute_taxonomy( $attribute_id );
+		$taxonomy  = wc_attribute_taxonomy_name( $attribute->attribute_name );
+
+		register_taxonomy(
+			$taxonomy,
+			'product',
+			[
+				'hierarchical' => true,
+				'label'        => $attribute->attribute_label,
+				'public'       => true,
+			]
+		);
+
+		$this->registered_attribute_taxonomies[] = $taxonomy;
+
+		return $taxonomy;
 	}
 
 	/**

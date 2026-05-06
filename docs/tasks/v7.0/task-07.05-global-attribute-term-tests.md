@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft for review.
+Implemented.
 
 ## Parent plan
 
@@ -24,11 +24,23 @@ Add integration coverage for terms created under WooCommerce global attribute ta
 - Verify explicit Cyrillic term slugs are normalized.
 - Verify explicit Latin term slugs are preserved.
 
+## Implementation summary
+
+- Added integration coverage for terms under a real WooCommerce global attribute taxonomy.
+- Covered Cyrillic term name transliteration under `pa_*` taxonomy.
+- Covered explicit Cyrillic term slug normalization under `pa_*` taxonomy.
+- Covered explicit Latin term slug preservation under `pa_*` taxonomy.
+
 ## Acceptance criteria
 
 - Tests run against real WordPress term APIs and WooCommerce attribute taxonomies.
 - Attribute term behavior is covered without converting existing `pa_*` taxonomies.
 - The existing non-attribute term slug coverage remains green.
+
+## Implemented Files
+
+- `tests/integration/WooCommerceGlobalAttributeIntegrationTest.php`
+- `docs/tasks/v7.0/task-07.05-global-attribute-term-tests.md`
 
 ## Verification
 
