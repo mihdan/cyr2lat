@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned.
+Done.
 
 ## Parent plan
 
@@ -32,6 +32,13 @@ Route existing term slug conversion through the explicit term slug service bound
 
 ## Verification
 
-- To be run with the implementation commit:
+- Passed with the implementation commit:
   - `vendor\bin\phpunit tests\unit\BackgroundProcesses\TermConversionProcessTest.php tests\unit\Slugs\TermSlugServiceTest.php`
   - `vendor\bin\phpcs --standard=phpcs.xml src\php\BackgroundProcesses\TermConversionProcess.php tests\unit\BackgroundProcesses\TermConversionProcessTest.php docs\tasks\v7.0\task-10.03-background-term-converter-uses-term-slug-service.md`
+
+## Implementation notes
+
+- `TermConversionProcess` now owns an injectable `TermSlugService` dependency.
+- The background task normalizes queued term slugs through `TermSlugService::filter_term_slug()`.
+- The default service keeps the existing `Main::transliterate()` callback for conversion output.
+- WPML/Polylang locale filters remain scoped around the service call.

@@ -15,6 +15,7 @@ namespace CyrToLat\Tests\Unit\BackgroundProcesses;
 
 use CyrToLat\Main;
 use CyrToLat\BackgroundProcesses\TermConversionProcess;
+use CyrToLat\Slugs\TermSlugService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;
@@ -55,8 +56,13 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 			'term_taxonomy_id' => 5,
 		];
 
-		$main = Mockery::mock( Main::class );
-		$main->shouldReceive( 'transliterate' )->with( $term_slug )->andReturn( $transliterated_slug );
+		$main              = Mockery::mock( Main::class );
+		$term_slug_service = Mockery::mock( TermSlugService::class );
+
+		$term_slug_service->shouldReceive( 'filter_term_slug' )
+			->with( $term_slug, [ $main, 'transliterate' ] )
+			->once()
+			->andReturn( $transliterated_slug );
 
 		if ( $transliterated_slug !== $term->slug ) {
 			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -71,7 +77,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 			[ 'return' => 'ru_RU' ]
 		);
 
-		$subject = Mockery::mock( TermConversionProcess::class, [ $main ] )->makePartial()
+		$subject = Mockery::mock( TermConversionProcess::class, [ $main, $term_slug_service ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();
 
 		$method = 'task';
@@ -141,6 +147,13 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction(
 			'set_site_transient',
+			[
+				'times' => 1,
+			]
+		);
+
+		WP_Mock::userFunction(
+			'delete_site_option',
 			[
 				'times' => 1,
 			]
