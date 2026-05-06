@@ -126,6 +126,18 @@ function my_ctl_pre_sanitize_title( $result, $title ) {
 add_filter( 'ctl_pre_sanitize_title', 10, 2 );
 `
 
+= How can I control the legacy sanitize_title bridge? =
+
+Version 7.0 uses explicit slug handlers for posts, terms, WooCommerce attributes, and other known save paths. A legacy `sanitize_title` bridge remains as a compatibility fallback for broad calls that older integrations may still rely on.
+
+You can disable the broad fallback with this code:
+
+`
+add_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
+`
+
+The filter receives the current default value, `$title`, `$raw_title`, and `$context`. Explicit known contexts, such as WordPress save handling, continue to use the dedicated 7.0 slug paths.
+
 = How can I define my own transliteration of filenames? =
 
 Add similar code to your theme's `functions.php` file:

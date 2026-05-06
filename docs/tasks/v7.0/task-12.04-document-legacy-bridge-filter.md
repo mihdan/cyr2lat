@@ -2,7 +2,7 @@
 
 ## Status
 
-To do.
+Done.
 
 ## Parent plan
 
@@ -32,8 +32,10 @@ Document the `ctl_enable_legacy_sanitize_title_bridge` filter and its role in th
 
 ## Verification
 
-- To be completed with the implementation commit.
+- `vendor\bin\phpcs --standard=phpcs.xml readme.txt docs\tasks\v7.0\task-12.04-document-legacy-bridge-filter.md docs\tasks\v7.0\cyr2lat-7.0-development-plan-updated.md`
 
 ## Implementation notes
 
-- To be completed with the implementation commit.
+- Added a `readme.txt` FAQ entry for `ctl_enable_legacy_sanitize_title_bridge`.
+- Documented the bridge as a compatibility fallback while explicit 7.0 slug handlers remain the preferred paths.
+- Included the disable snippet and documented the filter arguments at a high level.
