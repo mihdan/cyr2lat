@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft for review.
+Implemented.
 
 ## Parent plan
 
@@ -30,9 +30,21 @@ Ensure WooCommerce REST and CRUD product save flows normalize local and variatio
 - REST/API global attribute references remain unchanged.
 - Integration tests cover the supported API paths.
 
+## Covered path
+
+The integration suite covers the WooCommerce CRUD layer used by REST controllers after request parsing: `WC_Product_Simple`, `WC_Product_Variable`, and `WC_Product_Variation` objects are saved through WooCommerce data stores with explicit local and variation key normalization before persistence. Direct REST controller execution remains out of scope for the current lightweight integration suite, but the shared CRUD save path used by REST payloads is covered.
+
+## Implemented Files
+
+- `src/php/Main.php`
+- `src/php/Slugs/LocalAttributeService.php`
+- `src/php/Slugs/VariationAttributeService.php`
+- `tests/integration/WooCommerceLocalAttributeIntegrationTest.php`
+- `tests/integration/WooCommerceVariationAddToCartIntegrationTest.php`
+- `docs/tasks/v7.0/cyr2lat-7.0-development-plan-updated.md`
+
 ## Verification
 
-```bash
-vendor/bin/phpunit -c phpunit.integration.xml tests/integration/WooCommerceLocalAttributeIntegrationTest.php tests/integration/WooCommerceVariationAddToCartIntegrationTest.php
-composer phpcs
-```
+- `vendor\bin\phpunit -c phpunit.integration.xml tests\integration\WooCommerceLocalAttributeIntegrationTest.php`
+- `vendor\bin\phpunit -c phpunit.integration.xml tests\integration\WooCommerceVariationAddToCartIntegrationTest.php`
+- `vendor\bin\phpcs --standard=phpcs.xml src\php\Main.php src\php\Slugs\LocalAttributeService.php src\php\Slugs\VariationAttributeService.php tests\integration\WooCommerceLocalAttributeIntegrationTest.php tests\integration\WooCommerceVariationAddToCartIntegrationTest.php`
