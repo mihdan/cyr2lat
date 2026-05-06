@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned.
+Done.
 
 ## Parent plan
 
@@ -32,8 +32,13 @@ Document that Gutenberg/block-editor slug coverage for 7.0 is provided by REST i
 
 ## Verification
 
-- Pending implementation.
+- Passed with the implementation commit:
+  - Documentation-only task; no build or PHPUnit run required.
+  - `vendor\bin\phpcs --standard=phpcs.xml docs\tasks\v7.0\task-11.04-document-gutenberg-rest-coverage.md docs\tasks\v7.0\cyr2lat-7.0-development-plan-updated.md`
 
 ## Implementation notes
 
-- Pending implementation.
+- Gutenberg/block-editor saves are covered through REST integration tests that exercise WordPress REST requests.
+- This keeps the required 7.0 coverage on backend entry points where slug generation is persisted.
+- Browser-only Gutenberg smoke coverage remains optional future work, not a 7.0 dependency.
+- No Playwright or Codeception coverage was added for Gutenberg.
