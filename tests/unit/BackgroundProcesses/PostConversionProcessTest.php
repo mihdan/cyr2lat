@@ -16,6 +16,7 @@ namespace CyrToLat\Tests\Unit\BackgroundProcesses;
 
 use CyrToLat\Main;
 use CyrToLat\BackgroundProcesses\PostConversionProcess;
+use CyrToLat\Slugs\PostSlugService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use ReflectionException;
@@ -57,8 +58,19 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 		];
 		$decoded_post_name = urldecode( $post->post_name );
 
-		$main = Mockery::mock( Main::class );
-		$main->shouldReceive( 'transliterate' )->with( $decoded_post_name )->andReturn( $transliterated_name );
+		$main              = Mockery::mock( Main::class );
+		$post_slug_service = Mockery::mock( PostSlugService::class );
+		$post_data         = [
+			'ID'          => $post->ID,
+			'post_name'   => $post->post_name,
+			'post_status' => '',
+			'post_type'   => $post->post_type,
+		];
+
+		$post_slug_service->shouldReceive( 'filter_post_data' )
+			->with( $post_data, $post_data, $post_data, true )
+			->once()
+			->andReturn( [ 'post_name' => $transliterated_name ] );
 
 		if ( $transliterated_name !== $post->post_name ) {
 			WP_Mock::userFunction(
@@ -81,7 +93,7 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 			[ 'return' => 'ru_RU' ]
 		);
 
-		$subject = Mockery::mock( PostConversionProcess::class, [ $main ] )->makePartial()
+		$subject = Mockery::mock( PostConversionProcess::class, [ $main, $post_slug_service ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();
 		$method  = 'task';
 
@@ -139,10 +151,21 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 			'post_type' => 'attachment',
 		];
 
-		$main = Mockery::mock( Main::class );
-		$main->shouldReceive( 'transliterate' )->with( $post_name )->andReturn( $transliterated_name );
+		$main              = Mockery::mock( Main::class );
+		$post_slug_service = Mockery::mock( PostSlugService::class );
+		$post_data         = [
+			'ID'          => $post->ID,
+			'post_name'   => $post->post_name,
+			'post_status' => '',
+			'post_type'   => $post->post_type,
+		];
 
-		$subject = Mockery::mock( PostConversionProcess::class, [ $main ] )->makePartial()
+		$post_slug_service->shouldReceive( 'filter_post_data' )
+			->with( $post_data, $post_data, $post_data, true )
+			->once()
+			->andReturn( [ 'post_name' => $transliterated_name ] );
+
+		$subject = Mockery::mock( PostConversionProcess::class, [ $main, $post_slug_service ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();
 		$method  = 'task';
 
@@ -509,6 +532,13 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction(
 			'set_site_transient',
+			[
+				'times' => 1,
+			]
+		);
+
+		WP_Mock::userFunction(
+			'delete_site_option',
 			[
 				'times' => 1,
 			]
