@@ -755,6 +755,7 @@ Tasks:
 - No automatic destructive conversion of WooCommerce global attribute taxonomy slugs.
 - No automatic conversion of existing WooCommerce variation attribute keys unless a dedicated migration tool is added.
 - Existing background converter keeps current behavior by default.
+- Do not add a WooCommerce attributes converter page section to the 7.0 background converter.
 - Add a warning or help text explaining that old WooCommerce attributes created before Cyr-To-Lat may need manual or dedicated conversion.
 
 ### 7.6 Database safety
@@ -861,7 +862,7 @@ For any future WooCommerce attribute migration tool:
 - [x] Ensure background post converter uses `PostSlugService`.
 - [x] Ensure background term converter uses `TermSlugService`.
 - [x] Preserve `ctl_post_types`.
-- [ ] Decide whether WooCommerce attributes need a separate converter page section.
+- [x] Decide whether WooCommerce attributes need a separate converter page section.
 - [ ] Add dry-run mode proposal for future attribute migrations.
 
 ### Epic 11 — Browser tests decision
