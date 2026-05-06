@@ -9,6 +9,7 @@ namespace CyrToLat\Tests\Unit\Slugs;
 
 use CyrToLat\Slugs\TermSlugService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
 
 /**
@@ -65,6 +66,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	public function test_should_transliterate_on_pre_term_slug_filter_skips_tag_query_context(): void {
 		global $wp_query;
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$wp_query = (object) [
 			'query_vars' => [
 				'tag' => 'й',
@@ -78,5 +80,55 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 		self::assertFalse( $subject->should_transliterate_on_pre_term_slug_filter( 'й' ) );
 
 		unset( $GLOBALS['wp_query'] );
+	}
+
+	/**
+	 * Test should_transliterate_on_pre_term_slug_filter() allows multilingual term handling.
+	 *
+	 * @return void
+	 */
+	public function test_should_transliterate_on_pre_term_slug_filter_allows_multilingual_plugins(): void {
+		global $wp_query;
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wp_query = (object) [
+			'query_vars' => [
+				'tag' => 'й',
+			],
+		];
+
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( true );
+		FunctionMocker::replace(
+			'class_exists',
+			static function ( string $class_name ): bool {
+				return 'Polylang' === $class_name;
+			}
+		);
+
+		$subject = new TermSlugService();
+
+		self::assertTrue( $subject->should_transliterate_on_pre_term_slug_filter( 'й' ) );
+
+		unset( $GLOBALS['wp_query'] );
+	}
+
+	/**
+	 * Test maybe_preserve_existing_encoded_slug() returns title on frontend with SitePress.
+	 *
+	 * @return void
+	 */
+	public function test_maybe_preserve_existing_encoded_slug_returns_title_on_frontend_with_sitepress(): void {
+		FunctionMocker::replace(
+			'class_exists',
+			static function ( string $class_name ): bool {
+				return 'SitePress' === $class_name;
+			}
+		);
+
+		$subject = new TermSlugService();
+		$subject->pre_insert_term_filter( 'й', 'category' );
+
+		self::assertSame( 'й', $subject->maybe_preserve_existing_encoded_slug( 'й', true ) );
+		self::assertFalse( $subject->is_term_context() );
 	}
 }

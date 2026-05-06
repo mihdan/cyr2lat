@@ -187,6 +187,7 @@ class TermSlugService {
 				$prepared_in .= ',';
 			}
 
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$prepared_in .= "'" . $wpdb->prepare( $format, $item ) . "'";
 		}
 
