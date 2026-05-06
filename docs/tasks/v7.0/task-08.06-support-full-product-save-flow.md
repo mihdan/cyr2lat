@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft for review.
+Implemented.
 
 ## Parent plan
 
@@ -30,9 +30,20 @@ Ensure full WooCommerce product save requests normalize local and variation attr
 - Global attributes keep their registered taxonomy names.
 - Integration tests cover the full product save path.
 
+## Covered path
+
+Full WooCommerce product save coverage is provided through CRUD-backed `WC_Product_Simple`, `WC_Product_Variable`, and `WC_Product_Variation` saves. The shared `woocommerce_before_product_object_save` hook normalizes local product attribute keys and local variation keys before WooCommerce data stores persist `_product_attributes` and `attribute_*` meta.
+
+## Implemented Files
+
+- `src/php/Main.php`
+- `src/php/Slugs/LocalAttributeService.php`
+- `src/php/Slugs/VariationAttributeService.php`
+- `tests/integration/WooCommerceLocalAttributeIntegrationTest.php`
+- `tests/integration/WooCommerceVariationAddToCartIntegrationTest.php`
+- `docs/tasks/v7.0/cyr2lat-7.0-development-plan-updated.md`
+
 ## Verification
 
-```bash
-vendor/bin/phpunit -c phpunit.integration.xml tests/integration/WooCommerceLocalAttributeIntegrationTest.php tests/integration/WooCommerceVariationAddToCartIntegrationTest.php
-composer phpcs
-```
+- `vendor\bin\phpunit -c phpunit.integration.xml tests\integration\WooCommerceLocalAttributeIntegrationTest.php tests\integration\WooCommerceVariationAddToCartIntegrationTest.php`
+- `vendor\bin\phpcs --standard=phpcs.xml src\php\Main.php src\php\Slugs\LocalAttributeService.php src\php\Slugs\VariationAttributeService.php tests\integration\WooCommerceLocalAttributeIntegrationTest.php tests\integration\WooCommerceVariationAddToCartIntegrationTest.php`
