@@ -16,9 +16,11 @@ Converts Cyrillic characters in post, page, and term slugs to Latin characters. 
 
 = Features =
 * The only plugin with a fully editable transliteration table. Allows adding/removing and editing pairs like 'Я' => 'Ya', or even 'Пиво' => 'Beer'
-* Converts any number of existing post, page, and term slugs in background processes
+* Converts post, page, custom post type, and term slugs through explicit WordPress save and REST/Gutenberg paths
+* Converts any number of existing post, page, and term slugs in background processes or with WP-CLI
 * Saves existing post and page permalinks integrity
 * Performs transliteration of attachment file names
+* Supports WooCommerce product, product taxonomy, global attribute, local attribute, variation, and frontend cart slug flows without automatic migration of existing attributes
 * The plugin supports Russian, Belorussian, Ukrainian, Bulgarian, Macedonian, Serbian, Greek, Armenian, Georgian, Kazakh, Hebrew, and Chinese characters
 * [Has many advantages over similar plugins](https://kagg.eu/en/the-benefits-of-cyr-to-lat/)
 * [Officially compatible with WPML](https://wpml.org/plugin/cyr-to-lat/)

@@ -2,7 +2,7 @@
 
 ## Status
 
-To do.
+Done.
 
 ## Parent plan
 
@@ -32,8 +32,9 @@ Update the WordPress.org-facing feature list so it reflects the 7.0 architecture
 
 ## Verification
 
-- To be completed with the implementation commit.
+- `vendor\bin\phpcs --standard=phpcs.xml readme.txt docs\tasks\v7.0\task-12.01-update-readme-feature-list.md docs\tasks\v7.0\cyr2lat-7.0-development-plan-updated.md`
 
 ## Implementation notes
 
-- To be completed with the implementation commit.
+- Updated the `readme.txt` feature list to mention explicit WordPress save, REST/Gutenberg, background, WP-CLI, filename, and WooCommerce slug flows.
+- Kept WooCommerce wording conservative: 7.0 supports current explicit flows but does not automatically migrate existing attributes.
