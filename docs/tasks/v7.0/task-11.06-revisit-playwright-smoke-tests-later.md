@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned.
+Done.
 
 ## Parent plan
 
@@ -32,8 +32,13 @@ Document that optional Playwright smoke tests should be revisited only after a r
 
 ## Verification
 
-- Pending implementation.
+- Passed with the implementation commit:
+  - Documentation-only task; no build or PHPUnit run required.
+  - `vendor\bin\phpcs --standard=phpcs.xml docs\tasks\v7.0\task-11.06-revisit-playwright-smoke-tests-later.md docs\tasks\v7.0\cyr2lat-7.0-development-plan-updated.md`
 
 ## Implementation notes
 
-- Pending implementation.
+- Optional Playwright smoke tests are deferred until there is a real UI-only bug that cannot be reproduced through backend entry points.
+- Potential future smoke cases remain non-release-blocking examples rather than required 7.0 work.
+- Backend-first coverage remains the required strategy for 7.0.
+- No Playwright package, configuration, browser download, or CI job was added.

@@ -873,7 +873,7 @@ For any future WooCommerce attribute migration tool:
 - [x] Use the standard WordPress PHPUnit integration suite for integration tests.
 - [x] Document that Gutenberg coverage is provided by REST integration tests.
 - [x] Document that WooCommerce coverage is provided by WooCommerce CRUD/API/admin-handler integration tests.
-- [ ] Revisit optional Playwright smoke tests only after a real UI-only bug is identified.
+- [x] Revisit optional Playwright smoke tests only after a real UI-only bug is identified.
 
 ### Epic 12 — Documentation and release preparation
 
