@@ -892,15 +892,6 @@ class Main {
 	 * @return bool
 	 */
 	protected function transliterate_on_pre_term_slug_filter( string $title ): bool {
-		global $wp_query;
-
-		$tag_var = $wp_query->query_vars['tag'] ?? null;
-
-		return ! (
-			$tag_var === $title &&
-			doing_filter( 'pre_term_slug' ) &&
-			// Transliterate on pre_term_slug with Polylang and WPML only.
-			! ( class_exists( 'Polylang' ) || class_exists( 'SitePress' ) )
-		);
+		return $this->term_slug_service()->should_transliterate_on_pre_term_slug_filter( $title );
 	}
 }

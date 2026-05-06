@@ -9,6 +9,7 @@ namespace CyrToLat\Tests\Unit\Slugs;
 
 use CyrToLat\Slugs\TermSlugService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use WP_Mock;
 
 /**
  * Class TermSlugServiceTest
@@ -54,5 +55,28 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 		self::assertSame( $args, $subject->get_terms_args_filter( $args, [ 'category', 'post_tag' ] ) );
 		self::assertTrue( $subject->is_term_context() );
 		self::assertSame( [ 'category', 'post_tag' ], $subject->taxonomies() );
+	}
+
+	/**
+	 * Test should_transliterate_on_pre_term_slug_filter() skips tag query context.
+	 *
+	 * @return void
+	 */
+	public function test_should_transliterate_on_pre_term_slug_filter_skips_tag_query_context(): void {
+		global $wp_query;
+
+		$wp_query = (object) [
+			'query_vars' => [
+				'tag' => 'й',
+			],
+		];
+
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( true );
+
+		$subject = new TermSlugService();
+
+		self::assertFalse( $subject->should_transliterate_on_pre_term_slug_filter( 'й' ) );
+
+		unset( $GLOBALS['wp_query'] );
 	}
 }

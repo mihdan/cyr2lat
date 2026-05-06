@@ -141,6 +141,26 @@ class TermSlugService {
 	}
 
 	/**
+	 * Check if we should transliterate the tag on pre_term_slug filter.
+	 *
+	 * @param string $title Title.
+	 *
+	 * @return bool
+	 */
+	public function should_transliterate_on_pre_term_slug_filter( string $title ): bool {
+		global $wp_query;
+
+		$tag_var = $wp_query->query_vars['tag'] ?? null;
+
+		return ! (
+			$tag_var === $title &&
+			doing_filter( 'pre_term_slug' ) &&
+			// Transliterate on pre_term_slug with Polylang and WPML only.
+			! ( class_exists( 'Polylang' ) || class_exists( 'SitePress' ) )
+		);
+	}
+
+	/**
 	 * Changes an array of items into a string of items, separated by comma and sql-escaped.
 	 *
 	 * @param mixed|array $items  Item(s) to be joined into string.
