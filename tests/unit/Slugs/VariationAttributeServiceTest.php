@@ -77,4 +77,38 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 			$subject->encoded_local_variation_request_keys( 'Цвет' )
 		);
 	}
+
+	/**
+	 * Test normalize_variation_attribute_key().
+	 *
+	 * @return void
+	 */
+	public function test_normalize_variation_attribute_key(): void {
+		$subject = new VariationAttributeService();
+
+		self::assertSame( 'czvet', $subject->normalize_variation_attribute_key( 'Цвет', [ $this, 'normalize_key' ] ) );
+		self::assertSame( 'czvet', $subject->normalize_variation_attribute_key( 'attribute_Цвет', [ $this, 'normalize_key' ] ) );
+		self::assertSame( 'czvet', $subject->normalize_variation_attribute_key( '%D1%86%D0%B2%D0%B5%D1%82', [ $this, 'normalize_key' ] ) );
+		self::assertSame( 'pa_color', $subject->normalize_variation_attribute_key( 'attribute_pa_color', [ $this, 'normalize_key' ] ) );
+	}
+
+	/**
+	 * Normalize key.
+	 *
+	 * @param string $key Key.
+	 *
+	 * @return string
+	 */
+	public function normalize_key( string $key ): string {
+		return strtr(
+			$key,
+			[
+				'Ц' => 'CZ',
+				'ц' => 'cz',
+				'в' => 'v',
+				'е' => 'e',
+				'т' => 't',
+			]
+		);
+	}
 }

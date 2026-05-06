@@ -102,6 +102,21 @@ class WooCommerceVariationAddToCartIntegrationTest extends PluginWPTestCase {
 	}
 
 	/**
+	 * Test that variation save normalizes Cyrillic local attribute meta keys.
+	 *
+	 * @return void
+	 */
+	public function test_variation_save_normalizes_cyrillic_local_attribute_meta_key(): void {
+		[ , $variation_id ] = $this->create_variable_product_with_cyrillic_local_attribute( 'Цвет' );
+
+		$variation = new WC_Product_Variation( $variation_id );
+
+		self::assertArrayHasKey( 'czvet', $variation->get_attributes( 'edit' ) );
+		self::assertSame( 'Красный', get_post_meta( $variation_id, 'attribute_czvet', true ) );
+		self::assertSame( '', get_post_meta( $variation_id, 'attribute_Цвет', true ) );
+	}
+
+	/**
 	 * Test current behavior: WooCommerce frontend add-to-cart rejects the rendered local attribute request key.
 	 *
 	 * @return void
@@ -192,9 +207,11 @@ class WooCommerceVariationAddToCartIntegrationTest extends PluginWPTestCase {
 	/**
 	 * Create a variable product with a Cyrillic local attribute and one variation.
 	 *
+	 * @param string $variation_attribute_key Variation attribute key.
+	 *
 	 * @return array{int, int}
 	 */
-	private function create_variable_product_with_cyrillic_local_attribute(): array {
+	private function create_variable_product_with_cyrillic_local_attribute( string $variation_attribute_key = 'czvet' ): array {
 		$attribute = new WC_Product_Attribute();
 		$attribute->set_id( 0 );
 		$attribute->set_name( 'Цвет' );
@@ -216,7 +233,7 @@ class WooCommerceVariationAddToCartIntegrationTest extends PluginWPTestCase {
 		$variation->set_regular_price( '10' );
 		$variation->set_attributes(
 			[
-				'czvet' => 'Красный',
+				$variation_attribute_key => 'Красный',
 			]
 		);
 

@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft for review.
+Implemented.
 
 ## Parent plan
 
@@ -30,9 +30,16 @@ Normalize WooCommerce variation attribute meta keys explicitly so variation matc
 - Variation matching remains compatible with normalized parent product attribute keys.
 - Integration tests cover variation metadata after save.
 
+## Implemented Files
+
+- `src/php/Main.php`
+- `src/php/Slugs/VariationAttributeService.php`
+- `tests/unit/Slugs/VariationAttributeServiceTest.php`
+- `tests/integration/WooCommerceVariationAddToCartIntegrationTest.php`
+- `docs/tasks/v7.0/cyr2lat-7.0-development-plan-updated.md`
+
 ## Verification
 
-```bash
-vendor/bin/phpunit -c phpunit.integration.xml tests/integration/WooCommerceVariationAddToCartIntegrationTest.php
-composer phpcs
-```
+- `vendor\bin\phpunit tests\unit\Slugs\VariationAttributeServiceTest.php`
+- `vendor\bin\phpunit -c phpunit.integration.xml tests\integration\WooCommerceVariationAddToCartIntegrationTest.php --filter test_variation_save_normalizes_cyrillic_local_attribute_meta_key`
+- `vendor\bin\phpcs --standard=phpcs.xml src\php\Main.php src\php\Slugs\VariationAttributeService.php tests\unit\Slugs\VariationAttributeServiceTest.php tests\integration\WooCommerceVariationAddToCartIntegrationTest.php`

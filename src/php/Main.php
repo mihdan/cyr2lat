@@ -24,6 +24,7 @@ use CyrToLat\Slugs\LocalAttributeService;
 use CyrToLat\Slugs\OldSlugRedirectService;
 use CyrToLat\Slugs\PostSlugService;
 use CyrToLat\Slugs\TermSlugService;
+use CyrToLat\Slugs\VariationAttributeService;
 use CyrToLat\Transliteration\Transliterator;
 use JsonException;
 use Polylang;
@@ -116,6 +117,13 @@ class Main {
 	 * @var LocalAttributeService|null
 	 */
 	private ?LocalAttributeService $local_attribute_service = null;
+
+	/**
+	 * Variation attribute service.
+	 *
+	 * @var VariationAttributeService|null
+	 */
+	private ?VariationAttributeService $variation_attribute_service = null;
 
 	/**
 	 * Polylang locale.
@@ -392,6 +400,7 @@ class Main {
 	 */
 	public function normalize_wc_product_attribute_keys( $product ): void {
 		$this->local_attribute_service()->normalize_product_attributes( $product, [ $this, 'transliterate' ] );
+		$this->variation_attribute_service()->normalize_variation_attributes( $product, [ $this, 'transliterate' ] );
 	}
 
 	// @codeCoverageIgnoreStart
@@ -479,10 +488,23 @@ class Main {
 	 */
 	private function local_attribute_service(): LocalAttributeService {
 		if ( null === $this->local_attribute_service ) {
-			$this->local_attribute_service = new LocalAttributeService();
+			$this->local_attribute_service = new LocalAttributeService( $this->variation_attribute_service() );
 		}
 
 		return $this->local_attribute_service;
+	}
+
+	/**
+	 * Get variation attribute service.
+	 *
+	 * @return VariationAttributeService
+	 */
+	private function variation_attribute_service(): VariationAttributeService {
+		if ( null === $this->variation_attribute_service ) {
+			$this->variation_attribute_service = new VariationAttributeService();
+		}
+
+		return $this->variation_attribute_service;
 	}
 
 	/**
