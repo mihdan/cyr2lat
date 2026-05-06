@@ -410,6 +410,87 @@ class ConverterTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test convert_existing_slugs() preserves ctl_post_types.
+	 */
+	public function test_convert_existing_slugs_preserves_ctl_post_types(): void {
+		global $wpdb;
+
+		$main              = Mockery::mock( Main::class );
+		$settings          = Mockery::mock( Settings::class );
+		$process_all_posts = Mockery::mock( PostConversionProcess::class );
+		$process_all_terms = Mockery::mock( TermConversionProcess::class );
+		$admin_notices     = Mockery::mock( AdminNotices::class );
+
+		$subject = new Converter(
+			$main,
+			$settings,
+			$process_all_posts,
+			$process_all_terms,
+			$admin_notices
+		);
+
+		$post_types             = [ 'post', 'page', 'notification' ];
+		$convertible_post_types = [ 'post', 'page', 'product' ];
+		$filtered_post_types    = [ 'page' ];
+		$post_statuses          = [ 'publish' ];
+		$post_statuses_in       = "'publish'";
+		$post_types_in          = "'page'";
+		$defaults               = [
+			'post_type'   => $filtered_post_types,
+			'post_status' => $post_statuses,
+		];
+
+		FunctionMocker::replace( '\CyrToLat\Settings\Converter::get_convertible_post_types', $convertible_post_types );
+
+		$settings->shouldReceive( 'get' )->with( 'background_post_types' )->andReturn( $post_types );
+		$settings->shouldReceive( 'get' )->with( 'background_post_statuses' )->andReturn( $post_statuses );
+
+		WP_Mock::onFilter( 'ctl_post_types' )
+			->with( array_intersect( $convertible_post_types, $post_types ) )
+			->reply( $filtered_post_types );
+
+		WP_Mock::userFunction( 'wp_parse_args' )->with( [], $defaults )->andReturn( $defaults );
+
+		$main->shouldReceive( 'prepare_in' )->with( $post_statuses )->once()->andReturn( $post_statuses_in );
+		$main->shouldReceive( 'prepare_in' )->with( $filtered_post_types )->once()->andReturn( $post_types_in );
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wpdb                = Mockery::mock( wpdb::class );
+		$wpdb->posts         = 'wp_posts';
+		$wpdb->terms         = 'wp_terms';
+		$wpdb->term_taxonomy = 'wp_term_taxonomy';
+
+		$regexp = $subject::ALLOWED_CHARS_REGEX;
+
+		$post_query = "SELECT ID, post_name, post_type FROM $wpdb->posts " .
+			'WHERE LOWER(post_name) NOT REGEXP(%s) ' .
+			"AND (post_status IN ($post_statuses_in) AND post_type IN ($post_types_in))";
+		$term_query =
+			"SELECT t.term_id, slug, tt.taxonomy, tt.term_taxonomy_id FROM $wpdb->terms t, $wpdb->term_taxonomy tt
+					WHERE LOWER(t.slug) NOT REGEXP(%s) AND tt.taxonomy NOT REGEXP ('^pa_.*$') AND tt.term_id = t.term_id";
+
+		$post_query_prepared = str_replace( '%s', "'" . $subject::ALLOWED_CHARS_REGEX . "'", $post_query );
+		$term_query_prepared = str_replace( '%s', "'" . $subject::ALLOWED_CHARS_REGEX . "'", $term_query );
+
+		$wpdb->shouldReceive( 'prepare' )->with( '%s', $regexp )->once()
+			->andReturn( "'" . $subject::ALLOWED_CHARS_REGEX . "'" );
+		$wpdb->shouldReceive( 'prepare' )->with( $term_query, $regexp )->once()->andReturn( $term_query_prepared );
+		$wpdb->shouldReceive( 'get_results' )->with( $post_query_prepared )->once()->andReturn( null );
+		$wpdb->shouldReceive( 'get_results' )->with( $term_query_prepared )->once()->andReturn( null );
+
+		$admin_notices->shouldReceive( 'add_notice' )->with(
+			'Cyr To Lat has not found existing post slugs for conversion.',
+			'notice notice-info is-dismissible'
+		);
+		$admin_notices->shouldReceive( 'add_notice' )->with(
+			'Cyr To Lat has not found existing term slugs for conversion.',
+			'notice notice-info is-dismissible'
+		);
+
+		$subject->convert_existing_slugs();
+	}
+
+	/**
 	 * Test log()
 	 *
 	 * @param boolean $debug Is WP_DEBUG_LOG on.

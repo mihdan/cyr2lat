@@ -860,7 +860,7 @@ For any future WooCommerce attribute migration tool:
 - [x] Keep `wp cyr2lat regenerate` command stable.
 - [x] Ensure background post converter uses `PostSlugService`.
 - [x] Ensure background term converter uses `TermSlugService`.
-- [ ] Preserve `ctl_post_types`.
+- [x] Preserve `ctl_post_types`.
 - [ ] Decide whether WooCommerce attributes need a separate converter page section.
 - [ ] Add dry-run mode proposal for future attribute migrations.
 

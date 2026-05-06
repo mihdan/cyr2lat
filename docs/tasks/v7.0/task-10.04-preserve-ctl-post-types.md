@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned.
+Done.
 
 ## Parent plan
 
@@ -32,6 +32,13 @@ Ensure background conversion and WP-CLI regeneration continue to honor the publi
 
 ## Verification
 
-- To be run with the implementation commit:
+- Passed with the implementation commit:
   - `vendor\bin\phpunit tests\unit\ConverterTest.php tests\unit\Settings\ConverterTest.php`
   - `vendor\bin\phpcs --standard=phpcs.xml src\php\Converter.php tests\unit\ConverterTest.php docs\tasks\v7.0\task-10.04-preserve-ctl-post-types.md`
+
+## Implementation notes
+
+- Added explicit unit coverage for the converter path that starts from `wp cyr2lat regenerate` or admin conversion.
+- The test verifies that `ctl_post_types` receives the settings/convertible post type intersection.
+- The filtered post type list is then passed into SQL query preparation.
+- No runtime behavior was changed.
