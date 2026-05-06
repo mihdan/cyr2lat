@@ -21,6 +21,7 @@ use CyrToLat\Settings\Tables as SettingsTables;
 use CyrToLat\Slugs\FilenameService;
 use CyrToLat\Slugs\OldSlugRedirectService;
 use CyrToLat\Slugs\PostSlugService;
+use CyrToLat\Slugs\TermSlugService;
 use CyrToLat\Transliteration\Transliterator;
 use JsonException;
 use Polylang;
@@ -94,18 +95,11 @@ class Main {
 	protected ?ACF $acf = null;
 
 	/**
-	 * Flag showing that we are processing a term.
+	 * Term slug service.
 	 *
-	 * @var bool
+	 * @var TermSlugService|null
 	 */
-	private bool $is_term = false;
-
-	/**
-	 * Taxonomies saved in pre_insert_term or get_terms_args filter.
-	 *
-	 * @var string[]
-	 */
-	private array $taxonomies = [];
+	private ?TermSlugService $term_slug_service = null;
 
 	/**
 	 * Polylang locale.
@@ -301,8 +295,6 @@ class Main {
 	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
 	public function sanitize_title( $title, $raw_title = '', $context = '' ) {
-		global $wpdb;
-
 		if (
 			! $title ||
 			// Fix the bug with `_wp_old_slug` redirect.
@@ -319,34 +311,13 @@ class Main {
 			return $pre;
 		}
 
-		if ( $this->is_term ) {
-			// Make sure we search in the db only once being called from wp_insert_term().
-			$this->is_term = false;
+		$term = $this->term_slug_service()->maybe_preserve_existing_encoded_slug(
+			$title,
+			(bool) $this->is_frontend
+		);
 
-			// Fix a case when showing previously created categories in cyrillic with WPML.
-			if ( $this->is_frontend && class_exists( SitePress::class ) ) {
-				return $title;
-			}
-
-			$sql = $wpdb->prepare(
-				"SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
-							ON t.term_id = tt.term_id
-							WHERE t.slug = %s",
-				rawurlencode( $title )
-			);
-
-			if ( $this->taxonomies ) {
-				$sql .= ' AND tt.taxonomy IN (' . $this->prepare_in( $this->taxonomies ) . ')';
-			}
-
-			// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$term = $wpdb->get_var( $sql );
-			// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
-
-			if ( ! empty( $term ) ) {
-				return $term;
-			}
+		if ( false !== $term ) {
+			return $term;
 		}
 
 		return $this->is_wc_attribute( $title ) ? $title : $this->transliterate( $title );
@@ -638,18 +609,7 @@ class Main {
 	 * @return string|int|WP_Error
 	 */
 	public function pre_insert_term_filter( $term, string $taxonomy ) {
-		if (
-			0 === $term ||
-			is_wp_error( $term ) ||
-			'' === trim( $term )
-		) {
-			return $term;
-		}
-
-		$this->is_term    = true;
-		$this->taxonomies = [ $taxonomy ];
-
-		return $term;
+		return $this->term_slug_service()->pre_insert_term_filter( $term, $taxonomy );
 	}
 
 	/**
@@ -661,10 +621,20 @@ class Main {
 	 * @return array|mixed
 	 */
 	public function get_terms_args_filter( $args, array $taxonomies ) {
-		$this->is_term    = true;
-		$this->taxonomies = $taxonomies;
+		return $this->term_slug_service()->get_terms_args_filter( $args, $taxonomies );
+	}
 
-		return $args;
+	/**
+	 * Get term slug service.
+	 *
+	 * @return TermSlugService
+	 */
+	private function term_slug_service(): TermSlugService {
+		if ( null === $this->term_slug_service ) {
+			$this->term_slug_service = new TermSlugService( [ $this, 'prepare_in' ] );
+		}
+
+		return $this->term_slug_service;
 	}
 
 	/**

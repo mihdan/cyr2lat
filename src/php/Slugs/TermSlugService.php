@@ -13,6 +13,13 @@ namespace CyrToLat\Slugs;
 class TermSlugService {
 
 	/**
+	 * Prepare IN callback.
+	 *
+	 * @var callable|null
+	 */
+	private $prepare_in;
+
+	/**
 	 * Term context flag.
 	 *
 	 * @var bool
@@ -25,6 +32,15 @@ class TermSlugService {
 	 * @var string[]
 	 */
 	private array $taxonomies = [];
+
+	/**
+	 * Constructor.
+	 *
+	 * @param callable|null $prepare_in Prepare IN callback.
+	 */
+	public function __construct( $prepare_in = null ) {
+		$this->prepare_in = is_callable( $prepare_in ) ? $prepare_in : null;
+	}
 
 	/**
 	 * Whether a term context is active.
@@ -42,5 +58,118 @@ class TermSlugService {
 	 */
 	public function taxonomies(): array {
 		return $this->taxonomies;
+	}
+
+	/**
+	 * Filters a term before it is sanitized and inserted into the database.
+	 *
+	 * @param string|int|mixed $term     The term name to add.
+	 * @param string           $taxonomy Taxonomy slug.
+	 *
+	 * @return string|int|mixed
+	 */
+	public function pre_insert_term_filter( $term, string $taxonomy ) {
+		if (
+			0 === $term ||
+			( function_exists( 'is_wp_error' ) && is_wp_error( $term ) ) ||
+			'' === trim( $term )
+		) {
+			return $term;
+		}
+
+		$this->is_term    = true;
+		$this->taxonomies = [ $taxonomy ];
+
+		return $term;
+	}
+
+	/**
+	 * Filters the term query arguments.
+	 *
+	 * @param array|mixed $args       An array of get_terms() arguments.
+	 * @param string[]    $taxonomies An array of taxonomy names.
+	 *
+	 * @return array|mixed
+	 */
+	public function get_terms_args_filter( $args, array $taxonomies ) {
+		$this->is_term    = true;
+		$this->taxonomies = $taxonomies;
+
+		return $args;
+	}
+
+	/**
+	 * Preserve existing encoded term slug when current context requires it.
+	 *
+	 * @param string $title       Title.
+	 * @param bool   $is_frontend Whether current request is frontend.
+	 *
+	 * @return false|string
+	 */
+	public function maybe_preserve_existing_encoded_slug( string $title, bool $is_frontend ) {
+		global $wpdb;
+
+		if ( ! $this->is_term ) {
+			return false;
+		}
+
+		// Make sure we search in the db only once being called from wp_insert_term().
+		$this->is_term = false;
+
+		// Fix a case when showing previously created categories in cyrillic with WPML.
+		if ( $is_frontend && class_exists( 'SitePress' ) ) {
+			return $title;
+		}
+
+		$sql = $wpdb->prepare(
+			"SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
+							ON t.term_id = tt.term_id
+							WHERE t.slug = %s",
+			rawurlencode( $title )
+		);
+
+		if ( $this->taxonomies ) {
+			$sql .= ' AND tt.taxonomy IN (' . $this->prepare_in( $this->taxonomies ) . ')';
+		}
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$term = $wpdb->get_var( $sql );
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
+
+		return ! empty( $term ) ? $term : false;
+	}
+
+	/**
+	 * Changes an array of items into a string of items, separated by comma and sql-escaped.
+	 *
+	 * @param mixed|array $items  Item(s) to be joined into string.
+	 * @param string      $format %s or %d.
+	 *
+	 * @return string
+	 */
+	private function prepare_in( $items, string $format = '%s' ): string {
+		if ( $this->prepare_in ) {
+			if ( '%s' === $format ) {
+				return (string) call_user_func( $this->prepare_in, $items );
+			}
+
+			return (string) call_user_func( $this->prepare_in, $items, $format );
+		}
+
+		global $wpdb;
+
+		$prepared_in = '';
+		$items       = (array) $items;
+
+		foreach ( $items as $item ) {
+			if ( $prepared_in ) {
+				$prepared_in .= ',';
+			}
+
+			$prepared_in .= "'" . $wpdb->prepare( $format, $item ) . "'";
+		}
+
+		return $prepared_in;
 	}
 }
