@@ -837,7 +837,7 @@ For any future WooCommerce attribute migration tool:
 
 ### Epic 8 — WooCommerce local and variation attributes
 
-- [ ] Create `LocalAttributeService`.
+- [x] Create `LocalAttributeService`.
 - [ ] Create `VariationAttributeService` if separation is cleaner.
 - [ ] Normalize saved local product attribute keys explicitly.
 - [ ] Normalize variation attribute keys explicitly.

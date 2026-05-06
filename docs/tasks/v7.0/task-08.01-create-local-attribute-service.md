@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft for review.
+Implemented.
 
 ## Parent plan
 
@@ -30,9 +30,15 @@ Create a dedicated service boundary for WooCommerce local product attribute dete
 - Existing local attribute behavior is preserved.
 - Unit tests cover the service boundary.
 
+## Implemented Files
+
+- `src/php/Slugs/LocalAttributeService.php`
+- `src/php/Main.php`
+- `tests/unit/Slugs/LocalAttributeServiceTest.php`
+- `tests/unit/Slugs/TestLocalAttributeService.php`
+
 ## Verification
 
-```bash
-vendor/bin/phpunit tests/unit/Slugs/LocalAttributeServiceTest.php
-composer phpcs
-```
+- `vendor\bin\phpunit tests\unit\Slugs\LocalAttributeServiceTest.php`
+- `vendor\bin\phpunit tests\unit\Slugs\GlobalAttributeServiceTest.php`
+- `vendor\bin\phpcs --standard=phpcs.xml src\php\Slugs\LocalAttributeService.php src\php\Main.php tests\unit\Slugs\LocalAttributeServiceTest.php tests\unit\Slugs\TestLocalAttributeService.php`

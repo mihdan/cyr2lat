@@ -20,6 +20,7 @@ use CyrToLat\Settings\SystemInfo as SettingsSystemInfo;
 use CyrToLat\Settings\Tables as SettingsTables;
 use CyrToLat\Slugs\FilenameService;
 use CyrToLat\Slugs\GlobalAttributeService;
+use CyrToLat\Slugs\LocalAttributeService;
 use CyrToLat\Slugs\OldSlugRedirectService;
 use CyrToLat\Slugs\PostSlugService;
 use CyrToLat\Slugs\TermSlugService;
@@ -108,6 +109,13 @@ class Main {
 	 * @var GlobalAttributeService|null
 	 */
 	private ?GlobalAttributeService $global_attribute_service = null;
+
+	/**
+	 * Local attribute service.
+	 *
+	 * @var LocalAttributeService|null
+	 */
+	private ?LocalAttributeService $local_attribute_service = null;
 
 	/**
 	 * Polylang locale.
@@ -371,62 +379,7 @@ class Main {
 	 * @return bool
 	 */
 	protected function is_local_attribute( string $title ): bool {
-		// Global attribute.
-		if ( 0 === strpos( $title, 'pa_' ) ) {
-			return false;
-		}
-
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
-
-		$action = (string) filter_input( INPUT_POST, 'action', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-
-		if ( 'woocommerce_do_ajax_product_import' === $action ) {
-			return false;
-		}
-
-		// The `save attributes` action.
-		if ( 'woocommerce_save_attributes' === $action ) {
-			$data            = (string) filter_input( INPUT_POST, 'data', FILTER_SANITIZE_URL );
-			$attributes      = $this->wp_parse_str( urldecode( $data ) );
-			$attribute_names = $attributes['attribute_names'] ?? [];
-
-			return in_array( $title, $attribute_names, true );
-		}
-
-		// The `edit post` action.
-		if ( 'editpost' === $action ) {
-			$attribute_names = array_map(
-				'sanitize_text_field',
-				(array) wp_unslash( $_POST['attribute_names'] ?? [] )
-			);
-
-			return in_array( $title, $attribute_names, true );
-		}
-
-		if ( doing_action( 'woocommerce_variable_add_to_cart' ) ) {
-			$attributes = $GLOBALS['product']->get_attributes();
-
-			$encoded_attr_name = strtolower( rawurlencode( mb_strtolower( $title ) ) );
-
-			if ( isset( $attributes[ $encoded_attr_name ] ) ) {
-				return true;
-			}
-
-			return false;
-		}
-
-		if ( did_action( 'woocommerce_load_cart_from_session' ) ) {
-			return true;
-		}
-
-		$attr_name = str_replace( 'attribute_', '', mb_strtolower( $title ) );
-		$attr_name = 'attribute_' . $attr_name;
-
-		$encoded_attr_name = rawurlencode( $attr_name );
-
-		return isset( $_POST[ $encoded_attr_name ] ) || isset( $_POST[ strtolower( $encoded_attr_name ) ] );
-
-		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		return $this->local_attribute_service()->is_local_attribute( $title, [ $this, 'wp_parse_str' ] );
 	}
 
 	// @codeCoverageIgnoreStart
@@ -505,6 +458,19 @@ class Main {
 		}
 
 		return $this->global_attribute_service;
+	}
+
+	/**
+	 * Get local attribute service.
+	 *
+	 * @return LocalAttributeService
+	 */
+	private function local_attribute_service(): LocalAttributeService {
+		if ( null === $this->local_attribute_service ) {
+			$this->local_attribute_service = new LocalAttributeService();
+		}
+
+		return $this->local_attribute_service;
 	}
 
 	/**
