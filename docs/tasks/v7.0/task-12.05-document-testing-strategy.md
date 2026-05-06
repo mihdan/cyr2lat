@@ -2,7 +2,7 @@
 
 ## Status
 
-To do.
+Done.
 
 ## Parent plan
 
@@ -32,8 +32,10 @@ Document the required 7.0 testing strategy for contributors and release preparat
 
 ## Verification
 
-- To be completed with the implementation commit.
+- `vendor\bin\phpcs --standard=phpcs.xml docs\testing-strategy-7.0.md docs\tasks\v7.0\task-12.05-document-testing-strategy.md docs\tasks\v7.0\cyr2lat-7.0-development-plan-updated.md`
 
 ## Implementation notes
 
-- To be completed with the implementation commit.
+- Added `docs/testing-strategy-7.0.md` as contributor/release-facing testing documentation.
+- Documented required unit, WordPress PHPUnit integration, REST integration, WooCommerce integration, and PHPCS layers.
+- Documented that Codeception and Playwright are not required 7.0 release dependencies.

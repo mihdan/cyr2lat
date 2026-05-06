@@ -881,7 +881,7 @@ For any future WooCommerce attribute migration tool:
 - [x] Add upgrade notes for 7.0.
 - [x] Document WooCommerce attribute limitations clearly.
 - [x] Document legacy bridge filter.
-- [ ] Document testing strategy: unit, WordPress PHPUnit integration, REST integration, WooCommerce integration, no required Codeception, no required Playwright.
+- [x] Document testing strategy: unit, WordPress PHPUnit integration, REST integration, WooCommerce integration, no required Codeception, no required Playwright.
 - [ ] Add changelog entry.
 - [ ] Test with WordPress latest and WooCommerce latest.
 
