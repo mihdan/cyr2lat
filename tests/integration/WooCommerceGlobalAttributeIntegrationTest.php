@@ -151,6 +151,110 @@ class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
 	}
 
 	/**
+	 * Test that WooCommerce update preserves a slug when only the label changes.
+	 *
+	 * @return void
+	 */
+	public function test_wc_update_attribute_preserves_slug_when_only_name_changes(): void {
+		$attribute_id = wc_create_attribute(
+			[
+				'name' => 'Цвет',
+			]
+		);
+		$this->assertNotWPError( $attribute_id );
+		self::assertIsInt( $attribute_id );
+
+		$updated_id = wc_update_attribute(
+			$attribute_id,
+			[
+				'name' => 'Размер',
+			]
+		);
+
+		$this->assertNotWPError( $updated_id );
+		self::assertSame( $attribute_id, $updated_id );
+
+		$attribute = $this->get_woocommerce_attribute_taxonomy( $attribute_id );
+
+		self::assertSame( 'czvet', $attribute->attribute_name );
+		self::assertSame( 'Размер', $attribute->attribute_label );
+	}
+
+	/**
+	 * Test that WooCommerce update normalizes an explicit Cyrillic slug.
+	 *
+	 * @return void
+	 */
+	public function test_wc_update_attribute_uses_sanitize_title_for_explicit_cyrillic_slug(): void {
+		$sanitize_title_calls = [];
+		$attribute_id         = wc_create_attribute(
+			[
+				'name' => 'Material',
+				'slug' => 'material',
+			]
+		);
+		$this->assertNotWPError( $attribute_id );
+		self::assertIsInt( $attribute_id );
+
+		$spy        = $this->add_sanitize_title_spy( $sanitize_title_calls );
+		$updated_id = wc_update_attribute(
+			$attribute_id,
+			[
+				'name' => 'Материал',
+				'slug' => 'новый-материал',
+			]
+		);
+		remove_filter( 'sanitize_title', $spy, 1 );
+
+		$this->assertNotWPError( $updated_id );
+		self::assertSame( $attribute_id, $updated_id );
+
+		$attribute = $this->get_woocommerce_attribute_taxonomy( $attribute_id );
+
+		self::assertContains(
+			[
+				'title'     => 'новый-материал',
+				'raw_title' => 'новый-материал',
+				'context'   => 'save',
+			],
+			$sanitize_title_calls
+		);
+		self::assertSame( 'novyj-material', $attribute->attribute_name );
+		self::assertSame( 'Материал', $attribute->attribute_label );
+	}
+
+	/**
+	 * Test that WooCommerce update preserves an explicit Latin slug.
+	 *
+	 * @return void
+	 */
+	public function test_wc_update_attribute_preserves_explicit_latin_slug(): void {
+		$attribute_id = wc_create_attribute(
+			[
+				'name' => 'Цвет',
+			]
+		);
+		$this->assertNotWPError( $attribute_id );
+		self::assertIsInt( $attribute_id );
+
+		$updated_id = wc_update_attribute(
+			$attribute_id,
+			[
+				'name' => 'Колір',
+				'slug' => 'color-ua',
+			]
+		);
+
+		$this->assertNotWPError( $updated_id );
+		self::assertSame( $attribute_id, $updated_id );
+
+		$attribute = $this->get_woocommerce_attribute_taxonomy( $attribute_id );
+
+		self::assertSame( 'color-ua', $attribute->attribute_name );
+		self::assertSame( 'Колір', $attribute->attribute_label );
+	}
+
+	/**
 	 * Test that a registered global attribute taxonomy key is not transliterated by Cyr-To-Lat.
 	 *
 	 * @return void
