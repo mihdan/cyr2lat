@@ -19,6 +19,7 @@ use CyrToLat\Settings\Converter as SettingsConverter;
 use CyrToLat\Settings\SystemInfo as SettingsSystemInfo;
 use CyrToLat\Settings\Tables as SettingsTables;
 use CyrToLat\Slugs\FilenameService;
+use CyrToLat\Slugs\GlobalAttributeService;
 use CyrToLat\Slugs\OldSlugRedirectService;
 use CyrToLat\Slugs\PostSlugService;
 use CyrToLat\Slugs\TermSlugService;
@@ -100,6 +101,13 @@ class Main {
 	 * @var TermSlugService|null
 	 */
 	private ?TermSlugService $term_slug_service = null;
+
+	/**
+	 * Global attribute service.
+	 *
+	 * @var GlobalAttributeService|null
+	 */
+	private ?GlobalAttributeService $global_attribute_service = null;
 
 	/**
 	 * Polylang locale.
@@ -352,15 +360,7 @@ class Main {
 	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	protected function is_wc_attribute_taxonomy( string $title ): bool {
-		$title = preg_replace( '/^pa_/', '', $title );
-
-		foreach ( wc_get_attribute_taxonomies() as $attribute_taxonomy ) {
-			if ( $title === $attribute_taxonomy->attribute_name ) {
-				return true;
-			}
-		}
-
-		return false;
+		return $this->global_attribute_service()->is_attribute_taxonomy( $title );
 	}
 
 	/**
@@ -487,15 +487,24 @@ class Main {
 	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	protected function is_wc_attribute( string $title ): bool {
-		if ( ! function_exists( 'WC' ) ) {
-			return false;
+		return $this->global_attribute_service()->should_preserve_attribute_title(
+			$title,
+			[ $this, 'is_local_attribute' ],
+			[ $this, 'is_wc_product_not_converted_attribute' ]
+		);
+	}
+
+	/**
+	 * Get global attribute service.
+	 *
+	 * @return GlobalAttributeService
+	 */
+	private function global_attribute_service(): GlobalAttributeService {
+		if ( null === $this->global_attribute_service ) {
+			$this->global_attribute_service = new GlobalAttributeService();
 		}
 
-		return (
-			$this->is_wc_attribute_taxonomy( $title ) ||
-			$this->is_local_attribute( $title ) ||
-			$this->is_wc_product_not_converted_attribute( $title )
-		);
+		return $this->global_attribute_service;
 	}
 
 	/**
