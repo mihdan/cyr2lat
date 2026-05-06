@@ -2,7 +2,7 @@
 
 ## Status
 
-To do.
+Done.
 
 ## Parent plan
 
@@ -32,8 +32,10 @@ Document the WooCommerce attribute support boundaries and known limitations for 
 
 ## Verification
 
-- To be completed with the implementation commit.
+- `vendor\bin\phpcs --standard=phpcs.xml readme.txt docs\tasks\v7.0\task-12.03-document-woocommerce-attribute-limitations.md docs\tasks\v7.0\cyr2lat-7.0-development-plan-updated.md`
 
 ## Implementation notes
 
-- To be completed with the implementation commit.
+- Added a WooCommerce FAQ entry to `readme.txt`.
+- Documented supported new/update flows for product slugs, product taxonomies, global attributes, local attributes, variation attributes, frontend cart handling, REST/API saves, and admin saves.
+- Documented that existing global `pa_*`, local product attribute keys, and variation attribute keys are not automatically migrated during plugin upgrade.

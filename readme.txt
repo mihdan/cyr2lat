@@ -212,6 +212,12 @@ Where
   `-post_type` is a list of post types,
   `-post_status` is a list of post statuses.
 
+= What WooCommerce attribute behavior is supported in 7.0? =
+
+Cyr-To-Lat 7.0 explicitly handles new and updated WooCommerce product slugs, product category and tag slugs, global attribute slugs, global attribute term slugs, local product attribute keys, variation attribute keys, frontend add-to-cart requests, cart session loading, REST/API saves, and admin save flows.
+
+Existing WooCommerce attributes are not automatically migrated during plugin upgrade. This means existing global `pa_*` taxonomies, local product attribute keys, and variation attribute keys keep their current stored values until you intentionally change them. A future migration tool should be separate and dry-run-first so store owners can review the impact before any rewrite.
+
 = How can I regenerate thumbnails safely? =
 
 Regeneration of thumbnails with the command `wp media regenerate` can break links in old posts as file names become transliterated.
