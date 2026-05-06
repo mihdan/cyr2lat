@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft for review.
+Implemented.
 
 ## Parent plan
 
@@ -30,9 +30,22 @@ Consolidate WooCommerce CRUD/API integration coverage for local and variation at
 - Regression tests prove Latin and global attribute keys are preserved.
 - The Epic 8 test suite is documented in the task verification section.
 
+## Covered Tests
+
+- `WooCommerceLocalAttributeIntegrationTest` covers CRUD saves for Cyrillic local keys, Latin local keys, and explicit persistence without the broad `sanitize_title` bridge.
+- `WooCommerceVariationAddToCartIntegrationTest` covers variable product/variation CRUD saves, normalized local variation meta keys, frontend add-to-cart, and cart session reload.
+- `WooCommerceGlobalAttributeIntegrationTest` remains the regression suite for preserving registered `pa_*` global attribute identifiers from Epic 7.
+
+## Implemented Files
+
+- `tests/integration/WooCommerceLocalAttributeIntegrationTest.php`
+- `tests/integration/WooCommerceVariationAddToCartIntegrationTest.php`
+- `tests/integration/WooCommerceGlobalAttributeIntegrationTest.php`
+- `docs/tasks/v7.0/cyr2lat-7.0-development-plan-updated.md`
+
 ## Verification
 
-```bash
-vendor/bin/phpunit -c phpunit.integration.xml tests/integration/WooCommerceLocalAttributeIntegrationTest.php tests/integration/WooCommerceVariationAddToCartIntegrationTest.php
-composer phpcs
-```
+- `vendor\bin\phpunit -c phpunit.integration.xml tests\integration\WooCommerceLocalAttributeIntegrationTest.php`
+- `vendor\bin\phpunit -c phpunit.integration.xml tests\integration\WooCommerceVariationAddToCartIntegrationTest.php`
+- `vendor\bin\phpunit -c phpunit.integration.xml tests\integration\WooCommerceGlobalAttributeIntegrationTest.php`
+- `composer phpcs`
