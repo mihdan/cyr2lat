@@ -9,6 +9,7 @@ namespace CyrToLat\Tests\Integration;
 
 use WC_Cache_Helper;
 use WC_Install;
+use WC_Query;
 
 /**
  * Class WooCommerceGlobalAttributeIntegrationTest
@@ -84,6 +85,9 @@ class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
 
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		unset( $GLOBALS['current_screen'] );
+		$_GET = [];
+
+		WC_Query::reset_chosen_attributes();
 
 		parent::tearDown();
 	}
@@ -366,6 +370,32 @@ class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
 
 		$this->assertNotWPError( $term );
 		self::assertSame( 'manual-slug', get_term( $term['term_id'], $taxonomy )->slug );
+	}
+
+	/**
+	 * Test that frontend layered navigation keeps registered global attribute taxonomy and term slugs.
+	 *
+	 * @return void
+	 */
+	public function test_frontend_layered_nav_preserves_global_attribute_taxonomy_and_term_slug(): void {
+		$taxonomy = $this->register_global_attribute_taxonomy();
+		$term     = wp_insert_term( 'й', $taxonomy );
+
+		$this->assertNotWPError( $term );
+		self::assertSame( 'j', get_term( $term['term_id'], $taxonomy )->slug );
+		self::assertSame( 'pa_czvet', sanitize_title( $taxonomy ) );
+
+		$_GET = [
+			'filter_czvet'     => 'j',
+			'query_type_czvet' => 'or',
+		];
+		WC_Query::reset_chosen_attributes();
+
+		$chosen_attributes = WC_Query::get_layered_nav_chosen_attributes();
+
+		self::assertArrayHasKey( $taxonomy, $chosen_attributes );
+		self::assertSame( [ 'j' ], $chosen_attributes[ $taxonomy ]['terms'] );
+		self::assertSame( 'or', $chosen_attributes[ $taxonomy ]['query_type'] );
 	}
 
 	/**
