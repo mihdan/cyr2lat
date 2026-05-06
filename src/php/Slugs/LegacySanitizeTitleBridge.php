@@ -48,6 +48,20 @@ class LegacySanitizeTitleBridge {
 	private $is_wc_attribute;
 
 	/**
+	 * Development logging gate callback.
+	 *
+	 * @var callable|null
+	 */
+	private $is_development_logging_enabled;
+
+	/**
+	 * Unknown bridge call logger callback.
+	 *
+	 * @var callable|null
+	 */
+	private $unknown_call_logger;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param TermSlugService $term_slug_service                   Term slug service.
@@ -55,19 +69,25 @@ class LegacySanitizeTitleBridge {
 	 * @param callable        $transliterate                       Transliteration callback.
 	 * @param callable        $should_transliterate_pre_term_slug  Whether pre_term_slug should be transliterated callback.
 	 * @param callable        $is_wc_attribute                     WooCommerce attribute preservation callback.
+	 * @param callable|null   $is_development_logging_enabled      Development logging gate callback.
+	 * @param callable|null   $unknown_call_logger                 Unknown bridge call logger callback.
 	 */
 	public function __construct(
 		TermSlugService $term_slug_service,
 		bool $is_frontend,
 		callable $transliterate,
 		callable $should_transliterate_pre_term_slug,
-		callable $is_wc_attribute
+		callable $is_wc_attribute,
+		$is_development_logging_enabled = null,
+		$unknown_call_logger = null
 	) {
 		$this->term_slug_service                  = $term_slug_service;
 		$this->is_frontend                        = $is_frontend;
 		$this->transliterate                      = $transliterate;
 		$this->should_transliterate_pre_term_slug = $should_transliterate_pre_term_slug;
 		$this->is_wc_attribute                    = $is_wc_attribute;
+		$this->is_development_logging_enabled     = $is_development_logging_enabled;
+		$this->unknown_call_logger                = $unknown_call_logger;
 	}
 
 	/**
@@ -110,8 +130,56 @@ class LegacySanitizeTitleBridge {
 			return $term;
 		}
 
-		return call_user_func( $this->is_wc_attribute, $title )
-			? $title
-			: call_user_func( $this->transliterate, $title );
+		if ( call_user_func( $this->is_wc_attribute, $title ) ) {
+			return $title;
+		}
+
+		$this->maybe_log_unknown_call( $title, $raw_title, $context );
+
+		return call_user_func( $this->transliterate, $title );
+	}
+
+	/**
+	 * Maybe log an unknown broad bridge call.
+	 *
+	 * @param string       $title     Sanitized title.
+	 * @param string|mixed $raw_title The title prior to sanitization.
+	 * @param string|mixed $context   The context for which the title is being sanitized.
+	 *
+	 * @return void
+	 */
+	private function maybe_log_unknown_call( string $title, $raw_title, $context ): void {
+		if ( ! $this->is_development_logging_enabled() ) {
+			return;
+		}
+
+		$message = sprintf(
+			'Cyr To Lat legacy sanitize_title bridge handled an unknown call: context="%s", title_hash="%s", raw_title_hash="%s".',
+			is_scalar( $context ) ? (string) $context : gettype( $context ),
+			md5( $title ),
+			md5( is_scalar( $raw_title ) ? (string) $raw_title : gettype( $raw_title ) )
+		);
+
+		if ( is_callable( $this->unknown_call_logger ) ) {
+			call_user_func( $this->unknown_call_logger, $message );
+
+			return;
+		}
+
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		error_log( $message );
+	}
+
+	/**
+	 * Whether development logging is enabled.
+	 *
+	 * @return bool
+	 */
+	private function is_development_logging_enabled(): bool {
+		if ( is_callable( $this->is_development_logging_enabled ) ) {
+			return (bool) call_user_func( $this->is_development_logging_enabled );
+		}
+
+		return defined( 'WP_DEBUG' ) && WP_DEBUG;
 	}
 }

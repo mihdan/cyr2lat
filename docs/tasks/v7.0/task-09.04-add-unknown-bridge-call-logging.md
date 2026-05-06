@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned.
+Implemented.
 
 ## Parent plan
 
@@ -29,3 +29,14 @@ Add development-only diagnostics for unknown broad `sanitize_title` bridge calls
 - Logging is disabled unless development/debug conditions are active.
 - Unknown broad bridge calls can be diagnosed from the log context.
 - Tests cover the logging gate or pure decision logic.
+
+## Implemented Files
+
+- `src/php/Slugs/LegacySanitizeTitleBridge.php`
+- `tests/unit/Slugs/LegacySanitizeTitleBridgeTest.php`
+
+## Verification
+
+- To be run with the implementation commit:
+  - `vendor\bin\phpunit tests\unit\Slugs\LegacySanitizeTitleBridgeTest.php`
+  - `vendor\bin\phpcs --standard=phpcs.xml src\php\Slugs\LegacySanitizeTitleBridge.php tests\unit\Slugs\LegacySanitizeTitleBridgeTest.php docs\tasks\v7.0\task-09.04-add-unknown-bridge-call-logging.md`

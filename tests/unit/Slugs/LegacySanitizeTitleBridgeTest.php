@@ -86,13 +86,45 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test sanitize_title() logs unknown calls only when development logging is enabled.
+	 *
+	 * @return void
+	 */
+	public function test_sanitize_title_logs_unknown_call_when_development_logging_is_enabled(): void {
+		$messages = [];
+		$subject  = $this->get_subject(
+			false,
+			static function (): bool {
+				return true;
+			},
+			static function ( string $message ) use ( &$messages ): void {
+				$messages[] = $message;
+			}
+		);
+
+		WP_Mock::onFilter( 'ctl_enable_legacy_sanitize_title_bridge' )->with( true, 'цвет', '', '' )->reply( true );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, 'цвет' )->reply( false );
+
+		self::assertSame( 'Cvet', $subject->sanitize_title( 'цвет' ) );
+		self::assertCount( 1, $messages );
+		self::assertStringContainsString( 'legacy sanitize_title bridge handled an unknown call', $messages[0] );
+		self::assertStringNotContainsString( 'цвет', $messages[0] );
+	}
+
+	/**
 	 * Get a test subject.
 	 *
-	 * @param bool $is_wc_attribute Whether title should be preserved as WooCommerce attribute.
+	 * @param bool          $is_wc_attribute                Whether title should be preserved as WooCommerce attribute.
+	 * @param callable|null $is_development_logging_enabled Development logging gate callback.
+	 * @param callable|null $unknown_call_logger            Unknown bridge call logger callback.
 	 *
 	 * @return LegacySanitizeTitleBridge
 	 */
-	private function get_subject( bool $is_wc_attribute = false ): LegacySanitizeTitleBridge {
+	private function get_subject(
+		bool $is_wc_attribute = false,
+		$is_development_logging_enabled = null,
+		$unknown_call_logger = null
+	): LegacySanitizeTitleBridge {
 		return new LegacySanitizeTitleBridge(
 			new TermSlugService(),
 			false,
@@ -104,7 +136,9 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 			},
 			static function () use ( $is_wc_attribute ): bool {
 				return $is_wc_attribute;
-			}
+			},
+			$is_development_logging_enabled,
+			$unknown_call_logger
 		);
 	}
 }
