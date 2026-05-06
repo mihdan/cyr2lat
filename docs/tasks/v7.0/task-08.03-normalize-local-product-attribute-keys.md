@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft for review.
+Implemented.
 
 ## Parent plan
 
@@ -30,9 +30,15 @@ Normalize saved WooCommerce local product attribute keys explicitly before produ
 - Global attribute keys are not treated as local keys.
 - Integration tests cover saved `_product_attributes` metadata.
 
+## Implemented Files
+
+- `src/php/Main.php`
+- `src/php/Slugs/LocalAttributeService.php`
+- `tests/integration/WooCommerceLocalAttributeIntegrationTest.php`
+- `docs/tasks/v7.0/cyr2lat-7.0-development-plan-updated.md`
+
 ## Verification
 
-```bash
-vendor/bin/phpunit -c phpunit.integration.xml tests/integration/WooCommerceLocalAttributeIntegrationTest.php
-composer phpcs
-```
+- `vendor\bin\phpunit -c phpunit.integration.xml tests\integration\WooCommerceLocalAttributeIntegrationTest.php`
+- `vendor\bin\phpunit tests\unit\Slugs\LocalAttributeServiceTest.php`
+- `vendor\bin\phpcs --standard=phpcs.xml src\php\Main.php src\php\Slugs\LocalAttributeService.php tests\integration\WooCommerceLocalAttributeIntegrationTest.php`

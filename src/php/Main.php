@@ -261,6 +261,7 @@ class Main {
 		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 4 );
 		add_filter( 'pre_insert_term', [ $this, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
 		add_filter( 'post_updated', [ $this, 'check_for_changed_slugs' ], 10, 3 );
+		add_action( 'woocommerce_before_product_object_save', [ $this, 'normalize_wc_product_attribute_keys' ] );
 
 		if ( ! $this->is_frontend || class_exists( SitePress::class ) ) {
 			add_filter( 'get_terms_args', [ $this, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
@@ -380,6 +381,17 @@ class Main {
 	 */
 	protected function is_local_attribute( string $title ): bool {
 		return $this->local_attribute_service()->is_local_attribute( $title, [ $this, 'wp_parse_str' ] );
+	}
+
+	/**
+	 * Normalize WooCommerce product attribute keys.
+	 *
+	 * @param object $product Product.
+	 *
+	 * @return void
+	 */
+	public function normalize_wc_product_attribute_keys( $product ): void {
+		$this->local_attribute_service()->normalize_product_attributes( $product, [ $this, 'transliterate' ] );
 	}
 
 	// @codeCoverageIgnoreStart

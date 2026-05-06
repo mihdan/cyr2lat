@@ -74,6 +74,68 @@ class LocalAttributeService {
 	}
 
 	/**
+	 * Normalize local product attribute keys on a WooCommerce product object.
+	 *
+	 * @param object   $product       Product.
+	 * @param callable $normalize_key Key normalizer.
+	 *
+	 * @return bool
+	 */
+	public function normalize_product_attributes( $product, callable $normalize_key ): bool {
+		if ( ! is_object( $product ) || ! method_exists( $product, 'get_attributes' ) ) {
+			return false;
+		}
+
+		$attributes = $product->get_attributes( 'edit' );
+
+		if ( ! is_array( $attributes ) || [] === $attributes ) {
+			return false;
+		}
+
+		$normalized_attributes = [];
+		$changed               = false;
+
+		foreach ( $attributes as $attribute_key => $attribute ) {
+			$normalized_key                           = $this->normalize_product_attribute_key( (string) $attribute_key, $attribute, $normalize_key );
+			$normalized_attributes[ $normalized_key ] = $attribute;
+			$changed                                  = $changed || $normalized_key !== $attribute_key;
+		}
+
+		if ( ! $changed ) {
+			return false;
+		}
+
+		return $this->set_product_attributes_prop( $product, $normalized_attributes );
+	}
+
+	/**
+	 * Normalize a product attribute key.
+	 *
+	 * @param string   $attribute_key Attribute key.
+	 * @param mixed    $attribute     Attribute.
+	 * @param callable $normalize_key Key normalizer.
+	 *
+	 * @return string
+	 */
+	public function normalize_product_attribute_key( string $attribute_key, $attribute, callable $normalize_key ): string {
+		if ( ! is_object( $attribute ) || ! method_exists( $attribute, 'is_taxonomy' ) || ! method_exists( $attribute, 'get_name' ) ) {
+			return $attribute_key;
+		}
+
+		if ( $attribute->is_taxonomy() ) {
+			return $attribute_key;
+		}
+
+		$name = (string) $attribute->get_name();
+
+		if ( '' === $name ) {
+			return $attribute_key;
+		}
+
+		return strtolower( (string) call_user_func( $normalize_key, $name ) );
+	}
+
+	/**
 	 * Check AJAX save attribute request.
 	 *
 	 * @param string   $title     Title.
@@ -219,5 +281,29 @@ class LocalAttributeService {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		return isset( $_POST[ $key ] );
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
+	}
+
+	/**
+	 * Set normalized product attributes without calling WooCommerce's set_attributes().
+	 *
+	 * @param object $product    Product.
+	 * @param array  $attributes Attributes.
+	 *
+	 * @return bool
+	 */
+	private function set_product_attributes_prop( $product, array $attributes ): bool {
+		$setter = function ( array $attributes_to_set ): void {
+			$this->set_prop( 'attributes', $attributes_to_set );
+		};
+
+		$setter = $setter->bindTo( $product, get_class( $product ) );
+
+		if ( ! is_callable( $setter ) ) {
+			return false;
+		}
+
+		$setter( $attributes );
+
+		return true;
 	}
 }

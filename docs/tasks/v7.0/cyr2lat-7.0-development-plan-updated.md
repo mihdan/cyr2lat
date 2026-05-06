@@ -839,7 +839,7 @@ For any future WooCommerce attribute migration tool:
 
 - [x] Create `LocalAttributeService`.
 - [x] Create `VariationAttributeService` if separation is cleaner.
-- [ ] Normalize saved local product attribute keys explicitly.
+- [x] Normalize saved local product attribute keys explicitly.
 - [ ] Normalize variation attribute keys explicitly.
 - [ ] Support AJAX attribute save flow.
 - [ ] Support full product save flow.

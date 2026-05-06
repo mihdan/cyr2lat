@@ -136,6 +136,41 @@ class WooCommerceLocalAttributeIntegrationTest extends PluginWPTestCase {
 	}
 
 	/**
+	 * Test that explicit local attribute normalization does not require broad sanitize_title bridge.
+	 *
+	 * @return void
+	 */
+	public function test_product_save_normalizes_cyrillic_local_attribute_without_sanitize_title_bridge(): void {
+		remove_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ], 9 );
+
+		try {
+			$product_id = $this->create_product_with_local_attribute(
+				'Цвет',
+				[
+					'Красный',
+					'Синий',
+				]
+			);
+		} finally {
+			add_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ], 9, 3 );
+		}
+
+		$product = new WC_Product_Simple( $product_id );
+
+		$attributes = $product->get_attributes( 'edit' );
+
+		self::assertArrayHasKey( 'czvet', $attributes );
+		self::assertArrayNotHasKey( '%d1%86%d0%b2%d0%b5%d1%82', $attributes );
+		self::assertSame( 'Цвет', $attributes['czvet']->get_name() );
+
+		$stored_attributes = get_post_meta( $product_id, '_product_attributes', true );
+
+		self::assertIsArray( $stored_attributes );
+		self::assertArrayHasKey( 'czvet', $stored_attributes );
+		self::assertArrayNotHasKey( '%d1%86%d0%b2%d0%b5%d1%82', $stored_attributes );
+	}
+
+	/**
 	 * Install WooCommerce database tables needed by product CRUD.
 	 *
 	 * @return void
