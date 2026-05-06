@@ -883,7 +883,7 @@ For any future WooCommerce attribute migration tool:
 - [x] Document legacy bridge filter.
 - [x] Document testing strategy: unit, WordPress PHPUnit integration, REST integration, WooCommerce integration, no required Codeception, no required Playwright.
 - [x] Add changelog entry.
-- [ ] Test with WordPress latest and WooCommerce latest.
+- [x] Test with WordPress latest and WooCommerce latest.
 
 ## 9. Suggested release criteria
 

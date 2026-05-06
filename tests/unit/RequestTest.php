@@ -132,6 +132,7 @@ class RequestTest extends CyrToLatTestCase {
 		FunctionMocker::replace( 'defined', $defined );
 
 		FunctionMocker::replace( 'constant', $constant );
+		FunctionMocker::replace( 'class_exists', static fn( $class_name, $autoload = true ) => 'WP_CLI' === $class_name );
 
 		$subject = new Request();
 

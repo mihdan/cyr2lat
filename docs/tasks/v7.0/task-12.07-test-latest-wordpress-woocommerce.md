@@ -2,7 +2,7 @@
 
 ## Status
 
-To do.
+Done.
 
 ## Parent plan
 
@@ -32,8 +32,12 @@ Run and document the release verification result against the local latest WordPr
 
 ## Verification
 
-- To be completed with the implementation commit.
+- Local integration environment versions: WordPress `7.0-RC2-62287`, WooCommerce `10.7.0`.
+- `vendor\bin\phpunit tests\unit` — 480 tests, 539 assertions.
+- `vendor\bin\phpunit -c phpunit.integration.xml tests\integration` — 54 tests, 242 assertions, 2 skipped.
+- `composer phpcs` — 85 files checked.
 
 ## Implementation notes
 
-- To be completed with the implementation commit.
+- Updated stale unit-test mocks that still assumed pre-service Main behavior: WooCommerce attribute helpers now account for `wc_get_attribute_taxonomies()`, local attribute tests provide integer `did_action()` results, CLI detection tests account for `class_exists( 'WP_CLI', false )`, and post-name tests assert the current explicit slug callback path.
+- Recorded latest WordPress/WooCommerce verification results for the release task.

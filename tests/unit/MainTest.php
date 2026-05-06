@@ -810,10 +810,14 @@ class MainTest extends CyrToLatTestCase {
 	): void {
 		FunctionMocker::replace(
 			'function_exists',
-			static function ( $function_name ) {
-				return 'WC' === $function_name;
+			static function ( $function_name ) use ( $is_wc_attribute_taxonomy ) {
+				return in_array( $function_name, [ 'WC', 'wc_get_attribute_taxonomies' ], true );
 			}
 		);
+
+		$attribute_taxonomies = $is_wc_attribute_taxonomy ? [ (object) [ 'attribute_name' => 'some attribute' ] ] : [];
+
+		WP_Mock::userFunction( 'wc_get_attribute_taxonomies' )->with()->andReturn( $attribute_taxonomies );
 
 		$subject = $this->get_subject();
 
@@ -889,7 +893,7 @@ class MainTest extends CyrToLatTestCase {
 		FunctionMocker::replace(
 			'function_exists',
 			static function ( $function_name ) use ( $is_wc ) {
-				if ( 'WC' === $function_name ) {
+				if ( in_array( $function_name, [ 'WC', 'wc_get_attribute_taxonomies' ], true ) ) {
 					return $is_wc;
 				}
 
@@ -899,7 +903,7 @@ class MainTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction( 'wc_get_attribute_taxonomies' )->with()->andReturn( $attribute_taxonomies );
 		WP_Mock::userFunction( 'doing_action' )->andReturn( false );
-		WP_Mock::userFunction( 'did_action' )->andReturn( false );
+		WP_Mock::userFunction( 'did_action' )->andReturn( 0 );
 
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
@@ -920,7 +924,7 @@ class MainTest extends CyrToLatTestCase {
 		FunctionMocker::replace(
 			'function_exists',
 			static function ( $function_name ) {
-				if ( 'WC' === $function_name ) {
+				if ( in_array( $function_name, [ 'WC', 'wc_get_attribute_taxonomies' ], true ) ) {
 					return true;
 				}
 
@@ -966,7 +970,7 @@ class MainTest extends CyrToLatTestCase {
 		FunctionMocker::replace(
 			'function_exists',
 			static function ( $function_name ) {
-				if ( 'WC' === $function_name ) {
+				if ( in_array( $function_name, [ 'WC', 'wc_get_attribute_taxonomies' ], true ) ) {
 					return true;
 				}
 
@@ -1037,6 +1041,7 @@ class MainTest extends CyrToLatTestCase {
 			}
 		);
 		WP_Mock::userFunction( 'doing_action' )->andReturn( false );
+		WP_Mock::userFunction( 'did_action' )->andReturn( 0 );
 
 		FunctionMocker::replace(
 			'filter_input',
@@ -1204,7 +1209,11 @@ class MainTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_woocommerce_after_template_part_filter(): void {
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_allowed' )->with()->andReturn( false );
+
 		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		WP_Mock::userFunction( 'remove_filter' )
 			->with( 'sanitize_title', [ $subject, 'sanitize_title' ], 9 )->once();
@@ -1532,7 +1541,10 @@ class MainTest extends CyrToLatTestCase {
 	 */
 	public function test_sanitize_post_name( array $data, array $expected ): void {
 
-		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = $this->get_subject();
+		$subject->shouldReceive( 'sanitize_explicit_slug' )
+			->with( $data['post_title'] )
+			->andReturn( 'sanitized(' . $data['post_title'] . ')' );
 
 		WP_Mock::userFunction(
 			'has_filter',
