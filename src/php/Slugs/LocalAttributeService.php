@@ -13,6 +13,22 @@ namespace CyrToLat\Slugs;
 class LocalAttributeService {
 
 	/**
+	 * Variation attribute service.
+	 *
+	 * @var VariationAttributeService
+	 */
+	private VariationAttributeService $variation_attribute_service;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param VariationAttributeService|null $variation_attribute_service Variation attribute service.
+	 */
+	public function __construct( ?VariationAttributeService $variation_attribute_service = null ) {
+		$this->variation_attribute_service = $variation_attribute_service ?? new VariationAttributeService();
+	}
+
+	/**
 	 * Check if the title is a local attribute.
 	 *
 	 * @param string   $title     Title.
@@ -22,7 +38,7 @@ class LocalAttributeService {
 	 */
 	public function is_local_attribute( string $title, callable $parse_str ): bool {
 		// Global attribute.
-		if ( 0 === strpos( $title, 'pa_' ) ) {
+		if ( $this->variation_attribute_service->is_global_variation_attribute_key( $title ) ) {
 			return false;
 		}
 
@@ -36,47 +52,89 @@ class LocalAttributeService {
 
 		// The `save attributes` action.
 		if ( 'woocommerce_save_attributes' === $action ) {
-			$data            = $this->post_value( 'data', FILTER_SANITIZE_URL );
-			$attributes      = (array) call_user_func( $parse_str, urldecode( $data ) );
-			$attribute_names = $attributes['attribute_names'] ?? [];
-
-			return in_array( $title, $attribute_names, true );
+			return $this->is_ajax_save_attribute( $title, $parse_str );
 		}
 
 		// The `edit post` action.
 		if ( 'editpost' === $action ) {
-			$attribute_names = array_map(
-				[ $this, 'sanitize_text_field' ],
-				$this->post_array_value( 'attribute_names' )
-			);
-
-			return in_array( $title, $attribute_names, true );
+			return $this->is_edit_post_attribute( $title );
 		}
 
 		if ( $this->doing_action( 'woocommerce_variable_add_to_cart' ) ) {
-			$attributes = $this->product_attributes();
-
-			$encoded_attr_name = strtolower( rawurlencode( mb_strtolower( $title ) ) );
-
-			if ( isset( $attributes[ $encoded_attr_name ] ) ) {
-				return true;
-			}
-
-			return false;
+			return $this->is_variable_add_to_cart_attribute( $title );
 		}
 
 		if ( $this->did_action( 'woocommerce_load_cart_from_session' ) ) {
 			return true;
 		}
 
-		$attr_name = str_replace( 'attribute_', '', mb_strtolower( $title ) );
-		$attr_name = 'attribute_' . $attr_name;
-
-		$encoded_attr_name = rawurlencode( $attr_name );
-
-		return $this->has_post_value( $encoded_attr_name ) || $this->has_post_value( strtolower( $encoded_attr_name ) );
+		return $this->has_variation_request_attribute( $title );
 
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
+	}
+
+	/**
+	 * Check AJAX save attribute request.
+	 *
+	 * @param string   $title     Title.
+	 * @param callable $parse_str Request parser callback.
+	 *
+	 * @return bool
+	 */
+	private function is_ajax_save_attribute( string $title, callable $parse_str ): bool {
+		$data            = $this->post_value( 'data', FILTER_SANITIZE_URL );
+		$attributes      = (array) call_user_func( $parse_str, urldecode( $data ) );
+		$attribute_names = $attributes['attribute_names'] ?? [];
+
+		return in_array( $title, $attribute_names, true );
+	}
+
+	/**
+	 * Check edit post attribute request.
+	 *
+	 * @param string $title Title.
+	 *
+	 * @return bool
+	 */
+	private function is_edit_post_attribute( string $title ): bool {
+		$attribute_names = array_map(
+			[ $this, 'sanitize_text_field' ],
+			$this->post_array_value( 'attribute_names' )
+		);
+
+		return in_array( $title, $attribute_names, true );
+	}
+
+	/**
+	 * Check variable add-to-cart attribute rendering request.
+	 *
+	 * @param string $title Title.
+	 *
+	 * @return bool
+	 */
+	private function is_variable_add_to_cart_attribute( string $title ): bool {
+		$attributes = $this->product_attributes();
+
+		$encoded_attr_name = $this->variation_attribute_service->encoded_product_attribute_key( $title );
+
+		return isset( $attributes[ $encoded_attr_name ] );
+	}
+
+	/**
+	 * Check frontend variation request attribute keys.
+	 *
+	 * @param string $title Title.
+	 *
+	 * @return bool
+	 */
+	private function has_variation_request_attribute( string $title ): bool {
+		foreach ( $this->variation_attribute_service->encoded_local_variation_request_keys( $title ) as $encoded_attr_name ) {
+			if ( $this->has_post_value( $encoded_attr_name ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

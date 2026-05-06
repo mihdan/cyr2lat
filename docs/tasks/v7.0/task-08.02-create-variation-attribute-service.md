@@ -2,7 +2,7 @@
 
 ## Status
 
-Draft for review.
+Implemented.
 
 ## Parent plan
 
@@ -23,6 +23,10 @@ Decide whether variation attribute behavior is cleaner as a separate service and
 - Keep global attribute taxonomy behavior delegated to `GlobalAttributeService`.
 - Preserve existing frontend variation matching behavior.
 
+## Separation decision
+
+Variation attribute key handling is split from local product attribute request detection because WooCommerce uses distinct key formats for product attributes, variation request keys, and global taxonomy-backed attributes. `LocalAttributeService` now delegates variation key decisions to `VariationAttributeService` while global attribute taxonomy preservation remains in `GlobalAttributeService`.
+
 ## Acceptance criteria
 
 - The separation decision is documented in this task.
@@ -30,10 +34,17 @@ Decide whether variation attribute behavior is cleaner as a separate service and
 - Variation-specific behavior is not mixed into global attribute taxonomy handling.
 - Existing variation add-to-cart tests keep passing.
 
+## Implemented Files
+
+- `src/php/Slugs/VariationAttributeService.php`
+- `src/php/Slugs/LocalAttributeService.php`
+- `tests/unit/Slugs/VariationAttributeServiceTest.php`
+- `tests/unit/Slugs/LocalAttributeServiceTest.php`
+- `tests/unit/Slugs/TestLocalAttributeService.php`
+- `docs/tasks/v7.0/cyr2lat-7.0-development-plan-updated.md`
+
 ## Verification
 
-```bash
-vendor/bin/phpunit tests/unit/Slugs/VariationAttributeServiceTest.php tests/unit/Slugs/LocalAttributeServiceTest.php
-vendor/bin/phpunit -c phpunit.integration.xml tests/integration/WooCommerceVariationAddToCartIntegrationTest.php
-composer phpcs
-```
+- `vendor\bin\phpunit tests\unit\Slugs\VariationAttributeServiceTest.php`
+- `vendor\bin\phpunit tests\unit\Slugs\LocalAttributeServiceTest.php`
+- `vendor\bin\phpcs --standard=phpcs.xml src\php\Slugs\VariationAttributeService.php src\php\Slugs\LocalAttributeService.php tests\unit\Slugs\VariationAttributeServiceTest.php tests\unit\Slugs\LocalAttributeServiceTest.php tests\unit\Slugs\TestLocalAttributeService.php`

@@ -56,6 +56,8 @@ class TestLocalAttributeService extends LocalAttributeService {
 		array $fired_actions = [],
 		array $product_attributes = []
 	) {
+		parent::__construct();
+
 		$this->post_data          = $post_data;
 		$this->current_actions    = $current_actions;
 		$this->fired_actions      = $fired_actions;
