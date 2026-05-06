@@ -66,7 +66,7 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, 'цвет' )->reply( false );
 
-		self::assertSame( 'cvet', $subject->sanitize_title( 'цвет' ) );
+		self::assertSame( 'Cvet', $subject->sanitize_title( 'цвет' ) );
 	}
 
 	/**

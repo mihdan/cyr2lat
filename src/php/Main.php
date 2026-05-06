@@ -20,6 +20,7 @@ use CyrToLat\Settings\SystemInfo as SettingsSystemInfo;
 use CyrToLat\Settings\Tables as SettingsTables;
 use CyrToLat\Slugs\FilenameService;
 use CyrToLat\Slugs\GlobalAttributeService;
+use CyrToLat\Slugs\LegacySanitizeTitleBridge;
 use CyrToLat\Slugs\LocalAttributeService;
 use CyrToLat\Slugs\OldSlugRedirectService;
 use CyrToLat\Slugs\PostSlugService;
@@ -124,6 +125,13 @@ class Main {
 	 * @var VariationAttributeService|null
 	 */
 	private ?VariationAttributeService $variation_attribute_service = null;
+
+	/**
+	 * Legacy sanitize title bridge.
+	 *
+	 * @var LegacySanitizeTitleBridge|null
+	 */
+	private ?LegacySanitizeTitleBridge $legacy_sanitize_title_bridge = null;
 
 	/**
 	 * Polylang locale.
@@ -320,32 +328,7 @@ class Main {
 	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
 	public function sanitize_title( $title, $raw_title = '', $context = '' ) {
-		if (
-			! $title ||
-			// Fix the bug with `_wp_old_slug` redirect.
-			'query' === $context ||
-			! $this->transliterate_on_pre_term_slug_filter( (string) $title )
-		) {
-			return $title;
-		}
-
-		$title = urldecode( (string) $title );
-		$pre   = apply_filters( 'ctl_pre_sanitize_title', false, $title );
-
-		if ( false !== $pre ) {
-			return $pre;
-		}
-
-		$term = $this->term_slug_service()->maybe_preserve_existing_encoded_slug(
-			$title,
-			(bool) $this->is_frontend
-		);
-
-		if ( false !== $term ) {
-			return $term;
-		}
-
-		return $this->is_wc_attribute( $title ) ? $title : strtolower( $this->transliterate( $title ) );
+		return $this->legacy_sanitize_title_bridge()->sanitize_title( $title, $raw_title, $context );
 	}
 
 	/**
@@ -509,6 +492,31 @@ class Main {
 		}
 
 		return $this->variation_attribute_service;
+	}
+
+	/**
+	 * Get legacy sanitize title bridge.
+	 *
+	 * @return LegacySanitizeTitleBridge
+	 */
+	private function legacy_sanitize_title_bridge(): LegacySanitizeTitleBridge {
+		if ( null === $this->legacy_sanitize_title_bridge ) {
+			$this->legacy_sanitize_title_bridge = new LegacySanitizeTitleBridge(
+				$this->term_slug_service(),
+				(bool) $this->is_frontend,
+				function ( string $title ): string {
+					return $this->transliterate( $title );
+				},
+				function ( string $title ): bool {
+					return $this->transliterate_on_pre_term_slug_filter( $title );
+				},
+				function ( string $title ): bool {
+					return $this->is_wc_attribute( $title );
+				}
+			);
+		}
+
+		return $this->legacy_sanitize_title_bridge;
 	}
 
 	/**

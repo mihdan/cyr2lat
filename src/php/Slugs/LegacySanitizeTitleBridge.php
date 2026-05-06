@@ -108,6 +108,6 @@ class LegacySanitizeTitleBridge {
 
 		return call_user_func( $this->is_wc_attribute, $title )
 			? $title
-			: strtolower( call_user_func( $this->transliterate, $title ) );
+			: call_user_func( $this->transliterate, $title );
 	}
 }
