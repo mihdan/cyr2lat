@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned.
+Done.
 
 ## Parent plan
 
@@ -32,6 +32,13 @@ Ensure the public WP-CLI command remains compatible while converter internals mo
 
 ## Verification
 
-- To be run with the implementation commit:
+- Passed with the implementation commit:
   - `vendor\bin\phpunit tests\unit\WPCLITest.php tests\unit\ConverterTest.php`
-  - `vendor\bin\phpcs --standard=phpcs.xml src\php\WPCLI.php tests\unit\WPCLITest.php docs\tasks\v7.0\task-10.01-keep-wp-cli-regenerate-command-stable.md`
+  - `vendor\bin\phpcs --standard=phpcs.xml src\php\WPCli.php tests\unit\WPCLITest.php docs\tasks\v7.0\task-10.01-keep-wp-cli-regenerate-command-stable.md docs\tasks\v7.0\cyr2lat-7.0-development-plan-updated.md`
+
+## Implementation notes
+
+- `WPCli::regenerate()` already keeps the public `@subcommand regenerate` entry point and command output unchanged.
+- The command continues parsing comma-separated `post_status` and `post_type` values, trimming empty fragments.
+- Parsed arguments are still passed directly to `Converter::convert_existing_slugs()`.
+- No WooCommerce attribute migration behavior was added.

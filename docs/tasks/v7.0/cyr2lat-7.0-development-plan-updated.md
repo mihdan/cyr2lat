@@ -857,7 +857,7 @@ For any future WooCommerce attribute migration tool:
 
 ### Epic 10 — Converter and WP-CLI review
 
-- [ ] Keep `wp cyr2lat regenerate` command stable.
+- [x] Keep `wp cyr2lat regenerate` command stable.
 - [ ] Ensure background post converter uses `PostSlugService`.
 - [ ] Ensure background term converter uses `TermSlugService`.
 - [ ] Preserve `ctl_post_types`.
