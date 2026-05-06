@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned.
+Implemented.
 
 ## Parent plan
 
@@ -29,3 +29,29 @@ Run relevant test paths with the broad legacy `sanitize_title` bridge disabled a
 - Any uncovered slug paths are handled by explicit services.
 - Existing compatibility tests for the bridge-enabled default still pass.
 - The Epic 9 completion state is documented in the plan.
+
+## Implemented Files
+
+- `src/php/Main.php`
+- `src/php/Slugs/LegacySanitizeTitleBridge.php`
+- `src/php/Slugs/PostSlugService.php`
+- `src/php/Slugs/TermSlugService.php`
+- `tests/unit/Slugs/LegacySanitizeTitleBridgeTest.php`
+- `tests/unit/Slugs/PostSlugServiceTest.php`
+- `tests/unit/Slugs/TermSlugServiceTest.php`
+- `tests/integration/PostSlugIntegrationTest.php`
+- `tests/integration/TermSlugIntegrationTest.php`
+- `tests/integration/WooCommerceGlobalAttributeIntegrationTest.php`
+- `tests/integration/WooCommerceLocalAttributeIntegrationTest.php`
+- `tests/integration/WooCommerceVariationAddToCartIntegrationTest.php`
+- `docs/tasks/v7.0/cyr2lat-7.0-development-plan-updated.md`
+
+## Verification
+
+- To be run with the implementation commit:
+  - `vendor\bin\phpunit tests\unit\Slugs\PostSlugServiceTest.php tests\unit\Slugs\TermSlugServiceTest.php tests\unit\Slugs\LegacySanitizeTitleBridgeTest.php`
+  - `vendor\bin\phpunit -c phpunit.integration.xml tests\integration\TermSlugIntegrationTest.php`
+  - `vendor\bin\phpunit -c phpunit.integration.xml tests\integration\WooCommerceLocalAttributeIntegrationTest.php`
+  - `vendor\bin\phpunit -c phpunit.integration.xml tests\integration\WooCommerceVariationAddToCartIntegrationTest.php`
+  - `vendor\bin\phpunit -c phpunit.integration.xml tests\integration\WooCommerceGlobalAttributeIntegrationTest.php`
+  - `vendor\bin\phpcs --standard=phpcs.xml src\php\Main.php src\php\Slugs\LegacySanitizeTitleBridge.php src\php\Slugs\PostSlugService.php src\php\Slugs\TermSlugService.php tests\unit\Slugs\LegacySanitizeTitleBridgeTest.php tests\unit\Slugs\PostSlugServiceTest.php tests\unit\Slugs\TermSlugServiceTest.php tests\integration\PostSlugIntegrationTest.php tests\integration\TermSlugIntegrationTest.php tests\integration\WooCommerceGlobalAttributeIntegrationTest.php tests\integration\WooCommerceLocalAttributeIntegrationTest.php tests\integration\WooCommerceVariationAddToCartIntegrationTest.php docs\tasks\v7.0\task-09.05-disable-broad-bridge-in-tests.md docs\tasks\v7.0\cyr2lat-7.0-development-plan-updated.md`

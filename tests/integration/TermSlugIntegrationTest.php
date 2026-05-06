@@ -30,6 +30,7 @@ class TermSlugIntegrationTest extends WP_UnitTestCase {
 		set_current_screen( 'edit-tags' );
 		$this->register_test_taxonomy();
 		cyr_to_lat()->init_all();
+		add_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
 	}
 
 	/**
@@ -38,6 +39,7 @@ class TermSlugIntegrationTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function tearDown(): void {
+		remove_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
 		unregister_taxonomy( self::TAXONOMY );
 
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited

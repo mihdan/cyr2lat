@@ -58,6 +58,20 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test sanitize_title() keeps explicit save context when broad bridge is disabled.
+	 *
+	 * @return void
+	 */
+	public function test_sanitize_title_keeps_explicit_save_context_when_bridge_is_disabled(): void {
+		$subject = $this->get_subject();
+
+		WP_Mock::onFilter( 'ctl_enable_legacy_sanitize_title_bridge' )->with( true, 'цвет', '', 'save' )->reply( false );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, 'цвет' )->reply( false );
+
+		self::assertSame( 'Cvet', $subject->sanitize_title( 'цвет', '', 'save' ) );
+	}
+
+	/**
 	 * Test sanitize_title() preserves WooCommerce attributes.
 	 *
 	 * @return void

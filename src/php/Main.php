@@ -276,6 +276,7 @@ class Main {
 		add_filter( 'sanitize_file_name', [ $this, 'sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 4 );
 		add_filter( 'pre_insert_term', [ $this, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
+		add_filter( 'pre_term_slug', [ $this, 'sanitize_term_slug' ], 8 );
 		add_filter( 'post_updated', [ $this, 'check_for_changed_slugs' ], 10, 3 );
 		add_action( 'woocommerce_before_product_object_save', [ $this, 'normalize_wc_product_attribute_keys' ] );
 
@@ -618,7 +619,12 @@ class Main {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function sanitize_post_name( $data, $postarr = [], $unsanitized_postarr = [], bool $update = false ) {
-		return ( new PostSlugService() )->filter_post_data( $data, $postarr, $unsanitized_postarr, $update );
+		return ( new PostSlugService( [ $this, 'sanitize_explicit_slug' ] ) )->filter_post_data(
+			$data,
+			$postarr,
+			$unsanitized_postarr,
+			$update
+		);
 	}
 
 	/**
@@ -631,6 +637,30 @@ class Main {
 	 */
 	public function pre_insert_term_filter( $term, string $taxonomy ) {
 		return $this->term_slug_service()->pre_insert_term_filter( $term, $taxonomy );
+	}
+
+	/**
+	 * Sanitize term slug through the explicit term slug service.
+	 *
+	 * @param string|mixed $slug Term slug.
+	 *
+	 * @return string|mixed
+	 */
+	public function sanitize_term_slug( $slug ) {
+		return $this->term_slug_service()->filter_term_slug( $slug, [ $this, 'sanitize_explicit_slug' ] );
+	}
+
+	/**
+	 * Sanitize an explicit slug value without using the broad legacy bridge.
+	 *
+	 * @param string $slug Slug.
+	 *
+	 * @return string
+	 */
+	public function sanitize_explicit_slug( string $slug ): string {
+		$slug = $this->transliterate( $slug );
+
+		return sanitize_title_with_dashes( $slug );
 	}
 
 	/**

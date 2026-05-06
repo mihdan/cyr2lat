@@ -13,6 +13,22 @@ namespace CyrToLat\Slugs;
 class PostSlugService {
 
 	/**
+	 * Slug sanitization callback.
+	 *
+	 * @var callable|null
+	 */
+	private $sanitize_slug;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param callable|null $sanitize_slug Slug sanitization callback.
+	 */
+	public function __construct( $sanitize_slug = null ) {
+		$this->sanitize_slug = is_callable( $sanitize_slug ) ? $sanitize_slug : null;
+	}
+
+	/**
 	 * Filter post data before it is inserted.
 	 *
 	 * @param array|mixed $data                 An array of slashed, sanitized, and processed post data.
@@ -33,15 +49,15 @@ class PostSlugService {
 			! empty( $data['post_title'] ) &&
 			! $this->is_skipped_post_data( $data, $postarr )
 		) {
-			$data['post_name'] = sanitize_title( $data['post_title'] );
+			$data['post_name'] = $this->sanitize_slug( (string) $data['post_title'] );
 		}
 
 		if (
 			! empty( $data['post_name'] ) &&
-			$this->has_non_ascii_chars( (string) $data['post_name'] ) &&
+			$this->requires_sanitization( (string) $data['post_name'] ) &&
 			! $this->is_skipped_post_data( $data, $postarr )
 		) {
-			$data['post_name'] = sanitize_title( $data['post_name'] );
+			$data['post_name'] = $this->sanitize_slug( rawurldecode( (string) $data['post_name'] ) );
 		}
 
 		return $data;
@@ -87,5 +103,37 @@ class PostSlugService {
 	 */
 	private function has_non_ascii_chars( string $value ): bool {
 		return (bool) preg_match( '/[^\x00-\x7F]/', $value );
+	}
+
+	/**
+	 * Whether the value requires explicit sanitization.
+	 *
+	 * @param string $value Value.
+	 *
+	 * @return bool
+	 */
+	private function requires_sanitization( string $value ): bool {
+		if ( $this->has_non_ascii_chars( $value ) ) {
+			return true;
+		}
+
+		$decoded = rawurldecode( $value );
+
+		return $decoded !== $value && $this->has_non_ascii_chars( $decoded );
+	}
+
+	/**
+	 * Sanitize a slug value.
+	 *
+	 * @param string $value Value.
+	 *
+	 * @return string
+	 */
+	private function sanitize_slug( string $value ): string {
+		if ( $this->sanitize_slug ) {
+			return (string) call_user_func( $this->sanitize_slug, $value );
+		}
+
+		return sanitize_title( $value );
 	}
 }

@@ -99,6 +99,22 @@ class TermSlugService {
 	}
 
 	/**
+	 * Filter a term slug before WordPress default sanitize_title() fallback.
+	 *
+	 * @param string|mixed $slug        Term slug.
+	 * @param callable     $transliterate Transliteration callback.
+	 *
+	 * @return string|mixed
+	 */
+	public function filter_term_slug( $slug, callable $transliterate ) {
+		if ( ! is_string( $slug ) || '' === $slug || ! $this->has_non_ascii_chars( $slug ) ) {
+			return $slug;
+		}
+
+		return call_user_func( $transliterate, $slug );
+	}
+
+	/**
 	 * Preserve existing encoded term slug when current context requires it.
 	 *
 	 * @param string $title       Title.
@@ -192,5 +208,16 @@ class TermSlugService {
 		}
 
 		return $prepared_in;
+	}
+
+	/**
+	 * Whether the value contains non-ASCII characters.
+	 *
+	 * @param string $value Value.
+	 *
+	 * @return bool
+	 */
+	private function has_non_ascii_chars( string $value ): bool {
+		return (bool) preg_match( '/[^\x00-\x7F]/', $value );
 	}
 }

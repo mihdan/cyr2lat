@@ -36,20 +36,16 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_filter_post_data_generates_empty_post_name_from_title(): void {
-		$subject = new PostSlugService();
+		$subject = new PostSlugService(
+			static function ( string $slug ): string {
+				return 'й' === $slug ? 'j' : $slug;
+			}
+		);
 		$data    = [
 			'post_name'   => '',
 			'post_title'  => 'й',
 			'post_status' => 'publish',
 		];
-
-		WP_Mock::userFunction(
-			'sanitize_title',
-			[
-				'args'   => [ 'й' ],
-				'return' => 'j',
-			]
-		);
 
 		$filtered = $subject->filter_post_data( $data );
 
@@ -78,24 +74,62 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_filter_post_data_normalizes_explicit_cyrillic_post_name(): void {
-		$subject = new PostSlugService();
+		$subject = new PostSlugService(
+			static function ( string $slug ): string {
+				return 'й' === $slug ? 'j' : $slug;
+			}
+		);
 		$data    = [
 			'post_name'   => 'й',
 			'post_title'  => 'Title',
 			'post_status' => 'publish',
 		];
 
-		WP_Mock::userFunction(
-			'sanitize_title',
-			[
-				'args'   => [ 'й' ],
-				'return' => 'j',
-			]
+		$filtered = $subject->filter_post_data( $data );
+
+		self::assertSame( 'j', $filtered['post_name'] );
+	}
+
+	/**
+	 * Test filter_post_data() normalizes encoded Cyrillic post_name.
+	 *
+	 * @return void
+	 */
+	public function test_filter_post_data_normalizes_encoded_cyrillic_post_name(): void {
+		$subject = new PostSlugService(
+			static function ( string $slug ): string {
+				return 'й' === $slug ? 'j' : $slug;
+			}
 		);
+		$data    = [
+			'post_name'   => '%d0%b9',
+			'post_title'  => 'Title',
+			'post_status' => 'publish',
+		];
 
 		$filtered = $subject->filter_post_data( $data );
 
 		self::assertSame( 'j', $filtered['post_name'] );
+	}
+
+	/**
+	 * Test filter_post_data() preserves encoded ASCII post_name.
+	 *
+	 * @return void
+	 */
+	public function test_filter_post_data_preserves_encoded_ascii_post_name(): void {
+		$subject = new PostSlugService(
+			static function ( string $slug ): string {
+				return $slug . '-changed';
+			}
+		);
+		$data    = [
+			'post_name'   => 'hello%20world',
+			'post_title'  => 'Title',
+			'post_status' => 'publish',
+		];
+
+		self::assertSame( $data, $subject->filter_post_data( $data ) );
 	}
 
 	/**

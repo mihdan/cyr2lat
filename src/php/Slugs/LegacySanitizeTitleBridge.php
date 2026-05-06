@@ -110,7 +110,15 @@ class LegacySanitizeTitleBridge {
 			return $title;
 		}
 
-		if ( ! apply_filters( 'ctl_enable_legacy_sanitize_title_bridge', true, $title, $raw_title, $context ) ) {
+		$bridge_enabled = (bool) apply_filters(
+			'ctl_enable_legacy_sanitize_title_bridge',
+			true,
+			$title,
+			$raw_title,
+			$context
+		);
+
+		if ( ! $bridge_enabled && ! $this->is_known_explicit_context( $context ) ) {
 			return $title;
 		}
 
@@ -134,9 +142,22 @@ class LegacySanitizeTitleBridge {
 			return $title;
 		}
 
-		$this->maybe_log_unknown_call( $title, $raw_title, $context );
+		if ( $bridge_enabled ) {
+			$this->maybe_log_unknown_call( $title, $raw_title, $context );
+		}
 
 		return call_user_func( $this->transliterate, $title );
+	}
+
+	/**
+	 * Whether the context is handled by explicit WordPress/WooCommerce slug paths.
+	 *
+	 * @param string|mixed $context The context for which the title is being sanitized.
+	 *
+	 * @return bool
+	 */
+	private function is_known_explicit_context( $context ): bool {
+		return 'save' === $context;
 	}
 
 	/**

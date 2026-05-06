@@ -49,6 +49,7 @@ class WooCommerceLocalAttributeIntegrationTest extends PluginWPTestCase {
 
 		set_current_screen( 'post' );
 		cyr_to_lat()->init_all();
+		add_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
 	}
 
 	/**
@@ -57,6 +58,7 @@ class WooCommerceLocalAttributeIntegrationTest extends PluginWPTestCase {
 	 * @return void
 	 */
 	public function tearDown(): void {
+		remove_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
 		unset( $GLOBALS['product'] );
 		wp_cache_flush();
 

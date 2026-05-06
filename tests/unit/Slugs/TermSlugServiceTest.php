@@ -59,6 +59,44 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test filter_term_slug() transliterates explicit Cyrillic slug.
+	 *
+	 * @return void
+	 */
+	public function test_filter_term_slug_transliterates_explicit_cyrillic_slug(): void {
+		$subject = new TermSlugService();
+
+		self::assertSame(
+			'j',
+			$subject->filter_term_slug(
+				'й',
+				static function ( string $slug ): string {
+					return 'й' === $slug ? 'j' : $slug;
+				}
+			)
+		);
+	}
+
+	/**
+	 * Test filter_term_slug() preserves Latin slug.
+	 *
+	 * @return void
+	 */
+	public function test_filter_term_slug_preserves_latin_slug(): void {
+		$subject = new TermSlugService();
+
+		self::assertSame(
+			'manual-slug',
+			$subject->filter_term_slug(
+				'manual-slug',
+				static function ( string $slug ): string {
+					return $slug . '-changed';
+				}
+			)
+		);
+	}
+
+	/**
 	 * Test should_transliterate_on_pre_term_slug_filter() skips tag query context.
 	 *
 	 * @return void

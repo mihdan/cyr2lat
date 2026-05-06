@@ -36,6 +36,7 @@ class PostSlugIntegrationTest extends WP_UnitTestCase {
 
 		set_current_screen( 'post' );
 		cyr_to_lat()->init_all();
+		add_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
 	}
 
 	/**
@@ -44,6 +45,7 @@ class PostSlugIntegrationTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function tearDown(): void {
+		remove_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
 		unregister_post_type( self::CPT );
 
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited

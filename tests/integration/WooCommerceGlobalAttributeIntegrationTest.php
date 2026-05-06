@@ -52,6 +52,7 @@ class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
 		$this->delete_woocommerce_attribute_taxonomies();
 		$this->reset_woocommerce_attribute_taxonomies();
 		cyr_to_lat()->init_all();
+		add_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
 	}
 
 	/**
@@ -60,6 +61,7 @@ class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
 	 * @return void
 	 */
 	public function tearDown(): void {
+		remove_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
 		foreach ( $this->registered_attribute_taxonomies as $taxonomy ) {
 			$term_ids = get_terms(
 				[

@@ -849,11 +849,11 @@ For any future WooCommerce attribute migration tool:
 
 ### Epic 9 — Legacy bridge reduction
 
-- [ ] Create `LegacySanitizeTitleBridge`.
-- [ ] Move old `sanitize_title` logic into bridge.
-- [ ] Add `ctl_enable_legacy_sanitize_title_bridge` filter.
-- [ ] Add development-only logging for unknown bridge calls.
-- [ ] Disable broad bridge in tests and fix uncovered paths.
+- [x] Create `LegacySanitizeTitleBridge`.
+- [x] Move old `sanitize_title` logic into bridge.
+- [x] Add `ctl_enable_legacy_sanitize_title_bridge` filter.
+- [x] Add development-only logging for unknown bridge calls.
+- [x] Disable broad bridge in tests and fix uncovered paths.
 
 ### Epic 10 — Converter and WP-CLI review
 

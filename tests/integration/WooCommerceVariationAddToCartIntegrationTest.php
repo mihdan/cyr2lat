@@ -54,6 +54,7 @@ class WooCommerceVariationAddToCartIntegrationTest extends PluginWPTestCase {
 
 		set_current_screen( 'post' );
 		cyr_to_lat()->init_all();
+		add_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
 
 		update_option( 'woocommerce_cart_redirect_after_add', 'no' );
 	}
@@ -64,6 +65,7 @@ class WooCommerceVariationAddToCartIntegrationTest extends PluginWPTestCase {
 	 * @return void
 	 */
 	public function tearDown(): void {
+		remove_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
 		if ( WC()->cart ) {
 			WC()->cart->empty_cart();
 		}
