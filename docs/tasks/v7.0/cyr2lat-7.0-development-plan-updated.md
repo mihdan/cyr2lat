@@ -833,7 +833,7 @@ For any future WooCommerce attribute migration tool:
 - [ ] Add tests for creating/editing global attributes.
 - [ ] Add tests for global attribute terms.
 - [ ] Add tests for frontend global attribute filtering where practical.
-- [ ] Decide and document existing `pa_*` attribute migration policy.
+- [x] Decide and document existing `pa_*` attribute migration policy.
 
 ### Epic 8 — WooCommerce local and variation attributes
 
