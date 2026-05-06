@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned.
+Done.
 
 ## Parent plan
 
@@ -32,8 +32,13 @@ Make the standard WordPress PHPUnit integration suite the required integration-t
 
 ## Verification
 
-- Pending implementation.
+- Passed with the implementation commit:
+  - Documentation-only task; no build or PHPUnit run required.
+  - `vendor\bin\phpcs --standard=phpcs.xml docs\tasks\v7.0\task-11.03-use-wordpress-phpunit-integration-suite.md docs\tasks\v7.0\cyr2lat-7.0-development-plan-updated.md`
 
 ## Implementation notes
 
-- Pending implementation.
+- `composer.json` keeps `composer integration` mapped to `vendor/bin/phpunit -c phpunit.integration.xml`.
+- Integration test bootstrap remains under the WordPress PHPUnit configuration instead of a browser or acceptance runner.
+- The current required integration suites cover post, term, REST, and WooCommerce paths through backend entry points.
+- No required Playwright or Codeception layer was introduced.
