@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned.
+Done.
 
 ## Parent plan
 
@@ -32,8 +32,13 @@ Document that WooCommerce coverage for 7.0 is provided by CRUD, API, admin-handl
 
 ## Verification
 
-- Pending implementation.
+- Passed with the implementation commit:
+  - Documentation-only task; no build or PHPUnit run required.
+  - `vendor\bin\phpcs --standard=phpcs.xml docs\tasks\v7.0\task-11.05-document-woocommerce-integration-coverage.md docs\tasks\v7.0\cyr2lat-7.0-development-plan-updated.md`
 
 ## Implementation notes
 
-- Pending implementation.
+- WooCommerce global attribute coverage is provided by integration tests for attribute create/update, REST/API paths, terms, and backend layered-navigation filtering.
+- WooCommerce local and variation coverage is provided by CRUD/admin-handler, REST/API, frontend add-to-cart, and cart session integration paths.
+- These backend entry points cover the slug and attribute persistence behavior required for 7.0 without browser infrastructure.
+- No Playwright or Codeception dependency was added for WooCommerce coverage.
