@@ -772,67 +772,67 @@ For any future WooCommerce attribute migration tool:
 
 ### Epic 1 — Behavior capture before refactor
 
-- [ ] Add tests documenting current `Main::sanitize_title()` behavior.
-- [ ] Add integration tests infrastructure.
-- [ ] Add tests for post slug generation through `wp_insert_post_data`.
-- [ ] Add REST integration tests for Gutenberg/block-editor save paths.
-- [ ] Add tests for term slug generation through `pre_insert_term` / `sanitize_title` interaction.
-- [ ] Add tests for `sanitize_file_name` transliteration.
-- [ ] Add tests for current WooCommerce global attribute behavior.
-- [ ] Add tests for current WooCommerce local attribute behavior.
-- [ ] Add tests for frontend WooCommerce variation add-to-cart with Cyrillic local attribute.
-- [ ] Add tests for cart/session loading with Cyrillic local attributes.
+- [x] Add tests documenting current `Main::sanitize_title()` behavior.
+- [x] Add integration tests infrastructure.
+- [x] Add tests for post slug generation through `wp_insert_post_data`.
+- [x] Add REST integration tests for Gutenberg/block-editor save paths.
+- [x] Add tests for term slug generation through `pre_insert_term` / `sanitize_title` interaction.
+- [x] Add tests for `sanitize_file_name` transliteration.
+- [x] Add tests for current WooCommerce global attribute behavior.
+- [x] Add tests for current WooCommerce local attribute behavior.
+- [x] Add tests for frontend WooCommerce variation add-to-cart with Cyrillic local attribute.
+- [x] Add tests for cart/session loading with Cyrillic local attributes.
 
 ### Epic 2 — Extract transliteration core
 
-- [ ] Create `Transliterator` service.
-- [ ] Create `SlugContext` value object or associative context structure.
-- [ ] Move `fix_mac_string()` into transliteration core.
-- [ ] Move `split_chinese_string()` into transliteration core.
-- [ ] Preserve `ctl_table` and `ctl_locale` behavior.
-- [ ] Add unit tests for transliteration core.
+- [x] Create `Transliterator` service.
+- [x] Create `SlugContext` value object or associative context structure.
+- [x] Move `fix_mac_string()` into transliteration core.
+- [x] Move `split_chinese_string()` into transliteration core.
+- [x] Preserve `ctl_table` and `ctl_locale` behavior.
+- [x] Add unit tests for transliteration core.
 
 ### Epic 3 — Extract filename handling
 
-- [ ] Create `FilenameService`.
-- [ ] Move `sanitize_filename()` logic from `Main`.
-- [ ] Preserve `ctl_pre_sanitize_filename`.
-- [ ] Add filename integration tests.
+- [x] Create `FilenameService`.
+- [x] Move `sanitize_filename()` logic from `Main`.
+- [x] Preserve `ctl_pre_sanitize_filename`.
+- [x] Add filename integration tests.
 
 ### Epic 4 — Extract post slug handling
 
-- [ ] Create `PostSlugService`.
-- [ ] Register `wp_insert_post_data` with 4 accepted args.
-- [ ] Support empty `post_name` generation from raw title.
-- [ ] Support explicit Cyrillic `post_name` normalization.
-- [ ] Preserve manual Latin slugs.
-- [ ] Skip autosaves, revisions, and auto-drafts.
-- [ ] Add tests for post/page/CPT/product slugs.
-- [ ] Add REST tests for posts/pages/CPTs.
+- [x] Create `PostSlugService`.
+- [x] Register `wp_insert_post_data` with 4 accepted args.
+- [x] Support empty `post_name` generation from raw title.
+- [x] Support explicit Cyrillic `post_name` normalization.
+- [x] Preserve manual Latin slugs.
+- [x] Skip autosaves, revisions, and auto-drafts.
+- [x] Add tests for post/page/CPT/product slugs.
+- [x] Add REST tests for posts/pages/CPTs.
 
 ### Epic 5 — Extract old slug redirect handling
 
-- [ ] Create `OldSlugRedirectService`.
-- [ ] Move `check_for_changed_slugs()` logic.
-- [ ] Add regression tests for `_wp_old_slug` behavior.
+- [x] Create `OldSlugRedirectService`.
+- [x] Move `check_for_changed_slugs()` logic.
+- [x] Add regression tests for `_wp_old_slug` behavior.
 
 ### Epic 6 — Extract term slug handling
 
-- [ ] Create `TermSlugService`.
-- [ ] Replace `$is_term` / `$taxonomies` state with scoped context.
-- [ ] Use `pre_insert_term` and `pre_term_slug` explicitly.
-- [ ] Add tests for category/tag/custom taxonomy/product taxonomy terms.
-- [ ] Add tests for explicit term slug in args.
-- [ ] Add WPML/Polylang term tests if practical.
+- [x] Create `TermSlugService`.
+- [x] Replace `$is_term` / `$taxonomies` state with scoped context.
+- [x] Use `pre_insert_term` and `pre_term_slug` explicitly.
+- [x] Add tests for category/tag/custom taxonomy/product taxonomy terms.
+- [x] Add tests for explicit term slug in args.
+- [x] Add WPML/Polylang term tests if practical.
 
 ### Epic 7 — WooCommerce global attributes
 
-- [ ] Research exact WooCommerce hooks around attribute taxonomy create/update.
-- [ ] Research WooCommerce REST/API paths for product attributes.
-- [ ] Create `GlobalAttributeService`.
-- [ ] Add tests for creating/editing global attributes.
-- [ ] Add tests for global attribute terms.
-- [ ] Add tests for frontend global attribute filtering where practical.
+- [x] Research exact WooCommerce hooks around attribute taxonomy create/update.
+- [x] Research WooCommerce REST/API paths for product attributes.
+- [x] Create `GlobalAttributeService`.
+- [x] Add tests for creating/editing global attributes.
+- [x] Add tests for global attribute terms.
+- [x] Add tests for frontend global attribute filtering where practical.
 - [x] Decide and document existing `pa_*` attribute migration policy.
 
 ### Epic 8 — WooCommerce local and variation attributes
