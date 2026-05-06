@@ -2,7 +2,7 @@
 
 ## Status
 
-To do.
+Done.
 
 ## Parent plan
 
@@ -32,8 +32,10 @@ Add a changelog entry that summarizes the 7.0 release changes.
 
 ## Verification
 
-- To be completed with the implementation commit.
+- `vendor\bin\phpcs --standard=phpcs.xml readme.txt docs\tasks\v7.0\task-12.06-add-changelog-entry.md docs\tasks\v7.0\cyr2lat-7.0-development-plan-updated.md`
 
 ## Implementation notes
 
-- To be completed with the implementation commit.
+- Added the pending `7.0.0` changelog entry to `readme.txt`.
+- Summarized explicit slug services, REST/Gutenberg coverage, WooCommerce coverage, legacy bridge filter, migration policy, and backend-first testing strategy.
+- Kept the entry release-facing and avoided promising automatic WooCommerce attribute migration.
