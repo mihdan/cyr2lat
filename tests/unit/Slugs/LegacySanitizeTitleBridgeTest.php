@@ -38,9 +38,23 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 	public function test_sanitize_title_returns_pre_filter_value(): void {
 		$subject = $this->get_subject();
 
+		WP_Mock::onFilter( 'ctl_enable_legacy_sanitize_title_bridge' )->with( true, 'some title', '', '' )->reply( true );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, 'some title' )->reply( 'filtered title' );
 
 		self::assertSame( 'filtered title', $subject->sanitize_title( 'some title' ) );
+	}
+
+	/**
+	 * Test sanitize_title() returns unchanged title when legacy bridge is disabled.
+	 *
+	 * @return void
+	 */
+	public function test_sanitize_title_returns_unchanged_title_when_bridge_is_disabled(): void {
+		$subject = $this->get_subject();
+
+		WP_Mock::onFilter( 'ctl_enable_legacy_sanitize_title_bridge' )->with( true, 'цвет', '', '' )->reply( false );
+
+		self::assertSame( 'цвет', $subject->sanitize_title( 'цвет' ) );
 	}
 
 	/**
@@ -51,6 +65,7 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 	public function test_sanitize_title_preserves_wc_attribute(): void {
 		$subject = $this->get_subject( true );
 
+		WP_Mock::onFilter( 'ctl_enable_legacy_sanitize_title_bridge' )->with( true, 'цвет', '', '' )->reply( true );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, 'цвет' )->reply( false );
 
 		self::assertSame( 'цвет', $subject->sanitize_title( 'цвет' ) );
@@ -64,6 +79,7 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 	public function test_sanitize_title_transliterates_through_callback(): void {
 		$subject = $this->get_subject();
 
+		WP_Mock::onFilter( 'ctl_enable_legacy_sanitize_title_bridge' )->with( true, 'цвет', '', '' )->reply( true );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, 'цвет' )->reply( false );
 
 		self::assertSame( 'Cvet', $subject->sanitize_title( 'цвет' ) );

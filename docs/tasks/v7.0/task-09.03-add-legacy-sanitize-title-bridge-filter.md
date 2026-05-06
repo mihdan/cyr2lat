@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned.
+Implemented.
 
 ## Parent plan
 
@@ -29,3 +29,14 @@ Add a documented filter gate that allows developers and tests to disable the rem
 - The broad bridge remains enabled by default.
 - Returning `false` from the filter disables broad fallback transliteration.
 - Tests cover both enabled and disabled behavior.
+
+## Implemented Files
+
+- `src/php/Slugs/LegacySanitizeTitleBridge.php`
+- `tests/unit/Slugs/LegacySanitizeTitleBridgeTest.php`
+
+## Verification
+
+- To be run with the implementation commit:
+  - `vendor\bin\phpunit tests\unit\Slugs\LegacySanitizeTitleBridgeTest.php`
+  - `vendor\bin\phpcs --standard=phpcs.xml src\php\Slugs\LegacySanitizeTitleBridge.php tests\unit\Slugs\LegacySanitizeTitleBridgeTest.php docs\tasks\v7.0\task-09.03-add-legacy-sanitize-title-bridge-filter.md`

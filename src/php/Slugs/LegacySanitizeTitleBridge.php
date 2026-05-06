@@ -90,6 +90,10 @@ class LegacySanitizeTitleBridge {
 			return $title;
 		}
 
+		if ( ! apply_filters( 'ctl_enable_legacy_sanitize_title_bridge', true, $title, $raw_title, $context ) ) {
+			return $title;
+		}
+
 		$title = urldecode( (string) $title );
 		$pre   = apply_filters( 'ctl_pre_sanitize_title', false, $title );
 
