@@ -139,6 +139,40 @@ class TermSlugIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that an explicitly supplied Cyrillic custom taxonomy term slug is transliterated.
+	 *
+	 * @return void
+	 */
+	public function test_wp_insert_custom_taxonomy_term_transliterates_explicit_cyrillic_slug(): void {
+		$term = $this->insert_term(
+			'Manual',
+			self::TAXONOMY,
+			[
+				'slug' => 'й',
+			]
+		);
+
+		self::assertSame( 'j', $term->slug );
+	}
+
+	/**
+	 * Test that an explicitly supplied Latin custom taxonomy term slug is preserved.
+	 *
+	 * @return void
+	 */
+	public function test_wp_insert_custom_taxonomy_term_preserves_explicit_latin_slug(): void {
+		$term = $this->insert_term(
+			'Manual',
+			self::TAXONOMY,
+			[
+				'slug' => 'manual-slug',
+			]
+		);
+
+		self::assertSame( 'manual-slug', $term->slug );
+	}
+
+	/**
 	 * Test current behavior when an encoded Cyrillic slug already exists.
 	 *
 	 * @return void
