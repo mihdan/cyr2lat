@@ -50,6 +50,14 @@ Sponsored by [Blackfire](https://www.blackfire.io/).
 1. Upload the ` cyr2lat ` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
+= Upgrade notes for 7.0 =
+
+Version 7.0 is an architecture-focused release. It keeps the existing transliteration table, locale filters, post and term conversion tools, and WP-CLI command stable while moving slug handling to explicit services.
+
+Existing posts, pages, terms, filenames, and WooCommerce product data are not destructively rewritten during the plugin upgrade. Use the Converter page or `wp cyr2lat regenerate` when you intentionally want to regenerate existing post and term slugs.
+
+WooCommerce attributes created before 7.0 are not automatically migrated. Existing global `pa_*` taxonomies and existing local or variation attribute keys should be reviewed separately; any future migration must use a dedicated dry-run-first workflow.
+
 == Frequently Asked Questions ==
 
 = How can I define my own substitutions? =

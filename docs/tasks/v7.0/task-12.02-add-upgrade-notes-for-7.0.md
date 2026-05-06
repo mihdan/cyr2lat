@@ -2,7 +2,7 @@
 
 ## Status
 
-To do.
+Done.
 
 ## Parent plan
 
@@ -33,8 +33,10 @@ Add release-facing upgrade notes that explain the important 7.0 behavioral expec
 
 ## Verification
 
-- To be completed with the implementation commit.
+- `vendor\bin\phpcs --standard=phpcs.xml readme.txt docs\tasks\v7.0\task-12.02-add-upgrade-notes-for-7.0.md docs\tasks\v7.0\cyr2lat-7.0-development-plan-updated.md`
 
 ## Implementation notes
 
-- To be completed with the implementation commit.
+- Added `Upgrade notes for 7.0` to `readme.txt`.
+- Documented that 7.0 keeps stable public behavior while moving slug handling to explicit services.
+- Documented that existing WooCommerce attributes are not automatically migrated and future migration must be dry-run-first.
