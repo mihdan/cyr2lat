@@ -17,15 +17,15 @@ class PostSlugService {
 	 *
 	 * @var callable|null
 	 */
-	private $sanitize_slug;
+	private $sanitize_slug_callback;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param callable|null $sanitize_slug Slug sanitization callback.
 	 */
-	public function __construct( $sanitize_slug = null ) {
-		$this->sanitize_slug = is_callable( $sanitize_slug ) ? $sanitize_slug : null;
+	public function __construct( ?callable $sanitize_slug = null ) {
+		$this->sanitize_slug_callback = is_callable( $sanitize_slug ) ? $sanitize_slug : null;
 	}
 
 	/**
@@ -91,7 +91,7 @@ class PostSlugService {
 			return true;
 		}
 
-		return function_exists( 'wp_is_post_revision' ) && (bool) wp_is_post_revision( $post_id );
+		return function_exists( 'wp_is_post_revision' ) && wp_is_post_revision( $post_id );
 	}
 
 	/**
@@ -130,8 +130,8 @@ class PostSlugService {
 	 * @return string
 	 */
 	private function sanitize_slug( string $value ): string {
-		if ( $this->sanitize_slug ) {
-			return (string) call_user_func( $this->sanitize_slug, $value );
+		if ( $this->sanitize_slug_callback ) {
+			return (string) call_user_func( $this->sanitize_slug_callback, $value );
 		}
 
 		return sanitize_title( $value );
