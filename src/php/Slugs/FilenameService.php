@@ -5,6 +5,9 @@
  * @package cyr-to-lat
  */
 
+// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpInternalEntityUsedInspection */
+
 namespace CyrToLat\Slugs;
 
 use CyrToLat\Transliteration\SlugContext;
@@ -54,7 +57,6 @@ class FilenameService {
 	 *
 	 * @return string
 	 * @noinspection PhpUnusedParameterInspection
-	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public function sanitize_filename( $filename, $filename_raw ): string {
 		global $wp_version;
@@ -66,7 +68,7 @@ class FilenameService {
 		}
 
 		$filename = (string) $filename;
-		$is_utf8  = version_compare( (string) $wp_version, '6.9-RC1', '>=' ) ? 'wp_is_valid_utf8' : 'seems_utf8';
+		$is_utf8  = version_compare( (string) $wp_version, '6.9', '>=' ) ? 'wp_is_valid_utf8' : 'seems_utf8';
 
 		if ( $is_utf8( $filename ) ) {
 			$filename = (string) Mbstring::mb_strtolower( $filename );
