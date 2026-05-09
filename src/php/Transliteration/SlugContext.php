@@ -141,7 +141,7 @@ class SlugContext {
 	}
 
 	/**
-	 * Get raw source label.
+	 * Get a raw source label.
 	 *
 	 * @return string
 	 */
