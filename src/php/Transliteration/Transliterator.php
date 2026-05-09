@@ -5,6 +5,9 @@
  * @package cyr-to-lat
  */
 
+// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpInternalEntityUsedInspection */
+
 namespace CyrToLat\Transliteration;
 
 use CyrToLat\ConversionTables;
@@ -54,12 +57,35 @@ class Transliterator {
 	 * @param SlugContext|null $context Slug context.
 	 *
 	 * @return string
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function transliterate_with_table( string $str, array $table, ?SlugContext $context = null ): string {
 		$str = $this->fix_mac_string( $str, $table );
 		$str = $this->split_chinese_string( $str, $table );
 
 		return strtr( $str, $table );
+	}
+
+	/**
+	 * Fix string encoding on macOS.
+	 *
+	 * @param string $str   String.
+	 * @param array  $table Conversion table.
+	 *
+	 * @return string
+	 */
+	private function fix_mac_string( string $str, array $table ): string {
+		$fix_table = ConversionTables::get_fix_table_for_mac();
+
+		$fix = [];
+
+		foreach ( $fix_table as $key => $value ) {
+			if ( isset( $table[ $key ] ) ) {
+				$fix[ $value ] = $table[ $key ];
+			}
+		}
+
+		return strtr( $str, $fix );
 	}
 
 	/**
@@ -87,26 +113,5 @@ class Transliterator {
 		}
 
 		return $str;
-	}
-
-	/**
-	 * Fix string encoding on macOS.
-	 *
-	 * @param string $str   String.
-	 * @param array  $table Conversion table.
-	 *
-	 * @return string
-	 */
-	private function fix_mac_string( string $str, array $table ): string {
-		$fix_table = ConversionTables::get_fix_table_for_mac();
-
-		$fix = [];
-		foreach ( $fix_table as $key => $value ) {
-			if ( isset( $table[ $key ] ) ) {
-				$fix[ $value ] = $table[ $key ];
-			}
-		}
-
-		return strtr( $str, $fix );
 	}
 }
