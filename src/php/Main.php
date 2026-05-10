@@ -332,12 +332,16 @@ class Main {
 	 * @param string|mixed $raw_title The title prior to sanitization.
 	 * @param string|mixed $context   The context for which the title is being sanitized.
 	 *
-	 * @return string|mixed
+	 * @return string
 	 * @noinspection PhpUnusedParameterInspection
 	 * @noinspection PhpMissingReturnTypeInspection
 	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
-	public function sanitize_title( $title, $raw_title = '', $context = '' ) {
+	public function sanitize_title( $title, $raw_title = '', $context = '' ): string {
+		$title     = (string) $title;
+		$raw_title = (string) $raw_title;
+		$context   = (string) $context;
+
 		return $this->legacy_sanitize_title_bridge()->sanitize_title( $title, $raw_title, $context );
 	}
 
@@ -500,11 +504,9 @@ class Main {
 	private function legacy_sanitize_title_bridge(): LegacySanitizeTitleBridge {
 		if ( null === $this->legacy_sanitize_title_bridge ) {
 			$this->legacy_sanitize_title_bridge = new LegacySanitizeTitleBridge(
+				$this,
 				$this->term_slug_service(),
 				(bool) $this->is_frontend,
-				function ( string $title ): string {
-					return $this->transliterate( $title );
-				},
 				function ( string $title ): bool {
 					return $this->is_wc_attribute( $title );
 				}

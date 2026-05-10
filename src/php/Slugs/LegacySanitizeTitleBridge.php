@@ -7,10 +7,19 @@
 
 namespace CyrToLat\Slugs;
 
+use CyrToLat\Main;
+
 /**
  * Handles the remaining broad sanitize_title fallback.
  */
 class LegacySanitizeTitleBridge {
+
+	/**
+	 * Main plugin class.
+	 *
+	 * @var Main
+	 */
+	private Main $main;
 
 	/**
 	 * Term slug service.
@@ -27,13 +36,6 @@ class LegacySanitizeTitleBridge {
 	private bool $is_frontend;
 
 	/**
-	 * Transliteration callback.
-	 *
-	 * @var callable
-	 */
-	private $transliterate;
-
-	/**
 	 * WooCommerce attribute preservation callback.
 	 *
 	 * @var callable
@@ -43,38 +45,38 @@ class LegacySanitizeTitleBridge {
 	/**
 	 * Constructor.
 	 *
+	 * @param Main            $main              Main plugin class.
 	 * @param TermSlugService $term_slug_service Term slug service.
 	 * @param bool            $is_frontend       Whether current request is frontend.
-	 * @param callable        $transliterate     Transliteration callback.
 	 * @param callable        $is_wc_attribute   WooCommerce attribute preservation callback.
 	 */
 	public function __construct(
+		Main $main,
 		TermSlugService $term_slug_service,
 		bool $is_frontend,
-		callable $transliterate,
 		callable $is_wc_attribute
 	) {
+		$this->main              = $main;
 		$this->term_slug_service = $term_slug_service;
 		$this->is_frontend       = $is_frontend;
-		$this->transliterate     = $transliterate;
 		$this->is_wc_attribute   = $is_wc_attribute;
 	}
 
 	/**
 	 * Sanitize the title through the legacy broad bridge.
 	 *
-	 * @param string|mixed $title     Sanitized title.
-	 * @param string|mixed $raw_title The title prior to sanitization.
-	 * @param string|mixed $context   The context for which the title is being sanitized.
+	 * @param string $title     Sanitized title.
+	 * @param string $raw_title The title prior to sanitization.
+	 * @param string $context   The context for which the title is being sanitized.
 	 *
-	 * @return string|mixed
+	 * @return string
 	 */
-	public function sanitize_title( $title, $raw_title = '', $context = '' ) {
+	public function sanitize_title( string $title, string $raw_title = '', string $context = '' ): string {
 		if (
 			! $title ||
 			// Fix the bug with `_wp_old_slug` redirect.
 			'query' === $context ||
-			! $this->term_slug_service->should_transliterate_on_pre_term_slug_filter( (string) $title )
+			! $this->term_slug_service->should_transliterate_on_pre_term_slug_filter( $title )
 		) {
 			return $title;
 		}
@@ -91,11 +93,11 @@ class LegacySanitizeTitleBridge {
 			return $title;
 		}
 
-		$title = urldecode( (string) $title );
+		$title = urldecode( $title );
 		$pre   = apply_filters( 'ctl_pre_sanitize_title', false, $title );
 
 		if ( false !== $pre ) {
-			return $pre;
+			return (string) $pre;
 		}
 
 		$term = $this->term_slug_service->maybe_preserve_existing_encoded_slug(
@@ -115,7 +117,7 @@ class LegacySanitizeTitleBridge {
 			$this->maybe_log_unknown_call( $title, $raw_title, $context );
 		}
 
-		return call_user_func( $this->transliterate, $title );
+		return $this->main->transliterate( $title );
 	}
 
 	/**

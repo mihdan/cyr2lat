@@ -8,10 +8,13 @@
 namespace CyrToLat\Tests\Unit\Slugs;
 
 use CyrToLat\Main;
+use CyrToLat\Settings\Settings;
 use CyrToLat\Slugs\LegacySanitizeTitleBridge;
 use CyrToLat\Slugs\TermSlugService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use CyrToLat\Transliteration\Transliterator;
 use Mockery;
+use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
 
@@ -71,7 +74,7 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 		WP_Mock::onFilter( 'ctl_enable_legacy_sanitize_title_bridge' )->with( true, 'цвет', '', 'save' )->reply( false );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, 'цвет' )->reply( false );
 
-		self::assertSame( 'Cvet', $subject->sanitize_title( 'цвет', '', 'save' ) );
+		self::assertSame( 'czvet', $subject->sanitize_title( 'цвет', '', 'save' ) );
 	}
 
 	/**
@@ -99,7 +102,7 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 		WP_Mock::onFilter( 'ctl_enable_legacy_sanitize_title_bridge' )->with( true, 'цвет', '', '' )->reply( true );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, 'цвет' )->reply( false );
 
-		self::assertSame( 'Cvet', $subject->sanitize_title( 'цвет' ) );
+		self::assertSame( 'czvet', $subject->sanitize_title( 'цвет' ) );
 	}
 
 	/**
@@ -124,7 +127,7 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 			}
 		);
 
-		self::assertSame( 'Cvet', $subject->sanitize_title( 'цвет' ) );
+		self::assertSame( 'czvet', $subject->sanitize_title( 'цвет' ) );
 		self::assertCount( 1, $messages );
 		self::assertStringContainsString( 'legacy sanitize_title bridge handled an unknown call', $messages[0] );
 		self::assertStringNotContainsString( 'цвет', $messages[0] );
@@ -152,14 +155,27 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 			}
 		);
 
-		$main = Mockery::mock( Main::class )->makePartial();
+		$locale     = 'ru_RU';
+		$iso9_table = $this->get_conversion_table( $locale );
+
+		$settings = Mockery::mock( Settings::class );
+		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
+		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
+
+		$transliterator = Mockery::mock( Transliterator::class )->makePartial();
+		$main           = Mockery::mock( Main::class )->makePartial();
+
+		try {
+			$this->set_protected_property( $transliterator, 'settings', $settings );
+			$this->set_protected_property( $main, 'transliterator', $transliterator );
+		} catch ( ReflectionException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+			// Ignore.
+		}
 
 		return new LegacySanitizeTitleBridge(
+			$main,
 			new TermSlugService( $main ),
 			false,
-			static function ( string $title ): string {
-				return 'цвет' === $title ? 'Cvet' : $title;
-			},
 			static function () use ( $is_wc_attribute ): bool {
 				return $is_wc_attribute;
 			}

@@ -509,6 +509,7 @@ class MainTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
+
 		self::assertSame( $expected, $subject->sanitize_title( $title ) );
 	}
 

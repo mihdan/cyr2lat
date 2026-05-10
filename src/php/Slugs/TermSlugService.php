@@ -15,7 +15,7 @@ use CyrToLat\Main;
 class TermSlugService extends BaseService {
 
 	/**
-	 * Plugin main class.
+	 * Main plugin class.
 	 *
 	 * @var Main
 	 */
@@ -38,7 +38,7 @@ class TermSlugService extends BaseService {
 	/**
 	 * Constructor.
 	 *
-	 * @param Main $main Plugin main class.
+	 * @param Main $main Main plugin class.
 	 */
 	public function __construct( Main $main ) {
 		$this->main = $main;
