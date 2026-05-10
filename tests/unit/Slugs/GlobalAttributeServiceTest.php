@@ -37,7 +37,7 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 			]
 		);
 
-		$subject = new GlobalAttributeService();
+		$subject = new GlobalAttributeService( Mockery::mock( LocalAttributeService::class ) );
 
 		self::assertTrue( $subject->is_attribute_taxonomy( 'razmer' ) );
 		self::assertTrue( $subject->is_attribute_taxonomy( 'pa_razmer' ) );
@@ -60,7 +60,7 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 			]
 		);
 
-		$subject = new GlobalAttributeService();
+		$subject = new GlobalAttributeService( Mockery::mock( LocalAttributeService::class ) );
 
 		self::assertFalse( $subject->is_attribute_taxonomy( 'cvet' ) );
 	}

@@ -7,7 +7,9 @@
 
 namespace CyrToLat\Tests\Unit\Slugs;
 
+use CyrToLat\Main;
 use CyrToLat\Slugs\LocalAttributeService;
+use Mockery;
 
 /**
  * Test local attribute service.
@@ -56,7 +58,7 @@ class TestLocalAttributeService extends LocalAttributeService {
 		array $fired_actions = [],
 		array $product_attributes = []
 	) {
-		parent::__construct();
+		parent::__construct( Mockery::mock( Main::class ) );
 
 		$this->post_data          = $post_data;
 		$this->current_actions    = $current_actions;
