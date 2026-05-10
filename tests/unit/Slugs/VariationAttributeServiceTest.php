@@ -7,8 +7,10 @@
 
 namespace CyrToLat\Tests\Unit\Slugs;
 
+use CyrToLat\Main;
 use CyrToLat\Slugs\VariationAttributeService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use Mockery;
 
 /**
  * Class VariationAttributeServiceTest
@@ -84,12 +86,15 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_normalize_variation_attribute_key(): void {
-		$subject = new VariationAttributeService();
+		$main = Mockery::mock( Main::class );
+		$main->shouldReceive( 'transliterate' )->andReturnUsing( [ $this, 'normalize_key' ] );
 
-		self::assertSame( 'czvet', $subject->normalize_variation_attribute_key( 'Цвет', [ $this, 'normalize_key' ] ) );
-		self::assertSame( 'czvet', $subject->normalize_variation_attribute_key( 'attribute_Цвет', [ $this, 'normalize_key' ] ) );
-		self::assertSame( 'czvet', $subject->normalize_variation_attribute_key( '%D1%86%D0%B2%D0%B5%D1%82', [ $this, 'normalize_key' ] ) );
-		self::assertSame( 'pa_color', $subject->normalize_variation_attribute_key( 'attribute_pa_color', [ $this, 'normalize_key' ] ) );
+		$subject = new VariationAttributeService( $main );
+
+		self::assertSame( 'czvet', $subject->normalize_variation_attribute_key( 'Цвет' ) );
+		self::assertSame( 'czvet', $subject->normalize_variation_attribute_key( 'attribute_Цвет' ) );
+		self::assertSame( 'czvet', $subject->normalize_variation_attribute_key( '%D1%86%D0%B2%D0%B5%D1%82' ) );
+		self::assertSame( 'pa_color', $subject->normalize_variation_attribute_key( 'attribute_pa_color' ) );
 	}
 
 	/**

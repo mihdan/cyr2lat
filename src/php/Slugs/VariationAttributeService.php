@@ -10,12 +10,29 @@
 
 namespace CyrToLat\Slugs;
 
+use CyrToLat\Main;
 use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 
 /**
  * Handles WooCommerce variation attribute key decisions.
  */
 class VariationAttributeService {
+
+	/**
+	 * Main instance.
+	 *
+	 * @var Main
+	 */
+	private Main $main;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Main $main Main instance.
+	 */
+	public function __construct( Main $main ) {
+		$this->main = $main;
+	}
 
 	/**
 	 * Check if the variation attribute key belongs to a global attribute taxonomy.
@@ -68,12 +85,11 @@ class VariationAttributeService {
 	/**
 	 * Normalize local variation attribute keys on a WooCommerce variation object.
 	 *
-	 * @param object   $variation     Variation.
-	 * @param callable $normalize_key Key normalizer.
+	 * @param object $variation Variation.
 	 *
 	 * @return bool
 	 */
-	public function normalize_variation_attributes( object $variation, callable $normalize_key ): bool {
+	public function normalize_variation_attributes( object $variation ): bool {
 		if ( ! is_object( $variation ) || ! method_exists( $variation, 'get_attributes' ) ) {
 			return false;
 		}
@@ -92,7 +108,7 @@ class VariationAttributeService {
 		$changed               = false;
 
 		foreach ( $attributes as $attribute_key => $attribute_value ) {
-			$normalized_key                           = $this->normalize_variation_attribute_key( (string) $attribute_key, $normalize_key );
+			$normalized_key                           = $this->normalize_variation_attribute_key( (string) $attribute_key );
 			$normalized_attributes[ $normalized_key ] = $attribute_value;
 			$changed                                  = $changed || $normalized_key !== $attribute_key;
 		}
@@ -107,12 +123,11 @@ class VariationAttributeService {
 	/**
 	 * Normalize a variation attribute key.
 	 *
-	 * @param string   $attribute_key Attribute key.
-	 * @param callable $normalize_key Key normalizer.
+	 * @param string $attribute_key Attribute key.
 	 *
 	 * @return string
 	 */
-	public function normalize_variation_attribute_key( string $attribute_key, callable $normalize_key ): string {
+	public function normalize_variation_attribute_key( string $attribute_key ): string {
 		if ( $this->is_global_variation_attribute_key( $attribute_key ) ) {
 			return 0 === strpos( $attribute_key, 'attribute_' ) ? substr( $attribute_key, 10 ) : $attribute_key;
 		}
@@ -124,7 +139,7 @@ class VariationAttributeService {
 			return $attribute_key;
 		}
 
-		return strtolower( (string) $normalize_key( $attribute_key ) );
+		return strtolower( $this->main->transliterate( $attribute_key ) );
 	}
 
 	/**
