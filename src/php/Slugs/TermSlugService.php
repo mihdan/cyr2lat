@@ -17,7 +17,7 @@ class TermSlugService {
 	 *
 	 * @var callable|null
 	 */
-	private $prepare_in;
+	private $prepare_in_callback;
 
 	/**
 	 * Term context flag.
@@ -38,8 +38,8 @@ class TermSlugService {
 	 *
 	 * @param callable|null $prepare_in Prepare IN callback.
 	 */
-	public function __construct( $prepare_in = null ) {
-		$this->prepare_in = is_callable( $prepare_in ) ? $prepare_in : null;
+	public function __construct( ?callable $prepare_in = null ) {
+		$this->prepare_in_callback = is_callable( $prepare_in ) ? $prepare_in : null;
 	}
 
 	/**
@@ -111,11 +111,11 @@ class TermSlugService {
 			return $slug;
 		}
 
-		return call_user_func( $transliterate, $slug );
+		return $transliterate( $slug );
 	}
 
 	/**
-	 * Preserve existing encoded term slug when current context requires it.
+	 * Preserve existing encoded term slug when the current context requires it.
 	 *
 	 * @param string $title       Title.
 	 * @param bool   $is_frontend Whether current request is frontend.
@@ -183,14 +183,15 @@ class TermSlugService {
 	 * @param string      $format %s or %d.
 	 *
 	 * @return string
+	 * @noinspection PhpSameParameterValueInspection
 	 */
 	private function prepare_in( $items, string $format = '%s' ): string {
-		if ( $this->prepare_in ) {
+		if ( $this->prepare_in_callback ) {
 			if ( '%s' === $format ) {
-				return (string) call_user_func( $this->prepare_in, $items );
+				return (string) call_user_func( $this->prepare_in_callback, $items );
 			}
 
-			return (string) call_user_func( $this->prepare_in, $items, $format );
+			return (string) call_user_func( $this->prepare_in_callback, $items, $format );
 		}
 
 		global $wpdb;
