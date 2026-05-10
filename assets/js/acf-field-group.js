@@ -18,7 +18,7 @@
 			function( k, v ) {
 				const regex = new RegExp( k, 'g' );
 				str = str.replace( regex, v );
-			}
+			},
 		);
 		str = str.replace( /[^\w\d\-_]/g, '' );
 		str = str.replace( /_+/g, '_' );
@@ -32,7 +32,7 @@
 		'generate_field_object_name',
 		function( val ) {
 			return convert( val );
-		}
+		},
 	);
 
 	$( document ).on(
@@ -50,6 +50,6 @@
 			if ( str !== $this.val() ) {
 				$this.val( str );
 			}
-		}
+		},
 	);
 }( window.jQuery, window, document ) );

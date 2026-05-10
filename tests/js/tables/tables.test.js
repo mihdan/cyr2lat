@@ -139,7 +139,7 @@ describe( 'Tables', () => {
 		new Tables();
 
 		const wrapper = document.querySelector(
-			'#ctl-options ul.nav-tab-wrapper'
+			'#ctl-options ul.nav-tab-wrapper',
 		);
 		expect( typeof wrapper ).not.toBe( undefined );
 	} );
@@ -150,12 +150,12 @@ describe( 'Tables', () => {
 		new Tables();
 
 		const successMessage = document.querySelector(
-			'#ctl-options #ctl-success'
+			'#ctl-options #ctl-success',
 		);
 		expect( typeof successMessage ).not.toBe( undefined );
 
 		const errorMessage = document.querySelector(
-			'#ctl-options #ctl-error'
+			'#ctl-options #ctl-error',
 		);
 		expect( typeof errorMessage ).not.toBe( undefined );
 	} );
@@ -173,20 +173,20 @@ describe( 'Tables', () => {
 			return null;
 		} );
 		const tabs = document.querySelector(
-			'#ctl-options ul.nav-tab-wrapper'
+			'#ctl-options ul.nav-tab-wrapper',
 		);
 		expect( typeof tabs ).not.toBe( undefined );
 
 		const headers = [
 			...document.querySelectorAll(
-				'#ctl-options ul.nav-tab-wrapper h2'
+				'#ctl-options ul.nav-tab-wrapper h2',
 			),
 		];
 		headers.map( ( header, index ) => {
 			expect( header.classList.contains( 'nav-tab' ) ).toBe( true );
 			expect( parseInt( header.dataset.index ) ).toBe( index );
 			expect( header.classList.contains( 'nav-tab-active' ) ).toBe(
-				1 === index
+				1 === index,
 			);
 
 			return null;
@@ -205,7 +205,7 @@ describe( 'Tables', () => {
 		const checkActive = ( i ) => {
 			headers.map( ( header, index ) => {
 				expect( header.classList.contains( 'nav-tab-active' ) ).toBe(
-					i === index
+					i === index,
 				);
 
 				return null;
@@ -214,7 +214,7 @@ describe( 'Tables', () => {
 			const tableElements = [ ...document.querySelectorAll( '.ctl-table' ) ];
 			tableElements.map( ( table, index ) => {
 				expect( table.classList.contains( 'active' ) ).toBe(
-					i === index
+					i === index,
 				);
 
 				return null;
@@ -257,10 +257,10 @@ describe( 'Tables', () => {
 		document.body.innerHTML = getTables();
 		const tables = new Tables();
 		const successMessage = document.querySelector(
-			'#ctl-options #ctl-success'
+			'#ctl-options #ctl-success',
 		);
 		const errorMessage = document.querySelector(
-			'#ctl-options #ctl-error'
+			'#ctl-options #ctl-error',
 		);
 
 		jest.useFakeTimers();
@@ -290,7 +290,7 @@ describe( 'Tables', () => {
 		expect( setTimeout ).toHaveBeenCalledTimes( 2 );
 		expect( setTimeout ).toHaveBeenCalledWith(
 			expect.any( Function ),
-			5000
+			5000,
 		);
 
 		expect( clearTimeout ).toHaveBeenCalledTimes( 1 );
@@ -307,7 +307,7 @@ describe( 'Tables', () => {
 		expect( submitButton.disabled ).toBe( true );
 
 		const input = document.querySelector(
-			'#ctl-options table.active input'
+			'#ctl-options table.active input',
 		);
 		input.value = 'A1';
 
@@ -333,10 +333,10 @@ describe( 'Tables', () => {
 		const tables = new Tables();
 
 		const successMessage = document.querySelector(
-			'#ctl-options #ctl-success'
+			'#ctl-options #ctl-success',
 		);
 		const errorMessage = document.querySelector(
-			'#ctl-options #ctl-error'
+			'#ctl-options #ctl-error',
 		);
 
 		const mockSuccessResponse = {};
@@ -366,7 +366,7 @@ describe( 'Tables', () => {
 		};
 
 		const input = document.querySelector(
-			'#ctl-options table.active input'
+			'#ctl-options table.active input',
 		);
 		input.value = 'A1';
 
@@ -378,12 +378,12 @@ describe( 'Tables', () => {
 
 			expect( successMessage.innerHTML ).toBe( 'Options saved.' );
 			expect( successMessage.classList.contains( 'active' ) ).toBe(
-				true
+				true,
 			);
 
 			expect( errorMessage.innerHTML ).toBe( '' );
 			expect( errorMessage.classList.contains( 'active' ) ).not.toBe(
-				true
+				true,
 			);
 		} );
 
@@ -397,10 +397,10 @@ describe( 'Tables', () => {
 		const tables = new Tables();
 
 		const successMessage = document.querySelector(
-			'#ctl-options #ctl-success'
+			'#ctl-options #ctl-success',
 		);
 		const errorMessage = document.querySelector(
-			'#ctl-options #ctl-error'
+			'#ctl-options #ctl-error',
 		);
 
 		const mockSuccessResponse = {};
@@ -430,7 +430,7 @@ describe( 'Tables', () => {
 		};
 
 		const input = document.querySelector(
-			'#ctl-options table.active input'
+			'#ctl-options table.active input',
 		);
 		input.value = 'A1';
 
@@ -442,7 +442,7 @@ describe( 'Tables', () => {
 
 			expect( successMessage.innerHTML ).toBe( '' );
 			expect( successMessage.classList.contains( 'active' ) ).not.toBe(
-				true
+				true,
 			);
 
 			expect( errorMessage.innerHTML ).toBe( 'Error saving options.' );
@@ -460,20 +460,20 @@ describe( 'Tables', () => {
 
 		const labels = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table label'
+				'#ctl-options #ctl-current+table label',
 			),
 		];
 		const label = labels[ 0 ];
 		label.click();
 
 		const editLabelInput = label.parentNode.querySelector(
-			'#ctl-edit-label'
+			'#ctl-edit-label',
 		);
 
 		expect( typeof editLabelInput ).not.toBe( undefined );
 		expect( editLabelInput.value ).toBe( label.innerHTML );
 		expect(
-			editLabelInput.classList.contains( 'ctl-edit-label-error' )
+			editLabelInput.classList.contains( 'ctl-edit-label-error' ),
 		).toBe( false );
 		expect( editLabelInput.style.display ).toBe( 'block' );
 		expect( document.activeElement === editLabelInput ).toBe( true );
@@ -489,26 +489,26 @@ describe( 'Tables', () => {
 
 		const labels = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table label'
+				'#ctl-options #ctl-current+table label',
 			),
 		];
 		const plus = document.querySelector(
-			'#ctl-options #ctl-current+table .ctl-plus'
+			'#ctl-options #ctl-current+table .ctl-plus',
 		);
 		plus.click();
 
 		const lastCell = document.querySelector(
-			'#ctl-options .active .ctl-plus'
+			'#ctl-options .active .ctl-plus',
 		).previousElementSibling;
 
 		expect( typeof lastCell ).not.toBe( undefined );
 		expect( lastCell.querySelector( 'label' ).htmlFor ).toBe(
-			'bel-' + labels.length
+			'bel-' + labels.length,
 		);
 		expect( lastCell.querySelector( 'label' ).innerHTML ).toBe( '' );
 		expect( lastCell.querySelector( 'input' ).id ).toBe( 'ctl-edit-label' );
 		expect( lastCell.querySelector( 'input' ).nextElementSibling.id ).toBe(
-			'bel-' + labels.length
+			'bel-' + labels.length,
 		);
 		expect( lastCell.querySelector( 'input' ).value ).toBe( '' );
 
@@ -517,7 +517,7 @@ describe( 'Tables', () => {
 
 		expect( spyEditLabel ).toHaveBeenCalledTimes( 1 );
 		expect( spyEditLabel ).toHaveBeenCalledWith(
-			lastCell.querySelector( 'label' )
+			lastCell.querySelector( 'label' ),
 		);
 	} );
 
@@ -528,7 +528,7 @@ describe( 'Tables', () => {
 
 		const labels = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table label'
+				'#ctl-options #ctl-current+table label',
 			),
 		];
 		const label = labels[ 0 ];
@@ -537,12 +537,12 @@ describe( 'Tables', () => {
 		tables.hideEditLabelInput();
 
 		const editLabelInput = document.querySelector(
-			'body > #ctl-edit-label'
+			'body > #ctl-edit-label',
 		);
 
 		expect( typeof editLabelInput ).not.toBe( undefined );
 		expect(
-			editLabelInput.classList.contains( 'ctl-edit-label-error' )
+			editLabelInput.classList.contains( 'ctl-edit-label-error' ),
 		).toBe( false );
 		expect( editLabelInput.style.display ).toBe( 'none' );
 	} );
@@ -553,7 +553,7 @@ describe( 'Tables', () => {
 		const tables = new Tables();
 		const spyHideEditLabelInput = jest.spyOn(
 			tables,
-			'hideEditLabelInput'
+			'hideEditLabelInput',
 		);
 		const spySetSubmitStatus = jest.spyOn( tables, 'setSubmitStatus' );
 
@@ -569,13 +569,13 @@ describe( 'Tables', () => {
 		const tables = new Tables();
 		const spyHideEditLabelInput = jest.spyOn(
 			tables,
-			'hideEditLabelInput'
+			'hideEditLabelInput',
 		);
 		const spySetSubmitStatus = jest.spyOn( tables, 'setSubmitStatus' );
 
 		let labels = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table label'
+				'#ctl-options #ctl-current+table label',
 			),
 		];
 		const label = labels[ 0 ];
@@ -589,7 +589,7 @@ describe( 'Tables', () => {
 
 		labels = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table label'
+				'#ctl-options #ctl-current+table label',
 			),
 		];
 
@@ -606,12 +606,12 @@ describe( 'Tables', () => {
 		const tables = new Tables();
 		const spyHideEditLabelInput = jest.spyOn(
 			tables,
-			'hideEditLabelInput'
+			'hideEditLabelInput',
 		);
 
 		let labels = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table label'
+				'#ctl-options #ctl-current+table label',
 			),
 		];
 		const label = labels[ 0 ];
@@ -621,7 +621,7 @@ describe( 'Tables', () => {
 
 		labels = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table label'
+				'#ctl-options #ctl-current+table label',
 			),
 		];
 
@@ -636,12 +636,12 @@ describe( 'Tables', () => {
 		const tables = new Tables();
 		const spyHideEditLabelInput = jest.spyOn(
 			tables,
-			'hideEditLabelInput'
+			'hideEditLabelInput',
 		);
 
 		let labels = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table label'
+				'#ctl-options #ctl-current+table label',
 			),
 		];
 		const label = labels[ 0 ];
@@ -651,7 +651,7 @@ describe( 'Tables', () => {
 
 		labels = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table label'
+				'#ctl-options #ctl-current+table label',
 			),
 		];
 
@@ -667,7 +667,7 @@ describe( 'Tables', () => {
 
 		let labels = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table label'
+				'#ctl-options #ctl-current+table label',
 			),
 		];
 		const label = labels[ 0 ];
@@ -681,13 +681,13 @@ describe( 'Tables', () => {
 
 		labels = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table label'
+				'#ctl-options #ctl-current+table label',
 			),
 		];
 
 		expect( labels.length ).toBe( 2 );
 		expect(
-			editLabelInput.classList.contains( 'ctl-edit-label-error' )
+			editLabelInput.classList.contains( 'ctl-edit-label-error' ),
 		).toBe( true );
 	} );
 
@@ -699,7 +699,7 @@ describe( 'Tables', () => {
 
 		let labels = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table label'
+				'#ctl-options #ctl-current+table label',
 			),
 		];
 		let label = labels[ 0 ];
@@ -714,14 +714,14 @@ describe( 'Tables', () => {
 
 		labels = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table label'
+				'#ctl-options #ctl-current+table label',
 			),
 		];
 		label = labels[ 0 ];
 
 		const inputs = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table input'
+				'#ctl-options #ctl-current+table input',
 			),
 		];
 		const input = inputs[ 0 ];
@@ -729,7 +729,7 @@ describe( 'Tables', () => {
 		expect( labels.length ).toBe( 2 );
 		expect( label.innerHTML ).toBe( newValue );
 		expect( input.name ).toBe(
-			'cyr_to_lat_settings[bel][' + newValue + ']'
+			'cyr_to_lat_settings[bel][' + newValue + ']',
 		);
 		expect( spySetSubmitStatus ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -742,7 +742,7 @@ describe( 'Tables', () => {
 
 		const labels = [
 			...document.querySelectorAll(
-				'#ctl-options #ctl-current+table label'
+				'#ctl-options #ctl-current+table label',
 			),
 		];
 		const label = labels[ 0 ];
