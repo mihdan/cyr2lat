@@ -7,6 +7,8 @@
 
 namespace CyrToLat\Slugs;
 
+use CyrToLat\Main;
+
 /**
  * Handles WooCommerce local product attribute slug decisions.
  */
@@ -20,11 +22,20 @@ class LocalAttributeService {
 	private VariationAttributeService $variation_attribute_service;
 
 	/**
+	 * Main instance.
+	 *
+	 * @var Main|null
+	 */
+	private ?Main $main;
+
+	/**
 	 * Constructor.
 	 *
+	 * @param Main                           $main                        Main instance.
 	 * @param VariationAttributeService|null $variation_attribute_service Variation attribute service.
 	 */
-	public function __construct( ?VariationAttributeService $variation_attribute_service = null ) {
+	public function __construct( Main $main, ?VariationAttributeService $variation_attribute_service = null ) {
+		$this->main                        = $main;
 		$this->variation_attribute_service = $variation_attribute_service ?? new VariationAttributeService();
 	}
 
@@ -75,12 +86,11 @@ class LocalAttributeService {
 	/**
 	 * Normalize local product attribute keys on a WooCommerce product object.
 	 *
-	 * @param object   $product       Product.
-	 * @param callable $normalize_key Key normalizer.
+	 * @param object $product Product.
 	 *
 	 * @return bool
 	 */
-	public function normalize_product_attributes( object $product, callable $normalize_key ): bool {
+	public function normalize_product_attributes( object $product ): bool {
 		if ( ! is_object( $product ) || ! method_exists( $product, 'get_attributes' ) ) {
 			return false;
 		}
@@ -95,7 +105,7 @@ class LocalAttributeService {
 		$changed               = false;
 
 		foreach ( $attributes as $attribute_key => $attribute ) {
-			$normalized_key                           = $this->normalize_product_attribute_key( (string) $attribute_key, $attribute, $normalize_key );
+			$normalized_key                           = $this->normalize_product_attribute_key( (string) $attribute_key, $attribute );
 			$normalized_attributes[ $normalized_key ] = $attribute;
 			$changed                                  = $changed || $normalized_key !== $attribute_key;
 		}
@@ -110,13 +120,12 @@ class LocalAttributeService {
 	/**
 	 * Normalize a product attribute key.
 	 *
-	 * @param string   $attribute_key Attribute key.
-	 * @param mixed    $attribute     Attribute.
-	 * @param callable $normalize_key Key normalizer.
+	 * @param string $attribute_key Attribute key.
+	 * @param mixed  $attribute     Attribute.
 	 *
 	 * @return string
 	 */
-	public function normalize_product_attribute_key( string $attribute_key, $attribute, callable $normalize_key ): string {
+	public function normalize_product_attribute_key( string $attribute_key, $attribute ): string {
 		if ( ! is_object( $attribute ) || ! method_exists( $attribute, 'is_taxonomy' ) || ! method_exists( $attribute, 'get_name' ) ) {
 			return $attribute_key;
 		}
@@ -131,7 +140,11 @@ class LocalAttributeService {
 			return $attribute_key;
 		}
 
-		return strtolower( (string) $normalize_key( $name ) );
+		if ( null === $this->main ) {
+			return $attribute_key;
+		}
+
+		return strtolower( $this->main->transliterate( $name ) );
 	}
 
 	/**

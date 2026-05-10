@@ -388,7 +388,7 @@ class Main {
 	 * @return void
 	 */
 	public function normalize_wc_product_attribute_keys( object $product ): void {
-		$this->local_attribute_service()->normalize_product_attributes( $product, [ $this, 'transliterate' ] );
+		$this->local_attribute_service()->normalize_product_attributes( $product );
 		$this->variation_attribute_service()->normalize_variation_attributes( $product, [ $this, 'transliterate' ] );
 	}
 
@@ -424,7 +424,7 @@ class Main {
 	 */
 	private function local_attribute_service(): LocalAttributeService {
 		if ( null === $this->local_attribute_service ) {
-			$this->local_attribute_service = new LocalAttributeService( $this->variation_attribute_service() );
+			$this->local_attribute_service = new LocalAttributeService( $this, $this->variation_attribute_service() );
 		}
 
 		return $this->local_attribute_service;
