@@ -401,10 +401,7 @@ class Main {
 	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	protected function is_wc_attribute( string $title ): bool {
-		return $this->global_attribute_service()->should_preserve_attribute_title(
-			$title,
-			[ $this, 'is_local_attribute' ]
-		);
+		return $this->global_attribute_service()->should_preserve_attribute_title( $title );
 	}
 
 	/**
@@ -414,7 +411,7 @@ class Main {
 	 */
 	private function global_attribute_service(): GlobalAttributeService {
 		if ( null === $this->global_attribute_service ) {
-			$this->global_attribute_service = new GlobalAttributeService();
+			$this->global_attribute_service = new GlobalAttributeService( $this->local_attribute_service() );
 		}
 
 		return $this->global_attribute_service;

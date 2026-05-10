@@ -13,6 +13,22 @@ namespace CyrToLat\Slugs;
 class GlobalAttributeService {
 
 	/**
+	 * Local attribute service.
+	 *
+	 * @var LocalAttributeService
+	 */
+	private LocalAttributeService $local_attribute_service;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param LocalAttributeService|null $local_attribute_service Local attribute service.
+	 */
+	public function __construct( ?LocalAttributeService $local_attribute_service = null ) {
+		$this->local_attribute_service = $local_attribute_service ?? new LocalAttributeService();
+	}
+
+	/**
 	 * Check if title is an attribute taxonomy.
 	 *
 	 * @param string $title Title.
@@ -40,12 +56,11 @@ class GlobalAttributeService {
 	/**
 	 * Check if the title should be preserved as a WooCommerce attribute slug.
 	 *
-	 * @param string        $title                              Title.
-	 * @param callable|null $is_local_attribute                 Local attribute callback.
+	 * @param string $title Title.
 	 *
 	 * @return bool
 	 */
-	public function should_preserve_attribute_title( string $title, ?callable $is_local_attribute = null ): bool {
+	public function should_preserve_attribute_title( string $title ): bool {
 		if ( ! function_exists( 'WC' ) ) {
 			return false;
 		}
@@ -54,7 +69,7 @@ class GlobalAttributeService {
 			return true;
 		}
 
-		if ( is_callable( $is_local_attribute ) && $is_local_attribute( $title ) ) {
+		if ( $this->local_attribute_service->is_local_attribute( $title ) ) {
 			return true;
 		}
 

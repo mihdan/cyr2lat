@@ -8,6 +8,7 @@
 namespace CyrToLat\Tests\Unit\Slugs;
 
 use CyrToLat\Slugs\GlobalAttributeService;
+use CyrToLat\Slugs\LocalAttributeService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use WP_Mock;
@@ -70,16 +71,12 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_should_preserve_attribute_title_rejects_non_woocommerce_context(): void {
-		$subject = new GlobalAttributeService();
+		$local_attribute_service = Mockery::mock( LocalAttributeService::class );
+		$local_attribute_service->shouldNotReceive( 'is_local_attribute' );
 
-		self::assertFalse(
-			$subject->should_preserve_attribute_title(
-				'razmer',
-				static function (): bool {
-					return true;
-				}
-			)
-		);
+		$subject = new GlobalAttributeService( $local_attribute_service );
+
+		self::assertFalse( $subject->should_preserve_attribute_title( 'razmer' ) );
 	}
 
 	/**
@@ -100,7 +97,9 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 			]
 		);
 
-		$subject = new GlobalAttributeService();
+		$local_attribute_service = Mockery::mock( LocalAttributeService::class );
+
+		$subject = new GlobalAttributeService( $local_attribute_service );
 
 		self::assertTrue( $subject->should_preserve_attribute_title( 'pa_razmer' ) );
 	}
@@ -114,16 +113,14 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 		WP_Mock::userFunction( 'WC' );
 		WP_Mock::userFunction( 'wc_get_attribute_taxonomies', [ 'return' => [] ] );
 
-		$subject = new GlobalAttributeService();
+		$local_attribute_service = Mockery::mock( LocalAttributeService::class );
+		$local_attribute_service->shouldReceive( 'is_local_attribute' )
+			->with( 'local-size' )
+			->andReturn( true );
 
-		self::assertTrue(
-			$subject->should_preserve_attribute_title(
-				'local-size',
-				static function ( string $title ): bool {
-					return 'local-size' === $title;
-				}
-			)
-		);
+		$subject = new GlobalAttributeService( $local_attribute_service );
+
+		self::assertTrue( $subject->should_preserve_attribute_title( 'local-size' ) );
 	}
 
 	/**
@@ -149,7 +146,12 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 		$product->shouldReceive( 'get_id' )->andReturn( $product_id );
 		$GLOBALS['product'] = $product;
 
-		$subject = new GlobalAttributeService();
+		$local_attribute_service = Mockery::mock( LocalAttributeService::class );
+		$local_attribute_service->shouldReceive( 'is_local_attribute' )
+			->with( $title )
+			->andReturn( false );
+
+		$subject = new GlobalAttributeService( $local_attribute_service );
 
 		self::assertTrue( $subject->should_preserve_attribute_title( $title ) );
 

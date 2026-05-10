@@ -813,7 +813,7 @@ class MainTest extends CyrToLatTestCase {
 
 		$global_attribute_service = Mockery::mock( GlobalAttributeService::class );
 		$global_attribute_service->shouldReceive( 'should_preserve_attribute_title' )
-			->with( $title, [ $subject, 'is_local_attribute' ] )
+			->with( $title )
 			->andReturn( $expected );
 
 		$this->set_protected_property( $subject, 'global_attribute_service', $global_attribute_service );
