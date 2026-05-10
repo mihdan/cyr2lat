@@ -105,9 +105,9 @@ class TermSlugService extends BaseService {
 	 *
 	 * @param string $slug Term slug.
 	 *
-	 * @return string|mixed
+	 * @return string
 	 */
-	public function filter_term_slug( string $slug ) {
+	public function filter_term_slug( string $slug ): string {
 		if ( '' === $slug || ! $this->has_non_ascii_chars( $slug ) ) {
 			return $slug;
 		}

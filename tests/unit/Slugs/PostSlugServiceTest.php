@@ -45,7 +45,7 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test filter_post_data() keeps empty post_name without title.
+	 * Test filter_post_data() keeps an empty post_name without a title.
 	 *
 	 * @return void
 	 */
@@ -198,9 +198,9 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	/**
 	 * Get a Main mock instance.
 	 *
-	 * @return Main
+	 * @return object
 	 */
-	private function get_main_mock(): Main {
+	private function get_main_mock(): object {
 		return Mockery::mock( Main::class )->makePartial();
 	}
 }

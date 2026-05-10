@@ -10,6 +10,7 @@ namespace CyrToLat\Tests\Unit\Slugs;
 use CyrToLat\Main;
 use CyrToLat\Slugs\TermSlugService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use Mockery;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
 
@@ -65,7 +66,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_filter_term_slug_transliterates_explicit_cyrillic_slug(): void {
-		$main = \Mockery::mock( Main::class )->makePartial();
+		$main = Mockery::mock( Main::class )->makePartial();
 		$main->shouldReceive( 'sanitize_explicit_slug' )
 			->with( 'й' )
 			->andReturn( 'j' );
@@ -166,7 +167,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	 * @return TermSlugService
 	 */
 	private function get_subject(): TermSlugService {
-		$main = \Mockery::mock( Main::class )->makePartial();
+		$main = Mockery::mock( Main::class )->makePartial();
 
 		return new TermSlugService( $main );
 	}

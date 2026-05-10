@@ -34,7 +34,6 @@ use CyrToLat\Transliteration\Transliterator;
 use CyrToLat\WPCli;
 use Mockery;
 use PHPUnit\Runner\Version;
-use ReflectionClass;
 use ReflectionException;
 use WP_Mock;
 use WP_Post;
@@ -974,108 +973,6 @@ class MainTest extends CyrToLatTestCase {
 
 		self::assertSame( $title, $subject->sanitize_title( $title ) );
 	}
-
-	/**
-	 * Test is_local_attribute().
-	 *
-	 * @param string $title    Title.
-	 * @param array  $post     POST data.
-	 * @param bool   $expected Expected result.
-	 *
-	 * @dataProvider dp_test_is_local_attribute
-	 * @throws ReflectionException ReflectionException.
-	 */
-	public function test_is_local_attribute(
-		string $title,
-		array $post,
-		bool $expected
-	): void {
-		$subject = $this->get_subject();
-
-		$subject->shouldAllowMockingProtectedMethods();
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$_POST = $post;
-
-		WP_Mock::passthruFunction( 'sanitize_text_field' );
-		WP_Mock::passthruFunction( 'wp_unslash' );
-
-		$local_attribute_service = Mockery::mock( LocalAttributeService::class . '[wp_parse_str]', [ Mockery::mock( Main::class ), new VariationAttributeService( Mockery::mock( Main::class ) ) ] );
-		$local_attribute_service->shouldAllowMockingProtectedMethods();
-		$local_attribute_service->shouldReceive( 'wp_parse_str' )->andReturnUsing(
-			static function ( $input_string ) {
-				parse_str( (string) $input_string, $result );
-
-				return $result;
-			}
-		);
-		$this->set_protected_property( $subject, 'local_attribute_service', $local_attribute_service );
-
-		WP_Mock::userFunction( 'doing_action' )->andReturn( false );
-		WP_Mock::userFunction( 'did_action' )->andReturn( 0 );
-
-		FunctionMocker::replace(
-			'filter_input',
-			static function ( $type, $var_name, $filter ) use ( $post ) {
-				if ( INPUT_POST === $type && 'action' === $var_name && FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter ) {
-					return $post['action'];
-				}
-
-				if ( INPUT_POST === $type && 'data' === $var_name && FILTER_SANITIZE_URL === $filter ) {
-					return $post['data'];
-				}
-
-				return null;
-			}
-		);
-
-		$subject->shouldAllowMockingProtectedMethods();
-
-		self::assertSame( $expected, $subject->is_local_attribute( $title ) );
-	}
-
-	/**
-	 * Data provider for test_is_local_attribute().
-	 *
-	 * @return array
-	 */
-	public static function dp_test_is_local_attribute(): array {
-		return [
-			'global attribute'       => [
-				'pa_color',
-				[
-					'action' => 'woocommerce_save_attributes',
-					'data'   => 'attribute_names%5B0%5D=color',
-				],
-				false,
-			],
-			'wrong action'           => [
-				'color',
-				[
-					'action' => 'other_action',
-					'data'   => 'attribute_names%5B0%5D=color',
-				],
-				false,
-			],
-			'not in attribute names' => [
-				'color',
-				[
-					'action' => 'woocommerce_save_attributes',
-					'data'   => 'attribute_names%5B0%5D=size',
-				],
-				false,
-			],
-			'in attribute names'     => [
-				'color',
-				[
-					'action' => 'woocommerce_save_attributes',
-					'data'   => 'attribute_names%5B0%5D=color',
-				],
-				true,
-			],
-		];
-	}
-
 
 	/**
 	 * Data provider for test_sanitize_title_for_wc_attribute_taxonomy

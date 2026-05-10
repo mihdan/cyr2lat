@@ -75,7 +75,7 @@ class TermConversionProcess extends ConversionProcess {
 		$slug       = urldecode( $term->slug );
 
 		add_filter( 'locale', [ $this, 'filter_term_locale' ] );
-		$transliterated_slug = $this->term_slug_service->filter_term_slug( $slug, [ $this->main, 'transliterate' ] );
+		$transliterated_slug = $this->term_slug_service->filter_term_slug( $slug );
 		remove_filter( 'locale', [ $this, 'filter_term_locale' ] );
 
 		$transliterated_slug = (string) $transliterated_slug;

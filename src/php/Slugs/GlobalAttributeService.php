@@ -22,10 +22,10 @@ class GlobalAttributeService {
 	/**
 	 * Constructor.
 	 *
-	 * @param LocalAttributeService|null $local_attribute_service Local attribute service.
+	 * @param LocalAttributeService $local_attribute_service Local attribute service.
 	 */
-	public function __construct( ?LocalAttributeService $local_attribute_service = null ) {
-		$this->local_attribute_service = $local_attribute_service ?? new LocalAttributeService();
+	public function __construct( LocalAttributeService $local_attribute_service ) {
+		$this->local_attribute_service = $local_attribute_service;
 	}
 
 	/**

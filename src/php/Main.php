@@ -370,17 +370,6 @@ class Main {
 	}
 
 	/**
-	 * Check if the title is a local attribute.
-	 *
-	 * @param string $title Title.
-	 *
-	 * @return bool
-	 */
-	public function is_local_attribute( string $title ): bool {
-		return $this->local_attribute_service()->is_local_attribute( $title );
-	}
-
-	/**
 	 * Normalize WooCommerce product attribute keys.
 	 *
 	 * @param object $product Product.

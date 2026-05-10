@@ -5,6 +5,11 @@
  * @package cyr-to-lat
  */
 
+// phpcs:disable Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpUndefinedClassInspection */
+/** @noinspection PhpUndefinedFunctionInspection */
+// phpcs:enable Generic.Commenting.DocComment.MissingShort
+
 namespace CyrToLat\Tests\Integration;
 
 use WC_Cache_Helper;

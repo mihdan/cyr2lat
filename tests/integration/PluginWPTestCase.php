@@ -98,6 +98,7 @@ abstract class PluginWPTestCase extends WP_UnitTestCase {
 	 * Load WordPress plugin admin functions.
 	 *
 	 * @return void
+	 * @noinspection PhpIncludeInspection
 	 */
 	protected static function load_plugin_functions(): void {
 		if ( ! function_exists( 'activate_plugin' ) ) {
