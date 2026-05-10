@@ -7,6 +7,7 @@
 
 namespace CyrToLat\Tests\Unit\Slugs;
 
+use CyrToLat\Main;
 use CyrToLat\Slugs\TermSlugService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use tad\FunctionMocker\FunctionMocker;
@@ -25,7 +26,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_default_context(): void {
-		$subject = new TermSlugService();
+		$subject = $this->get_subject();
 
 		self::assertFalse( $subject->is_term_context() );
 		self::assertSame( [], $subject->taxonomies() );
@@ -37,7 +38,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_pre_insert_term_filter_captures_context(): void {
-		$subject = new TermSlugService();
+		$subject = $this->get_subject();
 
 		self::assertSame( 'й', $subject->pre_insert_term_filter( 'й', 'category' ) );
 		self::assertTrue( $subject->is_term_context() );
@@ -50,7 +51,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_get_terms_args_filter_captures_context(): void {
-		$subject = new TermSlugService();
+		$subject = $this->get_subject();
 		$args    = [ 'hide_empty' => false ];
 
 		self::assertSame( $args, $subject->get_terms_args_filter( $args, [ 'category', 'post_tag' ] ) );
@@ -64,7 +65,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_filter_term_slug_transliterates_explicit_cyrillic_slug(): void {
-		$subject = new TermSlugService();
+		$subject = $this->get_subject();
 
 		self::assertSame(
 			'j',
@@ -83,7 +84,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_filter_term_slug_preserves_latin_slug(): void {
-		$subject = new TermSlugService();
+		$subject = $this->get_subject();
 
 		self::assertSame(
 			'manual-slug',
@@ -113,7 +114,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( true );
 
-		$subject = new TermSlugService();
+		$subject = $this->get_subject();
 
 		self::assertFalse( $subject->should_transliterate_on_pre_term_slug_filter( 'й' ) );
 
@@ -143,7 +144,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 			}
 		);
 
-		$subject = new TermSlugService();
+		$subject = $this->get_subject();
 
 		self::assertTrue( $subject->should_transliterate_on_pre_term_slug_filter( 'й' ) );
 
@@ -163,10 +164,21 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 			}
 		);
 
-		$subject = new TermSlugService();
+		$subject = $this->get_subject();
 		$subject->pre_insert_term_filter( 'й', 'category' );
 
 		self::assertSame( 'й', $subject->maybe_preserve_existing_encoded_slug( 'й', true ) );
 		self::assertFalse( $subject->is_term_context() );
+	}
+
+	/**
+	 * Get the subject under test.
+	 *
+	 * @return TermSlugService
+	 */
+	private function get_subject(): TermSlugService {
+		$main = \Mockery::mock( Main::class )->makePartial();
+
+		return new TermSlugService( $main );
 	}
 }

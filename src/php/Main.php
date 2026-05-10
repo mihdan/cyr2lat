@@ -366,18 +366,6 @@ class Main {
 	}
 
 	/**
-	 * Check if title is an attribute taxonomy.
-	 *
-	 * @param string $title Title.
-	 *
-	 * @return bool
-	 * @noinspection PhpUndefinedFunctionInspection
-	 */
-	protected function is_wc_attribute_taxonomy( string $title ): bool {
-		return $this->global_attribute_service()->is_attribute_taxonomy( $title );
-	}
-
-	/**
 	 * Check if the title is a local attribute.
 	 *
 	 * @param string $title Title.
