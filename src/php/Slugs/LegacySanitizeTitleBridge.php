@@ -100,6 +100,8 @@ class LegacySanitizeTitleBridge {
 			return (string) $pre;
 		}
 
+		// This is the only point to process duplicate slugs.
+		// @todo Move to the TermSlugService.
 		$term = $this->term_slug_service->maybe_preserve_existing_encoded_slug(
 			$title,
 			$this->is_frontend
