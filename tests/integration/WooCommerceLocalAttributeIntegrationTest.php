@@ -72,6 +72,7 @@ class WooCommerceLocalAttributeIntegrationTest extends PluginWPTestCase {
 	 * Test that a WooCommerce product save stores a Cyrillic local attribute under the current transliterated key.
 	 *
 	 * @return void
+	 * @noinspection PhpUndefinedClassInspection
 	 */
 	public function test_product_save_stores_cyrillic_local_attribute_under_transliterated_key(): void {
 		$sanitize_title_calls = [];

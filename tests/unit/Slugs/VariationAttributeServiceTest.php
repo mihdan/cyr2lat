@@ -25,7 +25,7 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_is_global_variation_attribute_key_detects_global_keys(): void {
-		$subject = new VariationAttributeService();
+		$subject = new VariationAttributeService( Mockery::mock( Main::class ) );
 
 		self::assertTrue( $subject->is_global_variation_attribute_key( 'pa_color' ) );
 		self::assertTrue( $subject->is_global_variation_attribute_key( 'attribute_pa_color' ) );
@@ -37,7 +37,7 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_is_global_variation_attribute_key_rejects_local_keys(): void {
-		$subject = new VariationAttributeService();
+		$subject = new VariationAttributeService( Mockery::mock( Main::class ) );
 
 		self::assertFalse( $subject->is_global_variation_attribute_key( 'color' ) );
 		self::assertFalse( $subject->is_global_variation_attribute_key( 'attribute_color' ) );
@@ -49,7 +49,7 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_encoded_product_attribute_key(): void {
-		$subject = new VariationAttributeService();
+		$subject = new VariationAttributeService( Mockery::mock( Main::class ) );
 
 		self::assertSame( '%d1%86%d0%b2%d0%b5%d1%82', $subject->encoded_product_attribute_key( 'Цвет' ) );
 	}
@@ -60,7 +60,7 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_local_variation_request_key(): void {
-		$subject = new VariationAttributeService();
+		$subject = new VariationAttributeService( Mockery::mock( Main::class ) );
 
 		self::assertSame( 'attribute_цвет', $subject->local_variation_request_key( 'Цвет' ) );
 		self::assertSame( 'attribute_цвет', $subject->local_variation_request_key( 'attribute_Цвет' ) );
@@ -72,7 +72,7 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_encoded_local_variation_request_keys(): void {
-		$subject = new VariationAttributeService();
+		$subject = new VariationAttributeService( Mockery::mock( Main::class ) );
 
 		self::assertSame(
 			[ 'attribute_%D1%86%D0%B2%D0%B5%D1%82', 'attribute_%d1%86%d0%b2%d0%b5%d1%82' ],

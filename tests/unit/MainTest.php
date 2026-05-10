@@ -28,6 +28,7 @@ use CyrToLat\Requirements;
 use CyrToLat\Settings\Settings;
 use CyrToLat\Slugs\GlobalAttributeService;
 use CyrToLat\Slugs\LocalAttributeService;
+use CyrToLat\Slugs\VariationAttributeService;
 use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 use CyrToLat\Transliteration\Transliterator;
 use CyrToLat\WPCli;
@@ -960,7 +961,7 @@ class MainTest extends CyrToLatTestCase {
 		$subject = $this->get_subject();
 		$subject->shouldAllowMockingProtectedMethods();
 
-		$local_attribute_service = Mockery::mock( LocalAttributeService::class . '[wp_parse_str]', [ Mockery::mock( Main::class ) ] );
+		$local_attribute_service = Mockery::mock( LocalAttributeService::class . '[wp_parse_str]', [ Mockery::mock( Main::class ), new VariationAttributeService( Mockery::mock( Main::class ) ) ] );
 		$local_attribute_service->shouldAllowMockingProtectedMethods();
 		$local_attribute_service->shouldReceive( 'wp_parse_str' )->andReturnUsing(
 			static function ( $input_string ) {
@@ -999,7 +1000,7 @@ class MainTest extends CyrToLatTestCase {
 		WP_Mock::passthruFunction( 'sanitize_text_field' );
 		WP_Mock::passthruFunction( 'wp_unslash' );
 
-		$local_attribute_service = Mockery::mock( LocalAttributeService::class . '[wp_parse_str]', [ Mockery::mock( Main::class ) ] );
+		$local_attribute_service = Mockery::mock( LocalAttributeService::class . '[wp_parse_str]', [ Mockery::mock( Main::class ), new VariationAttributeService( Mockery::mock( Main::class ) ) ] );
 		$local_attribute_service->shouldAllowMockingProtectedMethods();
 		$local_attribute_service->shouldReceive( 'wp_parse_str' )->andReturnUsing(
 			static function ( $input_string ) {
