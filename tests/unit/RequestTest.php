@@ -192,19 +192,15 @@ class RequestTest extends CyrToLatTestCase {
 		$subject = new Request();
 
 		$_SERVER['REQUEST_URI'] = '/wp-json/wp/v2/some-route';
+		$_SERVER['SCRIPT_NAME'] = '/index.php';
+		$_GET['rest_route']     = '/wp/v2/posts';
 
-		FunctionMocker::replace(
-			'filter_input',
-			static function ( $type, $var_name, $filter ) {
-				return (
-					INPUT_GET === $type &&
-					'rest_route' === $var_name &&
-					FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter
-				);
-			}
-		);
+		WP_Mock::userFunction( 'sanitize_text_field' )->andReturnArg( 0 );
+		WP_Mock::passthruFunction( 'wp_unslash' );
 
 		self::assertTrue( $subject->is_rest() );
+
+		unset( $_GET['rest_route'], $_SERVER['SCRIPT_NAME'] );
 	}
 
 	/**
@@ -214,70 +210,23 @@ class RequestTest extends CyrToLatTestCase {
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$GLOBALS['wp_rewrite'] = Mockery::mock( 'WP_Rewrite' );
 
-		$rest_route             = '/wp/v2/posts';
-		$_SERVER['REQUEST_URI'] = '/wp-json' . $rest_route;
+		$_SERVER['REQUEST_URI'] = '/wp-json/wp/v2/posts';
 
-		$subject = Mockery::mock( Request::class )->makePartial();
-		$subject->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'get_rest_route' )->andReturnUsing(
-			function () use ( &$rest_route ) {
-				return $rest_route;
-			}
-		);
-
-		self::assertTrue( $subject->is_rest() );
-
-		$rest_route             = '';
-		$_SERVER['REQUEST_URI'] = '/' . $rest_route;
-
-		self::assertFalse( $subject->is_rest() );
-	}
-
-	/**
-	 * Test get_rest_route().
-	 *
-	 * @param string $current_path Current path.
-	 * @param string $expected     Expected.
-	 *
-	 * @dataProvider dp_test_get_rest_route
-	 *
-	 * @throws ReflectionException ReflectionException.
-	 */
-	public function test_get_rest_route( string $current_path, string $expected ): void {
-		$current_url = 'https://test.test' . $current_path;
-
-		$rest_path = '/wp-json';
-		$rest_url  = 'https://test.test' . $rest_path . '/';
-
-		WP_Mock::userFunction( 'add_query_arg' )->with( [] )->andReturn( $current_url );
-		WP_Mock::userFunction( 'wp_parse_url' )->with( $current_url . '/', PHP_URL_PATH )->andReturn( $current_path );
-
-		WP_Mock::userFunction( 'rest_url' )->andReturn( $rest_url );
+		WP_Mock::userFunction( 'sanitize_text_field' )->andReturnArg( 0 );
+		WP_Mock::passthruFunction( 'wp_unslash' );
+		WP_Mock::userFunction( 'add_query_arg' )->with( [] )->andReturn( '/wp-json/wp/v2/posts' );
+		WP_Mock::userFunction( 'wp_parse_url' )->with( '/wp-json/wp/v2/posts', PHP_URL_PATH )->andReturn( '/wp-json/wp/v2/posts' );
+		WP_Mock::userFunction( 'rest_url' )->andReturn( 'https://test.test/wp-json/' );
 		WP_Mock::userFunction( 'trailingslashit' )->andReturnUsing(
 			function ( $str ) {
 				return rtrim( $str, '/' ) . '/';
 			}
 		);
-		WP_Mock::userFunction( 'wp_parse_url' )->with( $rest_url, PHP_URL_PATH )->andReturn( $rest_path );
+		WP_Mock::userFunction( 'wp_parse_url' )->with( 'https://test.test/wp-json/', PHP_URL_PATH )->andReturn( '/wp-json/' );
 
-		$subject = Mockery::mock( Request::class )->makePartial();
-		$method  = 'get_rest_route';
+		$subject = new Request();
 
-		$this->set_method_accessibility( $subject, $method );
-
-		self::assertSame( $expected, $subject->$method() );
-	}
-
-	/**
-	 * Data provider for it_gets_rest_route.
-	 *
-	 * @return array
-	 */
-	public static function dp_test_get_rest_route(): array {
-		return [
-			'rest request' => [ '/wp-json/wp/v2/posts', '/wp/v2/posts' ],
-			'some request' => [ '/some-request', '' ],
-		];
+		self::assertTrue( $subject->is_rest() );
 	}
 
 	/**

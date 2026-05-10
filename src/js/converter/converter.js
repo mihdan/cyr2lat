@@ -14,7 +14,7 @@ class Converter {
 		this.CONFIRM_CANCEL_SELECTOR = '#ctl-confirm-cancel';
 
 		this.confirmPopup = document.querySelector(
-			this.CONFIRM_POPUP_SELECTOR
+			this.CONFIRM_POPUP_SELECTOR,
 		);
 
 		this.bindEvents();
@@ -25,7 +25,7 @@ class Converter {
 	 */
 	bindEvents() {
 		document.querySelector( this.CONVERT_BUTTON_SELECTOR ).onclick = (
-			event
+			event,
 		) => {
 			event.preventDefault();
 			this.confirmPopup.style.display = 'block';
@@ -37,7 +37,7 @@ class Converter {
 		};
 
 		document.querySelector( this.CONFIRM_OK_SELECTOR ).onclick = (
-			event
+			event,
 		) => {
 			event.stopPropagation();
 			this.hideConfirmPopup();
@@ -45,7 +45,7 @@ class Converter {
 		};
 
 		document.querySelector( this.CONFIRM_CANCEL_SELECTOR ).onclick = (
-			event
+			event,
 		) => {
 			event.stopPropagation();
 			this.hideConfirmPopup();

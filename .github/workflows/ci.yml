@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Update changelog
         if: ${{ matrix.php-version == '8.5' }}
@@ -31,35 +31,21 @@ jobs:
           extensions: json, mysqli, mbstring, zip
 
       - name: Install dependencies with caching
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Run code sniffer
+        if: ${{ matrix.php-version == '8.5' }}
         run: composer phpcs
 
       - name: Run unit tests
-        if: ${{ matrix.php-version != '8.5' }}
         run: vendor/bin/phpunit
 
-      - name: Run PHPUnit tests with coverage
-        if: ${{ matrix.php-version == '8.5' }}
-        run: vendor/bin/phpunit --coverage-clover coverage.xml
-
-      - name: Run Coveralls for PHPUnit tests
-        if: ${{ matrix.php-version == '8.5' }}
-        env:
-          COVERALLS_RUN_LOCALLY: true
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: vendor/bin/php-coveralls -v
-
-      - name: Run ESLint, JEST with coverage and Coveralls
+      - name: Run ESLint and JEST
         if: ${{ matrix.php-version == '8.4' }}
-        env:
-          COVERALLS_RUN_LOCALLY: true
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
           corepack enable
           yarn set version stable
           yarn
           yarn dev
           yarn lint
-          yarn run coveralls
+          yarn jest

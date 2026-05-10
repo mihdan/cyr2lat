@@ -41,7 +41,7 @@ describe( 'Converter', () => {
 
 		window.HTMLFormElement.prototype.submit = () => {};
 		const convertForm = document.querySelector(
-			'#ctl-convert-existing-slugs'
+			'#ctl-convert-existing-slugs',
 		);
 		const convertButton = document.querySelector( '#ctl-convert-button' );
 		const confirmPopup = document.querySelector( '#ctl-confirm-popup' );

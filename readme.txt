@@ -4,7 +4,7 @@ Tags: cyrillic, slugs, translation, transliteration
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 6.7.0
+Stable tag: 6.8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -236,6 +236,11 @@ We will review your report and respond as quickly as possible.
 
 == Changelog ==
 
+= 6.8.0 (10.05.2026) =
+* Fixed returning unexpected results by REST API in some cases.
+* Fixed import of WooCommerce products.
+* Fixed transliteration of product categories, brands, and tags.
+
 = 6.7.0 (01.04.2026) =
 * The minimum required PHP version is now 7.4.
 * The minimum required WordPress version is now 6.0.
@@ -262,7 +267,7 @@ We will review your report and respond as quickly as possible.
 * Removed fix for translation after WordPress 6.5+ due to performance issues.
 
 = 6.2.3 (24.11.2024) =
-* Fixed deprecation error with PHP 8.4.
+* Fixed the deprecation error with PHP 8.4.
 * Tested with PHP 8.4.
 
 = 6.2.2 (15.11.2024) =
@@ -270,7 +275,7 @@ We will review your report and respond as quickly as possible.
 * Some translations were empty with WordPress 6.5+.
 
 = 6.2.1 (13.11.2024) =
-* Fixed layout of the Converter page.
+* Fixed the layout of the Converter page.
 * Fixed issues reported by Plugin Check Plugin.
 
 = 6.2.0 (13.11.2024) =
@@ -283,7 +288,7 @@ We will review your report and respond as quickly as possible.
 = 6.1.0 (09.03.2024) =
 * Tested with WordPress 6.5.
 * Tested with WooCommerce 8.6.
-* Fixed error on the System Info tab when post types or post statuses are not set.
+* Fixed the error on the System Info tab when post types or post statuses are not set.
 
 = 6.0.8 (14.02.2024) =
 * Improved detection of the Gutenberg editor.
@@ -314,7 +319,7 @@ We will review your report and respond as quickly as possible.
 * Fixed the fatal error with Jetpack sync.
 
 = 6.0.2 (26.07.2023) =
-* Fixed fatal error in admin_footer_text().
+* Fixed the fatal error in admin_footer_text().
 
 = 6.0.1 (26.07.2023) =
 * Fixed the fatal error on the System Info page with empty options.
@@ -325,7 +330,7 @@ We will review your report and respond as quickly as possible.
 * Tested with WooCommerce 7.9.
 * Added System Info tab.
 * Added filter 'ctl_allow'
-* Fixed console error when saving table data.
+* Fixed the console error when saving table data.
 * Fixed the current table setting on the Tables page with WPML.
 
 [See changelog for all versions](https://plugins.svn.wordpress.org/cyr2lat/trunk/changelog.txt).

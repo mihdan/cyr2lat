@@ -70,37 +70,32 @@ class Request {
 		}
 
 		// Case #2.
-		if ( filter_input( INPUT_GET, 'rest_route', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$rest_route  = self::filter_input( INPUT_GET, 'rest_route' );
+		$script_name = self::filter_input( INPUT_SERVER, 'SCRIPT_NAME' );
+
+		if ( 0 === strpos( $rest_route, '/' ) && 'index.php' === basename( $script_name ) ) {
 			return true;
 		}
 
 		// Case #3.
 		global $wp_rewrite;
 
+		$initial_wp_rewrite = $wp_rewrite;
+
 		if ( null === $wp_rewrite ) {
-			// @codeCoverageIgnoreStart
 			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			$wp_rewrite = new WP_Rewrite();
-			// @codeCoverageIgnoreEnd
 		}
 
 		// Case #4.
-		return (bool) $this->get_rest_route();
-	}
+		$current_url = (string) wp_parse_url( add_query_arg( [] ), PHP_URL_PATH );
+		$rest_url    = wp_parse_url( trailingslashit( rest_url() ), PHP_URL_PATH );
 
-	/**
-	 * Get the REST route.
-	 * Returns a route if it is a REST request, otherwise an empty string.
-	 *
-	 * @return string
-	 */
-	protected function get_rest_route(): string {
-		$current_path = (string) wp_parse_url( trailingslashit( add_query_arg( [] ) ), PHP_URL_PATH );
-		$rest_path    = (string) wp_parse_url( trailingslashit( rest_url() ), PHP_URL_PATH );
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wp_rewrite = $initial_wp_rewrite;
 
-		$is_rest = 0 === strpos( $current_path, $rest_path );
-
-		return $is_rest ? substr( $current_path, strlen( $rest_path ) ) : '';
+		return 0 === strpos( $current_url, $rest_url );
 	}
 
 	/**
@@ -115,5 +110,48 @@ class Request {
 		);
 
 		return 'POST' === $request_method;
+	}
+
+	/**
+	 * Filter input in WP style.
+	 * Nonce must be checked in the calling function.
+	 *
+	 * @param int    $type     Input type.
+	 * @param string $var_name Variable name.
+	 *
+	 * @return array|string
+	 */
+	public static function filter_input( int $type, string $var_name ) {
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		switch ( $type ) {
+			case INPUT_GET:
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				return isset( $_GET[ $var_name ] ) ? self::sanitize_data( $_GET[ $var_name ] ) : '';
+			case INPUT_POST:
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing
+				return isset( $_POST[ $var_name ] ) ? self::sanitize_data( $_POST[ $var_name ] ) : '';
+			case INPUT_SERVER:
+				return isset( $_SERVER[ $var_name ] ) ? self::sanitize_data( $_SERVER[ $var_name ] ) : '';
+			case INPUT_COOKIE:
+				return isset( $_COOKIE[ $var_name ] ) ? self::sanitize_data( $_COOKIE[ $var_name ] ) : '';
+			default:
+				return '';
+		}
+		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+	}
+
+	/**
+	 * Sanitize data.
+	 *
+	 * @param array|string $data Data to sanitize.
+	 *
+	 * @return array|string
+	 */
+	private static function sanitize_data( $data ) {
+		if ( is_array( $data ) ) {
+			return array_map( [ self::class, 'sanitize_data' ], $data );
+		}
+
+		return is_scalar( $data ) ? sanitize_text_field( wp_unslash( $data ) ) : '';
 	}
 }

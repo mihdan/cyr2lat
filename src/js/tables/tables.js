@@ -66,7 +66,7 @@ class Tables {
 	 */
 	getActiveHeader() {
 		return document.querySelector(
-			this.HEADER_SELECTOR + '.' + this.ACTIVE_NAV_TAB_CLASS
+			this.HEADER_SELECTOR + '.' + this.ACTIVE_NAV_TAB_CLASS,
 		);
 	}
 
@@ -95,7 +95,7 @@ class Tables {
 	 */
 	getActiveTable() {
 		return document.querySelector(
-			this.TABLE_SELECTOR + '.' + this.ACTIVE_TABLE_CLASS
+			this.TABLE_SELECTOR + '.' + this.ACTIVE_TABLE_CLASS,
 		);
 	}
 
@@ -107,7 +107,7 @@ class Tables {
 	getInputs() {
 		return [
 			...document.querySelectorAll(
-				this.OPTIONS_FORM_SELECTOR + ' input'
+				this.OPTIONS_FORM_SELECTOR + ' input',
 			),
 		];
 	}
@@ -120,7 +120,7 @@ class Tables {
 	getLabels() {
 		return [
 			...document.querySelectorAll(
-				this.OPTIONS_FORM_SELECTOR + ' label'
+				this.OPTIONS_FORM_SELECTOR + ' label',
 			),
 		];
 	}
@@ -133,7 +133,7 @@ class Tables {
 	getPlusButtons() {
 		return [
 			...document.querySelectorAll(
-				this.OPTIONS_FORM_SELECTOR + ' .' + this.PLUS_CLASS
+				this.OPTIONS_FORM_SELECTOR + ' .' + this.PLUS_CLASS,
 			),
 		];
 	}
@@ -171,7 +171,7 @@ class Tables {
 		if ( activeLocale !== ctlLocale ) {
 			this.showMessage(
 				this.warningMessage,
-				Cyr2LatTablesObject.localeWarning.replace( '{active_table}', activeLocale )
+				Cyr2LatTablesObject.localeWarning.replace( '{active_table}', activeLocale ),
 			);
 		} else {
 			this.clearMessage( this.warningMessage );
@@ -227,21 +227,21 @@ class Tables {
 				if ( json.success ) {
 					this.showMessage(
 						this.successMessage,
-						json.data
+						json.data,
 					);
 
 					this.tablesData = this.getTablesData();
 				} else {
 					this.showMessage(
 						this.errorMessage,
-						json.data
+						json.data,
 					);
 				}
 			} )
 			.catch( ( error ) => {
 				this.showMessage(
 					this.errorMessage,
-					error
+					error,
 				);
 				return {};
 			} )
@@ -263,7 +263,7 @@ class Tables {
 		const data = {};
 		inputs.forEach( ( input ) => {
 			const label = document.querySelector(
-				this.OPTIONS_FORM_SELECTOR + ' label[for="' + input.id + '"]'
+				this.OPTIONS_FORM_SELECTOR + ' label[for="' + input.id + '"]',
 			);
 
 			data[ label.innerHTML ] = input.value;
@@ -310,7 +310,7 @@ class Tables {
 		this.wrapper.classList.add( 'nav-tab-wrapper' );
 		this.optionsForm.insertBefore(
 			this.wrapper,
-			this.optionsForm.firstChild
+			this.optionsForm.firstChild,
 		);
 	}
 
@@ -377,7 +377,7 @@ class Tables {
 				' .' +
 				this.ACTIVE_TABLE_CLASS +
 				' .' +
-				this.PLUS_CLASS
+				this.PLUS_CLASS,
 		).previousElementSibling;
 	}
 
@@ -388,7 +388,7 @@ class Tables {
 		let lastCell = this.getLastCell();
 		lastCell.parentElement.insertBefore(
 			lastCell.cloneNode( true ),
-			lastCell.nextElementSibling
+			lastCell.nextElementSibling,
 		);
 
 		lastCell = this.getLastCell();
@@ -468,7 +468,7 @@ class Tables {
 
 				headers.map( ( aHeader ) => {
 					return aHeader.classList.remove(
-						this.ACTIVE_NAV_TAB_CLASS
+						this.ACTIVE_NAV_TAB_CLASS,
 					);
 				} );
 				headers[ index ].classList.add( this.ACTIVE_NAV_TAB_CLASS );
@@ -563,7 +563,7 @@ class Tables {
 			( acc, label ) => {
 				return acc && label.innerHTML !== newValue;
 			},
-			true
+			true,
 		);
 	}
 
@@ -622,7 +622,7 @@ class Tables {
 		// noinspection JSUnresolvedVariable
 		input.name = input.name.replace(
 			/(.+\[.+])\[.*]/g,
-			'$1[' + newValue + ']'
+			'$1[' + newValue + ']',
 		);
 	}
 

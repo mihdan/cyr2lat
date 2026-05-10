@@ -406,6 +406,17 @@ class Main {
 
 		$action = (string) filter_input( INPUT_POST, 'action', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
+		$other_actions = [
+			'woocommerce_do_ajax_product_import',
+			'add-tag',
+			'editedtag',
+			'inline-save-tax',
+		];
+
+		if ( in_array( $action, $other_actions, true ) ) {
+			return false;
+		}
+
 		// The `save attributes` action.
 		if ( 'woocommerce_save_attributes' === $action ) {
 			$data            = (string) filter_input( INPUT_POST, 'data', FILTER_SANITIZE_URL );
