@@ -24,9 +24,9 @@ class LocalAttributeService {
 	/**
 	 * Main instance.
 	 *
-	 * @var Main|null
+	 * @var Main
 	 */
-	private ?Main $main;
+	private Main $main;
 
 	/**
 	 * Constructor.
@@ -36,7 +36,7 @@ class LocalAttributeService {
 	 */
 	public function __construct( Main $main, ?VariationAttributeService $variation_attribute_service = null ) {
 		$this->main                        = $main;
-		$this->variation_attribute_service = $variation_attribute_service ?? new VariationAttributeService();
+		$this->variation_attribute_service = $variation_attribute_service ?? new VariationAttributeService( $main );
 	}
 
 	/**
@@ -140,10 +140,6 @@ class LocalAttributeService {
 			return $attribute_key;
 		}
 
-		if ( null === $this->main ) {
-			return $attribute_key;
-		}
-
 		return strtolower( $this->main->transliterate( $name ) );
 	}
 
@@ -156,7 +152,7 @@ class LocalAttributeService {
 	 */
 	private function is_ajax_save_attribute( string $title ): bool {
 		$data            = $this->post_value( 'data', FILTER_SANITIZE_URL );
-		$attributes      = (array) $this->wp_parse_str( urldecode( $data ) );
+		$attributes      = $this->wp_parse_str( urldecode( $data ) );
 		$attribute_names = $attributes['attribute_names'] ?? [];
 
 		return in_array( $title, $attribute_names, true );
@@ -307,9 +303,8 @@ class LocalAttributeService {
 	 * @return bool
 	 */
 	protected function has_post_value( string $key ): bool {
-		// phpcs:disable WordPress.Security.NonceVerification.Missing
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		return isset( $_POST[ $key ] );
-		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 
 	/**
