@@ -53,7 +53,7 @@ class PostConversionProcess extends ConversionProcess {
 	public function __construct( Main $main, ?PostSlugService $post_slug_service = null ) {
 		$this->action            = constant( 'CYR_TO_LAT_POST_CONVERSION_ACTION' );
 		$this->locale            = get_locale();
-		$this->post_slug_service = $post_slug_service ?? new PostSlugService( $main, [ $main, 'transliterate' ] );
+		$this->post_slug_service = $post_slug_service ?? new PostSlugService( $main );
 
 		parent::__construct( $main );
 	}

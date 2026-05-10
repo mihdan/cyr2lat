@@ -25,12 +25,14 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_filter_post_data_generates_empty_post_name_from_title(): void {
-		$subject = new PostSlugService(
-			$this->get_main_mock(),
-			static function ( string $slug ): string {
-				return 'й' === $slug ? 'j' : $slug;
-			}
-		);
+		$main = $this->get_main_mock();
+		$main->shouldReceive( 'sanitize_explicit_slug' )
+			->andReturnUsing(
+				static function ( string $slug ): string {
+					return 'й' === $slug ? 'j' : $slug;
+				}
+			);
+		$subject = new PostSlugService( $main );
 		$data    = [
 			'post_name'   => '',
 			'post_title'  => 'й',
@@ -64,12 +66,14 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_filter_post_data_normalizes_explicit_cyrillic_post_name(): void {
-		$subject = new PostSlugService(
-			$this->get_main_mock(),
-			static function ( string $slug ): string {
-				return 'й' === $slug ? 'j' : $slug;
-			}
-		);
+		$main = $this->get_main_mock();
+		$main->shouldReceive( 'sanitize_explicit_slug' )
+			->andReturnUsing(
+				static function ( string $slug ): string {
+					return 'й' === $slug ? 'j' : $slug;
+				}
+			);
+		$subject = new PostSlugService( $main );
 		$data    = [
 			'post_name'   => 'й',
 			'post_title'  => 'Title',
@@ -87,12 +91,14 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_filter_post_data_normalizes_encoded_cyrillic_post_name(): void {
-		$subject = new PostSlugService(
-			$this->get_main_mock(),
-			static function ( string $slug ): string {
-				return 'й' === $slug ? 'j' : $slug;
-			}
-		);
+		$main = $this->get_main_mock();
+		$main->shouldReceive( 'sanitize_explicit_slug' )
+			->andReturnUsing(
+				static function ( string $slug ): string {
+					return 'й' === $slug ? 'j' : $slug;
+				}
+			);
+		$subject = new PostSlugService( $main );
 		$data    = [
 			'post_name'   => '%d0%b9',
 			'post_title'  => 'Title',
@@ -110,12 +116,14 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_filter_post_data_preserves_encoded_ascii_post_name(): void {
-		$subject = new PostSlugService(
-			$this->get_main_mock(),
-			static function ( string $slug ): string {
-				return $slug . '-changed';
-			}
-		);
+		$main = $this->get_main_mock();
+		$main->shouldReceive( 'sanitize_explicit_slug' )
+			->andReturnUsing(
+				static function ( string $slug ): string {
+					return $slug . '-changed';
+				}
+			);
+		$subject = new PostSlugService( $main );
 		$data    = [
 			'post_name'   => 'hello%20world',
 			'post_title'  => 'Title',

@@ -22,22 +22,12 @@ class PostSlugService extends BaseService {
 	private Main $main;
 
 	/**
-	 * Optional slug sanitization callback used instead of Main::sanitize_explicit_slug().
-	 *
-	 * @var callable|null
-	 */
-	private $sanitize_slug_callback;
-
-	/**
 	 * Constructor.
 	 *
-	 * @param Main          $main          Main plugin class.
-	 * @param callable|null $sanitize_slug Optional slug sanitization callback. When omitted,
-	 *                                     Main::sanitize_explicit_slug() is used.
+	 * @param Main $main Main plugin class.
 	 */
-	public function __construct( Main $main, ?callable $sanitize_slug = null ) {
-		$this->main                   = $main;
-		$this->sanitize_slug_callback = is_callable( $sanitize_slug ) ? $sanitize_slug : null;
+	public function __construct( Main $main ) {
+		$this->main = $main;
 	}
 
 	/**
@@ -128,10 +118,6 @@ class PostSlugService extends BaseService {
 	 * @return string
 	 */
 	private function sanitize_slug( string $value ): string {
-		if ( $this->sanitize_slug_callback ) {
-			return (string) call_user_func( $this->sanitize_slug_callback, $value );
-		}
-
 		return $this->main->sanitize_explicit_slug( $value );
 	}
 }
