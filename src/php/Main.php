@@ -554,18 +554,6 @@ class Main {
 	}
 
 	/**
-	 * Split Chinese string by hyphens.
-	 *
-	 * @param string $str   String.
-	 * @param array  $table Conversion table.
-	 *
-	 * @return string
-	 */
-	protected function split_chinese_string( string $str, array $table ): string {
-		return $this->transliterator->split_chinese_string( $str, $table );
-	}
-
-	/**
 	 * Transliterate string using a table.
 	 *
 	 * @param string $str String.
@@ -574,37 +562,6 @@ class Main {
 	 */
 	public function transliterate( string $str ): string {
 		return $this->transliterator->transliterate( $str );
-	}
-
-	/**
-	 * Check if the Block Editor is active.
-	 * Must only be used after the plugins_loaded action is fired.
-	 *
-	 * @return bool
-	 * @noinspection PhpUndefinedFunctionInspection
-	 */
-	private function is_gutenberg_editor_active(): bool {
-		// Gutenberg plugin is installed and activated.
-		// This filter was removed in WP 5.5.
-		if ( has_filter( 'replace_editor', 'gutenberg_init' ) ) {
-			return true;
-		}
-
-		if ( ! function_exists( 'is_plugin_active' ) ) {
-			// @codeCoverageIgnoreStart
-			include_once ABSPATH . 'wp-admin/includes/plugin.php';
-			// @codeCoverageIgnoreEnd
-		}
-
-		if ( is_plugin_active( 'classic-editor/classic-editor.php' ) ) {
-			return in_array( get_option( 'classic-editor-replace' ), [ 'no-replace', 'block' ], true );
-		}
-
-		if ( is_plugin_active( 'disable-gutenberg/disable-gutenberg.php' ) ) {
-			return ! disable_gutenberg();
-		}
-
-		return true;
 	}
 
 	/**
@@ -687,7 +644,7 @@ class Main {
 	 */
 	private function term_slug_service(): TermSlugService {
 		if ( null === $this->term_slug_service ) {
-			$this->term_slug_service = new TermSlugService( [ $this, 'prepare_in' ] );
+			$this->term_slug_service = new TermSlugService( $this );
 		}
 
 		return $this->term_slug_service;

@@ -7,9 +7,11 @@
 
 namespace CyrToLat\Tests\Unit\Slugs;
 
+use CyrToLat\Main;
 use CyrToLat\Slugs\LegacySanitizeTitleBridge;
 use CyrToLat\Slugs\TermSlugService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use Mockery;
 use WP_Mock;
 
 /**
@@ -139,8 +141,10 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 		?callable $is_development_logging_enabled = null,
 		?callable $unknown_call_logger = null
 	): LegacySanitizeTitleBridge {
+		$main = Mockery::mock( Main::class )->makePartial();
+
 		return new LegacySanitizeTitleBridge(
-			new TermSlugService(),
+			new TermSlugService( $main ),
 			false,
 			static function ( string $title ): string {
 				return 'цвет' === $title ? 'Cvet' : $title;

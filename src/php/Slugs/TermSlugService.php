@@ -7,17 +7,19 @@
 
 namespace CyrToLat\Slugs;
 
+use CyrToLat\Main;
+
 /**
  * Handles term slug context.
  */
 class TermSlugService extends BaseService {
 
 	/**
-	 * Prepare IN callback.
+	 * Plugin main class.
 	 *
-	 * @var callable|null
+	 * @var Main
 	 */
-	private $prepare_in_callback;
+	private Main $main;
 
 	/**
 	 * Term context flag.
@@ -36,10 +38,10 @@ class TermSlugService extends BaseService {
 	/**
 	 * Constructor.
 	 *
-	 * @param callable|null $prepare_in Prepare IN callback.
+	 * @param Main $main Plugin main class.
 	 */
-	public function __construct( ?callable $prepare_in = null ) {
-		$this->prepare_in_callback = is_callable( $prepare_in ) ? $prepare_in : null;
+	public function __construct( Main $main ) {
+		$this->main = $main;
 	}
 
 	/**
@@ -145,7 +147,7 @@ class TermSlugService extends BaseService {
 		);
 
 		if ( $this->taxonomies ) {
-			$sql .= ' AND tt.taxonomy IN (' . $this->prepare_in( $this->taxonomies ) . ')';
+			$sql .= ' AND tt.taxonomy IN (' . $this->main->prepare_in( $this->taxonomies ) . ')';
 		}
 
 		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
@@ -174,40 +176,5 @@ class TermSlugService extends BaseService {
 			// Transliterate on pre_term_slug with Polylang and WPML only.
 			! ( class_exists( 'Polylang' ) || class_exists( 'SitePress' ) )
 		);
-	}
-
-	/**
-	 * Changes an array of items into a string of items, separated by comma and sql-escaped.
-	 *
-	 * @param mixed|array $items  Item(s) to be joined into string.
-	 * @param string      $format %s or %d.
-	 *
-	 * @return string
-	 * @noinspection PhpSameParameterValueInspection
-	 */
-	private function prepare_in( $items, string $format = '%s' ): string {
-		if ( $this->prepare_in_callback ) {
-			if ( '%s' === $format ) {
-				return (string) call_user_func( $this->prepare_in_callback, $items );
-			}
-
-			return (string) call_user_func( $this->prepare_in_callback, $items, $format );
-		}
-
-		global $wpdb;
-
-		$prepared_in = '';
-		$items       = (array) $items;
-
-		foreach ( $items as $item ) {
-			if ( $prepared_in ) {
-				$prepared_in .= ',';
-			}
-
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$prepared_in .= "'" . $wpdb->prepare( $format, $item ) . "'";
-		}
-
-		return $prepared_in;
 	}
 }

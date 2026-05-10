@@ -53,7 +53,7 @@ class TermConversionProcess extends ConversionProcess {
 	public function __construct( Main $main, ?TermSlugService $term_slug_service = null ) {
 		$this->action            = constant( 'CYR_TO_LAT_TERM_CONVERSION_ACTION' );
 		$this->locale            = get_locale();
-		$this->term_slug_service = $term_slug_service ?? new TermSlugService( [ $main, 'prepare_in' ] );
+		$this->term_slug_service = $term_slug_service ?? new TermSlugService( $main );
 
 		parent::__construct( $main );
 	}

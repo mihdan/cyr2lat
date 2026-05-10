@@ -1273,56 +1273,6 @@ class MainTest extends CyrToLatTestCase {
 
 
 	/**
-	 * Test split_chinese_string().
-	 *
-	 * @param string $str      String.
-	 * @param string $expected Expected result.
-	 *
-	 * @throws ReflectionException ReflectionException.
-	 * @dataProvider dp_test_split_chinese_string
-	 */
-	public function test_split_chinese_string( string $str, string $expected ): void {
-		$locale = 'zh_CN';
-		$table  = $this->get_conversion_table( $locale );
-		$table  = $this->transpose_chinese_table( $table );
-
-		$settings = Mockery::mock( Settings::class );
-		$settings->shouldReceive( 'get_table' )->andReturn( $table );
-		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( true );
-
-		$subject = $this->get_subject();
-		$method  = 'split_chinese_string';
-		$this->set_method_accessibility( $subject, $method );
-
-		$transliterator = $this->get_protected_property( $subject, 'transliterator' );
-		$this->set_protected_property( $transliterator, 'settings', $settings );
-
-		self::assertSame( $expected, $subject->$method( $str, $table ) );
-	}
-
-	/**
-	 * Data provider for test_split_chinese_string
-	 *
-	 * @return array
-	 */
-	public static function dp_test_split_chinese_string(): array {
-		return [
-			'general'     => [
-				'我是俄罗斯人',
-				'-我--是--俄--罗--斯--人-',
-			],
-			'less than 4' => [
-				'俄罗斯',
-				'俄罗斯',
-			],
-			'with Latin'  => [
-				'我是 cool 俄罗斯 bool 人',
-				'-我--是- cool -俄--罗--斯- bool -人-',
-			],
-		];
-	}
-
-	/**
 	 * Test that sanitize_filename() returns ctl_pre_sanitize_filename filter value if set
 	 *
 	 * @throws ReflectionException ReflectionException.
