@@ -378,6 +378,7 @@ class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
 	 * Test that frontend layered navigation keeps registered global attribute taxonomy and term slugs.
 	 *
 	 * @return void
+	 * @noinspection PhpArrayWriteIsNotUsedInspection
 	 */
 	public function test_frontend_layered_nav_preserves_global_attribute_taxonomy_and_term_slug(): void {
 		$taxonomy = $this->register_global_attribute_taxonomy();

@@ -8,6 +8,7 @@
 namespace CyrToLat\Tests\Integration;
 
 use WC_Install;
+use WC_Post_Types;
 use WC_Product_Attribute;
 use WC_Product_Variable;
 use WC_Product_Variation;
@@ -79,7 +80,7 @@ class WooCommerceCartSessionIntegrationTest extends PluginWPTestCase {
 	}
 
 	/**
-	 * Test that WooCommerce restores a local attribute variation item from session.
+	 * Test that WooCommerce restores a local attribute variation item from a session.
 	 *
 	 * @return void
 	 */
@@ -132,8 +133,8 @@ class WooCommerceCartSessionIntegrationTest extends PluginWPTestCase {
 		WC()->init();
 
 		if ( class_exists( 'WC_Post_Types' ) ) {
-			\WC_Post_Types::register_taxonomies();
-			\WC_Post_Types::register_post_types();
+			WC_Post_Types::register_taxonomies();
+			WC_Post_Types::register_post_types();
 		}
 
 		if ( ! did_action( 'woocommerce_after_register_taxonomy' ) ) {

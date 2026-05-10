@@ -85,7 +85,7 @@ class PostSlugIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that wp_insert_post() creates a post slug from Cyrillic title.
+	 * Test that wp_insert_post() creates a post slug from a Cyrillic title.
 	 *
 	 * @return void
 	 */
@@ -104,7 +104,7 @@ class PostSlugIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that wp_insert_post() creates a page slug from Cyrillic title.
+	 * Test that wp_insert_post() creates a page slug from the Cyrillic title.
 	 *
 	 * @return void
 	 */
@@ -123,7 +123,7 @@ class PostSlugIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that wp_insert_post() creates a custom post type slug from Cyrillic title.
+	 * Test that wp_insert_post() creates a custom post type slug from a Cyrillic title.
 	 *
 	 * @return void
 	 */
@@ -142,7 +142,7 @@ class PostSlugIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that wp_insert_post() creates a product slug from Cyrillic title when WooCommerce is available.
+	 * Test that wp_insert_post() creates a product slug from a Cyrillic title when WooCommerce is available.
 	 *
 	 * @return void
 	 */

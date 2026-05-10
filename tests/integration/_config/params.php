@@ -15,7 +15,7 @@ if ( $config && file_exists( $config ) ) {
 
 $config = __DIR__ . '/params.github-actions.php';
 
-if ( ( getenv( 'GITHUB_ACTIONS' ) || in_array( 'github-actions', $argv, true ) ) && file_exists( $config ) ) {
+if ( file_exists( $config ) && ( getenv( 'GITHUB_ACTIONS' ) || in_array( 'github-actions', $argv, true ) ) ) {
 	return include $config;
 }
 

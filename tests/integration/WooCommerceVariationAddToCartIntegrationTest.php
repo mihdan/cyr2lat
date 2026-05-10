@@ -9,6 +9,7 @@ namespace CyrToLat\Tests\Integration;
 
 use WC_Form_Handler;
 use WC_Install;
+use WC_Post_Types;
 use WC_Product_Attribute;
 use WC_Product_Variable;
 use WC_Product_Variation;
@@ -122,6 +123,7 @@ class WooCommerceVariationAddToCartIntegrationTest extends PluginWPTestCase {
 	 * Test frontend add-to-cart accepts the rendered local attribute request key and survives session reload.
 	 *
 	 * @return void
+	 * @noinspection PhpArrayWriteIsNotUsedInspection
 	 */
 	public function test_frontend_add_to_cart_accepts_rendered_cyrillic_local_attribute_key_and_session_reload(): void {
 		[ $product_id, $variation_id ] = $this->create_variable_product_with_cyrillic_local_attribute();
@@ -137,7 +139,7 @@ class WooCommerceVariationAddToCartIntegrationTest extends PluginWPTestCase {
 			$request_key   => 'Красный',
 		];
 
-		WC_Form_Handler::add_to_cart_action( false );
+		WC_Form_Handler::add_to_cart_action();
 
 		self::assertSame( 'attribute_czvet', $request_key );
 		self::assertSame( 0, wc_notice_count( 'error' ) );
@@ -180,8 +182,8 @@ class WooCommerceVariationAddToCartIntegrationTest extends PluginWPTestCase {
 		WC()->init();
 
 		if ( class_exists( 'WC_Post_Types' ) ) {
-			\WC_Post_Types::register_taxonomies();
-			\WC_Post_Types::register_post_types();
+			WC_Post_Types::register_taxonomies();
+			WC_Post_Types::register_post_types();
 		}
 
 		if ( ! did_action( 'woocommerce_after_register_taxonomy' ) ) {
@@ -217,7 +219,7 @@ class WooCommerceVariationAddToCartIntegrationTest extends PluginWPTestCase {
 	}
 
 	/**
-	 * Get first cart item.
+	 * Get the first cart item.
 	 *
 	 * @return array
 	 */
@@ -233,8 +235,10 @@ class WooCommerceVariationAddToCartIntegrationTest extends PluginWPTestCase {
 	 * Get WooCommerce cart session handler.
 	 *
 	 * @return object
+	 * @noinspection OneTimeUseVariablesInspection
+	 * @noinspection PhpUndefinedFieldInspection
 	 */
-	private function cart_session() {
+	private function cart_session(): object {
 		$getter = function () {
 			return $this->session;
 		};

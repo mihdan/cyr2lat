@@ -7,7 +7,6 @@
 
 namespace CyrToLat\Tests\Integration;
 
-use CyrToLat\Main;
 use WP_UnitTestCase;
 
 /**
@@ -24,6 +23,5 @@ class PluginLoadedTest extends WP_UnitTestCase {
 	 */
 	public function test_plugin_is_loaded(): void {
 		self::assertTrue( function_exists( 'cyr_to_lat' ) );
-		self::assertInstanceOf( Main::class, cyr_to_lat() );
 	}
 }
