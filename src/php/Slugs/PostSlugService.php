@@ -31,19 +31,16 @@ class PostSlugService {
 	/**
 	 * Filter post data before it is inserted.
 	 *
-	 * @param array|mixed $data                 An array of slashed, sanitized, and processed post data.
-	 * @param array|mixed $postarr              An array of sanitized but otherwise unmodified post data.
-	 * @param array|mixed $unsanitized_postarr  An array of slashed yet unsanitized and unprocessed post data.
-	 * @param bool        $update               Whether this is an existing post update.
+	 * @param array $data                      An array of slashed, sanitized, and processed post data.
+	 * @param array $postarr                   An array of sanitized (and slashed) but otherwise unmodified post data.
+	 * @param array $unsanitized_postarr       An array of slashed yet *unsanitized* and unprocessed post data as
+	 *                                         originally passed to wp_insert_post().
+	 * @param bool  $update                    Whether this is an existing post being updated.
 	 *
-	 * @return array|mixed
+	 * @return array
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function filter_post_data( $data, $postarr = [], $unsanitized_postarr = [], bool $update = false ) {
-		if ( ! is_array( $data ) ) {
-			return $data;
-		}
-
+	public function filter_post_data( array $data, array $postarr = [], array $unsanitized_postarr = [], bool $update = false ): array {
 		if (
 			empty( $data['post_name'] ) &&
 			! empty( $data['post_title'] ) &&

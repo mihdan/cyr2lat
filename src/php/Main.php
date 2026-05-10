@@ -608,22 +608,23 @@ class Main {
 	}
 
 	/**
-	 * Gutenberg support
+	 * Sanitize post name.
 	 *
-	 * @param array|mixed $data                An array of slashed post data.
-	 * @param array|mixed $postarr             An array of sanitized, but otherwise unmodified post data.
-	 * @param array|mixed $unsanitized_postarr An array of slashed yet unsanitized and unprocessed post data.
-	 * @param bool        $update              Whether this is an existing post update.
+	 * @param array|mixed $data                An array of slashed, sanitized, and processed post data.
+	 * @param array       $postarr             An array of sanitized (and slashed) but otherwise unmodified post data.
+	 * @param array       $unsanitized_postarr An array of slashed yet *unsanitized* and unprocessed post data as
+	 *                                         originally passed to wp_insert_post().
+	 * @param bool        $update              Whether this is an existing post being updated.
 	 *
-	 * @return array|mixed
+	 * @return array
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function sanitize_post_name( $data, $postarr = [], $unsanitized_postarr = [], bool $update = false ) {
-		return ( new PostSlugService( [ $this, 'sanitize_explicit_slug' ] ) )->filter_post_data(
-			$data,
-			$postarr,
-			$unsanitized_postarr,
-			$update
+	public function sanitize_post_name( $data, array $postarr = [], array $unsanitized_postarr = [], bool $update = false ): array {
+		$data = (array) $data;
+
+		return (
+		( new PostSlugService( [ $this, 'sanitize_explicit_slug' ] ) )
+			->filter_post_data( $data, $postarr, $unsanitized_postarr, $update )
 		);
 	}
 

@@ -18,18 +18,6 @@ use CyrToLat\Tests\Unit\CyrToLatTestCase;
 class PostSlugServiceTest extends CyrToLatTestCase {
 
 	/**
-	 * Test filter_post_data().
-	 *
-	 * @return void
-	 */
-	public function test_filter_post_data_returns_data(): void {
-		$subject = new PostSlugService();
-		$data    = 'not-array';
-
-		self::assertSame( $data, $subject->filter_post_data( $data ) );
-	}
-
-	/**
 	 * Test filter_post_data() generates post_name from the title.
 	 *
 	 * @return void
