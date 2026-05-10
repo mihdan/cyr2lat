@@ -60,7 +60,7 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 		$term_slug_service = Mockery::mock( TermSlugService::class );
 
 		$term_slug_service->shouldReceive( 'filter_term_slug' )
-			->with( $term_slug, [ $main, 'transliterate' ] )
+			->with( $term_slug )
 			->once()
 			->andReturn( $transliterated_slug );
 
