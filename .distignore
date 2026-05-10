@@ -1,6 +1,7 @@
 # A set of files and directories you probably don't want in your WordPress.org distribution
 
 # Directories
+/.aiassistant
 /.git
 /.github
 /.idea
