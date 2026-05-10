@@ -36,30 +36,30 @@ class LegacySanitizeTitleBridge {
 	private bool $is_frontend;
 
 	/**
-	 * WooCommerce attribute preservation callback.
+	 * Global attribute service.
 	 *
-	 * @var callable
+	 * @var GlobalAttributeService
 	 */
-	private $is_wc_attribute;
+	private GlobalAttributeService $global_attribute_service;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param Main            $main              Main plugin class.
-	 * @param TermSlugService $term_slug_service Term slug service.
-	 * @param bool            $is_frontend       Whether current request is frontend.
-	 * @param callable        $is_wc_attribute   WooCommerce attribute preservation callback.
+	 * @param Main                   $main                     Main plugin class.
+	 * @param TermSlugService        $term_slug_service        Term slug service.
+	 * @param bool                   $is_frontend              Whether current request is frontend.
+	 * @param GlobalAttributeService $global_attribute_service Global attribute service.
 	 */
 	public function __construct(
 		Main $main,
 		TermSlugService $term_slug_service,
 		bool $is_frontend,
-		callable $is_wc_attribute
+		GlobalAttributeService $global_attribute_service
 	) {
-		$this->main              = $main;
-		$this->term_slug_service = $term_slug_service;
-		$this->is_frontend       = $is_frontend;
-		$this->is_wc_attribute   = $is_wc_attribute;
+		$this->main                     = $main;
+		$this->term_slug_service        = $term_slug_service;
+		$this->is_frontend              = $is_frontend;
+		$this->global_attribute_service = $global_attribute_service;
 	}
 
 	/**
@@ -109,7 +109,7 @@ class LegacySanitizeTitleBridge {
 			return $term;
 		}
 
-		if ( call_user_func( $this->is_wc_attribute, $title ) ) {
+		if ( $this->global_attribute_service->should_preserve_attribute_title( $title ) ) {
 			return $title;
 		}
 

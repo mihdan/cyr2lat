@@ -26,7 +26,6 @@ use CyrToLat\Main;
 use CyrToLat\Request;
 use CyrToLat\Requirements;
 use CyrToLat\Settings\Settings;
-use CyrToLat\Slugs\GlobalAttributeService;
 use CyrToLat\Slugs\LocalAttributeService;
 use CyrToLat\Slugs\VariationAttributeService;
 use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
@@ -795,42 +794,6 @@ class MainTest extends CyrToLatTestCase {
 		$title = 'some title';
 
 		self::assertSame( $title, $subject->sanitize_title( $title ) );
-	}
-
-	/**
-	 * Test is_wc_attribute().
-	 *
-	 * @param bool $expected Expected result returned by GlobalAttributeService.
-	 *
-	 * @return void
-	 * @throws ReflectionException ReflectionException.
-	 * @dataProvider dp_test_is_wc_attribute
-	 */
-	public function test_is_wc_attribute( bool $expected ): void {
-		$title = 'some attribute';
-
-		$subject = $this->get_subject();
-
-		$global_attribute_service = Mockery::mock( GlobalAttributeService::class );
-		$global_attribute_service->shouldReceive( 'should_preserve_attribute_title' )
-			->with( $title )
-			->andReturn( $expected );
-
-		$this->set_protected_property( $subject, 'global_attribute_service', $global_attribute_service );
-
-		self::assertSame( $expected, $subject->is_wc_attribute( $title ) );
-	}
-
-	/**
-	 * Data provider for test_is_wc_attribute().
-	 *
-	 * @return array[]
-	 */
-	public function dp_test_is_wc_attribute(): array {
-		return [
-			[ false ],
-			[ true ],
-		];
 	}
 
 	/**

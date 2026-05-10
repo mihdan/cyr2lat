@@ -382,18 +382,6 @@ class Main {
 	}
 
 	/**
-	 * Check if title is an attribute.
-	 *
-	 * @param string $title Title.
-	 *
-	 * @return bool
-	 * @noinspection PhpUndefinedFunctionInspection
-	 */
-	protected function is_wc_attribute( string $title ): bool {
-		return $this->global_attribute_service()->should_preserve_attribute_title( $title );
-	}
-
-	/**
 	 * Get global attribute service.
 	 *
 	 * @return GlobalAttributeService
@@ -443,9 +431,7 @@ class Main {
 				$this,
 				$this->term_slug_service(),
 				(bool) $this->is_frontend,
-				function ( string $title ): bool {
-					return $this->is_wc_attribute( $title );
-				}
+				$this->global_attribute_service()
 			);
 		}
 

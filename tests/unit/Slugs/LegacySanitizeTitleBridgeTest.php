@@ -9,6 +9,7 @@ namespace CyrToLat\Tests\Unit\Slugs;
 
 use CyrToLat\Main;
 use CyrToLat\Settings\Settings;
+use CyrToLat\Slugs\GlobalAttributeService;
 use CyrToLat\Slugs\LegacySanitizeTitleBridge;
 use CyrToLat\Slugs\TermSlugService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
@@ -172,13 +173,14 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 			// Ignore.
 		}
 
+		$global_attribute_service = Mockery::mock( GlobalAttributeService::class );
+		$global_attribute_service->shouldReceive( 'should_preserve_attribute_title' )->andReturn( $is_wc_attribute );
+
 		return new LegacySanitizeTitleBridge(
 			$main,
 			new TermSlugService( $main ),
 			false,
-			static function () use ( $is_wc_attribute ): bool {
-				return $is_wc_attribute;
-			}
+			$global_attribute_service
 		);
 	}
 }
