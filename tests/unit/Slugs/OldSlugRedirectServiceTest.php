@@ -37,7 +37,7 @@ class OldSlugRedirectServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test check_for_changed_slugs() stores encoded title when cyr2lat generated the new slug.
+	 * Test check_for_changed_slugs() stores the encoded title when cyr2lat generated the new slug.
 	 *
 	 * @return void
 	 */
@@ -132,7 +132,7 @@ class OldSlugRedirectServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test check_for_changed_slugs() handles attachments with inherit status.
+	 * Test check_for_changed_slugs() handles attachments with inherited status.
 	 *
 	 * @return void
 	 */

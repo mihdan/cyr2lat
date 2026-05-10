@@ -9,7 +9,6 @@ namespace CyrToLat\Tests\Unit\Slugs;
 
 use CyrToLat\Slugs\PostSlugService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
-use WP_Mock;
 
 /**
  * Class PostSlugServiceTest
@@ -31,7 +30,7 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test filter_post_data() generates post_name from title.
+	 * Test filter_post_data() generates post_name from the title.
 	 *
 	 * @return void
 	 */

@@ -45,7 +45,7 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test sanitize_title() returns unchanged title when legacy bridge is disabled.
+	 * Test sanitize_title() returns an unchanged title when legacy bridge is disabled.
 	 *
 	 * @return void
 	 */
@@ -136,8 +136,8 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 	 */
 	private function get_subject(
 		bool $is_wc_attribute = false,
-		$is_development_logging_enabled = null,
-		$unknown_call_logger = null
+		?callable $is_development_logging_enabled = null,
+		?callable $unknown_call_logger = null
 	): LegacySanitizeTitleBridge {
 		return new LegacySanitizeTitleBridge(
 			new TermSlugService(),

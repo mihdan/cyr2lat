@@ -11,7 +11,6 @@ namespace CyrToLat\Tests\Unit;
 
 use CyrToLat\Request;
 use Mockery;
-use ReflectionException;
 use tad\FunctionMocker\FunctionMocker;
 use WP_Mock;
 

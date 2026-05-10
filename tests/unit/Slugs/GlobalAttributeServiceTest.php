@@ -9,7 +9,6 @@ namespace CyrToLat\Tests\Unit\Slugs;
 
 use CyrToLat\Slugs\GlobalAttributeService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
-use stdClass;
 use WP_Mock;
 
 /**
@@ -43,7 +42,7 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test is_attribute_taxonomy() rejects unknown attribute slug.
+	 * Test is_attribute_taxonomy() rejects an unknown attribute slug.
 	 *
 	 * @return void
 	 */

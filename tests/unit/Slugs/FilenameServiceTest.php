@@ -90,7 +90,7 @@ class FilenameServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Create test subject.
+	 * Create a test subject.
 	 *
 	 * @param array $table Conversion table.
 	 *

@@ -7,7 +7,6 @@
 
 namespace CyrToLat\Tests\Unit\Slugs;
 
-use CyrToLat\Slugs\LocalAttributeService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 
 /**
@@ -113,7 +112,7 @@ class LocalAttributeServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test is_local_attribute() detects frontend request attribute key.
+	 * Test is_local_attribute() detects the frontend request attribute key.
 	 *
 	 * @return void
 	 */

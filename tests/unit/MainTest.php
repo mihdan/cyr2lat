@@ -810,7 +810,7 @@ class MainTest extends CyrToLatTestCase {
 	): void {
 		FunctionMocker::replace(
 			'function_exists',
-			static function ( $function_name ) use ( $is_wc_attribute_taxonomy ) {
+			static function ( $function_name ) {
 				return in_array( $function_name, [ 'WC', 'wc_get_attribute_taxonomies' ], true );
 			}
 		);
@@ -1207,6 +1207,7 @@ class MainTest extends CyrToLatTestCase {
 	 * Test woocommerce_after_template_part_filter().
 	 *
 	 * @return void
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_woocommerce_after_template_part_filter(): void {
 		$request = Mockery::mock( Request::class );
@@ -1320,6 +1321,8 @@ class MainTest extends CyrToLatTestCase {
 
 	/**
 	 * Test that sanitize_filename() returns ctl_pre_sanitize_filename filter value if set
+	 *
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_pre_sanitize_filename_filter_set(): void {
 		$subject = $this->get_subject();
@@ -1538,6 +1541,7 @@ class MainTest extends CyrToLatTestCase {
 	 * @param array $expected Post data expected after sanitization.
 	 *
 	 * @dataProvider dp_test_sanitize_post_name
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_sanitize_post_name( array $data, array $expected ): void {
 

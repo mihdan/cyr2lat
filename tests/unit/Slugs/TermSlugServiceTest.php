@@ -151,7 +151,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test maybe_preserve_existing_encoded_slug() returns title on frontend with SitePress.
+	 * Test maybe_preserve_existing_encoded_slug() returns the title on the frontend with SitePress.
 	 *
 	 * @return void
 	 */

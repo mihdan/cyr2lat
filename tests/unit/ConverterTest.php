@@ -556,7 +556,7 @@ class ConverterTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Get test subject
+	 * Get a test subject
 	 *
 	 * @return Converter
 	 * @noinspection PhpMissingReturnTypeInspection

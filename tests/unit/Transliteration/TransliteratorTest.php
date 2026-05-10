@@ -59,7 +59,7 @@ class TransliteratorTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test transliterate_with_table() with default ISO9 behavior.
+	 * Test transliterate_with_table() with the default ISO9 behavior.
 	 *
 	 * @return void
 	 */
@@ -125,7 +125,7 @@ class TransliteratorTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test transliterate() accepts a context without changing current behavior.
+	 * Test transliterate() accepts a context without changing the current behavior.
 	 *
 	 * @return void
 	 */
