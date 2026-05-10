@@ -31,7 +31,7 @@ jobs:
           extensions: json, mysqli, mbstring, zip
 
       - name: Install dependencies with caching
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Run code sniffer
         run: composer phpcs
