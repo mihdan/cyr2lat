@@ -1,39 +1,34 @@
 # A set of files and directories you probably don't want in your WordPress.org distribution
 
+# Directories
+/.git
+/.github
+/.idea
+/.wordpress-org
+/.yarn
+/bin
+/node_modules
+/src/js
+/tests
+
 # Files
 /.DS_Store
-/.babelrc
-/.coveralls.yml
 /.distignore
 /.editorconfig
-/.eslintrc.json
 /.gitignore
 /.phpcs.cache
 /.phpunit.result.cache
 /.pnp.*
 /.yarnrc.yml
-/CHANGELOG.md
-/Makefile
 /README.md
 /Thumbs.db
 /auth.json
 /babel.config.json
-/composer.json
 /composer.lock
+/eslint.config.cjs
 /package.json
 /phpcs.xml
 /phpunit.xml
 /postcss.config.js
 /webpack.config.js
 /yarn.lock
-
-# Directories
-/.git
-/.github
-/.idea
-/.make
-/.wordpress-org
-/.yarn
-/node_modules
-/src/js
-/tests
