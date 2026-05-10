@@ -39,7 +39,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin version.
  */
-const CYR_TO_LAT_TEST_VERSION = '6.7.0';
+const CYR_TO_LAT_TEST_VERSION = '6.8.0';
 
 /**
  * Path to the plugin dir.
@@ -74,7 +74,7 @@ const CYR_TO_LAT_TEST_TERM_CONVERSION_ACTION = 'term_conversion_action';
 /**
  * Minimum required php version.
  */
-const CYR_TO_LAT_TEST_MINIMUM_PHP_REQUIRED_VERSION = '7.0';
+const CYR_TO_LAT_TEST_MINIMUM_PHP_REQUIRED_VERSION = '7.4';
 
 /**
  * Minimum required max_input_vars value.
