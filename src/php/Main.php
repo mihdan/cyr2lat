@@ -375,7 +375,7 @@ class Main {
 	 *
 	 * @return bool
 	 */
-	protected function is_local_attribute( string $title ): bool {
+	public function is_local_attribute( string $title ): bool {
 		return $this->local_attribute_service()->is_local_attribute( $title, [ $this, 'wp_parse_str' ] );
 	}
 
@@ -401,7 +401,7 @@ class Main {
 	 *
 	 * @return array
 	 */
-	protected function wp_parse_str( string $input_string ): array {
+	public function wp_parse_str( string $input_string ): array {
 		wp_parse_str( $input_string, $result );
 
 		return $result;
@@ -418,7 +418,7 @@ class Main {
 	 * @noinspection PhpUndefinedFunctionInspection
 	 * @noinspection PhpUndefinedMethodInspection
 	 */
-	protected function is_wc_product_not_converted_attribute( string $title ): bool {
+	public function is_wc_product_not_converted_attribute( string $title ): bool {
 
 		global $product;
 
