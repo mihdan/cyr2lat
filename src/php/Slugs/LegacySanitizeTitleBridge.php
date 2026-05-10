@@ -20,7 +20,7 @@ class LegacySanitizeTitleBridge {
 	private TermSlugService $term_slug_service;
 
 	/**
-	 * Current request is frontend.
+	 * The current request is frontend.
 	 *
 	 * @var bool
 	 */
@@ -52,7 +52,7 @@ class LegacySanitizeTitleBridge {
 	 *
 	 * @var callable|null
 	 */
-	private $is_development_logging_enabled;
+	private $is_development_logging_enabled_callback;
 
 	/**
 	 * Unknown bridge call logger callback.
@@ -64,13 +64,13 @@ class LegacySanitizeTitleBridge {
 	/**
 	 * Constructor.
 	 *
-	 * @param TermSlugService $term_slug_service                   Term slug service.
-	 * @param bool            $is_frontend                         Whether current request is frontend.
-	 * @param callable        $transliterate                       Transliteration callback.
-	 * @param callable        $should_transliterate_pre_term_slug  Whether pre_term_slug should be transliterated callback.
-	 * @param callable        $is_wc_attribute                     WooCommerce attribute preservation callback.
-	 * @param callable|null   $is_development_logging_enabled      Development logging gate callback.
-	 * @param callable|null   $unknown_call_logger                 Unknown bridge call logger callback.
+	 * @param TermSlugService $term_slug_service                  Term slug service.
+	 * @param bool            $is_frontend                        Whether current request is frontend.
+	 * @param callable        $transliterate                      Transliteration callback.
+	 * @param callable        $should_transliterate_pre_term_slug Whether pre_term_slug should be transliterated callback.
+	 * @param callable        $is_wc_attribute                    WooCommerce attribute preservation callback.
+	 * @param callable|null   $is_development_logging_enabled     Development logging gate callback.
+	 * @param callable|null   $unknown_call_logger                Unknown bridge call logger callback.
 	 */
 	public function __construct(
 		TermSlugService $term_slug_service,
@@ -78,27 +78,26 @@ class LegacySanitizeTitleBridge {
 		callable $transliterate,
 		callable $should_transliterate_pre_term_slug,
 		callable $is_wc_attribute,
-		$is_development_logging_enabled = null,
-		$unknown_call_logger = null
+		?callable $is_development_logging_enabled = null,
+		?callable $unknown_call_logger = null
 	) {
-		$this->term_slug_service                  = $term_slug_service;
-		$this->is_frontend                        = $is_frontend;
-		$this->transliterate                      = $transliterate;
-		$this->should_transliterate_pre_term_slug = $should_transliterate_pre_term_slug;
-		$this->is_wc_attribute                    = $is_wc_attribute;
-		$this->is_development_logging_enabled     = $is_development_logging_enabled;
-		$this->unknown_call_logger                = $unknown_call_logger;
+		$this->term_slug_service                       = $term_slug_service;
+		$this->is_frontend                             = $is_frontend;
+		$this->transliterate                           = $transliterate;
+		$this->should_transliterate_pre_term_slug      = $should_transliterate_pre_term_slug;
+		$this->is_wc_attribute                         = $is_wc_attribute;
+		$this->is_development_logging_enabled_callback = $is_development_logging_enabled;
+		$this->unknown_call_logger                     = $unknown_call_logger;
 	}
 
 	/**
-	 * Sanitize title through the legacy broad bridge.
+	 * Sanitize the title through the legacy broad bridge.
 	 *
 	 * @param string|mixed $title     Sanitized title.
 	 * @param string|mixed $raw_title The title prior to sanitization.
 	 * @param string|mixed $context   The context for which the title is being sanitized.
 	 *
 	 * @return string|mixed
-	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function sanitize_title( $title, $raw_title = '', $context = '' ) {
 		if (
@@ -197,8 +196,8 @@ class LegacySanitizeTitleBridge {
 	 * @return bool
 	 */
 	private function is_development_logging_enabled(): bool {
-		if ( is_callable( $this->is_development_logging_enabled ) ) {
-			return (bool) call_user_func( $this->is_development_logging_enabled );
+		if ( is_callable( $this->is_development_logging_enabled_callback ) ) {
+			return (bool) call_user_func( $this->is_development_logging_enabled_callback );
 		}
 
 		return defined( 'WP_DEBUG' ) && WP_DEBUG;
