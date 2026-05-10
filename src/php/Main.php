@@ -57,6 +57,13 @@ class Main {
 	protected Settings $settings;
 
 	/**
+	 * Transliterator instance.
+	 *
+	 * @var Transliterator
+	 */
+	protected Transliterator $transliterator;
+
+	/**
 	 * Process posts instance.
 	 *
 	 * @var PostConversionProcess|null
@@ -244,6 +251,8 @@ class Main {
 		if ( ! $requirements->are_requirements_met() ) {
 			return;
 		}
+
+		$this->transliterator = new Transliterator( $this->settings );
 
 		$this->process_all_posts = new PostConversionProcess( $this );
 		$this->process_all_terms = new TermConversionProcess( $this );
@@ -532,16 +541,7 @@ class Main {
 	 * @noinspection ReturnTypeCanBeDeclaredInspection
 	 */
 	public function sanitize_filename( $filename, $filename_raw ) {
-		return $this->filename_service()->sanitize_filename( $filename, $filename_raw );
-	}
-
-	/**
-	 * Get filename service.
-	 *
-	 * @return FilenameService
-	 */
-	private function filename_service(): FilenameService {
-		return new FilenameService( new Transliterator( $this->settings ) );
+		return ( new FilenameService( $this->transliterator ) )->sanitize_filename( $filename, $filename_raw );
 	}
 
 	/**
@@ -562,7 +562,7 @@ class Main {
 	 * @return string
 	 */
 	protected function split_chinese_string( string $str, array $table ): string {
-		return ( new Transliterator( $this->settings ) )->split_chinese_string( $str, $table );
+		return $this->transliterator->split_chinese_string( $str, $table );
 	}
 
 	/**
@@ -573,7 +573,7 @@ class Main {
 	 * @return string
 	 */
 	public function transliterate( string $str ): string {
-		return ( new Transliterator( $this->settings ) )->transliterate( $str );
+		return $this->transliterator->transliterate( $str );
 	}
 
 	/**
@@ -648,6 +648,10 @@ class Main {
 	 * @return string|mixed
 	 */
 	public function sanitize_term_slug( $slug ) {
+		if ( ! is_string( $slug ) ) {
+			return $slug;
+		}
+
 		return $this->term_slug_service()->filter_term_slug( $slug, [ $this, 'sanitize_explicit_slug' ] );
 	}
 
@@ -890,7 +894,8 @@ class Main {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function check_for_changed_slugs( $post_id, $post, $post_before ): void {
-		$service = new OldSlugRedirectService( new Transliterator( $this->settings ) );
+		$service = new OldSlugRedirectService( $this->transliterator );
+
 		$service->check_for_changed_slugs( (int) $post_id, $post, $post_before );
 	}
 

@@ -10,7 +10,7 @@ namespace CyrToLat\Slugs;
 /**
  * Handles post slug generation.
  */
-class PostSlugService {
+class PostSlugService extends BaseService {
 
 	/**
 	 * Slug sanitization callback.
@@ -89,17 +89,6 @@ class PostSlugService {
 		}
 
 		return function_exists( 'wp_is_post_revision' ) && wp_is_post_revision( $post_id );
-	}
-
-	/**
-	 * Whether the value contains non-ASCII characters.
-	 *
-	 * @param string $value Value.
-	 *
-	 * @return bool
-	 */
-	private function has_non_ascii_chars( string $value ): bool {
-		return (bool) preg_match( '/[^\x00-\x7F]/', $value );
 	}
 
 	/**

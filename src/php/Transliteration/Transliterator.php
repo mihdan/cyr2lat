@@ -24,7 +24,7 @@ class Transliterator {
 	 *
 	 * @var Settings
 	 */
-	private Settings $settings;
+	protected Settings $settings;
 
 	/**
 	 * Constructor.

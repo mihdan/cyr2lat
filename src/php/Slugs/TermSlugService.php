@@ -10,7 +10,7 @@ namespace CyrToLat\Slugs;
 /**
  * Handles term slug context.
  */
-class TermSlugService {
+class TermSlugService extends BaseService {
 
 	/**
 	 * Prepare IN callback.
@@ -101,13 +101,13 @@ class TermSlugService {
 	/**
 	 * Filter a term slug before WordPress default sanitize_title() fallback.
 	 *
-	 * @param string|mixed $slug        Term slug.
-	 * @param callable     $transliterate Transliteration callback.
+	 * @param string   $slug          Term slug.
+	 * @param callable $transliterate Transliteration callback.
 	 *
 	 * @return string|mixed
 	 */
-	public function filter_term_slug( $slug, callable $transliterate ) {
-		if ( ! is_string( $slug ) || '' === $slug || ! $this->has_non_ascii_chars( $slug ) ) {
+	public function filter_term_slug( string $slug, callable $transliterate ) {
+		if ( '' === $slug || ! $this->has_non_ascii_chars( $slug ) ) {
 			return $slug;
 		}
 
@@ -209,16 +209,5 @@ class TermSlugService {
 		}
 
 		return $prepared_in;
-	}
-
-	/**
-	 * Whether the value contains non-ASCII characters.
-	 *
-	 * @param string $value Value.
-	 *
-	 * @return bool
-	 */
-	private function has_non_ascii_chars( string $value ): bool {
-		return (bool) preg_match( '/[^\x00-\x7F]/', $value );
 	}
 }

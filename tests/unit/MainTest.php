@@ -27,6 +27,7 @@ use CyrToLat\Request;
 use CyrToLat\Requirements;
 use CyrToLat\Settings\Settings;
 use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
+use CyrToLat\Transliteration\Transliterator;
 use CyrToLat\WPCli;
 use Mockery;
 use PHPUnit\Runner\Version;
@@ -1286,13 +1287,15 @@ class MainTest extends CyrToLatTestCase {
 		$table  = $this->transpose_chinese_table( $table );
 
 		$settings = Mockery::mock( Settings::class );
+		$settings->shouldReceive( 'get_table' )->andReturn( $table );
 		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( true );
 
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$subject = $this->get_subject();
 		$method  = 'split_chinese_string';
-
 		$this->set_method_accessibility( $subject, $method );
-		$this->set_protected_property( $subject, 'settings', $settings );
+
+		$transliterator = $this->get_protected_property( $subject, 'transliterator' );
+		$this->set_protected_property( $transliterator, 'settings', $settings );
 
 		self::assertSame( $expected, $subject->$method( $str, $table ) );
 	}
@@ -2093,8 +2096,7 @@ class MainTest extends CyrToLatTestCase {
 				}
 			);
 
-		$subject = Mockery::mock( Main::class )->makePartial();
-		$this->set_protected_property( $subject, 'settings', $settings );
+		$subject = $this->get_subject();
 
 		$subject->check_for_changed_slugs( $post_id, $post, $post_before );
 		self::assertEquals( $expected, $post_before );
@@ -2329,6 +2331,9 @@ class MainTest extends CyrToLatTestCase {
 		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
 		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
 
+		$transliterator = Mockery::mock( Transliterator::class )->makePartial();
+		$this->set_protected_property( $transliterator, 'settings', $settings );
+
 		$process_all_posts = Mockery::mock( PostConversionProcess::class );
 		$process_all_terms = Mockery::mock( TermConversionProcess::class );
 		$admin_notices     = Mockery::mock( AdminNotices::class );
@@ -2340,6 +2345,7 @@ class MainTest extends CyrToLatTestCase {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		$this->set_protected_property( $subject, 'settings', $settings );
+		$this->set_protected_property( $subject, 'transliterator', $transliterator );
 		$this->set_protected_property( $subject, 'process_all_posts', $process_all_posts );
 		$this->set_protected_property( $subject, 'process_all_terms', $process_all_terms );
 		$this->set_protected_property( $subject, 'admin_notices', $admin_notices );
