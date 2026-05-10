@@ -5,7 +5,12 @@
  * @package cyr-to-lat
  */
 
+// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+/** @noinspection PhpInternalEntityUsedInspection */
+
 namespace CyrToLat\Slugs;
+
+use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 
 /**
  * Handles WooCommerce variation attribute key decisions.
@@ -24,25 +29,25 @@ class VariationAttributeService {
 	}
 
 	/**
-	 * Get encoded product attribute key used by WooCommerce during variation form rendering.
+	 * Get an encoded product attribute key used by WooCommerce during variation form rendering.
 	 *
 	 * @param string $title Title.
 	 *
 	 * @return string
 	 */
 	public function encoded_product_attribute_key( string $title ): string {
-		return strtolower( rawurlencode( mb_strtolower( $title ) ) );
+		return strtolower( rawurlencode( Mbstring::mb_strtolower( $title ) ) );
 	}
 
 	/**
-	 * Get local variation request key.
+	 * Get a local variation request key.
 	 *
 	 * @param string $title Title.
 	 *
 	 * @return string
 	 */
 	public function local_variation_request_key( string $title ): string {
-		$attr_name = str_replace( 'attribute_', '', mb_strtolower( $title ) );
+		$attr_name = str_replace( 'attribute_', '', Mbstring::mb_strtolower( $title ) );
 
 		return 'attribute_' . $attr_name;
 	}
@@ -68,7 +73,7 @@ class VariationAttributeService {
 	 *
 	 * @return bool
 	 */
-	public function normalize_variation_attributes( $variation, callable $normalize_key ): bool {
+	public function normalize_variation_attributes( object $variation, callable $normalize_key ): bool {
 		if ( ! is_object( $variation ) || ! method_exists( $variation, 'get_attributes' ) ) {
 			return false;
 		}
@@ -119,7 +124,7 @@ class VariationAttributeService {
 			return $attribute_key;
 		}
 
-		return strtolower( (string) call_user_func( $normalize_key, $attribute_key ) );
+		return strtolower( (string) $normalize_key( $attribute_key ) );
 	}
 
 	/**
@@ -130,7 +135,7 @@ class VariationAttributeService {
 	 *
 	 * @return bool
 	 */
-	private function set_variation_attributes_prop( $variation, array $attributes ): bool {
+	private function set_variation_attributes_prop( object $variation, array $attributes ): bool {
 		$setter = function ( array $attributes_to_set ): void {
 			$this->set_prop( 'attributes', $attributes_to_set );
 		};

@@ -81,7 +81,7 @@ class LocalAttributeService {
 	 *
 	 * @return bool
 	 */
-	public function normalize_product_attributes( $product, callable $normalize_key ): bool {
+	public function normalize_product_attributes( object $product, callable $normalize_key ): bool {
 		if ( ! is_object( $product ) || ! method_exists( $product, 'get_attributes' ) ) {
 			return false;
 		}
@@ -132,7 +132,7 @@ class LocalAttributeService {
 			return $attribute_key;
 		}
 
-		return strtolower( (string) call_user_func( $normalize_key, $name ) );
+		return strtolower( (string) $normalize_key( $name ) );
 	}
 
 	/**
@@ -145,7 +145,7 @@ class LocalAttributeService {
 	 */
 	private function is_ajax_save_attribute( string $title, callable $parse_str ): bool {
 		$data            = $this->post_value( 'data', FILTER_SANITIZE_URL );
-		$attributes      = (array) call_user_func( $parse_str, urldecode( $data ) );
+		$attributes      = (array) $parse_str( urldecode( $data ) );
 		$attribute_names = $attributes['attribute_names'] ?? [];
 
 		return in_array( $title, $attribute_names, true );
@@ -168,7 +168,7 @@ class LocalAttributeService {
 	}
 
 	/**
-	 * Check variable add-to-cart attribute rendering request.
+	 * Check the variable add-to-cart attribute rendering request.
 	 *
 	 * @param string $title Title.
 	 *
@@ -291,7 +291,7 @@ class LocalAttributeService {
 	 *
 	 * @return bool
 	 */
-	private function set_product_attributes_prop( $product, array $attributes ): bool {
+	private function set_product_attributes_prop( object $product, array $attributes ): bool {
 		$setter = function ( array $attributes_to_set ): void {
 			$this->set_prop( 'attributes', $attributes_to_set );
 		};
