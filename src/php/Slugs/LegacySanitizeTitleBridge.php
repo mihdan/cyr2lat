@@ -34,13 +34,6 @@ class LegacySanitizeTitleBridge {
 	private $transliterate;
 
 	/**
-	 * Whether pre_term_slug should be transliterated callback.
-	 *
-	 * @var callable
-	 */
-	private $should_transliterate_pre_term_slug;
-
-	/**
 	 * WooCommerce attribute preservation callback.
 	 *
 	 * @var callable
@@ -50,24 +43,21 @@ class LegacySanitizeTitleBridge {
 	/**
 	 * Constructor.
 	 *
-	 * @param TermSlugService $term_slug_service                  Term slug service.
-	 * @param bool            $is_frontend                        Whether current request is frontend.
-	 * @param callable        $transliterate                      Transliteration callback.
-	 * @param callable        $should_transliterate_pre_term_slug Whether pre_term_slug should be transliterated callback.
-	 * @param callable        $is_wc_attribute                    WooCommerce attribute preservation callback.
+	 * @param TermSlugService $term_slug_service Term slug service.
+	 * @param bool            $is_frontend       Whether current request is frontend.
+	 * @param callable        $transliterate     Transliteration callback.
+	 * @param callable        $is_wc_attribute   WooCommerce attribute preservation callback.
 	 */
 	public function __construct(
 		TermSlugService $term_slug_service,
 		bool $is_frontend,
 		callable $transliterate,
-		callable $should_transliterate_pre_term_slug,
 		callable $is_wc_attribute
 	) {
-		$this->term_slug_service                  = $term_slug_service;
-		$this->is_frontend                        = $is_frontend;
-		$this->transliterate                      = $transliterate;
-		$this->should_transliterate_pre_term_slug = $should_transliterate_pre_term_slug;
-		$this->is_wc_attribute                    = $is_wc_attribute;
+		$this->term_slug_service = $term_slug_service;
+		$this->is_frontend       = $is_frontend;
+		$this->transliterate     = $transliterate;
+		$this->is_wc_attribute   = $is_wc_attribute;
 	}
 
 	/**
@@ -84,7 +74,7 @@ class LegacySanitizeTitleBridge {
 			! $title ||
 			// Fix the bug with `_wp_old_slug` redirect.
 			'query' === $context ||
-			! call_user_func( $this->should_transliterate_pre_term_slug, (string) $title )
+			! $this->term_slug_service->should_transliterate_on_pre_term_slug_filter( (string) $title )
 		) {
 			return $title;
 		}

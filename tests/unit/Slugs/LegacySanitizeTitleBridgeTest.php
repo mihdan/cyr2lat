@@ -160,9 +160,6 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 			static function ( string $title ): string {
 				return 'цвет' === $title ? 'Cvet' : $title;
 			},
-			static function (): bool {
-				return true;
-			},
 			static function () use ( $is_wc_attribute ): bool {
 				return $is_wc_attribute;
 			}

@@ -506,9 +506,6 @@ class Main {
 					return $this->transliterate( $title );
 				},
 				function ( string $title ): bool {
-					return $this->transliterate_on_pre_term_slug_filter( $title );
-				},
-				function ( string $title ): bool {
 					return $this->is_wc_attribute( $title );
 				}
 			);
@@ -884,16 +881,5 @@ class Main {
 		}
 
 		return $prepared_in;
-	}
-
-	/**
-	 * Check if we should transliterate the tag on pre_term_slug filter.
-	 *
-	 * @param string $title Title.
-	 *
-	 * @return bool
-	 */
-	protected function transliterate_on_pre_term_slug_filter( string $title ): bool {
-		return $this->term_slug_service()->should_transliterate_on_pre_term_slug_filter( $title );
 	}
 }
