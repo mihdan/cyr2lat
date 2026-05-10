@@ -9,6 +9,7 @@ namespace CyrToLat\Tests\Unit\Slugs;
 
 use CyrToLat\Slugs\GlobalAttributeService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use Mockery;
 use WP_Mock;
 
 /**
@@ -131,19 +132,27 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_should_preserve_attribute_title_delegates_not_converted_attribute_context(): void {
+		$product_id = 5;
+		$title      = 'old-size';
+		$attributes = [
+			'old-size' => [ 'name' => 'old-size' ],
+		];
+
 		WP_Mock::userFunction( 'WC' );
 		WP_Mock::userFunction( 'wc_get_attribute_taxonomies', [ 'return' => [] ] );
+		WP_Mock::userFunction( 'get_post_meta' )
+			->with( $product_id, '_product_attributes', true )
+			->andReturn( $attributes );
+		WP_Mock::passthruFunction( 'sanitize_title_with_dashes' );
+
+		$product = Mockery::mock( 'WC_Product' );
+		$product->shouldReceive( 'get_id' )->andReturn( $product_id );
+		$GLOBALS['product'] = $product;
 
 		$subject = new GlobalAttributeService();
 
-		self::assertTrue(
-			$subject->should_preserve_attribute_title(
-				'old-size',
-				null,
-				static function ( string $title ): bool {
-					return 'old-size' === $title;
-				}
-			)
-		);
+		self::assertTrue( $subject->should_preserve_attribute_title( $title ) );
+
+		unset( $GLOBALS['product'] );
 	}
 }

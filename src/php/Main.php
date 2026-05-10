@@ -117,7 +117,7 @@ class Main {
 	 *
 	 * @var GlobalAttributeService|null
 	 */
-	private ?GlobalAttributeService $global_attribute_service = null;
+	protected ?GlobalAttributeService $global_attribute_service = null;
 
 	/**
 	 * Local attribute service.
@@ -411,37 +411,6 @@ class Main {
 	// @codeCoverageIgnoreEnd
 
 	/**
-	 * Check if title is a product not converted attribute.
-	 *
-	 * @param string $title Title.
-	 *
-	 * @return bool
-	 * @noinspection PhpUndefinedFunctionInspection
-	 * @noinspection PhpUndefinedMethodInspection
-	 */
-	public function is_wc_product_not_converted_attribute( string $title ): bool {
-
-		global $product;
-
-		if ( ! is_a( $product, 'WC_Product' ) ) {
-			return false;
-		}
-
-		// We have to get attributes from postmeta here to see the converted slug.
-		$attributes = (array) get_post_meta( $product->get_id(), '_product_attributes', true );
-
-		foreach ( $attributes as $slug => $attribute ) {
-			$name = $attribute['name'] ?? '';
-
-			if ( $name === $title && sanitize_title_with_dashes( $title ) === $slug ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
 	 * Check if title is an attribute.
 	 *
 	 * @param string $title Title.
@@ -452,8 +421,7 @@ class Main {
 	protected function is_wc_attribute( string $title ): bool {
 		return $this->global_attribute_service()->should_preserve_attribute_title(
 			$title,
-			[ $this, 'is_local_attribute' ],
-			[ $this, 'is_wc_product_not_converted_attribute' ]
+			[ $this, 'is_local_attribute' ]
 		);
 	}
 

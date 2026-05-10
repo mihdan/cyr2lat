@@ -42,15 +42,10 @@ class GlobalAttributeService {
 	 *
 	 * @param string        $title                              Title.
 	 * @param callable|null $is_local_attribute                 Local attribute callback.
-	 * @param callable|null $is_product_not_converted_attribute Product attribute callback.
 	 *
 	 * @return bool
 	 */
-	public function should_preserve_attribute_title(
-		string $title,
-		?callable $is_local_attribute = null,
-		?callable $is_product_not_converted_attribute = null
-	): bool {
+	public function should_preserve_attribute_title( string $title, ?callable $is_local_attribute = null ): bool {
 		if ( ! function_exists( 'WC' ) ) {
 			return false;
 		}
@@ -63,6 +58,36 @@ class GlobalAttributeService {
 			return true;
 		}
 
-		return is_callable( $is_product_not_converted_attribute ) && $is_product_not_converted_attribute( $title );
+		return $this->is_product_not_converted_attribute( $title );
+	}
+
+	/**
+	 * Check if title is a product not converted attribute.
+	 *
+	 * @param string $title Title.
+	 *
+	 * @return bool
+	 * @noinspection PhpUndefinedMethodInspection
+	 */
+	private function is_product_not_converted_attribute( string $title ): bool {
+
+		global $product;
+
+		if ( ! is_a( $product, 'WC_Product' ) ) {
+			return false;
+		}
+
+		// We have to get attributes from postmeta here to see the converted slug.
+		$attributes = (array) get_post_meta( $product->get_id(), '_product_attributes', true );
+
+		foreach ( $attributes as $slug => $attribute ) {
+			$name = $attribute['name'] ?? '';
+
+			if ( $name === $title && sanitize_title_with_dashes( $title ) === $slug ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

@@ -26,11 +26,13 @@ use CyrToLat\Main;
 use CyrToLat\Request;
 use CyrToLat\Requirements;
 use CyrToLat\Settings\Settings;
+use CyrToLat\Slugs\GlobalAttributeService;
 use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 use CyrToLat\Transliteration\Transliterator;
 use CyrToLat\WPCli;
 use Mockery;
 use PHPUnit\Runner\Version;
+use ReflectionClass;
 use ReflectionException;
 use WP_Mock;
 use WP_Post;
@@ -797,42 +799,25 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Test is_wc_attribute().
 	 *
-	 * @param bool $is_wc_attribute_taxonomy              Whether attribute taxonomy is WC attribute taxonomy.
-	 * @param bool $is_local_attribute                    Whether attribute is local attribute.
-	 * @param bool $is_wc_product_not_converted_attribute Whether attribute is WC product not converted attribute.
+	 * @param bool $expected Expected result returned by GlobalAttributeService.
 	 *
 	 * @return void
 	 * @throws ReflectionException ReflectionException.
 	 * @dataProvider dp_test_is_wc_attribute
 	 */
-	public function test_is_wc_attribute(
-		bool $is_wc_attribute_taxonomy,
-		bool $is_local_attribute,
-		bool $is_wc_product_not_converted_attribute
-	): void {
-		FunctionMocker::replace(
-			'function_exists',
-			static function ( $function_name ) {
-				return in_array( $function_name, [ 'WC', 'wc_get_attribute_taxonomies' ], true );
-			}
-		);
-
-		$attribute_taxonomies = $is_wc_attribute_taxonomy ? [ (object) [ 'attribute_name' => 'some attribute' ] ] : [];
-
-		WP_Mock::userFunction( 'wc_get_attribute_taxonomies' )->with()->andReturn( $attribute_taxonomies );
+	public function test_is_wc_attribute( bool $expected ): void {
+		$title = 'some attribute';
 
 		$subject = $this->get_subject();
 
-		$subject->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'is_wc_attribute_taxonomy' )->andReturn( $is_wc_attribute_taxonomy );
-		$subject->shouldReceive( 'is_local_attribute' )->andReturn( $is_local_attribute );
-		$subject->shouldReceive( 'is_wc_product_not_converted_attribute' )
-			->andReturn( $is_wc_product_not_converted_attribute );
-		$subject->shouldAllowMockingProtectedMethods();
+		$global_attribute_service = Mockery::mock( GlobalAttributeService::class );
+		$global_attribute_service->shouldReceive( 'should_preserve_attribute_title' )
+			->with( $title, [ $subject, 'is_local_attribute' ] )
+			->andReturn( $expected );
 
-		$expected = $is_wc_attribute_taxonomy || $is_local_attribute || $is_wc_product_not_converted_attribute;
+		$this->set_protected_property( $subject, 'global_attribute_service', $global_attribute_service );
 
-		self::assertSame( $expected, $subject->is_wc_attribute( 'some attribute' ) );
+		self::assertSame( $expected, $subject->is_wc_attribute( $title ) );
 	}
 
 	/**
@@ -842,36 +827,9 @@ class MainTest extends CyrToLatTestCase {
 	 */
 	public function dp_test_is_wc_attribute(): array {
 		return [
-			[ false, false, false ],
-			[ false, false, true ],
-			[ false, true, false ],
-			[ false, true, true ],
-			[ true, false, false ],
-			[ true, false, true ],
-			[ true, true, false ],
-			[ true, true, true ],
+			[ false ],
+			[ true ],
 		];
-	}
-
-	/**
-	 * Test is_wc_attribute() without WC.
-	 *
-	 * @return void
-	 * @throws ReflectionException ReflectionException.
-	 */
-	public function test_is_wc_attribute_without_wc(): void {
-		FunctionMocker::replace(
-			'function_exists',
-			static function ( $function_name ) {
-				return 'WC' !== $function_name;
-			}
-		);
-
-		$subject = $this->get_subject();
-
-		$subject->shouldAllowMockingProtectedMethods();
-
-		self::assertFalse( $subject->is_wc_attribute( 'some attribute' ) );
 	}
 
 	/**
@@ -1107,56 +1065,6 @@ class MainTest extends CyrToLatTestCase {
 		];
 	}
 
-	/**
-	 * Test is_wc_product_not_converted_attribute().
-	 *
-	 * @param string $title      Title.
-	 * @param bool   $is_product Whether it is a product page.
-	 * @param array  $attributes Attribute names.
-	 * @param bool   $expected   Expected result.
-	 *
-	 * @dataProvider dp_test_is_wc_product_attribute
-	 * @throws ReflectionException ReflectionException.
-	 */
-	public function test_is_wc_product_not_converted_attribute( string $title, bool $is_product, array $attributes, bool $expected ): void {
-		$product_id = 5;
-		$method     = 'is_wc_product_not_converted_attribute';
-		$subject    = $this->get_subject();
-
-		$this->set_method_accessibility( $subject, $method );
-
-		$product = Mockery::mock( 'WC_Product' );
-		$product->shouldReceive( 'get_id' )->andReturn( $product_id );
-		$GLOBALS['product'] = $is_product ? $product : null;
-
-		WP_Mock::userFunction( 'get_post_meta' )->with( $product_id, '_product_attributes', true )
-			->andReturn( $attributes );
-		WP_Mock::passthruFunction( 'sanitize_title_with_dashes' );
-
-		self::assertSame( $expected, $subject->$method( $title ) );
-	}
-
-	/**
-	 * Data provider for test_is_wc_product_attribute().
-	 *
-	 * @return array
-	 */
-	public function dp_test_is_wc_product_attribute(): array {
-		return [
-			'not a product page' => [ 'атрибут 1', false, [], false ],
-			'no attributes'      => [ 'атрибут 1', true, [], false ],
-			'no matching'        => [ 'атрибут 1', true, [ 'some' => [ 'name' => 'some' ] ], false ],
-			'matching'           => [
-				'атрибут 1',
-				true,
-				[
-					'some'      => [ 'name' => 'some' ],
-					'атрибут 1' => [ 'name' => 'атрибут 1' ],
-				],
-				true,
-			],
-		];
-	}
 
 	/**
 	 * Data provider for test_sanitize_title_for_wc_attribute_taxonomy
