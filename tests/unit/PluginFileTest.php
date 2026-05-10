@@ -111,7 +111,11 @@ class PluginFileTest extends CyrToLatTestCase {
 	/**
 	 * Test that readme.txt contains a proper stable tag.
 	 */
-	public function test_readme_txt(): void {
+	public function test_stable_tag_in_readme_txt(): void {
+		if ( preg_match( '/-.+$/', CYR_TO_LAT_TEST_VERSION ) ) {
+			$this->markTestSkipped( 'Not a final version, skipping stable tag in readme.txt test.' );
+		}
+
 		$expected    = [
 			'stable_tag' => CYR_TO_LAT_TEST_VERSION,
 		];
@@ -124,5 +128,51 @@ class PluginFileTest extends CyrToLatTestCase {
 		);
 
 		self::assertSame( $expected, $readme_headers );
+	}
+
+	/**
+	 * Test that readme.txt contains changelog records for the current version.
+	 */
+	public function test_changelog(): void {
+		if ( preg_match( '/-.+$/', CYR_TO_LAT_TEST_VERSION ) ) {
+			$this->markTestSkipped( 'Not a final version, skipping changelog test.' );
+		}
+
+		$readme_file    = CYR_TO_LAT_TEST_PATH . '/readme.txt';
+		$changelog_file = CYR_TO_LAT_TEST_PATH . '/changelog.txt';
+
+		// phpcs:disable WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$readme    = file_get_contents( $readme_file );
+		$changelog = file_get_contents( $changelog_file );
+		// phpcs:enable WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
+		$readme_changelog = substr( $readme, strpos( $readme, "\n== Changelog ==" ) );
+
+		self::assertSame(
+			$this->get_current_version_records( $readme_changelog ),
+			$this->get_current_version_records( $changelog )
+		);
+	}
+
+	/**
+	 * Get current version records from a changelog section.
+	 *
+	 * @param string $changelog Changelog.
+	 *
+	 * @return string
+	 * @noinspection RegExpSingleCharAlternation
+	 */
+	private function get_current_version_records( string $changelog ): string {
+		$current_version_records = '';
+
+		$pattern = '/= ' . preg_quote( CYR_TO_LAT_TEST_VERSION, '/' ) . ' \((?:\d{2}|XX)\.(?:\d{2}|XX)\.\d{4}\) =\n((?:.|\n)+)\n= /U';
+
+		if ( preg_match( $pattern, $changelog, $m ) ) {
+			$current_version_records = $m[1];
+		}
+
+		self::assertNotEmpty( trim( $current_version_records ) );
+
+		return $current_version_records;
 	}
 }

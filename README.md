@@ -1,13 +1,13 @@
 # Cyr-To-Lat
 
-Converts Cyrillic characters in post, page and term slugs to Latin characters. Useful for creating human-readable URLs.
+Converts Cyrillic characters in post, page, and term slugs to Latin characters. Useful for creating human-readable URLs.
 
 ![Banner](./.wordpress-org/banner-772x250.png)
 
 ## Features
 
-* The only plugin with fully editable transliteration table. Allows add/remove and edit pairs like 'Я' => 'Ya', or even 'Пиво' => 'Beer'
-* Converts any number of existing post, page and term slugs in background processes
+* The only plugin with a fully editable transliteration table. Allows adding/ removing and editing pairs like 'Я' ⇒ 'Ya', or even 'Пиво' ⇒ 'Beer'
+* Converts any number of existing post, page, and term slugs in background processes
 * Saves existing post and page permalinks integrity
 * Performs transliteration of attachment file names
 * Includes Russian, Belorussian, Ukrainian, Bulgarian, Macedonian, Serbian, Greek, Armenian, Georgian, Kazakh, Hebrew, and Chinese characters
@@ -59,19 +59,11 @@ Where
 
 ## Packagist
 
-[![Total Downloads](https://poser.pugx.org/mihdan/cyr2lat/downloads)](https://packagist.org/packages/mihdan/cyr2lat)
-
 [![License](https://poser.pugx.org/mihdan/cyr2lat/license)](https://packagist.org/packages/mihdan/cyr2lat)
 
 [![Latest Stable Version](https://poser.pugx.org/mihdan/cyr2lat/v/stable)](https://packagist.org/packages/mihdan/cyr2lat)
 
 [![Latest Unstable Version](https://poser.pugx.org/mihdan/cyr2lat/v/unstable)](https://packagist.org/packages/mihdan/cyr2lat)
-
-[![composer.lock](https://poser.pugx.org/mihdan/cyr2lat/composerlock)](https://packagist.org/packages/mihdan/cyr2lat)
-
-## Code Coverage
-
-[![Coverage Status](https://coveralls.io/repos/github/mihdan/cyr2lat/badge.svg?branch=master)](https://coveralls.io/github/mihdan/cyr2lat?branch=master)
 
 ## License
 

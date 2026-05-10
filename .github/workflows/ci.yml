@@ -47,31 +47,29 @@ jobs:
           extensions: json, mysqli, mbstring, zip
 
       - name: Install dependencies with caching
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
         with:
           working-directory: ${{ env.wp-plugin-directory }}
 
       - name: Run code sniffer
+        if: ${{ matrix.php-version == '8.5' }}
         working-directory: ${{ env.wp-plugin-directory }}
         run: composer phpcs
 
+      - name: Run ESLint and JEST
+        if: ${{ matrix.php-version == '8.4' }}
+        working-directory: ${{ env.wp-plugin-directory }}
+        run: |
+          corepack enable
+          yarn set version stable
+          yarn
+          yarn dev
+          yarn lint
+          yarn jest
+
       - name: Run unit tests
-        if: ${{ matrix.php-version != '8.5' }}
         working-directory: ${{ env.wp-plugin-directory }}
         run: vendor/bin/phpunit
-
-      - name: Run PHPUnit tests with coverage
-        if: ${{ matrix.php-version == '8.5' }}
-        working-directory: ${{ env.wp-plugin-directory }}
-        run: vendor/bin/phpunit --coverage-clover coverage.xml
-
-      - name: Run Coveralls for PHPUnit tests
-        if: ${{ matrix.php-version == '8.5' }}
-        working-directory: ${{ env.wp-plugin-directory }}
-        env:
-          COVERALLS_RUN_LOCALLY: true
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: vendor/bin/php-coveralls -v
 
       - name: Install WP CLI
         run: |
@@ -107,14 +105,3 @@ jobs:
       - name: Run integration tests
         working-directory: ${{ env.wp-plugin-directory }}
         run: composer integration
-
-      - name: Run ESLint, JEST with coverage and Coveralls
-        if: ${{ matrix.php-version == '8.4' }}
-        working-directory: ${{ env.wp-plugin-directory }}
-        run: |
-          corepack enable
-          yarn set version stable
-          yarn
-          yarn dev
-          yarn lint
-          yarn jest
