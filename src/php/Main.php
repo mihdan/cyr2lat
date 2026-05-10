@@ -124,7 +124,7 @@ class Main {
 	 *
 	 * @var LocalAttributeService|null
 	 */
-	private ?LocalAttributeService $local_attribute_service = null;
+	protected ?LocalAttributeService $local_attribute_service = null;
 
 	/**
 	 * Variation attribute service.
@@ -377,7 +377,7 @@ class Main {
 	 * @return bool
 	 */
 	public function is_local_attribute( string $title ): bool {
-		return $this->local_attribute_service()->is_local_attribute( $title, [ $this, 'wp_parse_str' ] );
+		return $this->local_attribute_service()->is_local_attribute( $title );
 	}
 
 	/**
@@ -391,24 +391,6 @@ class Main {
 		$this->local_attribute_service()->normalize_product_attributes( $product, [ $this, 'transliterate' ] );
 		$this->variation_attribute_service()->normalize_variation_attributes( $product, [ $this, 'transliterate' ] );
 	}
-
-	// @codeCoverageIgnoreStart
-
-	/**
-	 * Polyfill of the wp_parse_str().
-	 * Added for test reasons.
-	 *
-	 * @param string $input_string Input string.
-	 *
-	 * @return array
-	 */
-	public function wp_parse_str( string $input_string ): array {
-		wp_parse_str( $input_string, $result );
-
-		return $result;
-	}
-
-	// @codeCoverageIgnoreEnd
 
 	/**
 	 * Check if title is an attribute.

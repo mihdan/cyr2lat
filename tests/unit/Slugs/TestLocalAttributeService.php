@@ -139,4 +139,21 @@ class TestLocalAttributeService extends LocalAttributeService {
 	protected function has_post_value( string $key ): bool {
 		return isset( $this->post_data[ $key ] );
 	}
+
+	// @codeCoverageIgnoreStart
+
+	/**
+	 * Polyfill of the wp_parse_str().
+	 *
+	 * @param string $input_string Input string.
+	 *
+	 * @return array
+	 */
+	protected function wp_parse_str( string $input_string ): array {
+		parse_str( $input_string, $result );
+
+		return $result;
+	}
+
+	// @codeCoverageIgnoreEnd
 }

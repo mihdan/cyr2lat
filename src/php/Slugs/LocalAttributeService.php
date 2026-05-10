@@ -31,12 +31,11 @@ class LocalAttributeService {
 	/**
 	 * Check if the title is a local attribute.
 	 *
-	 * @param string   $title     Title.
-	 * @param callable $parse_str Request parser callback.
+	 * @param string $title Title.
 	 *
 	 * @return bool
 	 */
-	public function is_local_attribute( string $title, callable $parse_str ): bool {
+	public function is_local_attribute( string $title ): bool {
 		// Global attribute.
 		if ( $this->variation_attribute_service->is_global_variation_attribute_key( $title ) ) {
 			return false;
@@ -52,7 +51,7 @@ class LocalAttributeService {
 
 		// The `save attributes` action.
 		if ( 'woocommerce_save_attributes' === $action ) {
-			return $this->is_ajax_save_attribute( $title, $parse_str );
+			return $this->is_ajax_save_attribute( $title );
 		}
 
 		// The `edit post` action.
@@ -138,18 +137,35 @@ class LocalAttributeService {
 	/**
 	 * Check AJAX save attribute request.
 	 *
-	 * @param string   $title     Title.
-	 * @param callable $parse_str Request parser callback.
+	 * @param string $title Title.
 	 *
 	 * @return bool
 	 */
-	private function is_ajax_save_attribute( string $title, callable $parse_str ): bool {
+	private function is_ajax_save_attribute( string $title ): bool {
 		$data            = $this->post_value( 'data', FILTER_SANITIZE_URL );
-		$attributes      = (array) $parse_str( urldecode( $data ) );
+		$attributes      = (array) $this->wp_parse_str( urldecode( $data ) );
 		$attribute_names = $attributes['attribute_names'] ?? [];
 
 		return in_array( $title, $attribute_names, true );
 	}
+
+	// @codeCoverageIgnoreStart
+
+	/**
+	 * Polyfill of the wp_parse_str().
+	 * Added for test reasons.
+	 *
+	 * @param string $input_string Input string.
+	 *
+	 * @return array
+	 */
+	protected function wp_parse_str( string $input_string ): array {
+		wp_parse_str( $input_string, $result );
+
+		return $result;
+	}
+
+	// @codeCoverageIgnoreEnd
 
 	/**
 	 * Check edit post attribute request.

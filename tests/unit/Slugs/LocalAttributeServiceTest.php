@@ -24,7 +24,7 @@ class LocalAttributeServiceTest extends CyrToLatTestCase {
 	public function test_is_local_attribute_rejects_global_attribute_key(): void {
 		$subject = new TestLocalAttributeService();
 
-		self::assertFalse( $subject->is_local_attribute( 'pa_razmer', [ $this, 'parse_str' ] ) );
+		self::assertFalse( $subject->is_local_attribute( 'pa_razmer' ) );
 	}
 
 	/**
@@ -39,7 +39,7 @@ class LocalAttributeServiceTest extends CyrToLatTestCase {
 			]
 		);
 
-		self::assertFalse( $subject->is_local_attribute( 'Размер', [ $this, 'parse_str' ] ) );
+		self::assertFalse( $subject->is_local_attribute( 'Размер' ) );
 	}
 
 	/**
@@ -55,7 +55,7 @@ class LocalAttributeServiceTest extends CyrToLatTestCase {
 			]
 		);
 
-		self::assertTrue( $subject->is_local_attribute( 'Размер', [ $this, 'parse_str' ] ) );
+		self::assertTrue( $subject->is_local_attribute( 'Размер' ) );
 	}
 
 	/**
@@ -71,7 +71,7 @@ class LocalAttributeServiceTest extends CyrToLatTestCase {
 			]
 		);
 
-		self::assertTrue( $subject->is_local_attribute( 'Размер', [ $this, 'parse_str' ] ) );
+		self::assertTrue( $subject->is_local_attribute( 'Размер' ) );
 	}
 
 	/**
@@ -91,7 +91,7 @@ class LocalAttributeServiceTest extends CyrToLatTestCase {
 			]
 		);
 
-		self::assertTrue( $subject->is_local_attribute( 'Размер', [ $this, 'parse_str' ] ) );
+		self::assertTrue( $subject->is_local_attribute( 'Размер' ) );
 	}
 
 	/**
@@ -108,7 +108,7 @@ class LocalAttributeServiceTest extends CyrToLatTestCase {
 			]
 		);
 
-		self::assertTrue( $subject->is_local_attribute( 'Размер', [ $this, 'parse_str' ] ) );
+		self::assertTrue( $subject->is_local_attribute( 'Размер' ) );
 	}
 
 	/**
@@ -123,19 +123,6 @@ class LocalAttributeServiceTest extends CyrToLatTestCase {
 			]
 		);
 
-		self::assertTrue( $subject->is_local_attribute( 'Размер', [ $this, 'parse_str' ] ) );
-	}
-
-	/**
-	 * Parse string.
-	 *
-	 * @param string $input_string Input string.
-	 *
-	 * @return array
-	 */
-	public function parse_str( string $input_string ): array {
-		parse_str( $input_string, $result );
-
-		return $result;
+		self::assertTrue( $subject->is_local_attribute( 'Размер' ) );
 	}
 }
