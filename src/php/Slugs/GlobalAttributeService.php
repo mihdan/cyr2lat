@@ -19,6 +19,7 @@ class GlobalAttributeService {
 	 *
 	 * @return bool
 	 * @noinspection PhpUndefinedFunctionInspection
+	 * @noinspection UnnecessaryCastingInspection
 	 */
 	public function is_attribute_taxonomy( string $title ): bool {
 		if ( ! function_exists( 'wc_get_attribute_taxonomies' ) ) {
@@ -37,7 +38,7 @@ class GlobalAttributeService {
 	}
 
 	/**
-	 * Check if title should be preserved as a WooCommerce attribute slug.
+	 * Check if the title should be preserved as a WooCommerce attribute slug.
 	 *
 	 * @param string        $title                              Title.
 	 * @param callable|null $is_local_attribute                 Local attribute callback.
@@ -47,8 +48,8 @@ class GlobalAttributeService {
 	 */
 	public function should_preserve_attribute_title(
 		string $title,
-		$is_local_attribute = null,
-		$is_product_not_converted_attribute = null
+		?callable $is_local_attribute = null,
+		?callable $is_product_not_converted_attribute = null
 	): bool {
 		if ( ! function_exists( 'WC' ) ) {
 			return false;
@@ -58,10 +59,10 @@ class GlobalAttributeService {
 			return true;
 		}
 
-		if ( is_callable( $is_local_attribute ) && call_user_func( $is_local_attribute, $title ) ) {
+		if ( is_callable( $is_local_attribute ) && $is_local_attribute( $title ) ) {
 			return true;
 		}
 
-		return is_callable( $is_product_not_converted_attribute ) && call_user_func( $is_product_not_converted_attribute, $title );
+		return is_callable( $is_product_not_converted_attribute ) && $is_product_not_converted_attribute( $title );
 	}
 }
