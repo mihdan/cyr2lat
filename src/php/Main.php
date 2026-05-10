@@ -406,7 +406,14 @@ class Main {
 
 		$action = (string) filter_input( INPUT_POST, 'action', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
-		if ( 'woocommerce_do_ajax_product_import' === $action ) {
+		$other_actions = [
+			'woocommerce_do_ajax_product_import',
+			'add-tag',
+			'editedtag',
+			'inline-save-tax',
+		];
+
+		if ( in_array( $action, $other_actions, true ) ) {
 			return false;
 		}
 
