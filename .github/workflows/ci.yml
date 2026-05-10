@@ -34,10 +34,10 @@ jobs:
         uses: ramsey/composer-install@v4
 
       - name: Run code sniffer
+        if: ${{ matrix.php-version == '8.5' }}
         run: composer phpcs
 
       - name: Run unit tests
-        if: ${{ matrix.php-version != '8.5' }}
         run: vendor/bin/phpunit
 
       - name: Run ESLint and JEST
