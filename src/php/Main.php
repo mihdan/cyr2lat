@@ -514,7 +514,7 @@ class Main {
 		$data = (array) $data;
 
 		return (
-		( new PostSlugService( [ $this, 'sanitize_explicit_slug' ] ) )
+		( new PostSlugService( $this ) )
 			->filter_post_data( $data, $postarr, $unsanitized_postarr, $update )
 		);
 	}
@@ -543,7 +543,7 @@ class Main {
 			return $slug;
 		}
 
-		return $this->term_slug_service()->filter_term_slug( $slug, [ $this, 'sanitize_explicit_slug' ] );
+		return $this->term_slug_service()->filter_term_slug( $slug );
 	}
 
 	/**

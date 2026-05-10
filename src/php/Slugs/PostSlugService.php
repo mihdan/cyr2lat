@@ -7,13 +7,22 @@
 
 namespace CyrToLat\Slugs;
 
+use CyrToLat\Main;
+
 /**
  * Handles post slug generation.
  */
 class PostSlugService extends BaseService {
 
 	/**
-	 * Slug sanitization callback.
+	 * Main plugin class.
+	 *
+	 * @var Main
+	 */
+	private Main $main;
+
+	/**
+	 * Optional slug sanitization callback used instead of Main::sanitize_explicit_slug().
 	 *
 	 * @var callable|null
 	 */
@@ -22,9 +31,12 @@ class PostSlugService extends BaseService {
 	/**
 	 * Constructor.
 	 *
-	 * @param callable|null $sanitize_slug Slug sanitization callback.
+	 * @param Main          $main          Main plugin class.
+	 * @param callable|null $sanitize_slug Optional slug sanitization callback. When omitted,
+	 *                                     Main::sanitize_explicit_slug() is used.
 	 */
-	public function __construct( ?callable $sanitize_slug = null ) {
+	public function __construct( Main $main, ?callable $sanitize_slug = null ) {
+		$this->main                   = $main;
 		$this->sanitize_slug_callback = is_callable( $sanitize_slug ) ? $sanitize_slug : null;
 	}
 
@@ -120,6 +132,6 @@ class PostSlugService extends BaseService {
 			return (string) call_user_func( $this->sanitize_slug_callback, $value );
 		}
 
-		return sanitize_title( $value );
+		return $this->main->sanitize_explicit_slug( $value );
 	}
 }

@@ -65,17 +65,14 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_filter_term_slug_transliterates_explicit_cyrillic_slug(): void {
-		$subject = $this->get_subject();
+		$main = \Mockery::mock( Main::class )->makePartial();
+		$main->shouldReceive( 'sanitize_explicit_slug' )
+			->with( 'й' )
+			->andReturn( 'j' );
 
-		self::assertSame(
-			'j',
-			$subject->filter_term_slug(
-				'й',
-				static function ( string $slug ): string {
-					return 'й' === $slug ? 'j' : $slug;
-				}
-			)
-		);
+		$subject = new TermSlugService( $main );
+
+		self::assertSame( 'j', $subject->filter_term_slug( 'й' ) );
 	}
 
 	/**
@@ -86,15 +83,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	public function test_filter_term_slug_preserves_latin_slug(): void {
 		$subject = $this->get_subject();
 
-		self::assertSame(
-			'manual-slug',
-			$subject->filter_term_slug(
-				'manual-slug',
-				static function ( string $slug ): string {
-					return $slug . '-changed';
-				}
-			)
-		);
+		self::assertSame( 'manual-slug', $subject->filter_term_slug( 'manual-slug' ) );
 	}
 
 	/**

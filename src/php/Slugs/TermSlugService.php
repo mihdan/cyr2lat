@@ -103,17 +103,16 @@ class TermSlugService extends BaseService {
 	/**
 	 * Filter a term slug before WordPress default sanitize_title() fallback.
 	 *
-	 * @param string   $slug          Term slug.
-	 * @param callable $transliterate Transliteration callback.
+	 * @param string $slug Term slug.
 	 *
 	 * @return string|mixed
 	 */
-	public function filter_term_slug( string $slug, callable $transliterate ) {
+	public function filter_term_slug( string $slug ) {
 		if ( '' === $slug || ! $this->has_non_ascii_chars( $slug ) ) {
 			return $slug;
 		}
 
-		return $transliterate( $slug );
+		return $this->main->sanitize_explicit_slug( $slug );
 	}
 
 	/**

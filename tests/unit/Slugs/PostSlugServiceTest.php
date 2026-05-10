@@ -7,8 +7,10 @@
 
 namespace CyrToLat\Tests\Unit\Slugs;
 
+use CyrToLat\Main;
 use CyrToLat\Slugs\PostSlugService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
+use Mockery;
 
 /**
  * Class PostSlugServiceTest
@@ -24,6 +26,7 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	 */
 	public function test_filter_post_data_generates_empty_post_name_from_title(): void {
 		$subject = new PostSlugService(
+			$this->get_main_mock(),
 			static function ( string $slug ): string {
 				return 'й' === $slug ? 'j' : $slug;
 			}
@@ -45,7 +48,7 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_filter_post_data_keeps_empty_post_name_without_title(): void {
-		$subject = new PostSlugService();
+		$subject = new PostSlugService( $this->get_main_mock() );
 		$data    = [
 			'post_name'   => '',
 			'post_title'  => '',
@@ -62,6 +65,7 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	 */
 	public function test_filter_post_data_normalizes_explicit_cyrillic_post_name(): void {
 		$subject = new PostSlugService(
+			$this->get_main_mock(),
 			static function ( string $slug ): string {
 				return 'й' === $slug ? 'j' : $slug;
 			}
@@ -84,6 +88,7 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	 */
 	public function test_filter_post_data_normalizes_encoded_cyrillic_post_name(): void {
 		$subject = new PostSlugService(
+			$this->get_main_mock(),
 			static function ( string $slug ): string {
 				return 'й' === $slug ? 'j' : $slug;
 			}
@@ -106,6 +111,7 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	 */
 	public function test_filter_post_data_preserves_encoded_ascii_post_name(): void {
 		$subject = new PostSlugService(
+			$this->get_main_mock(),
 			static function ( string $slug ): string {
 				return $slug . '-changed';
 			}
@@ -125,7 +131,7 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_filter_post_data_preserves_manual_latin_post_name(): void {
-		$subject = new PostSlugService();
+		$subject = new PostSlugService( $this->get_main_mock() );
 		$data    = [
 			'post_name'   => 'manual-slug',
 			'post_title'  => 'й',
@@ -144,7 +150,7 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	 * @dataProvider dp_test_filter_post_data_skips_transient_post_saves
 	 */
 	public function test_filter_post_data_skips_transient_post_saves( array $data ): void {
-		$subject = new PostSlugService();
+		$subject = new PostSlugService( $this->get_main_mock() );
 
 		self::assertSame( $data, $subject->filter_post_data( $data ) );
 	}
@@ -179,5 +185,14 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 				],
 			],
 		];
+	}
+
+	/**
+	 * Get a Main mock instance.
+	 *
+	 * @return Main
+	 */
+	private function get_main_mock(): Main {
+		return Mockery::mock( Main::class )->makePartial();
 	}
 }
