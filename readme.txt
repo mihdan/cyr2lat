@@ -1,6 +1,6 @@
 === Cyr-To-Lat ===
 Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
-Tags: cyrillic, slugs, translation, transliteration
+Tags: transliteration, cyrillic, slugs, translation, multilingual
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
