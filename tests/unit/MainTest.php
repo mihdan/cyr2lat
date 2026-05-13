@@ -27,14 +27,12 @@ use CyrToLat\Request;
 use CyrToLat\Requirements;
 use CyrToLat\Settings\Settings;
 use CyrToLat\Slugs\LocalAttributeService;
-use CyrToLat\Slugs\TermSlugService;
 use CyrToLat\Slugs\VariationAttributeService;
 use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 use CyrToLat\Transliteration\Transliterator;
 use CyrToLat\WPCli;
 use Mockery;
 use PHPUnit\Runner\Version;
-use ReflectionClass;
 use ReflectionException;
 use WP_Mock;
 use WP_Post;
@@ -344,12 +342,6 @@ class MainTest extends CyrToLatTestCase {
 			}
 		);
 
-		if ( ! $frontend || $sitepress ) {
-			WP_Mock::expectFilterAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
-		} else {
-			WP_Mock::expectFilterNotAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ] );
-		}
-
 		WP_Mock::expectActionAdded( 'before_woocommerce_init', [ $subject, 'declare_wc_compatibility' ] );
 
 		if ( $is_cli ) {
@@ -412,7 +404,6 @@ class MainTest extends CyrToLatTestCase {
 		WP_Mock::expectActionNotAdded( 'woocommerce_product_attributes_updated', [ $subject, 'normalize_wc_product_attribute_meta' ] );
 		WP_Mock::expectActionNotAdded( 'woocommerce_product_read', [ $subject, 'normalize_wc_read_product_attribute_keys' ] );
 		WP_Mock::expectFilterNotAdded( 'woocommerce_product_get_attributes', [ $subject, 'normalize_wc_product_get_attribute_keys' ] );
-		WP_Mock::expectFilterNotAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ] );
 		WP_Mock::expectFilterNotAdded( 'locale', [ $subject, 'pll_locale_filter' ] );
 		WP_Mock::expectFilterNotAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ] );
 		WP_Mock::expectActionNotAdded( 'wpml_language_has_switched', [ $subject, 'wpml_language_has_switched' ] );
@@ -585,7 +576,6 @@ class MainTest extends CyrToLatTestCase {
 		$taxonomy = 'taxonomy';
 
 		$subject = $this->get_subject();
-		$this->set_wp_insert_term_backtrace_provider( $subject );
 
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
 
@@ -628,7 +618,6 @@ class MainTest extends CyrToLatTestCase {
 		$prepared_tax = '\'' . $taxonomy . '\'';
 
 		$subject = $this->get_subject();
-		$this->set_wp_insert_term_backtrace_provider( $subject );
 
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
 		WP_Mock::userFunction( 'is_wp_error' )->with( $title )->andReturn( false );
@@ -655,7 +644,7 @@ class MainTest extends CyrToLatTestCase {
 
 		$subject->pre_insert_term_filter( $title, $taxonomy );
 
-		self::assertSame( $encoded_slug, $subject->sanitize_title( $title ) );
+		self::assertSame( $encoded_slug, $this->wp_insert_term( $subject, $title ) );
 	}
 
 	/**
@@ -672,7 +661,6 @@ class MainTest extends CyrToLatTestCase {
 		$prepared_tax = '\'' . $taxonomy . '\'';
 
 		$subject = $this->get_subject();
-		$this->set_wp_insert_term_backtrace_provider( $subject );
 
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
 		WP_Mock::userFunction( 'is_wp_error' )->with( $title )->andReturn( false );
@@ -699,41 +687,7 @@ class MainTest extends CyrToLatTestCase {
 
 		$subject->pre_insert_term_filter( $title, $taxonomy );
 
-		self::assertSame( 'j', $subject->sanitize_title( $title ) );
-	}
-
-	/**
-	 * Test sanitize_title() for get_terms
-	 *
-	 * @param string $title               Title to sanitize.
-	 * @param string $term                Term to use.
-	 * @param array  $taxonomies          Taxonomies to use.
-	 * @param string $prepared_taxonomies Prepared taxonomies to use.
-	 * @param string $expected            Expected result.
-	 *
-	 * @dataProvider dp_test_sanitize_title_for_get_terms
-	 * @throws ReflectionException ReflectionException.
-	 */
-	public function test_sanitize_title_for_get_terms( string $title, string $term, array $taxonomies, string $prepared_taxonomies, string $expected ): void {
-		$subject = $this->get_subject();
-
-		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
-
-		$args = [ 'some args' ];
-
-		self::assertSame( $args, $subject->get_terms_args_filter( $args, $taxonomies ) );
-		self::assertSame( $title, $subject->sanitize_title( $title ) );
-	}
-
-	/**
-	 * Data provider for test_sanitize_title_for_get_terms()
-	 */
-	public static function dp_test_sanitize_title_for_get_terms(): array {
-		return [
-			[ 'title', 'term', [ 'taxonomy' ], "'taxonomy'", 'term' ],
-			[ 'title', 'term', [ 'taxonomy1', 'taxonomy2' ], "'taxonomy1', 'taxonomy2'", 'term' ],
-			[ 'title', 'term', [], '', 'term' ],
-		];
+		self::assertSame( 'j', $this->wp_insert_term( $subject, $title ) );
 	}
 
 	/**
@@ -744,7 +698,6 @@ class MainTest extends CyrToLatTestCase {
 	public function test_sanitize_title_for_frontend(): void {
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'is_frontend', true );
-		$this->set_wp_insert_term_backtrace_provider( $subject );
 
 		FunctionMocker::replace(
 			'class_exists',
@@ -756,7 +709,7 @@ class MainTest extends CyrToLatTestCase {
 		$subject->pre_insert_term_filter( 'some term', 'category' );
 		$title = 'some title';
 
-		self::assertSame( $title, $subject->sanitize_title( $title ) );
+		self::assertSame( $title, $this->wp_insert_term( $subject, $title ) );
 	}
 
 	/**
@@ -2050,34 +2003,15 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Set the term slug service with a wp_insert_term() backtrace provider.
+	 * Call sanitize_title() from a method named like the WordPress function.
 	 *
-	 * @param Main $subject Main plugin class.
+	 * @param Main   $subject Main plugin class.
+	 * @param string $title   Title.
 	 *
-	 * @return void
-	 * @throws ReflectionException ReflectionException.
+	 * @return string
 	 */
-	private function set_wp_insert_term_backtrace_provider( Main $subject ): void {
-		$reflection_class = new ReflectionClass( Main::class );
-		$property         = $reflection_class->getProperty( 'term_slug_service' );
-
-		$property->setAccessible( true );
-		$property->setValue(
-			$subject,
-			new TermSlugService(
-				$subject,
-				static function ( int $options, int $limit ): array {
-					self::assertSame( DEBUG_BACKTRACE_IGNORE_ARGS, $options );
-					self::assertSame( 8, $limit );
-
-					return [
-						[ 'function' => 'sanitize_title' ],
-						[ 'function' => 'wp_insert_term' ],
-					];
-				}
-			)
-		);
-		$property->setAccessible( false );
+	private function wp_insert_term( Main $subject, string $title ): string {
+		return $subject->sanitize_title( $title );
 	}
 
 	/**

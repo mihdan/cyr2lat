@@ -295,10 +295,6 @@ class Main {
 		add_action( 'woocommerce_product_read', [ $this, 'normalize_wc_read_product_attribute_keys' ], 10, 2 );
 		add_filter( 'woocommerce_product_get_attributes', [ $this, 'normalize_wc_product_get_attribute_keys' ], 10, 2 );
 
-		if ( ! $this->is_frontend || class_exists( SitePress::class ) ) {
-			add_filter( 'get_terms_args', [ $this, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
-		}
-
 		add_action( 'before_woocommerce_init', [ $this, 'declare_wc_compatibility' ] );
 
 		if ( $this->request->is_cli() ) {
@@ -625,18 +621,6 @@ class Main {
 	 */
 	public function sanitize_wc_taxonomy_name( $taxonomy, $raw_taxonomy ) {
 		return $this->global_attribute_service()->filter_taxonomy_name( $taxonomy, $raw_taxonomy );
-	}
-
-	/**
-	 * Filters the term query arguments.
-	 *
-	 * @param array|mixed $args       An array of get_terms() arguments.
-	 * @param string[]    $taxonomies An array of taxonomy names.
-	 *
-	 * @return array|mixed
-	 */
-	public function get_terms_args_filter( $args, array $taxonomies ) {
-		return $this->term_slug_service()->get_terms_args_filter( $args, $taxonomies );
 	}
 
 	/**

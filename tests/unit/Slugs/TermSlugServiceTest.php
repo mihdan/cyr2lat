@@ -47,20 +47,6 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test get_terms_args_filter() leaves term context unchanged.
-	 *
-	 * @return void
-	 */
-	public function test_get_terms_args_filter_leaves_context_unchanged(): void {
-		$subject = $this->get_subject();
-		$args    = [ 'hide_empty' => false ];
-
-		self::assertSame( $args, $subject->get_terms_args_filter( $args, [ 'category', 'post_tag' ] ) );
-		self::assertFalse( $subject->is_term_context() );
-		self::assertSame( [], $subject->taxonomies() );
-	}
-
-	/**
 	 * Test filter_term_slug() transliterates explicit Cyrillic slug.
 	 *
 	 * @return void
@@ -71,7 +57,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 			->with( 'й' )
 			->andReturn( 'j' );
 
-		$subject = new TermSlugService( $main, $this->get_wp_insert_term_backtrace_provider() );
+		$subject = new TermSlugService( $main );
 
 		self::assertSame( 'j', $subject->filter_term_slug( 'й' ) );
 	}
@@ -85,7 +71,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 		$main = Mockery::mock( Main::class )->makePartial();
 		$main->shouldReceive( 'sanitize_explicit_slug' )->never();
 
-		$subject = new TermSlugService( $main, $this->get_wp_insert_term_backtrace_provider() );
+		$subject = new TermSlugService( $main );
 		$subject->pre_insert_term_filter( 'й', 'category' );
 
 		self::assertSame( '', $subject->filter_term_slug( '' ) );
@@ -102,7 +88,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 		$main = Mockery::mock( Main::class )->makePartial();
 		$main->shouldReceive( 'sanitize_explicit_slug' )->never();
 
-		$subject = new TermSlugService( $main, $this->get_wp_insert_term_backtrace_provider() );
+		$subject = new TermSlugService( $main );
 		$subject->pre_insert_term_filter( 'й', 'category' );
 
 		self::assertSame( '', $subject->filter_term_slug( '' ) );
@@ -173,7 +159,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 		$main = Mockery::mock( Main::class )->makePartial();
 		$main->shouldReceive( 'sanitize_explicit_slug' )->never();
 
-		$subject = new TermSlugService( $main, $this->get_wp_insert_term_backtrace_provider() );
+		$subject = new TermSlugService( $main );
 		$subject->pre_insert_term_filter( 'й', 'category' );
 
 		$encoded_slug = strtolower( rawurlencode( 'й' ) );
@@ -181,7 +167,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, 'й' )->reply( false );
 		$this->expect_existing_encoded_slug_lookup( $main, 'й', [ 'category' ], $encoded_slug );
 
-		self::assertSame( $encoded_slug, $subject->filter_sanitize_title( 'й' ) );
+		self::assertSame( $encoded_slug, $this->wp_insert_term( $subject, 'й' ) );
 		self::assertFalse( $subject->is_term_context() );
 		self::assertSame( [], $subject->taxonomies() );
 	}
@@ -198,13 +184,13 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 			->with( 'й' )
 			->andReturn( 'j' );
 
-		$subject = new TermSlugService( $main, $this->get_wp_insert_term_backtrace_provider() );
+		$subject = new TermSlugService( $main );
 		$subject->pre_insert_term_filter( 'й', 'category' );
 
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, 'й' )->reply( false );
 		$this->expect_existing_encoded_slug_lookup( $main, 'й', [ 'category' ], '' );
 
-		self::assertSame( 'j', $subject->filter_sanitize_title( 'й' ) );
+		self::assertSame( 'j', $this->wp_insert_term( $subject, 'й' ) );
 		self::assertFalse( $subject->is_term_context() );
 		self::assertSame( [], $subject->taxonomies() );
 	}
@@ -218,14 +204,7 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 		$main = Mockery::mock( Main::class )->makePartial();
 		$main->shouldReceive( 'sanitize_explicit_slug' )->never();
 
-		$subject = new TermSlugService(
-			$main,
-			static function (): array {
-				return [
-					[ 'function' => 'sanitize_title' ],
-				];
-			}
-		);
+		$subject = new TermSlugService( $main );
 		$subject->pre_insert_term_filter( 'й', 'category' );
 
 		self::assertFalse( $subject->filter_sanitize_title( 'й' ) );
@@ -463,20 +442,14 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Get a minimal debug_backtrace() result for wp_insert_term().
+	 * Call filter_sanitize_title() from a method named like the WordPress function.
 	 *
-	 * @return callable
+	 * @param TermSlugService $subject Term slug service.
+	 * @param string          $title   Title.
+	 *
+	 * @return false|string
 	 */
-	private function get_wp_insert_term_backtrace_provider(): callable {
-		return static function ( int $options, int $limit ): array {
-			self::assertSame( DEBUG_BACKTRACE_IGNORE_ARGS, $options );
-			self::assertSame( 8, $limit );
-
-			return [
-				[ 'function' => 'filter_sanitize_title' ],
-				[ 'function' => 'sanitize_title' ],
-				[ 'function' => 'wp_insert_term' ],
-			];
-		};
+	private function wp_insert_term( TermSlugService $subject, string $title ) {
+		return $subject->filter_sanitize_title( $title );
 	}
 }

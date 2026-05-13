@@ -43,21 +43,12 @@ class TermSlugService extends BaseService {
 	private ?string $raw_term = null;
 
 	/**
-	 * Backtrace provider.
-	 *
-	 * @var callable|null
-	 */
-	private $backtrace_provider;
-
-	/**
 	 * Constructor.
 	 *
-	 * @param Main          $main               Main plugin class.
-	 * @param callable|null $backtrace_provider Backtrace provider.
+	 * @param Main $main Main plugin class.
 	 */
-	public function __construct( Main $main, ?callable $backtrace_provider = null ) {
-		$this->main               = $main;
-		$this->backtrace_provider = $backtrace_provider;
+	public function __construct( Main $main ) {
+		$this->main = $main;
 	}
 
 	/**
@@ -100,18 +91,6 @@ class TermSlugService extends BaseService {
 		$this->raw_term   = (string) $term;
 
 		return $term;
-	}
-
-	/**
-	 * Filters the term query arguments.
-	 *
-	 * @param array|mixed $args       An array of get_terms() arguments.
-	 * @param string[]    $taxonomies An array of taxonomy names.
-	 *
-	 * @return array|mixed
-	 */
-	public function get_terms_args_filter( $args, array $taxonomies ) {
-		return $args;
 	}
 
 	/**
@@ -315,11 +294,8 @@ class TermSlugService extends BaseService {
 	 * @return bool
 	 */
 	private function is_wp_insert_term_sanitize_title_call(): bool {
-		$backtrace_provider = $this->backtrace_provider;
-		$backtrace          = $backtrace_provider
-			? $backtrace_provider( DEBUG_BACKTRACE_IGNORE_ARGS, 8 )
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Intentional limited stack inspection for WordPress term flow detection.
-			: debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 8 );
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Intentional limited stack inspection for WordPress term flow detection.
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 8 );
 
 		foreach ( $backtrace as $call ) {
 			if ( 'wp_insert_term' === ( $call['function'] ?? '' ) ) {
