@@ -12,23 +12,13 @@
 
 namespace CyrToLat\Tests\Integration;
 
-use WC_Install;
-use WC_Post_Types;
-
 /**
  * Class WooCommercePostSlugIntegrationTest
  *
  * @group integration
  * @group woocommerce
  */
-class WooCommercePostSlugIntegrationTest extends PluginWPTestCase {
-
-	/**
-	 * WooCommerce plugin path relative to WP_PLUGIN_DIR.
-	 *
-	 * @var string
-	 */
-	protected static string $plugin = 'woocommerce/woocommerce.php';
+class WooCommercePostSlugIntegrationTest extends WooCommerceWPTestCase {
 
 	/**
 	 * Set up an allowed admin product request context.
@@ -37,13 +27,6 @@ class WooCommercePostSlugIntegrationTest extends PluginWPTestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
-
-		if ( ! function_exists( 'WC' ) || ! class_exists( WC_Post_Types::class ) ) {
-			self::markTestSkipped( 'WooCommerce post type classes are not loaded in the integration test environment.' );
-		}
-
-		$this->install_woocommerce_tables();
-		$this->init_woocommerce();
 
 		set_current_screen( 'post' );
 		cyr_to_lat()->init_all();
@@ -57,9 +40,6 @@ class WooCommercePostSlugIntegrationTest extends PluginWPTestCase {
 	 */
 	public function tearDown(): void {
 		remove_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
-
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		unset( $GLOBALS['current_screen'] );
 
 		parent::tearDown();
 	}
@@ -83,37 +63,5 @@ class WooCommercePostSlugIntegrationTest extends PluginWPTestCase {
 
 		$this->assertNotWPError( $post_id );
 		self::assertSame( 'j', get_post( $post_id )->post_name );
-	}
-
-	/**
-	 * Install WooCommerce database tables needed by product flows.
-	 *
-	 * @return void
-	 */
-	private function install_woocommerce_tables(): void {
-		if ( class_exists( WC_Install::class ) ) {
-			WC_Install::create_tables();
-			update_option( 'woocommerce_version', WC()->version );
-		}
-	}
-
-	/**
-	 * Initialize WooCommerce and restore post type/taxonomy lifecycle actions in the PHPUnit process.
-	 *
-	 * @return void
-	 */
-	private function init_woocommerce(): void {
-		WC()->init();
-
-		WC_Post_Types::register_taxonomies();
-		WC_Post_Types::register_post_types();
-
-		if ( ! did_action( 'woocommerce_after_register_taxonomy' ) ) {
-			do_action( 'woocommerce_after_register_taxonomy' );
-		}
-
-		if ( ! did_action( 'woocommerce_after_register_post_type' ) ) {
-			do_action( 'woocommerce_after_register_post_type' );
-		}
 	}
 }

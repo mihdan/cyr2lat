@@ -12,8 +12,6 @@
 
 namespace CyrToLat\Tests\Integration;
 
-use WC_Install;
-use WC_Post_Types;
 use WC_Product_Attribute;
 use WC_Product_Simple;
 
@@ -23,14 +21,7 @@ use WC_Product_Simple;
  * @group integration
  * @group woocommerce
  */
-class WooCommerceLocalAttributeIntegrationTest extends PluginWPTestCase {
-
-	/**
-	 * WooCommerce plugin path relative to WP_PLUGIN_DIR.
-	 *
-	 * @var string
-	 */
-	protected static string $plugin = 'woocommerce/woocommerce.php';
+class WooCommerceLocalAttributeIntegrationTest extends WooCommerceWPTestCase {
 
 	/**
 	 * Set up an allowed admin product request context.
@@ -48,10 +39,6 @@ class WooCommerceLocalAttributeIntegrationTest extends PluginWPTestCase {
 			self::markTestSkipped( 'WooCommerce product classes are not loaded in the integration test environment.' );
 		}
 
-		$this->install_woocommerce_tables();
-		$this->init_woocommerce();
-		wp_cache_flush();
-
 		set_current_screen( 'post' );
 		cyr_to_lat()->init_all();
 		add_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
@@ -64,11 +51,6 @@ class WooCommerceLocalAttributeIntegrationTest extends PluginWPTestCase {
 	 */
 	public function tearDown(): void {
 		remove_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
-		unset( $GLOBALS['product'] );
-		wp_cache_flush();
-
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		unset( $GLOBALS['current_screen'] );
 
 		parent::tearDown();
 	}
@@ -176,40 +158,6 @@ class WooCommerceLocalAttributeIntegrationTest extends PluginWPTestCase {
 		self::assertIsArray( $stored_attributes );
 		self::assertArrayHasKey( 'czvet', $stored_attributes );
 		self::assertArrayNotHasKey( '%d1%86%d0%b2%d0%b5%d1%82', $stored_attributes );
-	}
-
-	/**
-	 * Install WooCommerce database tables needed by product CRUD.
-	 *
-	 * @return void
-	 */
-	private function install_woocommerce_tables(): void {
-		if ( class_exists( WC_Install::class ) ) {
-			WC_Install::create_tables();
-			update_option( 'woocommerce_version', WC()->version );
-		}
-	}
-
-	/**
-	 * Initialize WooCommerce after activation in the already bootstrapped WordPress test process.
-	 *
-	 * @return void
-	 */
-	private function init_woocommerce(): void {
-		WC()->init();
-
-		if ( class_exists( 'WC_Post_Types' ) ) {
-			WC_Post_Types::register_taxonomies();
-			WC_Post_Types::register_post_types();
-		}
-
-		if ( ! did_action( 'woocommerce_after_register_taxonomy' ) ) {
-			do_action( 'woocommerce_after_register_taxonomy' );
-		}
-
-		if ( ! did_action( 'woocommerce_after_register_post_type' ) ) {
-			do_action( 'woocommerce_after_register_post_type' );
-		}
 	}
 
 	/**

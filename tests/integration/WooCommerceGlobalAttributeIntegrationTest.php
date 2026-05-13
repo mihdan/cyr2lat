@@ -13,7 +13,6 @@
 namespace CyrToLat\Tests\Integration;
 
 use WC_Cache_Helper;
-use WC_Install;
 use WC_Query;
 
 /**
@@ -22,14 +21,7 @@ use WC_Query;
  * @group integration
  * @group woocommerce
  */
-class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
-
-	/**
-	 * WooCommerce plugin path relative to WP_PLUGIN_DIR.
-	 *
-	 * @var string
-	 */
-	protected static string $plugin = 'woocommerce/woocommerce.php';
+class WooCommerceGlobalAttributeIntegrationTest extends WooCommerceWPTestCase {
 
 	/**
 	 * Registered attribute taxonomies created by tests.
@@ -49,9 +41,6 @@ class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
 		if ( ! function_exists( 'WC' ) || ! function_exists( 'wc_create_attribute' ) ) {
 			self::markTestSkipped( 'WooCommerce is not loaded in the integration test environment.' );
 		}
-
-		$this->install_woocommerce_tables();
-		$this->init_woocommerce();
 
 		set_current_screen( 'edit-tags' );
 		$this->delete_woocommerce_attribute_taxonomies();
@@ -404,29 +393,6 @@ class WooCommerceGlobalAttributeIntegrationTest extends PluginWPTestCase {
 		self::assertArrayHasKey( $taxonomy, $chosen_attributes );
 		self::assertSame( [ 'j' ], $chosen_attributes[ $taxonomy ]['terms'] );
 		self::assertSame( 'or', $chosen_attributes[ $taxonomy ]['query_type'] );
-	}
-
-	/**
-	 * Install WooCommerce database tables needed by wc_create_attribute().
-	 *
-	 * @return void
-	 */
-	private function install_woocommerce_tables(): void {
-		if ( class_exists( WC_Install::class ) ) {
-			WC_Install::create_tables();
-			update_option( 'woocommerce_version', WC()->version );
-		}
-	}
-
-	/**
-	 * Initialize WooCommerce after activation in the already bootstrapped WordPress test process.
-	 *
-	 * @return void
-	 */
-	private function init_woocommerce(): void {
-		if ( ! did_action( 'woocommerce_init' ) ) {
-			WC()->init();
-		}
 	}
 
 	/**

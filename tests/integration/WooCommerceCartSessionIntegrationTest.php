@@ -12,8 +12,6 @@
 
 namespace CyrToLat\Tests\Integration;
 
-use WC_Install;
-use WC_Post_Types;
 use WC_Product_Attribute;
 use WC_Product_Variable;
 use WC_Product_Variation;
@@ -24,14 +22,7 @@ use WC_Product_Variation;
  * @group integration
  * @group woocommerce
  */
-class WooCommerceCartSessionIntegrationTest extends PluginWPTestCase {
-
-	/**
-	 * WooCommerce plugin path relative to WP_PLUGIN_DIR.
-	 *
-	 * @var string
-	 */
-	protected static string $plugin = 'woocommerce/woocommerce.php';
+class WooCommerceCartSessionIntegrationTest extends WooCommerceWPTestCase {
 
 	/**
 	 * Set up an allowed product and cart request context.
@@ -51,37 +42,10 @@ class WooCommerceCartSessionIntegrationTest extends PluginWPTestCase {
 			self::markTestSkipped( 'WooCommerce product and cart classes are not loaded in the integration test environment.' );
 		}
 
-		$this->install_woocommerce_tables();
-		$this->init_woocommerce();
 		$this->load_cart();
-		wp_cache_flush();
 
 		set_current_screen( 'post' );
 		cyr_to_lat()->init_all();
-	}
-
-	/**
-	 * Tear down test globals.
-	 *
-	 * @return void
-	 */
-	public function tearDown(): void {
-		if ( WC()->cart ) {
-			WC()->cart->empty_cart();
-		}
-
-		if ( WC()->session ) {
-			WC()->session->set( 'cart', null );
-			WC()->session->set( 'removed_cart_contents', null );
-		}
-
-		wc_clear_notices();
-		wp_cache_flush();
-
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		unset( $GLOBALS['current_screen'] );
-
-		parent::tearDown();
 	}
 
 	/**
@@ -115,51 +79,6 @@ class WooCommerceCartSessionIntegrationTest extends PluginWPTestCase {
 		self::assertSame( 1, $cart[ $cart_item_key ]['quantity'] );
 		self::assertSame( $variation, $cart[ $cart_item_key ]['variation'] );
 		self::assertSame( 1, WC()->cart->get_cart_contents_count() );
-	}
-
-	/**
-	 * Install WooCommerce database tables needed by product and cart flows.
-	 *
-	 * @return void
-	 */
-	private function install_woocommerce_tables(): void {
-		if ( class_exists( WC_Install::class ) ) {
-			WC_Install::create_tables();
-			update_option( 'woocommerce_version', WC()->version );
-		}
-	}
-
-	/**
-	 * Initialize WooCommerce and restore post type/taxonomy lifecycle actions in the PHPUnit process.
-	 *
-	 * @return void
-	 */
-	private function init_woocommerce(): void {
-		WC()->init();
-
-		if ( class_exists( 'WC_Post_Types' ) ) {
-			WC_Post_Types::register_taxonomies();
-			WC_Post_Types::register_post_types();
-		}
-
-		if ( ! did_action( 'woocommerce_after_register_taxonomy' ) ) {
-			do_action( 'woocommerce_after_register_taxonomy' );
-		}
-
-		if ( ! did_action( 'woocommerce_after_register_post_type' ) ) {
-			do_action( 'woocommerce_after_register_post_type' );
-		}
-	}
-
-	/**
-	 * Load WooCommerce cart objects.
-	 *
-	 * @return void
-	 */
-	private function load_cart(): void {
-		wc_load_cart();
-		WC()->cart->empty_cart();
-		wc_clear_notices();
 	}
 
 	/**
