@@ -36,6 +36,13 @@ class TermSlugService extends BaseService {
 	private array $taxonomies = [];
 
 	/**
+	 * Raw term name captured during insertion.
+	 *
+	 * @var string|null
+	 */
+	private ?string $raw_term = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Main $main Main plugin class.
@@ -81,6 +88,7 @@ class TermSlugService extends BaseService {
 
 		$this->is_term    = true;
 		$this->taxonomies = [ $taxonomy ];
+		$this->raw_term   = (string) $term;
 
 		return $term;
 	}
@@ -96,6 +104,7 @@ class TermSlugService extends BaseService {
 	public function get_terms_args_filter( $args, array $taxonomies ) {
 		$this->is_term    = true;
 		$this->taxonomies = $taxonomies;
+		$this->raw_term   = null;
 
 		return $args;
 	}
@@ -108,6 +117,10 @@ class TermSlugService extends BaseService {
 	 * @return string
 	 */
 	public function filter_term_slug( string $slug ): string {
+		if ( null !== $this->raw_term ) {
+			return $this->filter_insert_term_slug( $slug );
+		}
+
 		if ( '' === $slug || ! $this->has_non_ascii_chars( $slug ) ) {
 			return $slug;
 		}
@@ -124,37 +137,21 @@ class TermSlugService extends BaseService {
 	 * @return false|string
 	 */
 	public function maybe_preserve_existing_encoded_slug( string $title, bool $is_frontend ) {
-		global $wpdb;
-
 		if ( ! $this->is_term ) {
 			return false;
 		}
 
+		$taxonomies = $this->taxonomies;
+
 		// Make sure we search in the db only once being called from wp_insert_term().
-		$this->is_term = false;
+		$this->reset_term_context();
 
 		// Fix a case when showing previously created categories in cyrillic with WPML.
 		if ( $is_frontend && class_exists( 'SitePress' ) ) {
 			return $title;
 		}
 
-		$sql = $wpdb->prepare(
-			"SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
-							ON t.term_id = tt.term_id
-							WHERE t.slug = %s",
-			rawurlencode( $title )
-		);
-
-		if ( $this->taxonomies ) {
-			$sql .= ' AND tt.taxonomy IN (' . $this->main->prepare_in( $this->taxonomies ) . ')';
-		}
-
-		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		$term = $wpdb->get_var( $sql );
-		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
-
-		return ! empty( $term ) ? $term : false;
+		return $this->find_existing_encoded_slug( $title, $taxonomies );
 	}
 
 	/**
@@ -167,13 +164,105 @@ class TermSlugService extends BaseService {
 	public function should_transliterate_on_pre_term_slug_filter( string $title ): bool {
 		global $wp_query;
 
+		$doing_pre_term_slug = function_exists( 'doing_filter' ) && doing_filter( 'pre_term_slug' );
+
+		if ( $doing_pre_term_slug && $this->is_encoded_non_ascii_slug( $title ) ) {
+			return false;
+		}
+
 		$tag_var = $wp_query->query_vars['tag'] ?? null;
 
 		return ! (
 			$tag_var === $title &&
-			doing_filter( 'pre_term_slug' ) &&
+			$doing_pre_term_slug &&
 			// Transliterate on pre_term_slug with Polylang and WPML only.
 			! ( class_exists( 'Polylang' ) || class_exists( 'SitePress' ) )
 		);
+	}
+
+	/**
+	 * Filter a slug while WordPress is sanitizing a term insert payload.
+	 *
+	 * @param string $slug Term slug.
+	 *
+	 * @return string
+	 */
+	private function filter_insert_term_slug( string $slug ): string {
+		$raw_term   = (string) $this->raw_term;
+		$taxonomies = $this->taxonomies;
+
+		$this->reset_term_context();
+
+		if ( '' !== $slug ) {
+			if ( $this->has_non_ascii_chars( $slug ) ) {
+				return $this->main->sanitize_explicit_slug( $slug );
+			}
+
+			return $slug;
+		}
+
+		if ( ! $this->has_non_ascii_chars( $raw_term ) ) {
+			return $slug;
+		}
+
+		$term = $this->find_existing_encoded_slug( $raw_term, $taxonomies );
+
+		if ( false !== $term ) {
+			return $term;
+		}
+
+		return $this->main->sanitize_explicit_slug( $raw_term );
+	}
+
+	/**
+	 * Find an existing URL-encoded term slug for the provided title.
+	 *
+	 * @param string   $title      Title.
+	 * @param string[] $taxonomies Taxonomies.
+	 *
+	 * @return false|string
+	 */
+	private function find_existing_encoded_slug( string $title, array $taxonomies ) {
+		global $wpdb;
+
+		$sql = $wpdb->prepare(
+			"SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
+							ON t.term_id = tt.term_id
+							WHERE LOWER(t.slug) = LOWER(%s)",
+			rawurlencode( $title )
+		);
+
+		if ( $taxonomies ) {
+			$sql .= ' AND tt.taxonomy IN (' . $this->main->prepare_in( $taxonomies ) . ')';
+		}
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$term = $wpdb->get_var( $sql );
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared
+
+		return ! empty( $term ) ? $term : false;
+	}
+
+	/**
+	 * Whether a slug is a percent-encoded non-ASCII value.
+	 *
+	 * @param string $slug Slug.
+	 *
+	 * @return bool
+	 */
+	private function is_encoded_non_ascii_slug( string $slug ): bool {
+		return false !== strpos( $slug, '%' ) && $this->has_non_ascii_chars( rawurldecode( $slug ) );
+	}
+
+	/**
+	 * Reset captured term context.
+	 *
+	 * @return void
+	 */
+	private function reset_term_context(): void {
+		$this->is_term    = false;
+		$this->taxonomies = [];
+		$this->raw_term   = null;
 	}
 }

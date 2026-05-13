@@ -81,6 +81,28 @@ class TermSlugIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that category creation does not require the plugin's broad sanitize_title callback.
+	 *
+	 * @return void
+	 */
+	public function test_wp_insert_term_generates_category_slug_without_global_sanitize_title_callback(): void {
+		$term = $this->insert_term_without_global_sanitize_title_callback( 'ф', 'category' );
+
+		self::assertSame( 'f', $term->slug );
+	}
+
+	/**
+	 * Test that post tag creation does not require the plugin's broad sanitize_title callback.
+	 *
+	 * @return void
+	 */
+	public function test_wp_insert_term_generates_post_tag_slug_without_global_sanitize_title_callback(): void {
+		$term = $this->insert_term_without_global_sanitize_title_callback( 'х', 'post_tag' );
+
+		self::assertSame( 'h', $term->slug );
+	}
+
+	/**
 	 * Test that wp_insert_term creates a transliterated custom taxonomy slug.
 	 *
 	 * @return void
@@ -225,6 +247,25 @@ class TermSlugIntegrationTest extends WP_UnitTestCase {
 		self::assertInstanceOf( WP_Term::class, $term );
 
 		return $term;
+	}
+
+	/**
+	 * Insert a term while the plugin's broad sanitize_title callback is not registered.
+	 *
+	 * @param string $name     Term name.
+	 * @param string $taxonomy Taxonomy slug.
+	 * @param array  $args     Optional term args.
+	 *
+	 * @return WP_Term
+	 */
+	private function insert_term_without_global_sanitize_title_callback( string $name, string $taxonomy, array $args = [] ): WP_Term {
+		remove_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ], 9 );
+
+		try {
+			return $this->insert_term( $name, $taxonomy, $args );
+		} finally {
+			add_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ], 9, 3 );
+		}
 	}
 
 	/**

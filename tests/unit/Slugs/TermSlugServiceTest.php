@@ -77,6 +77,49 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test filter_term_slug() transliterates an empty insert slug from the raw term name.
+	 *
+	 * @return void
+	 */
+	public function test_filter_term_slug_transliterates_empty_insert_slug_from_cyrillic_term_name(): void {
+		$main = Mockery::mock( Main::class )->makePartial();
+		$main->shouldReceive( 'sanitize_explicit_slug' )
+			->once()
+			->with( 'й' )
+			->andReturn( 'j' );
+
+		$subject = new TermSlugService( $main );
+		$subject->pre_insert_term_filter( 'й', 'category' );
+
+		$this->expect_existing_encoded_slug_lookup( $main, 'й', [ 'category' ], '' );
+
+		self::assertSame( 'j', $subject->filter_term_slug( '' ) );
+		self::assertFalse( $subject->is_term_context() );
+		self::assertSame( [], $subject->taxonomies() );
+	}
+
+	/**
+	 * Test filter_term_slug() preserves an existing encoded slug from the raw term name.
+	 *
+	 * @return void
+	 */
+	public function test_filter_term_slug_preserves_existing_encoded_slug_from_cyrillic_term_name(): void {
+		$main = Mockery::mock( Main::class )->makePartial();
+		$main->shouldReceive( 'sanitize_explicit_slug' )->never();
+
+		$subject = new TermSlugService( $main );
+		$subject->pre_insert_term_filter( 'й', 'category' );
+
+		$encoded_slug = strtolower( rawurlencode( 'й' ) );
+
+		$this->expect_existing_encoded_slug_lookup( $main, 'й', [ 'category' ], $encoded_slug );
+
+		self::assertSame( $encoded_slug, $subject->filter_term_slug( '' ) );
+		self::assertFalse( $subject->is_term_context() );
+		self::assertSame( [], $subject->taxonomies() );
+	}
+
+	/**
 	 * Test filter_term_slug() preserves Latin slug.
 	 *
 	 * @return void
@@ -85,6 +128,20 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 		$subject = $this->get_subject();
 
 		self::assertSame( 'manual-slug', $subject->filter_term_slug( 'manual-slug' ) );
+	}
+
+	/**
+	 * Test filter_term_slug() consumes term insert context for explicit Latin slugs.
+	 *
+	 * @return void
+	 */
+	public function test_filter_term_slug_consumes_insert_context_for_explicit_latin_slug(): void {
+		$subject = $this->get_subject();
+		$subject->pre_insert_term_filter( 'й', 'category' );
+
+		self::assertSame( 'manual-slug', $subject->filter_term_slug( 'manual-slug' ) );
+		self::assertFalse( $subject->is_term_context() );
+		self::assertSame( [], $subject->taxonomies() );
 	}
 
 	/**
@@ -109,6 +166,19 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 		self::assertFalse( $subject->should_transliterate_on_pre_term_slug_filter( 'й' ) );
 
 		unset( $GLOBALS['wp_query'] );
+	}
+
+	/**
+	 * Test should_transliterate_on_pre_term_slug_filter() skips encoded non-ASCII slugs.
+	 *
+	 * @return void
+	 */
+	public function test_should_transliterate_on_pre_term_slug_filter_skips_encoded_non_ascii_slug(): void {
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( true );
+
+		$subject = $this->get_subject();
+
+		self::assertFalse( $subject->should_transliterate_on_pre_term_slug_filter( '%d0%b9' ) );
 	}
 
 	/**
@@ -170,5 +240,43 @@ class TermSlugServiceTest extends CyrToLatTestCase {
 		$main = Mockery::mock( Main::class )->makePartial();
 
 		return new TermSlugService( $main );
+	}
+
+	/**
+	 * Expect a lookup for an existing encoded term slug.
+	 *
+	 * @param Main     $main       Main plugin class.
+	 * @param string   $title      Title.
+	 * @param string[] $taxonomies Taxonomies.
+	 * @param string   $term       Term lookup result.
+	 *
+	 * @return void
+	 */
+	private function expect_existing_encoded_slug_lookup( Main $main, string $title, array $taxonomies, string $term ): void {
+		global $wpdb;
+
+		$encoded_slug = rawurlencode( $title );
+		$prepared_tax = '\'' . implode( "','", $taxonomies ) . '\'';
+
+		$main->shouldReceive( 'prepare_in' )
+			->once()
+			->with( $taxonomies )
+			->andReturn( $prepared_tax );
+
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wpdb                = Mockery::mock( \wpdb::class );
+		$wpdb->terms         = 'wp_terms';
+		$wpdb->term_taxonomy = 'wp_term_taxonomy';
+
+		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
+							ON t.term_id = tt.term_id
+							WHERE LOWER(t.slug) = LOWER(%s)";
+		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
+							ON t.term_id = tt.term_id
+							WHERE LOWER(t.slug) = LOWER(" . $encoded_slug . ')';
+		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
+
+		$wpdb->shouldReceive( 'prepare' )->once()->with( $request, $encoded_slug )->andReturn( $prepared_request );
+		$wpdb->shouldReceive( 'get_var' )->once()->with( $sql )->andReturn( $term );
 	}
 }

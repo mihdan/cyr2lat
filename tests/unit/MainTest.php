@@ -596,10 +596,10 @@ class MainTest extends CyrToLatTestCase {
 
 		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.slug = %s";
+							WHERE LOWER(t.slug) = LOWER(%s)";
 		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.slug = " . $title;
+							WHERE LOWER(t.slug) = LOWER(" . $title . ')';
 		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
 
 		$wpdb->shouldReceive( 'prepare' )->times( $times )->with(
@@ -654,10 +654,10 @@ class MainTest extends CyrToLatTestCase {
 
 		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.slug = %s";
+							WHERE LOWER(t.slug) = LOWER(%s)";
 		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.slug = " . $encoded_slug;
+							WHERE LOWER(t.slug) = LOWER(" . $encoded_slug . ')';
 		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
 
 		$wpdb->shouldReceive( 'prepare' )->once()->with( $request, $encoded_slug )->andReturn( $prepared_request );
@@ -696,10 +696,10 @@ class MainTest extends CyrToLatTestCase {
 
 		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.slug = %s";
+							WHERE LOWER(t.slug) = LOWER(%s)";
 		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.slug = " . $encoded_slug;
+							WHERE LOWER(t.slug) = LOWER(" . $encoded_slug . ')';
 		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
 
 		$wpdb->shouldReceive( 'prepare' )->once()->with( $request, $encoded_slug )->andReturn( $prepared_request );
@@ -740,10 +740,10 @@ class MainTest extends CyrToLatTestCase {
 
 		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.slug = %s";
+							WHERE LOWER(t.slug) = LOWER(%s)";
 		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.slug = " . $title;
+							WHERE LOWER(t.slug) = LOWER(" . $title . ')';
 
 		$sql = $prepared_request;
 
