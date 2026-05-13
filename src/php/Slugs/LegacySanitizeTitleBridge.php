@@ -89,7 +89,7 @@ class LegacySanitizeTitleBridge {
 			$context
 		);
 
-		if ( ! $bridge_enabled && ! $this->is_known_explicit_context( $context ) ) {
+		if ( ! $bridge_enabled ) {
 			return $title;
 		}
 
@@ -120,17 +120,6 @@ class LegacySanitizeTitleBridge {
 		}
 
 		return $this->main->transliterate( $title );
-	}
-
-	/**
-	 * Whether the context is handled by explicit WordPress/WooCommerce slug paths.
-	 *
-	 * @param string|mixed $context The context for which the title is being sanitized.
-	 *
-	 * @return bool
-	 */
-	private function is_known_explicit_context( $context ): bool {
-		return 'save' === $context;
 	}
 
 	/**
