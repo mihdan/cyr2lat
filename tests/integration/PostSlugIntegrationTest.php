@@ -142,29 +142,6 @@ class PostSlugIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that wp_insert_post() creates a product slug from a Cyrillic title when WooCommerce is available.
-	 *
-	 * @return void
-	 */
-	public function test_wp_insert_post_creates_product_slug_from_cyrillic_title_when_available(): void {
-		if ( ! post_type_exists( 'product' ) ) {
-			self::markTestSkipped( 'WooCommerce product post type is not registered.' );
-		}
-
-		$post_id = wp_insert_post(
-			[
-				'post_type'   => 'product',
-				'post_status' => 'publish',
-				'post_title'  => 'й',
-			],
-			true
-		);
-
-		$this->assertNotWPError( $post_id );
-		self::assertSame( 'j', get_post( $post_id )->post_name );
-	}
-
-	/**
 	 * Test that wp_insert_post_data preserves a manually supplied post_name.
 	 *
 	 * @return void

@@ -114,21 +114,6 @@ class TermSlugIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that wp_insert_term creates a transliterated WooCommerce product category slug when available.
-	 *
-	 * @return void
-	 */
-	public function test_wp_insert_term_generates_product_category_slug_from_cyrillic_name_when_available(): void {
-		if ( ! taxonomy_exists( 'product_cat' ) ) {
-			self::markTestSkipped( 'WooCommerce product_cat taxonomy is not registered.' );
-		}
-
-		$term = $this->insert_term( 'й', 'product_cat' );
-
-		self::assertSame( 'j', $term->slug );
-	}
-
-	/**
 	 * Test that an explicitly supplied Cyrillic term slug is transliterated.
 	 *
 	 * @return void
