@@ -29,13 +29,6 @@ class LegacySanitizeTitleBridge {
 	private TermSlugService $term_slug_service;
 
 	/**
-	 * The current request is frontend.
-	 *
-	 * @var bool
-	 */
-	private bool $is_frontend;
-
-	/**
 	 * Global attribute service.
 	 *
 	 * @var GlobalAttributeService
@@ -47,18 +40,15 @@ class LegacySanitizeTitleBridge {
 	 *
 	 * @param Main                   $main                     Main plugin class.
 	 * @param TermSlugService        $term_slug_service        Term slug service.
-	 * @param bool                   $is_frontend              Whether current request is frontend.
 	 * @param GlobalAttributeService $global_attribute_service Global attribute service.
 	 */
 	public function __construct(
 		Main $main,
 		TermSlugService $term_slug_service,
-		bool $is_frontend,
 		GlobalAttributeService $global_attribute_service
 	) {
 		$this->main                     = $main;
 		$this->term_slug_service        = $term_slug_service;
-		$this->is_frontend              = $is_frontend;
 		$this->global_attribute_service = $global_attribute_service;
 	}
 
@@ -98,17 +88,6 @@ class LegacySanitizeTitleBridge {
 
 		if ( false !== $pre ) {
 			return (string) $pre;
-		}
-
-		// This is the only point to process duplicate slugs.
-		// @todo Move to the TermSlugService.
-		$term = $this->term_slug_service->maybe_preserve_existing_encoded_slug(
-			$title,
-			$this->is_frontend
-		);
-
-		if ( false !== $term ) {
-			return $term;
 		}
 
 		if ( $this->global_attribute_service->should_preserve_attribute_title( $title ) ) {

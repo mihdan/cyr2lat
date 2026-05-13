@@ -27,12 +27,14 @@ use CyrToLat\Request;
 use CyrToLat\Requirements;
 use CyrToLat\Settings\Settings;
 use CyrToLat\Slugs\LocalAttributeService;
+use CyrToLat\Slugs\TermSlugService;
 use CyrToLat\Slugs\VariationAttributeService;
 use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 use CyrToLat\Transliteration\Transliterator;
 use CyrToLat\WPCli;
 use Mockery;
 use PHPUnit\Runner\Version;
+use ReflectionClass;
 use ReflectionException;
 use WP_Mock;
 use WP_Post;
@@ -325,6 +327,7 @@ class MainTest extends CyrToLatTestCase {
 		WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ], 10, 4 );
 		WP_Mock::expectFilterAdded( 'get_sample_permalink', [ $subject, 'sanitize_sample_permalink' ], 10, 5 );
 		WP_Mock::expectFilterAdded( 'pre_insert_term', [ $subject, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
+		WP_Mock::expectFilterAdded( 'wp_unique_term_slug_is_bad_slug', [ $subject, 'filter_unique_term_slug_is_bad_slug' ], 10, 3 );
 		WP_Mock::expectFilterAdded( 'sanitize_taxonomy_name', [ $subject, 'sanitize_wc_taxonomy_name' ], 10, 2 );
 		WP_Mock::expectActionAdded( 'woocommerce_product_attributes_updated', [ $subject, 'normalize_wc_product_attribute_meta' ] );
 		WP_Mock::expectActionAdded( 'woocommerce_product_read', [ $subject, 'normalize_wc_read_product_attribute_keys' ], 10, 2 );
@@ -404,6 +407,7 @@ class MainTest extends CyrToLatTestCase {
 		WP_Mock::expectFilterNotAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ] );
 		WP_Mock::expectFilterNotAdded( 'get_sample_permalink', [ $subject, 'sanitize_sample_permalink' ] );
 		WP_Mock::expectFilterNotAdded( 'pre_insert_term', [ $subject, 'pre_insert_term_filter' ] );
+		WP_Mock::expectFilterNotAdded( 'wp_unique_term_slug_is_bad_slug', [ $subject, 'filter_unique_term_slug_is_bad_slug' ] );
 		WP_Mock::expectFilterNotAdded( 'sanitize_taxonomy_name', [ $subject, 'sanitize_wc_taxonomy_name' ] );
 		WP_Mock::expectActionNotAdded( 'woocommerce_product_attributes_updated', [ $subject, 'normalize_wc_product_attribute_meta' ] );
 		WP_Mock::expectActionNotAdded( 'woocommerce_product_read', [ $subject, 'normalize_wc_read_product_attribute_keys' ] );
@@ -578,49 +582,23 @@ class MainTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_sanitize_title_for_insert_term( string $title, $term, string $expected ): void {
-		global $wpdb;
-
-		$taxonomy     = 'taxonomy';
-		$prepared_tax = '\'' . $taxonomy . '\'';
+		$taxonomy = 'taxonomy';
 
 		$subject = $this->get_subject();
-
-		$times = $term ? 1 : 0;
+		$this->set_wp_insert_term_backtrace_provider( $subject );
 
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
 
 		if ( is_object( $term ) ) {
 			WP_Mock::userFunction( 'is_wp_error' )->with( $term )->andReturn( true );
-			$times = 0;
 		} else {
 			WP_Mock::userFunction( 'is_wp_error' )->with( $term )->andReturn( false );
 		}
 
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
-		$subject->shouldReceive( 'prepare_in' )->times( $times )->with( [ $taxonomy ] )->andReturn( $prepared_tax );
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$wpdb                = Mockery::mock( wpdb::class );
-		$wpdb->terms         = 'wp_terms';
-		$wpdb->term_taxonomy = 'wp_term_taxonomy';
-
-		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
-							ON t.term_id = tt.term_id
-							WHERE LOWER(t.slug) = LOWER(%s)";
-		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
-							ON t.term_id = tt.term_id
-							WHERE LOWER(t.slug) = LOWER(" . $title . ')';
-		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
-
-		$wpdb->shouldReceive( 'prepare' )->times( $times )->with(
-			$request,
-			rawurlencode( $title )
-		)->andReturn( $prepared_request );
-		$wpdb->shouldReceive( 'get_var' )->times( $times )->with( $sql )->andReturn( $term );
-
 		$subject->pre_insert_term_filter( $term, $taxonomy );
 		self::assertSame( $expected, $subject->sanitize_title( $title ) );
-		// Make sure we search in the db only once being called from wp_insert_term().
 		self::assertSame( $title, $subject->sanitize_title( $title ) );
 	}
 
@@ -629,7 +607,7 @@ class MainTest extends CyrToLatTestCase {
 	 */
 	public static function dp_test_sanitize_title_for_insert_term(): array {
 		return [
-			[ 'title', 'term', 'term' ],
+			[ 'title', 'term', 'title' ],
 			[ 'title', '', 'title' ],
 			[ 'title', 0, 'title' ],
 			[ 'title', (object) [], 'title' ],
@@ -650,6 +628,7 @@ class MainTest extends CyrToLatTestCase {
 		$prepared_tax = '\'' . $taxonomy . '\'';
 
 		$subject = $this->get_subject();
+		$this->set_wp_insert_term_backtrace_provider( $subject );
 
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
 		WP_Mock::userFunction( 'is_wp_error' )->with( $title )->andReturn( false );
@@ -662,16 +641,17 @@ class MainTest extends CyrToLatTestCase {
 		$wpdb->terms         = 'wp_terms';
 		$wpdb->term_taxonomy = 'wp_term_taxonomy';
 
-		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
+		$request = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
 							WHERE LOWER(t.slug) = LOWER(%s)";
-		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
+		$wpdb->shouldReceive( 'prepare' )->once()->withAnyArgs()->andReturnUsing(
+			static function ( string $sql, string $slug ) use ( $wpdb ): string {
+				return 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE LOWER(t.slug) = LOWER(" . $encoded_slug . ')';
-		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
-
-		$wpdb->shouldReceive( 'prepare' )->once()->with( $request, $encoded_slug )->andReturn( $prepared_request );
-		$wpdb->shouldReceive( 'get_var' )->once()->with( $sql )->andReturn( $encoded_slug );
+							WHERE LOWER(t.slug) = LOWER(" . $slug . ')';
+			}
+		);
+		$wpdb->shouldReceive( 'get_var' )->once()->andReturn( $encoded_slug );
 
 		$subject->pre_insert_term_filter( $title, $taxonomy );
 
@@ -692,9 +672,11 @@ class MainTest extends CyrToLatTestCase {
 		$prepared_tax = '\'' . $taxonomy . '\'';
 
 		$subject = $this->get_subject();
+		$this->set_wp_insert_term_backtrace_provider( $subject );
 
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
 		WP_Mock::userFunction( 'is_wp_error' )->with( $title )->andReturn( false );
+		WP_Mock::userFunction( 'sanitize_title_with_dashes' )->with( 'j' )->andReturn( 'j' );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, $title )->reply( false );
 
 		$subject->shouldReceive( 'prepare_in' )->once()->with( [ $taxonomy ] )->andReturn( $prepared_tax );
@@ -733,43 +715,13 @@ class MainTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_sanitize_title_for_get_terms( string $title, string $term, array $taxonomies, string $prepared_taxonomies, string $expected ): void {
-		global $wpdb;
-
 		$subject = $this->get_subject();
-
-		$times = $taxonomies ? 1 : 0;
 
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
-		$subject->shouldReceive( 'prepare_in' )->times( $times )->with( $taxonomies )
-			->andReturn( $prepared_taxonomies );
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$wpdb                = Mockery::mock( wpdb::class );
-		$wpdb->terms         = 'wp_terms';
-		$wpdb->term_taxonomy = 'wp_term_taxonomy';
+		$args = [ 'some args' ];
 
-		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
-							ON t.term_id = tt.term_id
-							WHERE LOWER(t.slug) = LOWER(%s)";
-		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
-							ON t.term_id = tt.term_id
-							WHERE LOWER(t.slug) = LOWER(" . $title . ')';
-
-		$sql = $prepared_request;
-
-		if ( $taxonomies ) {
-			$sql .= ' AND tt.taxonomy IN (' . $prepared_taxonomies . ')';
-		}
-
-		$wpdb->shouldReceive( 'prepare' )->once()->with(
-			$request,
-			rawurlencode( $title )
-		)->andReturn( $prepared_request );
-		$wpdb->shouldReceive( 'get_var' )->once()->with( $sql )->andReturn( $term );
-
-		$subject->get_terms_args_filter( [ 'some args' ], $taxonomies );
-		self::assertSame( $expected, $subject->sanitize_title( $title ) );
-		// Make sure we search in the db only once being called from wp_insert_term().
+		self::assertSame( $args, $subject->get_terms_args_filter( $args, $taxonomies ) );
 		self::assertSame( $title, $subject->sanitize_title( $title ) );
 	}
 
@@ -792,6 +744,7 @@ class MainTest extends CyrToLatTestCase {
 	public function test_sanitize_title_for_frontend(): void {
 		$subject = Mockery::mock( Main::class )->makePartial();
 		$this->set_protected_property( $subject, 'is_frontend', true );
+		$this->set_wp_insert_term_backtrace_provider( $subject );
 
 		FunctionMocker::replace(
 			'class_exists',
@@ -2094,6 +2047,37 @@ class MainTest extends CyrToLatTestCase {
 		$this->set_protected_property( $subject, 'acf', $acf );
 
 		return $subject;
+	}
+
+	/**
+	 * Set the term slug service with a wp_insert_term() backtrace provider.
+	 *
+	 * @param Main $subject Main plugin class.
+	 *
+	 * @return void
+	 * @throws ReflectionException ReflectionException.
+	 */
+	private function set_wp_insert_term_backtrace_provider( Main $subject ): void {
+		$reflection_class = new ReflectionClass( Main::class );
+		$property         = $reflection_class->getProperty( 'term_slug_service' );
+
+		$property->setAccessible( true );
+		$property->setValue(
+			$subject,
+			new TermSlugService(
+				$subject,
+				static function ( int $options, int $limit ): array {
+					self::assertSame( DEBUG_BACKTRACE_IGNORE_ARGS, $options );
+					self::assertSame( 8, $limit );
+
+					return [
+						[ 'function' => 'sanitize_title' ],
+						[ 'function' => 'wp_insert_term' ],
+					];
+				}
+			)
+		);
+		$property->setAccessible( false );
 	}
 
 	/**

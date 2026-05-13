@@ -81,28 +81,6 @@ class TermSlugIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that category creation does not require the plugin's broad sanitize_title callback.
-	 *
-	 * @return void
-	 */
-	public function test_wp_insert_term_generates_category_slug_without_global_sanitize_title_callback(): void {
-		$term = $this->insert_term_without_global_sanitize_title_callback( 'ф', 'category' );
-
-		self::assertSame( 'f', $term->slug );
-	}
-
-	/**
-	 * Test that post tag creation does not require the plugin's broad sanitize_title callback.
-	 *
-	 * @return void
-	 */
-	public function test_wp_insert_term_generates_post_tag_slug_without_global_sanitize_title_callback(): void {
-		$term = $this->insert_term_without_global_sanitize_title_callback( 'х', 'post_tag' );
-
-		self::assertSame( 'h', $term->slug );
-	}
-
-	/**
 	 * Test that wp_insert_term creates a transliterated custom taxonomy slug.
 	 *
 	 * @return void
@@ -197,6 +175,44 @@ class TermSlugIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that term creation is transliterated when the legacy bridge is enabled.
+	 *
+	 * @return void
+	 */
+	public function test_wp_insert_term_generates_slug_from_cyrillic_name_with_legacy_bridge_enabled(): void {
+		remove_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
+
+		try {
+			$term = $this->insert_term( 'ф', self::TAXONOMY );
+
+			self::assertSame( 'f', $term->slug );
+		} finally {
+			add_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
+		}
+	}
+
+	/**
+	 * Test duplicate encoded slug handling when the legacy bridge is enabled.
+	 *
+	 * @return void
+	 */
+	public function test_wp_insert_term_uses_unique_suffix_for_encoded_duplicate_with_legacy_bridge_enabled(): void {
+		remove_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
+
+		try {
+			$encoded_slug = strtolower( rawurlencode( 'ф' ) );
+
+			$this->insert_raw_term( 'Encoded ф', self::TAXONOMY, $encoded_slug );
+
+			$term = $this->insert_term( 'ф', self::TAXONOMY );
+
+			self::assertSame( $encoded_slug . '-2', $term->slug );
+		} finally {
+			add_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
+		}
+	}
+
+	/**
 	 * Register a custom taxonomy used by integration tests.
 	 *
 	 * @return void
@@ -232,25 +248,6 @@ class TermSlugIntegrationTest extends WP_UnitTestCase {
 		self::assertInstanceOf( WP_Term::class, $term );
 
 		return $term;
-	}
-
-	/**
-	 * Insert a term while the plugin's broad sanitize_title callback is not registered.
-	 *
-	 * @param string $name     Term name.
-	 * @param string $taxonomy Taxonomy slug.
-	 * @param array  $args     Optional term args.
-	 *
-	 * @return WP_Term
-	 */
-	private function insert_term_without_global_sanitize_title_callback( string $name, string $taxonomy, array $args = [] ): WP_Term {
-		remove_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ], 9 );
-
-		try {
-			return $this->insert_term( $name, $taxonomy, $args );
-		} finally {
-			add_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ], 9, 3 );
-		}
 	}
 
 	/**

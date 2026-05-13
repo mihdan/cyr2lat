@@ -287,6 +287,7 @@ class Main {
 		add_filter( 'get_sample_permalink', [ $this, 'sanitize_sample_permalink' ], 10, 5 );
 		add_filter( 'pre_insert_term', [ $this, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
 		add_filter( 'pre_term_slug', [ $this, 'sanitize_term_slug' ], 8 );
+		add_filter( 'wp_unique_term_slug_is_bad_slug', [ $this, 'filter_unique_term_slug_is_bad_slug' ], 10, 3 );
 		add_filter( 'sanitize_taxonomy_name', [ $this, 'sanitize_wc_taxonomy_name' ], 10, 2 );
 		add_filter( 'post_updated', [ $this, 'check_for_changed_slugs' ], 10, 3 );
 		add_action( 'woocommerce_before_product_object_save', [ $this, 'normalize_wc_product_attribute_keys' ] );
@@ -346,6 +347,12 @@ class Main {
 		$title     = (string) $title;
 		$raw_title = (string) $raw_title;
 		$context   = (string) $context;
+
+		$term_title = $this->term_slug_service()->filter_sanitize_title( $title );
+
+		if ( false !== $term_title ) {
+			return $term_title;
+		}
 
 		return $this->legacy_sanitize_title_bridge()->sanitize_title( $title, $raw_title, $context );
 	}
@@ -476,7 +483,6 @@ class Main {
 			$this->legacy_sanitize_title_bridge = new LegacySanitizeTitleBridge(
 				$this,
 				$this->term_slug_service(),
-				(bool) $this->is_frontend,
 				$this->global_attribute_service()
 			);
 		}
@@ -581,6 +587,19 @@ class Main {
 		}
 
 		return $this->term_slug_service()->filter_term_slug( $slug );
+	}
+
+	/**
+	 * Let the term slug service repair WordPress duplicate checks for encoded slugs.
+	 *
+	 * @param bool|mixed $is_bad_slug Whether the slug needs a suffix.
+	 * @param string     $slug        Term slug.
+	 * @param object     $term        Term object.
+	 *
+	 * @return bool
+	 */
+	public function filter_unique_term_slug_is_bad_slug( $is_bad_slug, string $slug, object $term ): bool {
+		return $this->term_slug_service()->filter_unique_term_slug_is_bad_slug( (bool) $is_bad_slug, $slug, $term );
 	}
 
 	/**

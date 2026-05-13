@@ -179,7 +179,6 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 		return new LegacySanitizeTitleBridge(
 			$main,
 			new TermSlugService( $main ),
-			false,
 			$global_attribute_service
 		);
 	}

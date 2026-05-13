@@ -43,12 +43,21 @@ class TermSlugService extends BaseService {
 	private ?string $raw_term = null;
 
 	/**
+	 * Backtrace provider.
+	 *
+	 * @var callable|null
+	 */
+	private $backtrace_provider;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param Main $main Main plugin class.
+	 * @param Main          $main               Main plugin class.
+	 * @param callable|null $backtrace_provider Backtrace provider.
 	 */
-	public function __construct( Main $main ) {
-		$this->main = $main;
+	public function __construct( Main $main, ?callable $backtrace_provider = null ) {
+		$this->main               = $main;
+		$this->backtrace_provider = $backtrace_provider;
 	}
 
 	/**
@@ -102,10 +111,6 @@ class TermSlugService extends BaseService {
 	 * @return array|mixed
 	 */
 	public function get_terms_args_filter( $args, array $taxonomies ) {
-		$this->is_term    = true;
-		$this->taxonomies = $taxonomies;
-		$this->raw_term   = null;
-
 		return $args;
 	}
 
@@ -129,29 +134,66 @@ class TermSlugService extends BaseService {
 	}
 
 	/**
-	 * Preserve existing encoded term slug when the current context requires it.
+	 * Filter a generated term slug while WordPress sanitizes the term name.
 	 *
-	 * @param string $title       Title.
-	 * @param bool   $is_frontend Whether current request is frontend.
+	 * WordPress calls sanitize_title( $name ) before wp_unique_term_slug() when no
+	 * explicit slug was provided. This is the point where encoded legacy slugs
+	 * must be restored so WordPress can add the unique suffix itself.
+	 *
+	 * @param string $title Sanitized title.
 	 *
 	 * @return false|string
 	 */
-	public function maybe_preserve_existing_encoded_slug( string $title, bool $is_frontend ) {
-		if ( ! $this->is_term ) {
+	public function filter_sanitize_title( string $title ) {
+		if ( ! $this->is_term || null === $this->raw_term || '' === $title ) {
+			return false;
+		}
+
+		if ( ! $this->is_wp_insert_term_sanitize_title_call() ) {
 			return false;
 		}
 
 		$taxonomies = $this->taxonomies;
 
-		// Make sure we search in the db only once being called from wp_insert_term().
 		$this->reset_term_context();
 
-		// Fix a case when showing previously created categories in cyrillic with WPML.
-		if ( $is_frontend && class_exists( 'SitePress' ) ) {
+		$title = urldecode( $title );
+		$pre   = apply_filters( 'ctl_pre_sanitize_title', false, $title );
+
+		if ( false !== $pre ) {
+			return (string) $pre;
+		}
+
+		if ( ! $this->has_non_ascii_chars( $title ) ) {
 			return $title;
 		}
 
-		return $this->find_existing_encoded_slug( $title, $taxonomies );
+		$term = $this->find_existing_encoded_slug( $title, $taxonomies );
+
+		if ( false !== $term ) {
+			return $term;
+		}
+
+		return $this->main->sanitize_explicit_slug( $title );
+	}
+
+	/**
+	 * Filter whether WordPress should add a unique suffix to a term slug.
+	 *
+	 * @param bool   $is_bad_slug Whether WordPress already decided the slug needs a suffix.
+	 * @param string $slug        Term slug.
+	 * @param object $term        Term object.
+	 *
+	 * @return bool
+	 */
+	public function filter_unique_term_slug_is_bad_slug( bool $is_bad_slug, string $slug, object $term ): bool {
+		if ( $is_bad_slug || ! $this->is_encoded_non_ascii_slug( $slug ) ) {
+			return $is_bad_slug;
+		}
+
+		$taxonomy = isset( $term->taxonomy ) ? (string) $term->taxonomy : '';
+
+		return false !== $this->find_existing_slug( $slug, $taxonomy ? [ $taxonomy ] : [] );
 	}
 
 	/**
@@ -188,30 +230,30 @@ class TermSlugService extends BaseService {
 	 * @return string
 	 */
 	private function filter_insert_term_slug( string $slug ): string {
-		$raw_term   = (string) $this->raw_term;
 		$taxonomies = $this->taxonomies;
+
+		if ( '' === $slug ) {
+			return $slug;
+		}
 
 		$this->reset_term_context();
 
-		if ( '' !== $slug ) {
-			if ( $this->has_non_ascii_chars( $slug ) ) {
-				return $this->main->sanitize_explicit_slug( $slug );
+		if ( $this->is_encoded_non_ascii_slug( $slug ) ) {
+			$decoded_slug = rawurldecode( $slug );
+			$term         = $this->find_existing_encoded_slug( $decoded_slug, $taxonomies );
+
+			if ( false !== $term ) {
+				return $term;
 			}
 
-			return $slug;
+			return $this->main->sanitize_explicit_slug( $decoded_slug );
 		}
 
-		if ( ! $this->has_non_ascii_chars( $raw_term ) ) {
-			return $slug;
+		if ( $this->has_non_ascii_chars( $slug ) ) {
+			return $this->main->sanitize_explicit_slug( $slug );
 		}
 
-		$term = $this->find_existing_encoded_slug( $raw_term, $taxonomies );
-
-		if ( false !== $term ) {
-			return $term;
-		}
-
-		return $this->main->sanitize_explicit_slug( $raw_term );
+		return $slug;
 	}
 
 	/**
@@ -223,13 +265,25 @@ class TermSlugService extends BaseService {
 	 * @return false|string
 	 */
 	private function find_existing_encoded_slug( string $title, array $taxonomies ) {
+		return $this->find_existing_slug( rawurlencode( $title ), $taxonomies );
+	}
+
+	/**
+	 * Find an existing term slug.
+	 *
+	 * @param string   $slug       Slug.
+	 * @param string[] $taxonomies Taxonomies.
+	 *
+	 * @return false|string
+	 */
+	private function find_existing_slug( string $slug, array $taxonomies ) {
 		global $wpdb;
 
 		$sql = $wpdb->prepare(
 			"SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
 							WHERE LOWER(t.slug) = LOWER(%s)",
-			rawurlencode( $title )
+			$slug
 		);
 
 		if ( $taxonomies ) {
@@ -253,6 +307,27 @@ class TermSlugService extends BaseService {
 	 */
 	private function is_encoded_non_ascii_slug( string $slug ): bool {
 		return false !== strpos( $slug, '%' ) && $this->has_non_ascii_chars( rawurldecode( $slug ) );
+	}
+
+	/**
+	 * Whether the current sanitize_title() call belongs to wp_insert_term() generated slug handling.
+	 *
+	 * @return bool
+	 */
+	private function is_wp_insert_term_sanitize_title_call(): bool {
+		$backtrace_provider = $this->backtrace_provider;
+		$backtrace          = $backtrace_provider
+			? $backtrace_provider( DEBUG_BACKTRACE_IGNORE_ARGS, 8 )
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Intentional limited stack inspection for WordPress term flow detection.
+			: debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 8 );
+
+		foreach ( $backtrace as $call ) {
+			if ( 'wp_insert_term' === ( $call['function'] ?? '' ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
