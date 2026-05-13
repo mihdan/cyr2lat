@@ -83,6 +83,17 @@ class VariationAttributeService {
 	}
 
 	/**
+	 * Get the normalized local variation request key.
+	 *
+	 * @param string $title Title.
+	 *
+	 * @return string
+	 */
+	public function normalized_local_variation_request_key( string $title ): string {
+		return 'attribute_' . $this->normalize_variation_attribute_key( $title );
+	}
+
+	/**
 	 * Normalize local variation attribute keys on a WooCommerce variation object.
 	 *
 	 * @param object $variation Variation.

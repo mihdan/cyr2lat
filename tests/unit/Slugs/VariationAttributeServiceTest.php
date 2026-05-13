@@ -81,6 +81,21 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test normalized_local_variation_request_key().
+	 *
+	 * @return void
+	 */
+	public function test_normalized_local_variation_request_key(): void {
+		$main = Mockery::mock( Main::class );
+		$main->shouldReceive( 'transliterate' )->andReturnUsing( [ $this, 'normalize_key' ] );
+
+		$subject = new VariationAttributeService( $main );
+
+		self::assertSame( 'attribute_czvet', $subject->normalized_local_variation_request_key( 'Цвет' ) );
+		self::assertSame( 'attribute_czvet', $subject->normalized_local_variation_request_key( 'attribute_Цвет' ) );
+	}
+
+	/**
 	 * Test normalize_variation_attribute_key().
 	 *
 	 * @return void

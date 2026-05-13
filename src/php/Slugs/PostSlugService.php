@@ -43,12 +43,15 @@ class PostSlugService extends BaseService {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function filter_post_data( array $data, array $postarr = [], array $unsanitized_postarr = [], bool $update = false ): array {
+		$changed = false;
+
 		if (
 			empty( $data['post_name'] ) &&
 			! empty( $data['post_title'] ) &&
 			! $this->is_skipped_post_data( $data, $postarr )
 		) {
 			$data['post_name'] = $this->sanitize_slug( (string) $data['post_title'] );
+			$changed           = true;
 		}
 
 		if (
@@ -57,9 +60,45 @@ class PostSlugService extends BaseService {
 			! $this->is_skipped_post_data( $data, $postarr )
 		) {
 			$data['post_name'] = $this->sanitize_slug( rawurldecode( (string) $data['post_name'] ) );
+			$changed           = true;
+		}
+
+		if ( $changed ) {
+			$data['post_name'] = $this->unique_post_slug( (string) $data['post_name'], $data );
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Filter sample permalink slugs generated for REST draft responses.
+	 *
+	 * @param array|mixed $permalink Sample permalink data.
+	 * @param int         $post_id   Post ID.
+	 * @param string      $title     Post title.
+	 * @param string      $name      Post name.
+	 * @param object      $post      Post object.
+	 *
+	 * @return array|mixed
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function filter_sample_permalink( $permalink, int $post_id, string $title, string $name, object $post ) {
+		if ( ! is_array( $permalink ) || ! isset( $permalink[1] ) || ! $this->requires_sanitization( (string) $permalink[1] ) ) {
+			return $permalink;
+		}
+
+		$slug         = $this->sanitize_slug( rawurldecode( (string) $permalink[1] ) );
+		$permalink[1] = $this->unique_post_slug(
+			$slug,
+			[
+				'ID'          => $post_id,
+				'post_status' => (string) ( $post->post_status ?? '' ),
+				'post_type'   => (string) ( $post->post_type ?? '' ),
+				'post_parent' => (int) ( $post->post_parent ?? 0 ),
+			]
+		);
+
+		return $permalink;
 	}
 
 	/**
@@ -119,5 +158,27 @@ class PostSlugService extends BaseService {
 	 */
 	private function sanitize_slug( string $value ): string {
 		return $this->main->sanitize_explicit_slug( $value );
+	}
+
+	/**
+	 * Make a post slug unique when WordPress already passed its own uniqueness step.
+	 *
+	 * @param string $slug Slug.
+	 * @param array  $data Post data.
+	 *
+	 * @return string
+	 */
+	private function unique_post_slug( string $slug, array $data ): string {
+		if ( '' === $slug || ! function_exists( 'wp_unique_post_slug' ) ) {
+			return $slug;
+		}
+
+		return wp_unique_post_slug(
+			$slug,
+			(int) ( $data['ID'] ?? 0 ),
+			(string) ( $data['post_status'] ?? '' ),
+			(string) ( $data['post_type'] ?? '' ),
+			(int) ( $data['post_parent'] ?? 0 )
+		);
 	}
 }

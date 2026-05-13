@@ -84,6 +84,23 @@ class LocalAttributeService {
 	}
 
 	/**
+	 * Whether a sanitize_title() call belongs to an explicit local attribute flow.
+	 *
+	 * @param string $title Title.
+	 *
+	 * @return bool
+	 */
+	public function should_handle_sanitize_title( string $title ): bool {
+		if ( ! $this->has_non_ascii_chars( rawurldecode( $title ) ) ) {
+			return false;
+		}
+
+		return $this->doing_action( 'woocommerce_variable_add_to_cart' ) ||
+			(bool) $this->did_action( 'woocommerce_load_cart_from_session' ) ||
+			$this->has_variation_request_attribute( $title );
+	}
+
+	/**
 	 * Normalize local product attribute keys on a WooCommerce product object.
 	 *
 	 * @param object $product Product.
@@ -91,6 +108,50 @@ class LocalAttributeService {
 	 * @return bool
 	 */
 	public function normalize_product_attributes( object $product ): bool {
+		return $this->normalize_product_attributes_prop( $product, true );
+	}
+
+	/**
+	 * Normalize local product attribute keys on a WooCommerce product object after reading persisted data.
+	 *
+	 * @param object $product Product.
+	 *
+	 * @return bool
+	 */
+	public function normalize_read_product_attributes( object $product ): bool {
+		return $this->normalize_product_attributes_prop( $product, false );
+	}
+
+	/**
+	 * Normalize local product attribute keys in an attribute array.
+	 *
+	 * @param array $attributes Attributes.
+	 *
+	 * @return array
+	 */
+	public function normalize_product_attribute_array( array $attributes ): array {
+		if ( [] === $attributes ) {
+			return $attributes;
+		}
+
+		$normalized_attributes = [];
+
+		foreach ( $attributes as $attribute_key => $attribute ) {
+			$normalized_attributes[ $this->normalize_product_attribute_key( (string) $attribute_key, $attribute ) ] = $attribute;
+		}
+
+		return $normalized_attributes;
+	}
+
+	/**
+	 * Normalize local product attribute keys on a WooCommerce product object.
+	 *
+	 * @param object $product      Product.
+	 * @param bool   $mark_changes Whether the object should be marked as changed.
+	 *
+	 * @return bool
+	 */
+	private function normalize_product_attributes_prop( object $product, bool $mark_changes ): bool {
 		if ( ! is_object( $product ) || ! method_exists( $product, 'get_attributes' ) ) {
 			return false;
 		}
@@ -101,11 +162,50 @@ class LocalAttributeService {
 			return false;
 		}
 
+		$normalized_attributes = $this->normalize_product_attribute_array( $attributes );
+		$changed               = false;
+
+		foreach ( array_keys( $attributes ) as $attribute_key ) {
+			$changed = $changed || ! array_key_exists( $attribute_key, $normalized_attributes );
+		}
+
+		if ( ! $changed ) {
+			return false;
+		}
+
+		return $this->set_product_attributes_prop( $product, $normalized_attributes, $mark_changes );
+	}
+
+	/**
+	 * Normalize persisted product attribute metadata.
+	 *
+	 * @param object $product Product.
+	 *
+	 * @return bool
+	 */
+	public function normalize_product_attribute_meta( object $product ): bool {
+		if ( ! method_exists( $product, 'get_id' ) ) {
+			return false;
+		}
+
+		$product_id = (int) $product->get_id();
+
+		if ( $product_id <= 0 ) {
+			return false;
+		}
+
+		$attributes = get_post_meta( $product_id, '_product_attributes', true );
+
+		if ( ! is_array( $attributes ) || [] === $attributes ) {
+			return false;
+		}
+
 		$normalized_attributes = [];
 		$changed               = false;
 
 		foreach ( $attributes as $attribute_key => $attribute ) {
-			$normalized_key                           = $this->normalize_product_attribute_key( (string) $attribute_key, $attribute );
+			$normalized_key = $this->normalize_product_attribute_meta_key( (string) $attribute_key, $attribute );
+
 			$normalized_attributes[ $normalized_key ] = $attribute;
 			$changed                                  = $changed || $normalized_key !== $attribute_key;
 		}
@@ -114,7 +214,8 @@ class LocalAttributeService {
 			return false;
 		}
 
-		return $this->set_product_attributes_prop( $product, $normalized_attributes );
+		// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+		return update_post_meta( $product_id, '_product_attributes', wp_slash( $normalized_attributes ) );
 	}
 
 	/**
@@ -134,7 +235,29 @@ class LocalAttributeService {
 			return $attribute_key;
 		}
 
-		$name = (string) $attribute->get_name();
+		$name = rawurldecode( (string) $attribute->get_name() );
+
+		if ( '' === $name ) {
+			return $attribute_key;
+		}
+
+		return strtolower( $this->main->transliterate( $name ) );
+	}
+
+	/**
+	 * Normalize a persisted product attribute meta key.
+	 *
+	 * @param string $attribute_key Attribute key.
+	 * @param mixed  $attribute     Attribute metadata.
+	 *
+	 * @return string
+	 */
+	private function normalize_product_attribute_meta_key( string $attribute_key, $attribute ): string {
+		if ( ! is_array( $attribute ) || ! empty( $attribute['is_taxonomy'] ) ) {
+			return $attribute_key;
+		}
+
+		$name = rawurldecode( (string) ( $attribute['name'] ?? '' ) );
 
 		if ( '' === $name ) {
 			return $attribute_key;
@@ -215,8 +338,13 @@ class LocalAttributeService {
 	 * @return bool
 	 */
 	private function has_variation_request_attribute( string $title ): bool {
-		foreach ( $this->variation_attribute_service->encoded_local_variation_request_keys( $title ) as $encoded_attr_name ) {
-			if ( $this->has_post_value( $encoded_attr_name ) ) {
+		$request_keys = array_merge(
+			$this->variation_attribute_service->encoded_local_variation_request_keys( $title ),
+			[ $this->variation_attribute_service->normalized_local_variation_request_key( $title ) ]
+		);
+
+		foreach ( array_unique( $request_keys ) as $request_key ) {
+			if ( $this->has_post_value( $request_key ) || $this->has_request_value( $request_key ) ) {
 				return true;
 			}
 		}
@@ -308,16 +436,39 @@ class LocalAttributeService {
 	}
 
 	/**
+	 * Check request value existence.
+	 *
+	 * @param string $key Key.
+	 *
+	 * @return bool
+	 */
+	protected function has_request_value( string $key ): bool {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return isset( $_REQUEST[ $key ] );
+	}
+
+	/**
 	 * Set normalized product attributes without calling WooCommerce's set_attributes().
 	 *
 	 * @param object $product    Product.
 	 * @param array  $attributes Attributes.
+	 * @param bool   $mark_changes Whether the object should be marked as changed.
 	 *
 	 * @return bool
 	 */
-	private function set_product_attributes_prop( object $product, array $attributes ): bool {
-		$setter = function ( array $attributes_to_set ): void {
-			$this->set_prop( 'attributes', $attributes_to_set );
+	private function set_product_attributes_prop( object $product, array $attributes, bool $mark_changes = true ): bool {
+		$setter = function ( array $attributes_to_set, bool $should_mark_changes ): void {
+			if ( $should_mark_changes ) {
+				$this->set_prop( 'attributes', $attributes_to_set );
+
+				return;
+			}
+
+			$this->data['attributes'] = $attributes_to_set;
+
+			if ( isset( $this->changes['attributes'] ) ) {
+				unset( $this->changes['attributes'] );
+			}
 		};
 
 		$setter = $setter->bindTo( $product, get_class( $product ) );
@@ -326,8 +477,19 @@ class LocalAttributeService {
 			return false;
 		}
 
-		$setter( $attributes );
+		$setter( $attributes, $mark_changes );
 
 		return true;
+	}
+
+	/**
+	 * Whether the value contains non-ASCII characters.
+	 *
+	 * @param string $value Value.
+	 *
+	 * @return bool
+	 */
+	private function has_non_ascii_chars( string $value ): bool {
+		return (bool) preg_match( '/[^\x00-\x7F]/', $value );
 	}
 }

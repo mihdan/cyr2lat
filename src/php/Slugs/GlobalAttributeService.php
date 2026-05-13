@@ -7,10 +7,19 @@
 
 namespace CyrToLat\Slugs;
 
+use CyrToLat\Main;
+
 /**
  * Handles WooCommerce global attribute slug decisions.
  */
 class GlobalAttributeService {
+
+	/**
+	 * Main plugin class.
+	 *
+	 * @var Main
+	 */
+	private Main $main;
 
 	/**
 	 * Local attribute service.
@@ -22,9 +31,11 @@ class GlobalAttributeService {
 	/**
 	 * Constructor.
 	 *
+	 * @param Main                  $main                    Main plugin class.
 	 * @param LocalAttributeService $local_attribute_service Local attribute service.
 	 */
-	public function __construct( LocalAttributeService $local_attribute_service ) {
+	public function __construct( Main $main, LocalAttributeService $local_attribute_service ) {
+		$this->main                    = $main;
 		$this->local_attribute_service = $local_attribute_service;
 	}
 
@@ -69,11 +80,46 @@ class GlobalAttributeService {
 			return true;
 		}
 
-		if ( $this->local_attribute_service->is_local_attribute( $title ) ) {
-			return true;
+		return $this->is_product_not_converted_attribute( $title );
+	}
+
+	/**
+	 * Whether a sanitize_title() call belongs to an explicit WooCommerce attribute flow.
+	 *
+	 * @param string $title Title.
+	 *
+	 * @return bool
+	 */
+	public function should_handle_sanitize_title( string $title ): bool {
+		if ( ! function_exists( 'WC' ) ) {
+			return false;
 		}
 
-		return $this->is_product_not_converted_attribute( $title );
+		return $this->is_attribute_taxonomy( $title ) ||
+			$this->local_attribute_service->should_handle_sanitize_title( $title ) ||
+			$this->is_product_not_converted_attribute( $title );
+	}
+
+	/**
+	 * Filter WooCommerce taxonomy names without the broad sanitize_title bridge.
+	 *
+	 * @param string|mixed $taxonomy     Sanitized taxonomy.
+	 * @param string|mixed $raw_taxonomy Raw taxonomy.
+	 *
+	 * @return string|mixed
+	 */
+	public function filter_taxonomy_name( $taxonomy, $raw_taxonomy ) {
+		if ( ! function_exists( 'WC' ) || ! is_string( $taxonomy ) || ! is_string( $raw_taxonomy ) ) {
+			return $taxonomy;
+		}
+
+		$raw_taxonomy = rawurldecode( $raw_taxonomy );
+
+		if ( '' === $raw_taxonomy || ! $this->has_non_ascii_chars( $raw_taxonomy ) ) {
+			return $taxonomy;
+		}
+
+		return $this->main->sanitize_explicit_slug( $raw_taxonomy );
 	}
 
 	/**
@@ -104,5 +150,16 @@ class GlobalAttributeService {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Whether the value contains non-ASCII characters.
+	 *
+	 * @param string $value Value.
+	 *
+	 * @return bool
+	 */
+	private function has_non_ascii_chars( string $value ): bool {
+		return (bool) preg_match( '/[^\x00-\x7F]/', $value );
 	}
 }

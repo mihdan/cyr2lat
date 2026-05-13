@@ -284,10 +284,15 @@ class Main {
 		add_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9, 3 );
 		add_filter( 'sanitize_file_name', [ $this, 'sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 4 );
+		add_filter( 'get_sample_permalink', [ $this, 'sanitize_sample_permalink' ], 10, 5 );
 		add_filter( 'pre_insert_term', [ $this, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
 		add_filter( 'pre_term_slug', [ $this, 'sanitize_term_slug' ], 8 );
+		add_filter( 'sanitize_taxonomy_name', [ $this, 'sanitize_wc_taxonomy_name' ], 10, 2 );
 		add_filter( 'post_updated', [ $this, 'check_for_changed_slugs' ], 10, 3 );
 		add_action( 'woocommerce_before_product_object_save', [ $this, 'normalize_wc_product_attribute_keys' ] );
+		add_action( 'woocommerce_product_attributes_updated', [ $this, 'normalize_wc_product_attribute_meta' ] );
+		add_action( 'woocommerce_product_read', [ $this, 'normalize_wc_read_product_attribute_keys' ], 10, 2 );
+		add_filter( 'woocommerce_product_get_attributes', [ $this, 'normalize_wc_product_get_attribute_keys' ], 10, 2 );
 
 		if ( ! $this->is_frontend || class_exists( SitePress::class ) ) {
 			add_filter( 'get_terms_args', [ $this, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
@@ -382,13 +387,54 @@ class Main {
 	}
 
 	/**
+	 * Normalize persisted WooCommerce product attribute metadata.
+	 *
+	 * @param object $product Product.
+	 *
+	 * @return void
+	 */
+	public function normalize_wc_product_attribute_meta( object $product ): void {
+		$this->local_attribute_service()->normalize_product_attribute_meta( $product );
+	}
+
+	/**
+	 * Normalize WooCommerce product attribute keys after reading persisted data.
+	 *
+	 * @param int    $product_id Product ID.
+	 * @param object $product    Product.
+	 *
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function normalize_wc_read_product_attribute_keys( int $product_id, object $product ): void {
+		$this->local_attribute_service()->normalize_read_product_attributes( $product );
+	}
+
+	/**
+	 * Normalize WooCommerce product attribute keys when WooCommerce reads attributes from cached objects.
+	 *
+	 * @param array|mixed $attributes Product attributes.
+	 * @param object      $product    Product.
+	 *
+	 * @return array|mixed
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function normalize_wc_product_get_attribute_keys( $attributes, object $product ) {
+		if ( ! is_array( $attributes ) ) {
+			return $attributes;
+		}
+
+		return $this->local_attribute_service()->normalize_product_attribute_array( $attributes );
+	}
+
+	/**
 	 * Get global attribute service.
 	 *
 	 * @return GlobalAttributeService
 	 */
 	private function global_attribute_service(): GlobalAttributeService {
 		if ( null === $this->global_attribute_service ) {
-			$this->global_attribute_service = new GlobalAttributeService( $this->local_attribute_service() );
+			$this->global_attribute_service = new GlobalAttributeService( $this, $this->local_attribute_service() );
 		}
 
 		return $this->global_attribute_service;
@@ -495,6 +541,22 @@ class Main {
 	}
 
 	/**
+	 * Sanitize sample permalink slugs.
+	 *
+	 * @param array|mixed $permalink Sample permalink data.
+	 * @param int         $post_id   Post ID.
+	 * @param string      $title     Post title.
+	 * @param string      $name      Post name.
+	 * @param object      $post      Post object.
+	 *
+	 * @return array|mixed
+	 */
+	public function sanitize_sample_permalink( $permalink, int $post_id, string $title, string $name, object $post ) {
+		return ( new PostSlugService( $this ) )
+			->filter_sample_permalink( $permalink, $post_id, $title, $name, $post );
+	}
+
+	/**
 	 * Filters a term before it is sanitized and inserted into the database.
 	 *
 	 * @param string|int|WP_Error $term     The term name to add, or a WP_Error object if there's an error.
@@ -532,6 +594,18 @@ class Main {
 		$slug = $this->transliterate( $slug );
 
 		return sanitize_title_with_dashes( $slug );
+	}
+
+	/**
+	 * Sanitize WooCommerce taxonomy names through the explicit attribute service.
+	 *
+	 * @param string|mixed $taxonomy     Sanitized taxonomy.
+	 * @param string|mixed $raw_taxonomy Raw taxonomy.
+	 *
+	 * @return string|mixed
+	 */
+	public function sanitize_wc_taxonomy_name( $taxonomy, $raw_taxonomy ) {
+		return $this->global_attribute_service()->filter_taxonomy_name( $taxonomy, $raw_taxonomy );
 	}
 
 	/**

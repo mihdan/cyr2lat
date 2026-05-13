@@ -89,7 +89,7 @@ class LegacySanitizeTitleBridge {
 			$context
 		);
 
-		if ( ! $bridge_enabled ) {
+		if ( ! $bridge_enabled && ! $this->global_attribute_service->should_handle_sanitize_title( $title ) ) {
 			return $title;
 		}
 

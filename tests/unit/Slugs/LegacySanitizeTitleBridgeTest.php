@@ -173,6 +173,7 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 		}
 
 		$global_attribute_service = Mockery::mock( GlobalAttributeService::class );
+		$global_attribute_service->shouldReceive( 'should_handle_sanitize_title' )->andReturn( false );
 		$global_attribute_service->shouldReceive( 'should_preserve_attribute_title' )->andReturn( $is_wc_attribute );
 
 		return new LegacySanitizeTitleBridge(

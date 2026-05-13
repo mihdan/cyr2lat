@@ -56,6 +56,7 @@ class WooCommerceVariationAddToCartIntegrationTest extends PluginWPTestCase {
 		$this->install_woocommerce_tables();
 		$this->init_woocommerce();
 		$this->load_woocommerce_template_functions();
+		wc_clear_notices();
 		wp_cache_flush();
 
 		set_current_screen( 'post' );

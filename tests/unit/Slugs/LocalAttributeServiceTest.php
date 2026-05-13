@@ -125,4 +125,19 @@ class LocalAttributeServiceTest extends CyrToLatTestCase {
 
 		self::assertTrue( $subject->is_local_attribute( 'Размер' ) );
 	}
+
+	/**
+	 * Test is_local_attribute() detects the normalized frontend request attribute key.
+	 *
+	 * @return void
+	 */
+	public function test_is_local_attribute_detects_frontend_normalized_request_attribute_key(): void {
+		$subject = new TestLocalAttributeService(
+			[
+				'attribute_razmer' => 'XL',
+			]
+		);
+
+		self::assertTrue( $subject->is_local_attribute( 'Размер' ) );
+	}
 }

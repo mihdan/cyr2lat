@@ -323,7 +323,12 @@ class MainTest extends CyrToLatTestCase {
 		WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
 		WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ], 10, 2 );
 		WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ], 10, 4 );
+		WP_Mock::expectFilterAdded( 'get_sample_permalink', [ $subject, 'sanitize_sample_permalink' ], 10, 5 );
 		WP_Mock::expectFilterAdded( 'pre_insert_term', [ $subject, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
+		WP_Mock::expectFilterAdded( 'sanitize_taxonomy_name', [ $subject, 'sanitize_wc_taxonomy_name' ], 10, 2 );
+		WP_Mock::expectActionAdded( 'woocommerce_product_attributes_updated', [ $subject, 'normalize_wc_product_attribute_meta' ] );
+		WP_Mock::expectActionAdded( 'woocommerce_product_read', [ $subject, 'normalize_wc_read_product_attribute_keys' ], 10, 2 );
+		WP_Mock::expectFilterAdded( 'woocommerce_product_get_attributes', [ $subject, 'normalize_wc_product_get_attribute_keys' ], 10, 2 );
 
 		FunctionMocker::replace(
 			'class_exists',
@@ -397,7 +402,12 @@ class MainTest extends CyrToLatTestCase {
 		WP_Mock::expectFilterNotAdded( 'sanitize_title', [ $subject, 'sanitize_title' ] );
 		WP_Mock::expectFilterNotAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ] );
 		WP_Mock::expectFilterNotAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ] );
+		WP_Mock::expectFilterNotAdded( 'get_sample_permalink', [ $subject, 'sanitize_sample_permalink' ] );
 		WP_Mock::expectFilterNotAdded( 'pre_insert_term', [ $subject, 'pre_insert_term_filter' ] );
+		WP_Mock::expectFilterNotAdded( 'sanitize_taxonomy_name', [ $subject, 'sanitize_wc_taxonomy_name' ] );
+		WP_Mock::expectActionNotAdded( 'woocommerce_product_attributes_updated', [ $subject, 'normalize_wc_product_attribute_meta' ] );
+		WP_Mock::expectActionNotAdded( 'woocommerce_product_read', [ $subject, 'normalize_wc_read_product_attribute_keys' ] );
+		WP_Mock::expectFilterNotAdded( 'woocommerce_product_get_attributes', [ $subject, 'normalize_wc_product_get_attribute_keys' ] );
 		WP_Mock::expectFilterNotAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ] );
 		WP_Mock::expectFilterNotAdded( 'locale', [ $subject, 'pll_locale_filter' ] );
 		WP_Mock::expectFilterNotAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ] );
@@ -877,11 +887,11 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test that sanitize_title() preserves WooCommerce local attribute names during AJAX attribute save.
+	 * Test that sanitize_title() transliterates WooCommerce local attribute names during AJAX attribute save.
 	 *
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_sanitize_title_preserves_wc_local_attribute_name_during_ajax_save(): void {
+	public function test_sanitize_title_transliterates_wc_local_attribute_name_during_ajax_save(): void {
 		$title = 'цвет';
 		$post  = [
 			'action' => 'woocommerce_save_attributes',
@@ -934,7 +944,7 @@ class MainTest extends CyrToLatTestCase {
 		);
 		$this->set_protected_property( $subject, 'local_attribute_service', $local_attribute_service );
 
-		self::assertSame( $title, $subject->sanitize_title( $title ) );
+		self::assertSame( 'czvet', $subject->sanitize_title( $title ) );
 	}
 
 	/**

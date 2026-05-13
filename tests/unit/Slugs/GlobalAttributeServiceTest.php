@@ -7,6 +7,7 @@
 
 namespace CyrToLat\Tests\Unit\Slugs;
 
+use CyrToLat\Main;
 use CyrToLat\Slugs\GlobalAttributeService;
 use CyrToLat\Slugs\LocalAttributeService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
@@ -37,7 +38,7 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 			]
 		);
 
-		$subject = new GlobalAttributeService( Mockery::mock( LocalAttributeService::class ) );
+		$subject = $this->get_subject( Mockery::mock( LocalAttributeService::class ) );
 
 		self::assertTrue( $subject->is_attribute_taxonomy( 'razmer' ) );
 		self::assertTrue( $subject->is_attribute_taxonomy( 'pa_razmer' ) );
@@ -60,7 +61,7 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 			]
 		);
 
-		$subject = new GlobalAttributeService( Mockery::mock( LocalAttributeService::class ) );
+		$subject = $this->get_subject( Mockery::mock( LocalAttributeService::class ) );
 
 		self::assertFalse( $subject->is_attribute_taxonomy( 'cvet' ) );
 	}
@@ -74,7 +75,7 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 		$local_attribute_service = Mockery::mock( LocalAttributeService::class );
 		$local_attribute_service->shouldNotReceive( 'is_local_attribute' );
 
-		$subject = new GlobalAttributeService( $local_attribute_service );
+		$subject = $this->get_subject( $local_attribute_service );
 
 		self::assertFalse( $subject->should_preserve_attribute_title( 'razmer' ) );
 	}
@@ -99,28 +100,26 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 
 		$local_attribute_service = Mockery::mock( LocalAttributeService::class );
 
-		$subject = new GlobalAttributeService( $local_attribute_service );
+		$subject = $this->get_subject( $local_attribute_service );
 
 		self::assertTrue( $subject->should_preserve_attribute_title( 'pa_razmer' ) );
 	}
 
 	/**
-	 * Test should_preserve_attribute_title() delegates local attribute context.
+	 * Test should_preserve_attribute_title() does not preserve local attribute context.
 	 *
 	 * @return void
 	 */
-	public function test_should_preserve_attribute_title_delegates_local_attribute_context(): void {
+	public function test_should_preserve_attribute_title_does_not_preserve_local_attribute_context(): void {
 		WP_Mock::userFunction( 'WC' );
 		WP_Mock::userFunction( 'wc_get_attribute_taxonomies', [ 'return' => [] ] );
 
 		$local_attribute_service = Mockery::mock( LocalAttributeService::class );
-		$local_attribute_service->shouldReceive( 'is_local_attribute' )
-			->with( 'local-size' )
-			->andReturn( true );
+		$local_attribute_service->shouldNotReceive( 'is_local_attribute' );
 
-		$subject = new GlobalAttributeService( $local_attribute_service );
+		$subject = $this->get_subject( $local_attribute_service );
 
-		self::assertTrue( $subject->should_preserve_attribute_title( 'local-size' ) );
+		self::assertFalse( $subject->should_preserve_attribute_title( 'local-size' ) );
 	}
 
 	/**
@@ -147,14 +146,23 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 		$GLOBALS['product'] = $product;
 
 		$local_attribute_service = Mockery::mock( LocalAttributeService::class );
-		$local_attribute_service->shouldReceive( 'is_local_attribute' )
-			->with( $title )
-			->andReturn( false );
+		$local_attribute_service->shouldNotReceive( 'is_local_attribute' );
 
-		$subject = new GlobalAttributeService( $local_attribute_service );
+		$subject = $this->get_subject( $local_attribute_service );
 
 		self::assertTrue( $subject->should_preserve_attribute_title( $title ) );
 
 		unset( $GLOBALS['product'] );
+	}
+
+	/**
+	 * Get the subject under test.
+	 *
+	 * @param LocalAttributeService $local_attribute_service Local attribute service.
+	 *
+	 * @return GlobalAttributeService
+	 */
+	private function get_subject( LocalAttributeService $local_attribute_service ): GlobalAttributeService {
+		return new GlobalAttributeService( Mockery::mock( Main::class )->makePartial(), $local_attribute_service );
 	}
 }

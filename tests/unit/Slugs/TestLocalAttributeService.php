@@ -59,7 +59,10 @@ class TestLocalAttributeService extends LocalAttributeService {
 		array $fired_actions = [],
 		array $product_attributes = []
 	) {
-		parent::__construct( Mockery::mock( Main::class ), new VariationAttributeService( Mockery::mock( Main::class ) ) );
+		$main = Mockery::mock( Main::class );
+		$main->shouldReceive( 'transliterate' )->andReturnUsing( [ $this, 'normalize_key' ] );
+
+		parent::__construct( $main, new VariationAttributeService( $main ) );
 
 		$this->post_data          = $post_data;
 		$this->current_actions    = $current_actions;
@@ -141,6 +144,27 @@ class TestLocalAttributeService extends LocalAttributeService {
 	 */
 	protected function has_post_value( string $key ): bool {
 		return isset( $this->post_data[ $key ] );
+	}
+
+	/**
+	 * Normalize key.
+	 *
+	 * @param string $key Key.
+	 *
+	 * @return string
+	 */
+	public function normalize_key( string $key ): string {
+		return strtr(
+			$key,
+			[
+				'Р' => 'R',
+				'р' => 'r',
+				'а' => 'a',
+				'з' => 'z',
+				'м' => 'm',
+				'е' => 'e',
+			]
+		);
 	}
 
 	// @codeCoverageIgnoreStart
