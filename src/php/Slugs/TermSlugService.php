@@ -227,8 +227,8 @@ class TermSlugService extends BaseService {
 
 		$sql = $wpdb->prepare(
 			"SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
-							ON t.term_id = tt.term_id
-							WHERE LOWER(t.slug) = LOWER(%s)",
+						ON t.term_id = tt.term_id
+						WHERE LOWER(t.slug) = LOWER(%s)",
 			rawurlencode( $title )
 		);
 
