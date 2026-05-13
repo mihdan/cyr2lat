@@ -1,6 +1,6 @@
 <?php
 /**
- * PluginWPTestCase class file.
+ * PluginTestCase class file.
  *
  * @package cyr-to-lat
  */
@@ -12,7 +12,7 @@ use WP_UnitTestCase;
 /**
  * Base test case for integration tests that need an additional real WordPress plugin.
  */
-abstract class PluginWPTestCase extends WP_UnitTestCase {
+abstract class PluginTestCase extends WP_UnitTestCase {
 
 	/**
 	 * Plugin path relative to WP_PLUGIN_DIR.

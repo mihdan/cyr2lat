@@ -10,7 +10,9 @@
 /** @noinspection PhpUndefinedFunctionInspection */
 // phpcs:enable Generic.Commenting.DocComment.MissingShort
 
-namespace CyrToLat\Tests\Integration;
+namespace CyrToLat\Tests\Integration\Slugs\WooCommerce;
+
+use CyrToLat\Tests\Integration\WooCommerceWPTestCase;
 
 /**
  * Class WooCommercePostSlugIntegrationTest

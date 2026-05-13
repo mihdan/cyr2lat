@@ -5,7 +5,7 @@
  * @package cyr-to-lat
  */
 
-namespace CyrToLat\Tests\Integration;
+namespace CyrToLat\Tests\Integration\Slugs;
 
 use WP_UnitTestCase;
 

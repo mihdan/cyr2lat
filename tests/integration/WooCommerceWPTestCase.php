@@ -18,7 +18,7 @@ use WC_Post_Types;
 /**
  * Base test case for integration tests that need WooCommerce.
  */
-abstract class WooCommerceWPTestCase extends PluginWPTestCase {
+abstract class WooCommerceWPTestCase extends PluginTestCase {
 
 	/**
 	 * WooCommerce plugin path relative to WP_PLUGIN_DIR.
