@@ -437,7 +437,7 @@ class Main {
 	 */
 	private function global_attribute_service(): GlobalAttributeService {
 		if ( null === $this->global_attribute_service ) {
-			$this->global_attribute_service = new GlobalAttributeService( $this, $this->local_attribute_service() );
+			$this->global_attribute_service = new GlobalAttributeService( $this );
 		}
 
 		return $this->global_attribute_service;

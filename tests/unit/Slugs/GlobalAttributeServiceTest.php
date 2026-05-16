@@ -9,7 +9,6 @@ namespace CyrToLat\Tests\Unit\Slugs;
 
 use CyrToLat\Main;
 use CyrToLat\Slugs\GlobalAttributeService;
-use CyrToLat\Slugs\LocalAttributeService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
 use WP_Mock;
@@ -38,7 +37,7 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 			]
 		);
 
-		$subject = $this->get_subject( Mockery::mock( LocalAttributeService::class ) );
+		$subject = $this->get_subject();
 
 		self::assertTrue( $subject->is_attribute_taxonomy( 'razmer' ) );
 		self::assertTrue( $subject->is_attribute_taxonomy( 'pa_razmer' ) );
@@ -61,7 +60,7 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 			]
 		);
 
-		$subject = $this->get_subject( Mockery::mock( LocalAttributeService::class ) );
+		$subject = $this->get_subject();
 
 		self::assertFalse( $subject->is_attribute_taxonomy( 'cvet' ) );
 	}
@@ -72,10 +71,7 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_should_preserve_attribute_title_rejects_non_woocommerce_context(): void {
-		$local_attribute_service = Mockery::mock( LocalAttributeService::class );
-		$local_attribute_service->shouldNotReceive( 'is_local_attribute' );
-
-		$subject = $this->get_subject( $local_attribute_service );
+		$subject = $this->get_subject();
 
 		self::assertFalse( $subject->should_preserve_attribute_title( 'razmer' ) );
 	}
@@ -98,9 +94,7 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 			]
 		);
 
-		$local_attribute_service = Mockery::mock( LocalAttributeService::class );
-
-		$subject = $this->get_subject( $local_attribute_service );
+		$subject = $this->get_subject();
 
 		self::assertTrue( $subject->should_preserve_attribute_title( 'pa_razmer' ) );
 	}
@@ -114,10 +108,7 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 		WP_Mock::userFunction( 'WC' );
 		WP_Mock::userFunction( 'wc_get_attribute_taxonomies', [ 'return' => [] ] );
 
-		$local_attribute_service = Mockery::mock( LocalAttributeService::class );
-		$local_attribute_service->shouldNotReceive( 'is_local_attribute' );
-
-		$subject = $this->get_subject( $local_attribute_service );
+		$subject = $this->get_subject();
 
 		self::assertFalse( $subject->should_preserve_attribute_title( 'local-size' ) );
 	}
@@ -145,10 +136,7 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 		$product->shouldReceive( 'get_id' )->andReturn( $product_id );
 		$GLOBALS['product'] = $product;
 
-		$local_attribute_service = Mockery::mock( LocalAttributeService::class );
-		$local_attribute_service->shouldNotReceive( 'is_local_attribute' );
-
-		$subject = $this->get_subject( $local_attribute_service );
+		$subject = $this->get_subject();
 
 		self::assertTrue( $subject->should_preserve_attribute_title( $title ) );
 
@@ -156,13 +144,48 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Get the subject under test.
+	 * Test should_handle_sanitize_title() rejects non-WooCommerce context.
 	 *
-	 * @param LocalAttributeService $local_attribute_service Local attribute service.
+	 * @return void
+	 */
+	public function test_should_handle_sanitize_title_rejects_non_woocommerce_context(): void {
+		$subject = $this->get_subject();
+
+		self::assertFalse( $subject->should_handle_sanitize_title( 'Цвет' ) );
+	}
+
+	/**
+	 * Test should_handle_sanitize_title() rejects ASCII titles.
+	 *
+	 * @return void
+	 */
+	public function test_should_handle_sanitize_title_rejects_ascii_title(): void {
+		WP_Mock::userFunction( 'WC' );
+
+		$subject = $this->get_subject();
+
+		self::assertFalse( $subject->should_handle_sanitize_title( 'razmer' ) );
+	}
+
+	/**
+	 * Test should_handle_sanitize_title() rejects non-ASCII titles when not in a WooCommerce attribute call stack.
+	 *
+	 * @return void
+	 */
+	public function test_should_handle_sanitize_title_rejects_unknown_call_stack(): void {
+		WP_Mock::userFunction( 'WC' );
+
+		$subject = $this->get_subject();
+
+		self::assertFalse( $subject->should_handle_sanitize_title( 'Цвет' ) );
+	}
+
+	/**
+	 * Get the subject under test.
 	 *
 	 * @return GlobalAttributeService
 	 */
-	private function get_subject( LocalAttributeService $local_attribute_service ): GlobalAttributeService {
-		return new GlobalAttributeService( Mockery::mock( Main::class )->makePartial(), $local_attribute_service );
+	private function get_subject(): GlobalAttributeService {
+		return new GlobalAttributeService( Mockery::mock( Main::class )->makePartial() );
 	}
 }

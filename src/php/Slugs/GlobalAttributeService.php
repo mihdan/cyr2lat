@@ -15,6 +15,35 @@ use CyrToLat\Main;
 class GlobalAttributeService {
 
 	/**
+	 * Backtrace depth used to detect WooCommerce-originated sanitize_title() calls.
+	 */
+	private const SANITIZE_TITLE_STACK_DEPTH = 12;
+
+	/**
+	 * Whitelist of WooCommerce functions/methods that legitimately call
+	 * sanitize_title() on attribute-related values without a dedicated narrow hook.
+	 *
+	 * Each entry is a function name; class methods are matched by method name only,
+	 * which is enough because these identifiers are unique within the WC code base.
+	 *
+	 * @var array<string, true>
+	 */
+	private const WC_SANITIZE_TITLE_FRAMES = [
+		// Frontend layered nav / `?filter_*=...`.
+		'wc_attribute_taxonomy_name'        => true,
+		'get_layered_nav_chosen_attributes' => true,
+		// Variation reload via URL `?attribute_*=...`.
+		'find_matching_product_variation'   => true,
+		'get_matching_variation'            => true,
+		// Frontend add-to-cart for variable products.
+		'add_to_cart_handler_variable'      => true,
+		// Cart/session restore.
+		'get_cart_from_session'             => true,
+		// Legacy non-converted product attribute reads.
+		'wc_get_product_attribute'          => true,
+	];
+
+	/**
 	 * Main plugin class.
 	 *
 	 * @var Main
@@ -22,21 +51,12 @@ class GlobalAttributeService {
 	private Main $main;
 
 	/**
-	 * Local attribute service.
-	 *
-	 * @var LocalAttributeService
-	 */
-	private LocalAttributeService $local_attribute_service;
-
-	/**
 	 * Constructor.
 	 *
-	 * @param Main                  $main                    Main plugin class.
-	 * @param LocalAttributeService $local_attribute_service Local attribute service.
+	 * @param Main $main Main plugin class.
 	 */
-	public function __construct( Main $main, LocalAttributeService $local_attribute_service ) {
-		$this->main                    = $main;
-		$this->local_attribute_service = $local_attribute_service;
+	public function __construct( Main $main ) {
+		$this->main = $main;
 	}
 
 	/**
@@ -89,15 +109,43 @@ class GlobalAttributeService {
 	 * @param string $title Title.
 	 *
 	 * @return bool
+	 * @noinspection PhpUnused
 	 */
 	public function should_handle_sanitize_title( string $title ): bool {
 		if ( ! function_exists( 'WC' ) ) {
 			return false;
 		}
 
-		return $this->is_attribute_taxonomy( $title ) ||
-			$this->local_attribute_service->should_handle_sanitize_title( $title ) ||
-			$this->is_product_not_converted_attribute( $title );
+		if ( ! $this->has_non_ascii_chars( rawurldecode( $title ) ) ) {
+			return false;
+		}
+
+		return $this->is_wc_attribute_sanitize_title_call();
+	}
+
+	/**
+	 * Whether the current sanitize_title() call originates from a known WooCommerce attribute flow.
+	 *
+	 * Inspects a shallow `debug_backtrace()` and matches frames against the whitelist of
+	 * WooCommerce functions/methods that invoke sanitize_title() directly
+	 * (i.e., where no narrow filter is available). Mirrors the approach used in
+	 * {@see TermSlugService::is_wp_insert_term_sanitize_title_call()}.
+	 *
+	 * @return bool
+	 */
+	private function is_wc_attribute_sanitize_title_call(): bool {
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Intentional limited stack inspection for WooCommerce attribute flow detection.
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, self::SANITIZE_TITLE_STACK_DEPTH );
+
+		foreach ( $backtrace as $call ) {
+			$function = $call['function'] ?? '';
+
+			if ( isset( self::WC_SANITIZE_TITLE_FRAMES[ $function ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

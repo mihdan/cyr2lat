@@ -84,23 +84,6 @@ class LocalAttributeService {
 	}
 
 	/**
-	 * Whether a sanitize_title() call belongs to an explicit local attribute flow.
-	 *
-	 * @param string $title Title.
-	 *
-	 * @return bool
-	 */
-	public function should_handle_sanitize_title( string $title ): bool {
-		if ( ! $this->has_non_ascii_chars( rawurldecode( $title ) ) ) {
-			return false;
-		}
-
-		return $this->doing_action( 'woocommerce_variable_add_to_cart' ) ||
-			(bool) $this->did_action( 'woocommerce_load_cart_from_session' ) ||
-			$this->has_variation_request_attribute( $title );
-	}
-
-	/**
 	 * Normalize local product attribute keys on a WooCommerce product object.
 	 *
 	 * @param object $product Product.
