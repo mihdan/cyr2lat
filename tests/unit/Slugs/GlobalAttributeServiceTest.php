@@ -144,40 +144,51 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test should_handle_sanitize_title() rejects non-WooCommerce context.
+	 * Test sanitize_title() does nothing in non-WooCommerce context.
 	 *
 	 * @return void
 	 */
-	public function test_should_handle_sanitize_title_rejects_non_woocommerce_context(): void {
+	public function test_sanitize_title_does_nothing_in_non_woocommerce_context(): void {
 		$subject = $this->get_subject();
 
-		self::assertFalse( $subject->should_handle_sanitize_title( 'Цвет' ) );
+		self::assertNull( $subject->sanitize_title( 'Цвет' ) );
 	}
 
 	/**
-	 * Test should_handle_sanitize_title() rejects ASCII titles.
+	 * Test sanitize_title() does nothing for ASCII titles.
 	 *
 	 * @return void
 	 */
-	public function test_should_handle_sanitize_title_rejects_ascii_title(): void {
+	public function test_sanitize_title_does_nothing_for_ascii_title(): void {
 		WP_Mock::userFunction( 'WC' );
 
 		$subject = $this->get_subject();
 
-		self::assertFalse( $subject->should_handle_sanitize_title( 'razmer' ) );
+		self::assertNull( $subject->sanitize_title( 'razmer' ) );
 	}
 
 	/**
-	 * Test should_handle_sanitize_title() rejects non-ASCII titles when not in a WooCommerce attribute call stack.
+	 * Test sanitize_title() returns null when call stack does not match a WooCommerce attribute flow.
 	 *
 	 * @return void
 	 */
-	public function test_should_handle_sanitize_title_rejects_unknown_call_stack(): void {
+	public function test_sanitize_title_returns_null_for_unknown_call_stack(): void {
 		WP_Mock::userFunction( 'WC' );
 
 		$subject = $this->get_subject();
 
-		self::assertFalse( $subject->should_handle_sanitize_title( 'Цвет' ) );
+		self::assertNull( $subject->sanitize_title( 'Цвет' ) );
+	}
+
+	/**
+	 * Test sanitize_title() bails out on `query` context.
+	 *
+	 * @return void
+	 */
+	public function test_sanitize_title_bails_out_on_query_context(): void {
+		$subject = $this->get_subject();
+
+		self::assertNull( $subject->sanitize_title( 'Цвет', 'Цвет', 'query' ) );
 	}
 
 	/**

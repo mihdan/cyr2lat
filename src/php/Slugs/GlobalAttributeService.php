@@ -104,23 +104,45 @@ class GlobalAttributeService {
 	}
 
 	/**
-	 * Whether a sanitize_title() call belongs to an explicit WooCommerce attribute flow.
+	 * Sanitize a title that belongs to a WooCommerce attribute flow.
 	 *
-	 * @param string $title Title.
+	 * Routes the call away from the legacy broad sanitize_title bridge: when the
+	 * current call originates from a known WooCommerce attribute flow, this
+	 * service handles the value itself by either preserving the attribute title
+	 * or transliterating it. Otherwise, `null` is returned so the caller can fall
+	 * back to the legacy bridge or leave the value untouched.
 	 *
-	 * @return bool
-	 * @noinspection PhpUnused
+	 * @param string $title     Sanitized title.
+	 * @param string $raw_title Raw title prior to sanitization.
+	 * @param string $context   Sanitization context.
+	 *
+	 * @return string|null Final title when handled, `null` otherwise.
+	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function should_handle_sanitize_title( string $title ): bool {
+	public function sanitize_title( string $title, string $raw_title = '', string $context = '' ): ?string {
+		if ( '' === $title || 'query' === $context ) {
+			return null;
+		}
+
 		if ( ! function_exists( 'WC' ) ) {
-			return false;
+			return null;
 		}
 
 		if ( ! $this->has_non_ascii_chars( rawurldecode( $title ) ) ) {
-			return false;
+			return null;
 		}
 
-		return $this->is_wc_attribute_sanitize_title_call();
+		if ( ! $this->is_wc_attribute_sanitize_title_call() ) {
+			return null;
+		}
+
+		$decoded = urldecode( $title );
+
+		if ( $this->should_preserve_attribute_title( $decoded ) ) {
+			return $decoded;
+		}
+
+		return $this->main->transliterate( $decoded );
 	}
 
 	/**

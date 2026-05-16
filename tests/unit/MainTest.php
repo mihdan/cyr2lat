@@ -754,45 +754,6 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test that sanitize_title() preserves WooCommerce global attribute taxonomy names.
-	 *
-	 * @throws ReflectionException ReflectionException.
-	 */
-	public function test_sanitize_title_preserves_wc_global_attribute_taxonomy_name(): void {
-		$title = 'pa_цвет';
-
-		FunctionMocker::replace(
-			'function_exists',
-			static function ( $function_name ) {
-				if ( in_array( $function_name, [ 'WC', 'wc_get_attribute_taxonomies' ], true ) ) {
-					return true;
-				}
-
-				return null;
-			}
-		);
-
-		WP_Mock::userFunction( 'wc_get_attribute_taxonomies' )->with()->andReturn(
-			[
-				(object) [
-					'attribute_id'      => '9',
-					'attribute_name'    => 'цвет',
-					'attribute_label'   => 'Цвет',
-					'attribute_type'    => 'select',
-					'attribute_orderby' => 'menu_order',
-					'attribute_public'  => '1',
-				],
-			]
-		);
-		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
-		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, $title )->reply( false );
-
-		$subject = $this->get_subject();
-
-		self::assertSame( $title, $subject->sanitize_title( $title ) );
-	}
-
-	/**
 	 * Test that sanitize_title() transliterates WooCommerce local attribute names during AJAX attribute save.
 	 *
 	 * @throws ReflectionException ReflectionException.
@@ -838,8 +799,15 @@ class MainTest extends CyrToLatTestCase {
 
 		$subject = $this->get_subject();
 		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'transliterate' )->andReturn( 'czvet' );
 
-		$local_attribute_service = Mockery::mock( LocalAttributeService::class . '[wp_parse_str]', [ Mockery::mock( Main::class ), new VariationAttributeService( Mockery::mock( Main::class ) ) ] );
+		$main_for_local = Mockery::mock( Main::class );
+		$main_for_local->shouldReceive( 'transliterate' )->andReturnUsing( 'strtolower' );
+
+		$main_for_variation = Mockery::mock( Main::class );
+		$main_for_variation->shouldReceive( 'transliterate' )->andReturnUsing( 'strtolower' );
+
+		$local_attribute_service = Mockery::mock( LocalAttributeService::class . '[wp_parse_str]', [ $main_for_local, new VariationAttributeService( $main_for_variation ) ] );
 		$local_attribute_service->shouldAllowMockingProtectedMethods();
 		$local_attribute_service->shouldReceive( 'wp_parse_str' )->andReturnUsing(
 			static function ( $input_string ) {
@@ -883,7 +851,6 @@ class MainTest extends CyrToLatTestCase {
 			'no attr taxes'          => [ 'color', true, [], 1 ],
 			'not in attr taxes'      => [ 'color', true, $attribute_taxonomies, 1 ],
 			'in attr taxes'          => [ 'цвет', true, $attribute_taxonomies, 0 ],
-			'in attr taxes with pa_' => [ 'pa_цвет', true, $attribute_taxonomies, 0 ],
 		];
 	}
 

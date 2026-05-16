@@ -350,6 +350,12 @@ class Main {
 			return $term_title;
 		}
 
+		$wc_title = $this->global_attribute_service()->sanitize_title( $title, $raw_title, $context );
+
+		if ( null !== $wc_title ) {
+			return $wc_title;
+		}
+
 		return $this->legacy_sanitize_title_bridge()->sanitize_title( $title, $raw_title, $context );
 	}
 
@@ -478,8 +484,7 @@ class Main {
 		if ( null === $this->legacy_sanitize_title_bridge ) {
 			$this->legacy_sanitize_title_bridge = new LegacySanitizeTitleBridge(
 				$this,
-				$this->term_slug_service(),
-				$this->global_attribute_service()
+				$this->term_slug_service()
 			);
 		}
 

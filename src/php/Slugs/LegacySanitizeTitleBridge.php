@@ -11,6 +11,9 @@ use CyrToLat\Main;
 
 /**
  * Handles the remaining broad sanitize_title fallback.
+ *
+ * WooCommerce attribute flows are handled by {@see GlobalAttributeService::sanitize_title()}
+ * before reaching this bridge, so this class only deals with the generic legacy fallback.
  */
 class LegacySanitizeTitleBridge {
 
@@ -29,27 +32,17 @@ class LegacySanitizeTitleBridge {
 	private TermSlugService $term_slug_service;
 
 	/**
-	 * Global attribute service.
-	 *
-	 * @var GlobalAttributeService
-	 */
-	private GlobalAttributeService $global_attribute_service;
-
-	/**
 	 * Constructor.
 	 *
-	 * @param Main                   $main                     Main plugin class.
-	 * @param TermSlugService        $term_slug_service        Term slug service.
-	 * @param GlobalAttributeService $global_attribute_service Global attribute service.
+	 * @param Main            $main              Main plugin class.
+	 * @param TermSlugService $term_slug_service Term slug service.
 	 */
 	public function __construct(
 		Main $main,
-		TermSlugService $term_slug_service,
-		GlobalAttributeService $global_attribute_service
+		TermSlugService $term_slug_service
 	) {
-		$this->main                     = $main;
-		$this->term_slug_service        = $term_slug_service;
-		$this->global_attribute_service = $global_attribute_service;
+		$this->main              = $main;
+		$this->term_slug_service = $term_slug_service;
 	}
 
 	/**
@@ -79,7 +72,7 @@ class LegacySanitizeTitleBridge {
 			$context
 		);
 
-		if ( ! $bridge_enabled && ! $this->global_attribute_service->should_handle_sanitize_title( $title ) ) {
+		if ( ! $bridge_enabled ) {
 			return $title;
 		}
 
@@ -90,13 +83,7 @@ class LegacySanitizeTitleBridge {
 			return (string) $pre;
 		}
 
-		if ( $this->global_attribute_service->should_preserve_attribute_title( $title ) ) {
-			return $title;
-		}
-
-		if ( $bridge_enabled ) {
-			$this->maybe_log_unknown_call( $title, $raw_title, $context );
-		}
+		$this->maybe_log_unknown_call( $title, $raw_title, $context );
 
 		return $this->main->transliterate( $title );
 	}

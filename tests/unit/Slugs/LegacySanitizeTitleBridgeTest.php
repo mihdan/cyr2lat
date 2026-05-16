@@ -9,7 +9,6 @@ namespace CyrToLat\Tests\Unit\Slugs;
 
 use CyrToLat\Main;
 use CyrToLat\Settings\Settings;
-use CyrToLat\Slugs\GlobalAttributeService;
 use CyrToLat\Slugs\LegacySanitizeTitleBridge;
 use CyrToLat\Slugs\TermSlugService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
@@ -78,20 +77,6 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test sanitize_title() preserves WooCommerce attributes.
-	 *
-	 * @return void
-	 */
-	public function test_sanitize_title_preserves_wc_attribute(): void {
-		$subject = $this->get_subject( true );
-
-		WP_Mock::onFilter( 'ctl_enable_legacy_sanitize_title_bridge' )->with( true, 'цвет', '', '' )->reply( true );
-		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, 'цвет' )->reply( false );
-
-		self::assertSame( 'цвет', $subject->sanitize_title( 'цвет' ) );
-	}
-
-	/**
 	 * Test sanitize_title() transliterates through callback.
 	 *
 	 * @return void
@@ -112,10 +97,7 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 	 */
 	public function test_sanitize_title_logs_unknown_call_when_development_logging_is_enabled(): void {
 		$messages = [];
-		$subject  = $this->get_subject(
-			false,
-			true
-		);
+		$subject  = $this->get_subject( true );
 
 		WP_Mock::onFilter( 'ctl_enable_legacy_sanitize_title_bridge' )->with( true, 'цвет', '', '' )->reply( true );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, 'цвет' )->reply( false );
@@ -136,12 +118,11 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 	/**
 	 * Get a test subject.
 	 *
-	 * @param bool $is_wc_attribute                Whether title should be preserved as WooCommerce attribute.
 	 * @param bool $is_development_logging_enabled Whether the development logging is enabled.
 	 *
 	 * @return LegacySanitizeTitleBridge
 	 */
-	private function get_subject( bool $is_wc_attribute = false, bool $is_development_logging_enabled = false ): LegacySanitizeTitleBridge {
+	private function get_subject( bool $is_development_logging_enabled = false ): LegacySanitizeTitleBridge {
 		FunctionMocker::replace(
 			'defined',
 			static function ( string $constant_name ) use ( $is_development_logging_enabled ): bool {
@@ -172,14 +153,9 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 			// Ignore.
 		}
 
-		$global_attribute_service = Mockery::mock( GlobalAttributeService::class );
-		$global_attribute_service->shouldReceive( 'should_handle_sanitize_title' )->andReturn( false );
-		$global_attribute_service->shouldReceive( 'should_preserve_attribute_title' )->andReturn( $is_wc_attribute );
-
 		return new LegacySanitizeTitleBridge(
 			$main,
-			new TermSlugService( $main ),
-			$global_attribute_service
+			new TermSlugService( $main )
 		);
 	}
 }
