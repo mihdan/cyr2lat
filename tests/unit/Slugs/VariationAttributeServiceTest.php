@@ -113,6 +113,52 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test is_saved_local_variation_attribute_name().
+	 *
+	 * @return void
+	 */
+	public function test_is_saved_local_variation_attribute_name(): void {
+		$subject = new VariationAttributeService( Mockery::mock( Main::class ) );
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+			->with( 123, '_product_attributes', true )
+			->andReturn(
+				[
+					'czvet' => [
+						'name'         => 'Цвет',
+						'is_taxonomy'  => 0,
+						'is_variation' => 1,
+					],
+				]
+			);
+
+		self::assertTrue( $subject->is_saved_local_variation_attribute_name( 'Цвет', 123 ) );
+	}
+
+	/**
+	 * Test is_saved_local_variation_attribute_name() rejects non-variation local attributes.
+	 *
+	 * @return void
+	 */
+	public function test_is_saved_local_variation_attribute_name_rejects_non_variation_attribute(): void {
+		$subject = new VariationAttributeService( Mockery::mock( Main::class ) );
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+			->with( 123, '_product_attributes', true )
+			->andReturn(
+				[
+					'czvet' => [
+						'name'         => 'Цвет',
+						'is_taxonomy'  => 0,
+						'is_variation' => 0,
+					],
+				]
+			);
+
+		self::assertFalse( $subject->is_saved_local_variation_attribute_name( 'Цвет', 123 ) );
+	}
+
+	/**
 	 * Normalize key.
 	 *
 	 * @param string $key Key.

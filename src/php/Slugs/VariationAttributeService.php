@@ -154,6 +154,49 @@ class VariationAttributeService {
 	}
 
 	/**
+	 * Check whether a product has a saved local variation attribute with the given display name.
+	 *
+	 * @param string $attribute_name Attribute display name.
+	 * @param int    $product_id     Product ID.
+	 *
+	 * @return bool
+	 */
+	public function is_saved_local_variation_attribute_name( string $attribute_name, int $product_id ): bool {
+		if ( $product_id <= 0 ) {
+			return false;
+		}
+
+		$attributes = get_post_meta( $product_id, '_product_attributes', true );
+
+		if ( ! is_array( $attributes ) ) {
+			return false;
+		}
+
+		foreach ( $attributes as $attribute ) {
+			if ( ! $this->is_local_variation_attribute_meta( $attribute ) ) {
+				continue;
+			}
+
+			if ( rawurldecode( (string) ( $attribute['name'] ?? '' ) ) === $attribute_name ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check whether product attribute metadata describes a local variation attribute.
+	 *
+	 * @param mixed $attribute Attribute metadata.
+	 *
+	 * @return bool
+	 */
+	private function is_local_variation_attribute_meta( $attribute ): bool {
+		return is_array( $attribute ) && empty( $attribute['is_taxonomy'] ) && ! empty( $attribute['is_variation'] );
+	}
+
+	/**
 	 * Set normalized variation attributes without calling WooCommerce's set_attributes().
 	 *
 	 * @param object $variation  Variation.

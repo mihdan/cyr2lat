@@ -112,7 +112,7 @@ class LocalAttributeService {
 			return null;
 		}
 
-		if ( ! $this->is_local_attribute( $decoded ) && ! $this->is_saved_variation_product_attribute( $decoded ) ) {
+		if ( ! $this->is_local_attribute( $decoded ) && ! $this->is_saved_variation_product_attribute_name( $decoded ) ) {
 			return null;
 		}
 
@@ -395,7 +395,7 @@ class LocalAttributeService {
 	 *
 	 * @return bool
 	 */
-	private function is_saved_variation_product_attribute( string $title ): bool {
+	private function is_saved_variation_product_attribute_name( string $title ): bool {
 		$action = $this->post_value( 'action', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
 		if ( ! in_array( $action, [ 'woocommerce_add_variation', 'woocommerce_link_all_variations' ], true ) ) {
@@ -408,23 +408,7 @@ class LocalAttributeService {
 			return false;
 		}
 
-		$attributes = get_post_meta( $product_id, '_product_attributes', true );
-
-		if ( ! is_array( $attributes ) ) {
-			return false;
-		}
-
-		foreach ( $attributes as $attribute ) {
-			if ( ! is_array( $attribute ) || ! empty( $attribute['is_taxonomy'] ) || empty( $attribute['is_variation'] ) ) {
-				continue;
-			}
-
-			if ( rawurldecode( (string) ( $attribute['name'] ?? '' ) ) === $title ) {
-				return true;
-			}
-		}
-
-		return false;
+		return $this->variation_attribute_service->is_saved_local_variation_attribute_name( $title, $product_id );
 	}
 
 	/**
