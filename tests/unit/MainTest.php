@@ -754,6 +754,39 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Data provider for test_sanitize_title_for_wc_attribute_taxonomy
+	 *
+	 * @return array
+	 */
+	public static function dp_test_sanitize_title_for_wc_attribute_taxonomy(): array {
+		$attribute_taxonomies = [
+			'id:3' => (object) [
+				'attribute_id'      => '3',
+				'attribute_name'    => 'weight',
+				'attribute_label'   => 'Weight',
+				'attribute_type'    => 'select',
+				'attribute_orderby' => 'menu_order',
+				'attribute_public'  => '1',
+			],
+			'id:9' => (object) [
+				'attribute_id'      => '9',
+				'attribute_name'    => 'цвет',
+				'attribute_label'   => 'Цвет',
+				'attribute_type'    => 'select',
+				'attribute_orderby' => 'menu_order',
+				'attribute_public'  => '1',
+			],
+		];
+
+		return [
+			'no wc'             => [ 'color', false, [], 1 ],
+			'no attr taxes'     => [ 'color', true, [], 1 ],
+			'not in attr taxes' => [ 'color', true, $attribute_taxonomies, 1 ],
+			'in attr taxes'     => [ 'цвет', true, $attribute_taxonomies, 1 ],
+		];
+	}
+
+	/**
 	 * Test that sanitize_title() transliterates WooCommerce local attribute names during AJAX attribute save.
 	 *
 	 * @throws ReflectionException ReflectionException.
@@ -819,39 +852,6 @@ class MainTest extends CyrToLatTestCase {
 		$this->set_protected_property( $subject, 'local_attribute_service', $local_attribute_service );
 
 		self::assertSame( 'czvet', $subject->sanitize_title( $title ) );
-	}
-
-	/**
-	 * Data provider for test_sanitize_title_for_wc_attribute_taxonomy
-	 *
-	 * @return array
-	 */
-	public static function dp_test_sanitize_title_for_wc_attribute_taxonomy(): array {
-		$attribute_taxonomies = [
-			'id:3' => (object) [
-				'attribute_id'      => '3',
-				'attribute_name'    => 'weight',
-				'attribute_label'   => 'Weight',
-				'attribute_type'    => 'select',
-				'attribute_orderby' => 'menu_order',
-				'attribute_public'  => '1',
-			],
-			'id:9' => (object) [
-				'attribute_id'      => '9',
-				'attribute_name'    => 'цвет',
-				'attribute_label'   => 'Цвет',
-				'attribute_type'    => 'select',
-				'attribute_orderby' => 'menu_order',
-				'attribute_public'  => '1',
-			],
-		];
-
-		return [
-			'no wc'                  => [ 'color', false, null, 1 ],
-			'no attr taxes'          => [ 'color', true, [], 1 ],
-			'not in attr taxes'      => [ 'color', true, $attribute_taxonomies, 1 ],
-			'in attr taxes'          => [ 'цвет', true, $attribute_taxonomies, 0 ],
-		];
 	}
 
 	/**

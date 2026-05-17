@@ -149,6 +149,8 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_sanitize_title_does_nothing_in_non_woocommerce_context(): void {
+		WP_Mock::userFunction( 'wc_get_attribute_taxonomies', [ 'return' => [] ] );
+
 		$subject = $this->get_subject();
 
 		self::assertNull( $subject->sanitize_title( 'Цвет' ) );
@@ -173,6 +175,8 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 	 * @return void
 	 */
 	public function test_sanitize_title_returns_null_for_unknown_call_stack(): void {
+		WP_Mock::userFunction( 'wc_get_attribute_taxonomies', [ 'return' => [] ] );
+
 		WP_Mock::userFunction( 'WC' );
 
 		$subject = $this->get_subject();
