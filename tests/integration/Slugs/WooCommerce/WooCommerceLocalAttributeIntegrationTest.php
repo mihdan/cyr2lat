@@ -13,8 +13,10 @@
 namespace CyrToLat\Tests\Integration\Slugs\WooCommerce;
 
 use CyrToLat\Tests\Integration\WooCommerceWPTestCase;
+use WC_Meta_Box_Product_Data;
 use WC_Product_Attribute;
 use WC_Product_Simple;
+use WC_Product_Variable;
 
 /**
  * Class WooCommerceLocalAttributeIntegrationTest
@@ -35,6 +37,8 @@ class WooCommerceLocalAttributeIntegrationTest extends WooCommerceWPTestCase {
 		if (
 			! function_exists( 'WC' ) ||
 			! class_exists( WC_Product_Simple::class ) ||
+			! class_exists( WC_Product_Variable::class ) ||
+			! class_exists( WC_Meta_Box_Product_Data::class ) ||
 			! class_exists( WC_Product_Attribute::class )
 		) {
 			self::markTestSkipped( 'WooCommerce product classes are not loaded in the integration test environment.' );
@@ -162,27 +166,102 @@ class WooCommerceLocalAttributeIntegrationTest extends WooCommerceWPTestCase {
 	}
 
 	/**
+	 * Test that the variable-product admin AJAX lookup can find a new Cyrillic local attribute without the broad bridge.
+	 *
+	 * @return void
+	 */
+	public function test_variable_product_ajax_attribute_lookup_uses_transliterated_local_key_without_sanitize_title_bridge(): void {
+		$data = [
+			'attribute_names'      => [ 'Цвет' ],
+			'attribute_values'     => [ 'Красный | Синий' ],
+			'attribute_position'   => [ 0 ],
+			'attribute_visibility' => [ 1 ],
+			'attribute_variation'  => [ 1 ],
+		];
+
+		$product = new WC_Product_Variable();
+		$product->set_name( 'Variable local attribute product' );
+		$product->set_status( 'publish' );
+		$product_id = $product->save();
+
+		$_POST = [
+			'action'       => 'woocommerce_save_attributes',
+			'data'         => http_build_query( $data ),
+			'post_id'      => (string) $product_id,
+			'product_type' => 'variable',
+		];
+
+		$attributes = WC_Meta_Box_Product_Data::prepare_attributes( $data );
+
+		$product = new WC_Product_Variable( $product_id );
+		$product->set_attributes( $attributes );
+		$product->save();
+
+		$lookup_key = sanitize_title( 'Цвет' );
+		$attributes = $product->get_attributes( 'edit' );
+
+		self::assertSame( 'czvet', $lookup_key );
+		self::assertArrayHasKey( $lookup_key, $attributes );
+		self::assertTrue( $attributes[ $lookup_key ]->get_variation() );
+		self::assertSame( 'Цвет', $attributes[ $lookup_key ]->get_name() );
+	}
+
+	/**
+	 * Test that adding a variation uses the saved local attribute's transliterated request key.
+	 *
+	 * @return void
+	 */
+	public function test_add_variation_request_uses_transliterated_local_attribute_key_without_sanitize_title_bridge(): void {
+		$product_id = $this->create_product_with_local_attribute(
+			'Цвет',
+			[
+				'Красный',
+				'Синий',
+			],
+			true,
+			'variable'
+		);
+
+		$_POST = [
+			'action'  => 'woocommerce_add_variation',
+			'post_id' => (string) $product_id,
+		];
+
+		self::assertSame( 'czvet', sanitize_title( 'Цвет' ) );
+	}
+
+	/**
 	 * Create a simple product with a local attribute.
 	 *
 	 * @param string        $attribute_name Attribute name.
 	 * @param array<string> $options        Attribute options.
+	 * @param bool          $is_variation   Whether attribute is used for variations.
+	 * @param string        $product_type   Product type.
 	 *
 	 * @return int
-	 * @noinspection PhpSameParameterValueInspection
 	 */
-	private function create_product_with_local_attribute( string $attribute_name, array $options ): int {
+	private function create_product_with_local_attribute(
+		string $attribute_name,
+		array $options,
+		bool $is_variation = false,
+		string $product_type = 'simple'
+	): int {
 		$attribute = new WC_Product_Attribute();
 		$attribute->set_id( 0 );
 		$attribute->set_name( $attribute_name );
 		$attribute->set_options( $options );
 		$attribute->set_position( 0 );
 		$attribute->set_visible( true );
-		$attribute->set_variation( false );
+		$attribute->set_variation( $is_variation );
 
-		$product = new WC_Product_Simple();
+		$product = 'variable' === $product_type ? new WC_Product_Variable() : new WC_Product_Simple();
 		$product->set_name( 'Local attribute product' );
 		$product->set_status( 'publish' );
-		$product->set_regular_price( '10' );
+
+		if ( method_exists( $product, 'set_regular_price' ) ) {
+			$product->set_regular_price( '10' );
+		}
+
 		$product->set_attributes( [ $attribute ] );
 
 		return $product->save();

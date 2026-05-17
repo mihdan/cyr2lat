@@ -65,6 +65,10 @@ class LocalAttributeService {
 			return $this->is_ajax_save_attribute( $title );
 		}
 
+		if ( 'woocommerce_add_attributes_and_variations' === $action ) {
+			return $this->is_ajax_save_attribute( $title );
+		}
+
 		// The `edit post` action.
 		if ( 'editpost' === $action ) {
 			return $this->is_edit_post_attribute( $title );
@@ -81,6 +85,38 @@ class LocalAttributeService {
 		return $this->has_variation_request_attribute( $title );
 
 		// phpcs:enable WordPress.Security.NonceVerification.Missing
+	}
+
+	/**
+	 * Sanitize a title that belongs to a WooCommerce local attribute flow.
+	 *
+	 * @param string $title     Sanitized title.
+	 * @param string $raw_title Raw title prior to sanitization.
+	 * @param string $context   Sanitization context.
+	 *
+	 * @return string|null Final title when handled, `null` otherwise.
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function sanitize_title( string $title, string $raw_title = '', string $context = '' ): ?string {
+		if ( '' === $title || 'query' === $context ) {
+			return null;
+		}
+
+		if ( ! function_exists( 'WC' ) ) {
+			return null;
+		}
+
+		$decoded = rawurldecode( $title );
+
+		if ( '' === $decoded || ! $this->has_non_ascii_chars( $decoded ) ) {
+			return null;
+		}
+
+		if ( ! $this->is_local_attribute( $decoded ) && ! $this->is_saved_variation_product_attribute( $decoded ) ) {
+			return null;
+		}
+
+		return strtolower( $this->main->transliterate( $decoded ) );
 	}
 
 	/**
@@ -321,13 +357,69 @@ class LocalAttributeService {
 	 * @return bool
 	 */
 	private function has_variation_request_attribute( string $title ): bool {
-		$request_keys = array_merge(
-			$this->variation_attribute_service->encoded_local_variation_request_keys( $title ),
-			[ $this->variation_attribute_service->normalized_local_variation_request_key( $title ) ]
-		);
-
-		foreach ( array_unique( $request_keys ) as $request_key ) {
+		foreach ( $this->variation_attribute_service->encoded_local_variation_request_keys( $title ) as $request_key ) {
 			if ( $this->has_post_value( $request_key ) || $this->has_request_value( $request_key ) ) {
+				return true;
+			}
+		}
+
+		if ( ! $this->has_any_variation_request_value() ) {
+			return false;
+		}
+
+		$request_key = $this->variation_attribute_service->normalized_local_variation_request_key( $title );
+
+		return $this->has_post_value( $request_key ) || $this->has_request_value( $request_key );
+	}
+
+	/**
+	 * Check whether the current request includes any variation attribute key.
+	 *
+	 * @return bool
+	 */
+	protected function has_any_variation_request_value(): bool {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
+		foreach ( array_merge( array_keys( $_POST ?? [] ), array_keys( $_REQUEST ?? [] ) ) as $key ) {
+			if ( is_string( $key ) && 0 === strpos( $key, 'attribute_' ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check whether a value is a saved local variation attribute name for the current admin product request.
+	 *
+	 * @param string $title Title.
+	 *
+	 * @return bool
+	 */
+	private function is_saved_variation_product_attribute( string $title ): bool {
+		$action = $this->post_value( 'action', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+		if ( ! in_array( $action, [ 'woocommerce_add_variation', 'woocommerce_link_all_variations' ], true ) ) {
+			return false;
+		}
+
+		$product_id = (int) $this->post_value( 'post_id', FILTER_SANITIZE_NUMBER_INT );
+
+		if ( $product_id <= 0 ) {
+			return false;
+		}
+
+		$attributes = get_post_meta( $product_id, '_product_attributes', true );
+
+		if ( ! is_array( $attributes ) ) {
+			return false;
+		}
+
+		foreach ( $attributes as $attribute ) {
+			if ( ! is_array( $attribute ) || ! empty( $attribute['is_taxonomy'] ) || empty( $attribute['is_variation'] ) ) {
+				continue;
+			}
+
+			if ( rawurldecode( (string) ( $attribute['name'] ?? '' ) ) === $title ) {
 				return true;
 			}
 		}
@@ -344,7 +436,15 @@ class LocalAttributeService {
 	 * @return string
 	 */
 	protected function post_value( string $key, int $filter ): string {
-		return (string) filter_input( INPUT_POST, $key, $filter );
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( ! isset( $_POST[ $key ] ) || is_array( $_POST[ $key ] ) ) {
+			return '';
+		}
+
+		$value = wp_unslash( $_POST[ $key ] );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
+		return (string) filter_var( $value, $filter );
 	}
 
 	/**

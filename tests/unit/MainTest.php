@@ -825,14 +825,18 @@ class MainTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction( 'wc_get_attribute_taxonomies' )->with()->andReturn( [] );
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
-		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, $title )->reply( false );
+		WP_Mock::userFunction( 'wp_unslash' )->andReturnUsing(
+			static function ( $value ) {
+				return $value;
+			}
+		);
 
 		$subject = $this->get_subject();
 		$subject->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'transliterate' )->andReturn( 'czvet' );
+		$subject->shouldReceive( 'transliterate' )->never();
 
 		$main_for_local = Mockery::mock( Main::class );
-		$main_for_local->shouldReceive( 'transliterate' )->andReturnUsing( 'strtolower' );
+		$main_for_local->shouldReceive( 'transliterate' )->with( $title )->zeroOrMoreTimes()->andReturn( 'czvet' );
 
 		$main_for_variation = Mockery::mock( Main::class );
 		$main_for_variation->shouldReceive( 'transliterate' )->andReturnUsing( 'strtolower' );

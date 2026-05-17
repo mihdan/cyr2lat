@@ -147,6 +147,21 @@ class TestLocalAttributeService extends LocalAttributeService {
 	}
 
 	/**
+	 * Check whether the current request includes any variation attribute key.
+	 *
+	 * @return bool
+	 */
+	protected function has_any_variation_request_value(): bool {
+		foreach ( array_keys( $this->post_data ) as $key ) {
+			if ( 0 === strpos( (string) $key, 'attribute_' ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Normalize key.
 	 *
 	 * @param string $key Key.

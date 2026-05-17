@@ -350,6 +350,12 @@ class Main {
 			return $term_title;
 		}
 
+		$local_attribute_title = $this->local_attribute_service()->sanitize_title( $title, $raw_title, $context );
+
+		if ( null !== $local_attribute_title ) {
+			return $local_attribute_title;
+		}
+
 		$wc_title = $this->global_attribute_service()->sanitize_title( $title, $raw_title, $context );
 
 		if ( null !== $wc_title ) {
