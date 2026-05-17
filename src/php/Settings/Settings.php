@@ -101,7 +101,7 @@ class Settings implements SettingsInterface {
 	}
 
 	/**
-	 * Get plugin option.
+	 * Get a plugin option.
 	 *
 	 * @param string $key         Setting name.
 	 * @param mixed  $empty_value Empty value for this setting.

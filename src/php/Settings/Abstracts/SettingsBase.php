@@ -268,7 +268,7 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Add a link to plugin setting page on plugins page.
+	 * Add a link to the plugin setting page on the plugins' page.
 	 *
 	 * @param array|mixed $actions An array of plugin action links.
 	 *                             By default, this can include 'activate', 'deactivate', and 'delete'.
@@ -1084,7 +1084,7 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Get plugin option.
+	 * Get a plugin option.
 	 *
 	 * @param string $key         Setting name.
 	 * @param mixed  $empty_value Empty value for this setting.
@@ -1210,7 +1210,7 @@ abstract class SettingsBase {
 	}
 
 	/**
-	 * Is current admin screen the plugin options screen.
+	 * Whether the current admin screen is the plugin options screen.
 	 *
 	 * @param string|array $ids Additional screen id or ids to check.
 	 *

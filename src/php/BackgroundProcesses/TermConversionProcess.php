@@ -78,8 +78,6 @@ class TermConversionProcess extends ConversionProcess {
 		$transliterated_slug = $this->term_slug_service->filter_term_slug( $slug );
 		remove_filter( 'locale', [ $this, 'filter_term_locale' ] );
 
-		$transliterated_slug = (string) $transliterated_slug;
-
 		if ( $transliterated_slug !== $slug ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 			$wpdb->update( $wpdb->terms, [ 'slug' => rawurlencode( $transliterated_slug ) ], [ 'term_id' => $term->term_id ] );
