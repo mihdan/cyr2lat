@@ -1,6 +1,6 @@
 <?php
 /**
- * Determine request type.
+ * Determine the request type.
  *
  * @package cyr-to-lat
  */

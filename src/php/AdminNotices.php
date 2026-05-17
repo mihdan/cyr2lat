@@ -29,7 +29,7 @@ class AdminNotices {
 	}
 
 	/**
-	 * Add admin notice.
+	 * Add an admin notice.
 	 *
 	 * @param string $message    Message to show.
 	 * @param string $class_name Message class: notice notice-success notice-error notice-warning notice-info

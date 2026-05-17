@@ -358,11 +358,7 @@ class Main {
 
 		$wc_title = $this->global_attribute_service()->sanitize_title( $title, $raw_title, $context );
 
-		if ( null !== $wc_title ) {
-			return $wc_title;
-		}
-
-		return $this->legacy_sanitize_title_bridge()->sanitize_title( $title, $raw_title, $context );
+		return $wc_title ?? $this->legacy_sanitize_title_bridge()->sanitize_title( $title, $raw_title, $context );
 	}
 
 	/**
