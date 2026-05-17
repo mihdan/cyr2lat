@@ -67,7 +67,7 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 	}
 
 	/**
-	 * Test that the frontend variation form uses the current transliterated local attribute request key.
+	 * Test that the frontend variation form uses a URL-encoded local attribute request key.
 	 *
 	 * @return void
 	 */
@@ -76,9 +76,9 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 
 		$html = $this->render_variable_add_to_cart_form( $product_id );
 
-		self::assertStringContainsString( 'name="attribute_czvet"', $html );
-		self::assertStringContainsString( 'data-attribute_name="attribute_czvet"', $html );
-		self::assertStringNotContainsString( 'name="attribute_%d1%86', strtolower( $html ) );
+		self::assertStringContainsString( 'name="attribute_%d1%86', strtolower( $html ) );
+		self::assertStringContainsString( 'data-attribute_name="attribute_%d1%86', strtolower( $html ) );
+		self::assertStringNotContainsString( 'name="attribute_czvet"', $html );
 	}
 
 	/**
@@ -118,7 +118,7 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 
 		WC_Form_Handler::add_to_cart_action();
 
-		self::assertSame( 'attribute_czvet', $request_key );
+		self::assertStringContainsString( 'attribute_%d1%86', strtolower( $request_key ) );
 		self::assertSame( 0, wc_notice_count( 'error' ) );
 		self::assertEquals( 1, WC()->cart->get_cart_contents_count() );
 

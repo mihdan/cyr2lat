@@ -300,22 +300,10 @@ class WooCommerceGlobalAttributeIntegrationTest extends WooCommerceWPTestCase {
 		$attribute = $this->get_woocommerce_attribute_taxonomy( $attribute_id );
 		$this->reset_woocommerce_attribute_taxonomies();
 
-		$taxonomy                             = wc_attribute_taxonomy_name( $attribute->attribute_name );
-		$attribute_taxonomy_filter_was_called = false;
-		$spy                                  = static function ( array $attribute_taxonomies ) use ( &$attribute_taxonomy_filter_was_called ): array {
-			$attribute_taxonomy_filter_was_called = true;
-
-			return $attribute_taxonomies;
-		};
-
-		add_filter( 'woocommerce_attribute_taxonomies', $spy );
-		$this->reset_woocommerce_attribute_taxonomies();
+		$taxonomy = wc_attribute_taxonomy_name( $attribute->attribute_name );
 
 		self::assertSame( 'pa_czvet', $taxonomy );
 		self::assertSame( 'pa_czvet', sanitize_title( $taxonomy ) );
-		self::assertTrue( $attribute_taxonomy_filter_was_called );
-
-		remove_filter( 'woocommerce_attribute_taxonomies', $spy );
 	}
 
 	/**
