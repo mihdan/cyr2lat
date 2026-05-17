@@ -630,9 +630,6 @@ class MainTest extends CyrToLatTestCase {
 		$wpdb->terms         = 'wp_terms';
 		$wpdb->term_taxonomy = 'wp_term_taxonomy';
 
-		$request = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
-							ON t.term_id = tt.term_id
-							WHERE LOWER(t.slug) = LOWER(%s)";
 		$wpdb->shouldReceive( 'prepare' )->once()->withAnyArgs()->andReturnUsing(
 			static function ( string $sql, string $slug ) use ( $wpdb ): string {
 				return 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
@@ -1972,12 +1969,12 @@ class MainTest extends CyrToLatTestCase {
 	/**
 	 * Call sanitize_title() from a method named like the WordPress function.
 	 *
-	 * @param Main   $subject Main plugin class.
-	 * @param string $title   Title.
+	 * @param Main|object $subject Main plugin class.
+	 * @param string      $title   Title.
 	 *
 	 * @return string
 	 */
-	private function wp_insert_term( Main $subject, string $title ): string {
+	private function wp_insert_term( $subject, string $title ): string {
 		return $subject->sanitize_title( $title );
 	}
 
