@@ -75,14 +75,14 @@ class PostSlugService extends BaseService {
 	 *
 	 * @param array|mixed $permalink Sample permalink data.
 	 * @param int         $post_id   Post ID.
-	 * @param string      $title     Post title.
-	 * @param string      $name      Post name.
+	 * @param string|null $title     Post title.
+	 * @param string|null $name      Post name.
 	 * @param object      $post      Post object.
 	 *
 	 * @return array|mixed
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function filter_sample_permalink( $permalink, int $post_id, string $title, string $name, object $post ) {
+	public function filter_sample_permalink( $permalink, int $post_id, ?string $title, ?string $name, object $post ) {
 		if ( ! is_array( $permalink ) || ! isset( $permalink[1] ) || ! $this->requires_sanitization( (string) $permalink[1] ) ) {
 			return $permalink;
 		}
