@@ -26,7 +26,10 @@ use CyrToLat\Main;
 use CyrToLat\Request;
 use CyrToLat\Requirements;
 use CyrToLat\Settings\Settings;
+use CyrToLat\Slugs\LocalAttributeService;
+use CyrToLat\Slugs\VariationAttributeService;
 use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
+use CyrToLat\Transliteration\Transliterator;
 use CyrToLat\WPCli;
 use Mockery;
 use PHPUnit\Runner\Version;
@@ -319,8 +322,14 @@ class MainTest extends CyrToLatTestCase {
 
 		WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
 		WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ], 10, 2 );
-		WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ], 10, 2 );
+		WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ], 10, 4 );
+		WP_Mock::expectFilterAdded( 'get_sample_permalink', [ $subject, 'sanitize_sample_permalink' ], 10, 5 );
 		WP_Mock::expectFilterAdded( 'pre_insert_term', [ $subject, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
+		WP_Mock::expectFilterAdded( 'wp_unique_term_slug_is_bad_slug', [ $subject, 'filter_unique_term_slug_is_bad_slug' ], 10, 3 );
+		WP_Mock::expectFilterAdded( 'sanitize_taxonomy_name', [ $subject, 'sanitize_wc_taxonomy_name' ], 10, 2 );
+		WP_Mock::expectActionAdded( 'woocommerce_product_attributes_updated', [ $subject, 'normalize_wc_product_attribute_meta' ] );
+		WP_Mock::expectActionAdded( 'woocommerce_product_read', [ $subject, 'normalize_wc_read_product_attribute_keys' ], 10, 2 );
+		WP_Mock::expectFilterAdded( 'woocommerce_product_get_attributes', [ $subject, 'normalize_wc_product_get_attribute_keys' ], 10, 2 );
 
 		FunctionMocker::replace(
 			'class_exists',
@@ -332,12 +341,6 @@ class MainTest extends CyrToLatTestCase {
 				return null;
 			}
 		);
-
-		if ( ! $frontend || $sitepress ) {
-			WP_Mock::expectFilterAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ], PHP_INT_MAX, 2 );
-		} else {
-			WP_Mock::expectFilterNotAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ] );
-		}
 
 		WP_Mock::expectActionAdded( 'before_woocommerce_init', [ $subject, 'declare_wc_compatibility' ] );
 
@@ -394,8 +397,13 @@ class MainTest extends CyrToLatTestCase {
 		WP_Mock::expectFilterNotAdded( 'sanitize_title', [ $subject, 'sanitize_title' ] );
 		WP_Mock::expectFilterNotAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ] );
 		WP_Mock::expectFilterNotAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ] );
+		WP_Mock::expectFilterNotAdded( 'get_sample_permalink', [ $subject, 'sanitize_sample_permalink' ] );
 		WP_Mock::expectFilterNotAdded( 'pre_insert_term', [ $subject, 'pre_insert_term_filter' ] );
-		WP_Mock::expectFilterNotAdded( 'get_terms_args', [ $subject, 'get_terms_args_filter' ] );
+		WP_Mock::expectFilterNotAdded( 'wp_unique_term_slug_is_bad_slug', [ $subject, 'filter_unique_term_slug_is_bad_slug' ] );
+		WP_Mock::expectFilterNotAdded( 'sanitize_taxonomy_name', [ $subject, 'sanitize_wc_taxonomy_name' ] );
+		WP_Mock::expectActionNotAdded( 'woocommerce_product_attributes_updated', [ $subject, 'normalize_wc_product_attribute_meta' ] );
+		WP_Mock::expectActionNotAdded( 'woocommerce_product_read', [ $subject, 'normalize_wc_read_product_attribute_keys' ] );
+		WP_Mock::expectFilterNotAdded( 'woocommerce_product_get_attributes', [ $subject, 'normalize_wc_product_get_attribute_keys' ] );
 		WP_Mock::expectFilterNotAdded( 'locale', [ $subject, 'pll_locale_filter' ] );
 		WP_Mock::expectFilterNotAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ] );
 		WP_Mock::expectActionNotAdded( 'wpml_language_has_switched', [ $subject, 'wpml_language_has_switched' ] );
@@ -508,6 +516,7 @@ class MainTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
+
 		self::assertSame( $expected, $subject->sanitize_title( $title ) );
 	}
 
@@ -564,49 +573,22 @@ class MainTest extends CyrToLatTestCase {
 	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_sanitize_title_for_insert_term( string $title, $term, string $expected ): void {
-		global $wpdb;
-
-		$taxonomy     = 'taxonomy';
-		$prepared_tax = '\'' . $taxonomy . '\'';
+		$taxonomy = 'taxonomy';
 
 		$subject = $this->get_subject();
-
-		$times = $term ? 1 : 0;
 
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
 
 		if ( is_object( $term ) ) {
 			WP_Mock::userFunction( 'is_wp_error' )->with( $term )->andReturn( true );
-			$times = 0;
 		} else {
 			WP_Mock::userFunction( 'is_wp_error' )->with( $term )->andReturn( false );
 		}
 
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
-		$subject->shouldReceive( 'prepare_in' )->times( $times )->with( [ $taxonomy ] )->andReturn( $prepared_tax );
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$wpdb                = Mockery::mock( wpdb::class );
-		$wpdb->terms         = 'wp_terms';
-		$wpdb->term_taxonomy = 'wp_term_taxonomy';
-
-		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
-							ON t.term_id = tt.term_id
-							WHERE t.slug = %s";
-		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
-							ON t.term_id = tt.term_id
-							WHERE t.slug = " . $title;
-		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
-
-		$wpdb->shouldReceive( 'prepare' )->times( $times )->with(
-			$request,
-			rawurlencode( $title )
-		)->andReturn( $prepared_request );
-		$wpdb->shouldReceive( 'get_var' )->times( $times )->with( $sql )->andReturn( $term );
-
 		$subject->pre_insert_term_filter( $term, $taxonomy );
 		self::assertSame( $expected, $subject->sanitize_title( $title ) );
-		// Make sure we search in the db only once being called from wp_insert_term().
 		self::assertSame( $title, $subject->sanitize_title( $title ) );
 	}
 
@@ -615,7 +597,7 @@ class MainTest extends CyrToLatTestCase {
 	 */
 	public static function dp_test_sanitize_title_for_insert_term(): array {
 		return [
-			[ 'title', 'term', 'term' ],
+			[ 'title', 'term', 'title' ],
 			[ 'title', '', 'title' ],
 			[ 'title', 0, 'title' ],
 			[ 'title', (object) [], 'title' ],
@@ -623,28 +605,67 @@ class MainTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test sanitize_title() for get_terms
+	 * Test that sanitize_title() preserves an existing URL-encoded term slug.
 	 *
-	 * @param string $title               Title to sanitize.
-	 * @param string $term                Term to use.
-	 * @param array  $taxonomies          Taxonomies to use.
-	 * @param string $prepared_taxonomies Prepared taxonomies to use.
-	 * @param string $expected            Expected result.
-	 *
-	 * @dataProvider dp_test_sanitize_title_for_get_terms
 	 * @throws ReflectionException ReflectionException.
 	 */
-	public function test_sanitize_title_for_get_terms( string $title, string $term, array $taxonomies, string $prepared_taxonomies, string $expected ): void {
+	public function test_sanitize_title_preserves_existing_encoded_term_slug(): void {
 		global $wpdb;
+
+		$title        = 'й';
+		$encoded_slug = rawurlencode( $title );
+		$taxonomy     = 'category';
+		$prepared_tax = '\'' . $taxonomy . '\'';
 
 		$subject = $this->get_subject();
 
-		$times = $taxonomies ? 1 : 0;
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
+		WP_Mock::userFunction( 'is_wp_error' )->with( $title )->andReturn( false );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, $title )->reply( false );
 
-		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
+		$subject->shouldReceive( 'prepare_in' )->once()->with( [ $taxonomy ] )->andReturn( $prepared_tax );
 
-		$subject->shouldReceive( 'prepare_in' )->times( $times )->with( $taxonomies )
-			->andReturn( $prepared_taxonomies );
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$wpdb                = Mockery::mock( wpdb::class );
+		$wpdb->terms         = 'wp_terms';
+		$wpdb->term_taxonomy = 'wp_term_taxonomy';
+
+		$wpdb->shouldReceive( 'prepare' )->once()->withAnyArgs()->andReturnUsing(
+			static function ( string $sql, string $slug ) use ( $wpdb ): string {
+				return 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
+							ON t.term_id = tt.term_id
+							WHERE LOWER(t.slug) = LOWER(" . $slug . ')';
+			}
+		);
+		$wpdb->shouldReceive( 'get_var' )->once()->andReturn( $encoded_slug );
+
+		$subject->pre_insert_term_filter( $title, $taxonomy );
+
+		self::assertSame( $encoded_slug, $this->wp_insert_term( $subject, $title ) );
+	}
+
+	/**
+	 * Test that sanitize_title() transliterates a new term when no encoded slug exists.
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_sanitize_title_transliterates_new_term_when_encoded_slug_does_not_exist(): void {
+		global $wpdb;
+
+		$title        = 'й';
+		$encoded_slug = rawurlencode( $title );
+		$taxonomy     = 'category';
+		$prepared_tax = '\'' . $taxonomy . '\'';
+
+		$subject = $this->get_subject();
+
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
+		WP_Mock::userFunction( 'is_wp_error' )->with( $title )->andReturn( false );
+		WP_Mock::userFunction( 'sanitize_title_with_dashes' )->with( 'j' )->andReturn( 'j' );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, $title )->reply( false );
+
+		$subject->shouldReceive( 'prepare_in' )->once()->with( [ $taxonomy ] )->andReturn( $prepared_tax );
+
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$wpdb                = Mockery::mock( wpdb::class );
 		$wpdb->terms         = 'wp_terms';
@@ -652,38 +673,18 @@ class MainTest extends CyrToLatTestCase {
 
 		$request          = "SELECT slug FROM $wpdb->terms t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.slug = %s";
+							WHERE LOWER(t.slug) = LOWER(%s)";
 		$prepared_request = 'SELECT slug FROM ' . $wpdb->terms . " t LEFT JOIN $wpdb->term_taxonomy tt
 							ON t.term_id = tt.term_id
-							WHERE t.slug = " . $title;
+							WHERE LOWER(t.slug) = LOWER(" . $encoded_slug . ')';
+		$sql              = $prepared_request . ' AND tt.taxonomy IN (' . $prepared_tax . ')';
 
-		$sql = $prepared_request;
+		$wpdb->shouldReceive( 'prepare' )->once()->with( $request, $encoded_slug )->andReturn( $prepared_request );
+		$wpdb->shouldReceive( 'get_var' )->once()->with( $sql )->andReturn( '' );
 
-		if ( $taxonomies ) {
-			$sql .= ' AND tt.taxonomy IN (' . $prepared_taxonomies . ')';
-		}
+		$subject->pre_insert_term_filter( $title, $taxonomy );
 
-		$wpdb->shouldReceive( 'prepare' )->once()->with(
-			$request,
-			rawurlencode( $title )
-		)->andReturn( $prepared_request );
-		$wpdb->shouldReceive( 'get_var' )->once()->with( $sql )->andReturn( $term );
-
-		$subject->get_terms_args_filter( [ 'some args' ], $taxonomies );
-		self::assertSame( $expected, $subject->sanitize_title( $title ) );
-		// Make sure we search in the db only once being called from wp_insert_term().
-		self::assertSame( $title, $subject->sanitize_title( $title ) );
-	}
-
-	/**
-	 * Data provider for test_sanitize_title_for_get_terms()
-	 */
-	public static function dp_test_sanitize_title_for_get_terms(): array {
-		return [
-			[ 'title', 'term', [ 'taxonomy' ], "'taxonomy'", 'term' ],
-			[ 'title', 'term', [ 'taxonomy1', 'taxonomy2' ], "'taxonomy1', 'taxonomy2'", 'term' ],
-			[ 'title', 'term', [], '', 'term' ],
-		];
+		self::assertSame( 'j', $this->wp_insert_term( $subject, $title ) );
 	}
 
 	/**
@@ -705,83 +706,7 @@ class MainTest extends CyrToLatTestCase {
 		$subject->pre_insert_term_filter( 'some term', 'category' );
 		$title = 'some title';
 
-		self::assertSame( $title, $subject->sanitize_title( $title ) );
-	}
-
-	/**
-	 * Test is_wc_attribute().
-	 *
-	 * @param bool $is_wc_attribute_taxonomy              Whether attribute taxonomy is WC attribute taxonomy.
-	 * @param bool $is_local_attribute                    Whether attribute is local attribute.
-	 * @param bool $is_wc_product_not_converted_attribute Whether attribute is WC product not converted attribute.
-	 *
-	 * @return void
-	 * @throws ReflectionException ReflectionException.
-	 * @dataProvider dp_test_is_wc_attribute
-	 */
-	public function test_is_wc_attribute(
-		bool $is_wc_attribute_taxonomy,
-		bool $is_local_attribute,
-		bool $is_wc_product_not_converted_attribute
-	): void {
-		FunctionMocker::replace(
-			'function_exists',
-			static function ( $function_name ) {
-				return 'WC' === $function_name;
-			}
-		);
-
-		$subject = $this->get_subject();
-
-		$subject->shouldAllowMockingProtectedMethods();
-		$subject->shouldReceive( 'is_wc_attribute_taxonomy' )->andReturn( $is_wc_attribute_taxonomy );
-		$subject->shouldReceive( 'is_local_attribute' )->andReturn( $is_local_attribute );
-		$subject->shouldReceive( 'is_wc_product_not_converted_attribute' )
-			->andReturn( $is_wc_product_not_converted_attribute );
-		$subject->shouldAllowMockingProtectedMethods();
-
-		$expected = $is_wc_attribute_taxonomy || $is_local_attribute || $is_wc_product_not_converted_attribute;
-
-		self::assertSame( $expected, $subject->is_wc_attribute( 'some attribute' ) );
-	}
-
-	/**
-	 * Data provider for test_is_wc_attribute().
-	 *
-	 * @return array[]
-	 */
-	public function dp_test_is_wc_attribute(): array {
-		return [
-			[ false, false, false ],
-			[ false, false, true ],
-			[ false, true, false ],
-			[ false, true, true ],
-			[ true, false, false ],
-			[ true, false, true ],
-			[ true, true, false ],
-			[ true, true, true ],
-		];
-	}
-
-	/**
-	 * Test is_wc_attribute() without WC.
-	 *
-	 * @return void
-	 * @throws ReflectionException ReflectionException.
-	 */
-	public function test_is_wc_attribute_without_wc(): void {
-		FunctionMocker::replace(
-			'function_exists',
-			static function ( $function_name ) {
-				return 'WC' !== $function_name;
-			}
-		);
-
-		$subject = $this->get_subject();
-
-		$subject->shouldAllowMockingProtectedMethods();
-
-		self::assertFalse( $subject->is_wc_attribute( 'some attribute' ) );
+		self::assertSame( $title, $this->wp_insert_term( $subject, $title ) );
 	}
 
 	/**
@@ -805,7 +730,7 @@ class MainTest extends CyrToLatTestCase {
 		FunctionMocker::replace(
 			'function_exists',
 			static function ( $function_name ) use ( $is_wc ) {
-				if ( 'WC' === $function_name ) {
+				if ( in_array( $function_name, [ 'WC', 'wc_get_attribute_taxonomies' ], true ) ) {
 					return $is_wc;
 				}
 
@@ -815,7 +740,7 @@ class MainTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction( 'wc_get_attribute_taxonomies' )->with()->andReturn( $attribute_taxonomies );
 		WP_Mock::userFunction( 'doing_action' )->andReturn( false );
-		WP_Mock::userFunction( 'did_action' )->andReturn( false );
+		WP_Mock::userFunction( 'did_action' )->andReturn( 0 );
 
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, urldecode( $title ) )->reply( false );
 
@@ -823,152 +748,6 @@ class MainTest extends CyrToLatTestCase {
 		$subject->shouldReceive( 'transliterate' )->times( $expected );
 
 		$subject->sanitize_title( $title );
-	}
-
-	/**
-	 * Test is_local_attribute().
-	 *
-	 * @param string $title    Title.
-	 * @param array  $post     POST data.
-	 * @param bool   $expected Expected result.
-	 *
-	 * @dataProvider dp_test_is_local_attribute
-	 * @throws ReflectionException ReflectionException.
-	 */
-	public function test_is_local_attribute(
-		string $title,
-		array $post,
-		bool $expected
-	): void {
-		$subject = $this->get_subject();
-
-		$subject->shouldAllowMockingProtectedMethods();
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$_POST = $post;
-
-		WP_Mock::passthruFunction( 'sanitize_text_field' );
-		WP_Mock::passthruFunction( 'wp_unslash' );
-		$subject->shouldReceive( 'wp_parse_str' )->andReturnUsing(
-			static function ( $input_string ) {
-				parse_str( (string) $input_string, $result );
-
-				return $result;
-			}
-		);
-		WP_Mock::userFunction( 'doing_action' )->andReturn( false );
-
-		FunctionMocker::replace(
-			'filter_input',
-			static function ( $type, $var_name, $filter ) use ( $post ) {
-				if ( INPUT_POST === $type && 'action' === $var_name && FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter ) {
-					return $post['action'];
-				}
-
-				if ( INPUT_POST === $type && 'data' === $var_name && FILTER_SANITIZE_URL === $filter ) {
-					return $post['data'];
-				}
-
-				return null;
-			}
-		);
-
-		$subject->shouldAllowMockingProtectedMethods();
-
-		self::assertSame( $expected, $subject->is_local_attribute( $title ) );
-	}
-
-	/**
-	 * Data provider for test_is_local_attribute().
-	 *
-	 * @return array
-	 */
-	public static function dp_test_is_local_attribute(): array {
-		return [
-			'global attribute'       => [
-				'pa_color',
-				[
-					'action' => 'woocommerce_save_attributes',
-					'data'   => 'attribute_names%5B0%5D=color',
-				],
-				false,
-			],
-			'wrong action'           => [
-				'color',
-				[
-					'action' => 'other_action',
-					'data'   => 'attribute_names%5B0%5D=color',
-				],
-				false,
-			],
-			'not in attribute names' => [
-				'color',
-				[
-					'action' => 'woocommerce_save_attributes',
-					'data'   => 'attribute_names%5B0%5D=size',
-				],
-				false,
-			],
-			'in attribute names'     => [
-				'color',
-				[
-					'action' => 'woocommerce_save_attributes',
-					'data'   => 'attribute_names%5B0%5D=color',
-				],
-				true,
-			],
-		];
-	}
-
-	/**
-	 * Test is_wc_product_not_converted_attribute().
-	 *
-	 * @param string $title      Title.
-	 * @param bool   $is_product Whether it is a product page.
-	 * @param array  $attributes Attribute names.
-	 * @param bool   $expected   Expected result.
-	 *
-	 * @dataProvider dp_test_is_wc_product_attribute
-	 * @throws ReflectionException ReflectionException.
-	 */
-	public function test_is_wc_product_not_converted_attribute( string $title, bool $is_product, array $attributes, bool $expected ): void {
-		$product_id = 5;
-		$method     = 'is_wc_product_not_converted_attribute';
-		$subject    = $this->get_subject();
-
-		$this->set_method_accessibility( $subject, $method );
-
-		$product = Mockery::mock( 'WC_Product' );
-		$product->shouldReceive( 'get_id' )->andReturn( $product_id );
-		$GLOBALS['product'] = $is_product ? $product : null;
-
-		WP_Mock::userFunction( 'get_post_meta' )->with( $product_id, '_product_attributes', true )
-			->andReturn( $attributes );
-		WP_Mock::passthruFunction( 'sanitize_title_with_dashes' );
-
-		self::assertSame( $expected, $subject->$method( $title ) );
-	}
-
-	/**
-	 * Data provider for test_is_wc_product_attribute().
-	 *
-	 * @return array
-	 */
-	public function dp_test_is_wc_product_attribute(): array {
-		return [
-			'not a product page' => [ 'атрибут 1', false, [], false ],
-			'no attributes'      => [ 'атрибут 1', true, [], false ],
-			'no matching'        => [ 'атрибут 1', true, [ 'some' => [ 'name' => 'some' ] ], false ],
-			'matching'           => [
-				'атрибут 1',
-				true,
-				[
-					'some'      => [ 'name' => 'some' ],
-					'атрибут 1' => [ 'name' => 'атрибут 1' ],
-				],
-				true,
-			],
-		];
 	}
 
 	/**
@@ -997,12 +776,83 @@ class MainTest extends CyrToLatTestCase {
 		];
 
 		return [
-			'no wc'                  => [ 'color', false, null, 1 ],
-			'no attr taxes'          => [ 'color', true, [], 1 ],
-			'not in attr taxes'      => [ 'color', true, $attribute_taxonomies, 1 ],
-			'in attr taxes'          => [ 'цвет', true, $attribute_taxonomies, 0 ],
-			'in attr taxes with pa_' => [ 'pa_цвет', true, $attribute_taxonomies, 0 ],
+			'no wc'             => [ 'color', false, [], 1 ],
+			'no attr taxes'     => [ 'color', true, [], 1 ],
+			'not in attr taxes' => [ 'color', true, $attribute_taxonomies, 1 ],
+			'in attr taxes'     => [ 'цвет', true, $attribute_taxonomies, 1 ],
 		];
+	}
+
+	/**
+	 * Test that sanitize_title() transliterates WooCommerce local attribute names during AJAX attribute save.
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_sanitize_title_transliterates_wc_local_attribute_name_during_ajax_save(): void {
+		$title = 'цвет';
+		$post  = [
+			'action' => 'woocommerce_save_attributes',
+			'data'   => 'attribute_names%5B0%5D=%D1%86%D0%B2%D0%B5%D1%82',
+		];
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$_POST = $post;
+
+		FunctionMocker::replace(
+			'function_exists',
+			static function ( $function_name ) {
+				if ( in_array( $function_name, [ 'WC', 'wc_get_attribute_taxonomies' ], true ) ) {
+					return true;
+				}
+
+				return null;
+			}
+		);
+		FunctionMocker::replace(
+			'filter_input',
+			static function ( $type, $var_name, $filter ) use ( $post ) {
+				if ( INPUT_POST === $type && 'action' === $var_name && FILTER_SANITIZE_FULL_SPECIAL_CHARS === $filter ) {
+					return $post['action'];
+				}
+
+				if ( INPUT_POST === $type && 'data' === $var_name && FILTER_SANITIZE_URL === $filter ) {
+					return $post['data'];
+				}
+
+				return null;
+			}
+		);
+
+		WP_Mock::userFunction( 'wc_get_attribute_taxonomies' )->with()->andReturn( [] );
+		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
+		WP_Mock::userFunction( 'wp_unslash' )->andReturnUsing(
+			static function ( $value ) {
+				return $value;
+			}
+		);
+
+		$subject = $this->get_subject();
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'transliterate' )->never();
+
+		$main_for_local = Mockery::mock( Main::class );
+		$main_for_local->shouldReceive( 'transliterate' )->with( $title )->zeroOrMoreTimes()->andReturn( 'czvet' );
+
+		$main_for_variation = Mockery::mock( Main::class );
+		$main_for_variation->shouldReceive( 'transliterate' )->andReturnUsing( 'strtolower' );
+
+		$local_attribute_service = Mockery::mock( LocalAttributeService::class . '[wp_parse_str]', [ $main_for_local, new VariationAttributeService( $main_for_variation ) ] );
+		$local_attribute_service->shouldAllowMockingProtectedMethods();
+		$local_attribute_service->shouldReceive( 'wp_parse_str' )->andReturnUsing(
+			static function ( $input_string ) {
+				parse_str( (string) $input_string, $result );
+
+				return $result;
+			}
+		);
+		$this->set_protected_property( $subject, 'local_attribute_service', $local_attribute_service );
+
+		self::assertSame( 'czvet', $subject->sanitize_title( $title ) );
 	}
 
 	/**
@@ -1022,9 +872,14 @@ class MainTest extends CyrToLatTestCase {
 	 * Test woocommerce_after_template_part_filter().
 	 *
 	 * @return void
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_woocommerce_after_template_part_filter(): void {
+		$request = Mockery::mock( Request::class );
+		$request->shouldReceive( 'is_allowed' )->with()->andReturn( false );
+
 		$subject = Mockery::mock( Main::class )->makePartial();
+		$this->set_protected_property( $subject, 'request', $request );
 
 		WP_Mock::userFunction( 'remove_filter' )
 			->with( 'sanitize_title', [ $subject, 'sanitize_title' ], 9 )->once();
@@ -1082,58 +937,12 @@ class MainTest extends CyrToLatTestCase {
 
 
 	/**
-	 * Test split_chinese_string().
-	 *
-	 * @param string $str      String.
-	 * @param string $expected Expected result.
+	 * Test that sanitize_filename() returns ctl_pre_sanitize_filename filter value if set
 	 *
 	 * @throws ReflectionException ReflectionException.
-	 * @dataProvider dp_test_split_chinese_string
-	 */
-	public function test_split_chinese_string( string $str, string $expected ): void {
-		$locale = 'zh_CN';
-		$table  = $this->get_conversion_table( $locale );
-		$table  = $this->transpose_chinese_table( $table );
-
-		$settings = Mockery::mock( Settings::class );
-		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( true );
-
-		$subject = Mockery::mock( Main::class )->makePartial();
-		$method  = 'split_chinese_string';
-
-		$this->set_method_accessibility( $subject, $method );
-		$this->set_protected_property( $subject, 'settings', $settings );
-
-		self::assertSame( $expected, $subject->$method( $str, $table ) );
-	}
-
-	/**
-	 * Data provider for test_split_chinese_string
-	 *
-	 * @return array
-	 */
-	public static function dp_test_split_chinese_string(): array {
-		return [
-			'general'     => [
-				'我是俄罗斯人',
-				'-我--是--俄--罗--斯--人-',
-			],
-			'less than 4' => [
-				'俄罗斯',
-				'俄罗斯',
-			],
-			'with Latin'  => [
-				'我是 cool 俄罗斯 bool 人',
-				'-我--是- cool -俄--罗--斯- bool -人-',
-			],
-		];
-	}
-
-	/**
-	 * Test that sanitize_filename() returns ctl_pre_sanitize_filename filter value if set
 	 */
 	public function test_pre_sanitize_filename_filter_set(): void {
-		$subject = Mockery::mock( Main::class )->makePartial();
+		$subject = $this->get_subject();
 
 		$filename     = 'filename.jpg';
 		$filename_raw = '';
@@ -1282,30 +1091,6 @@ class MainTest extends CyrToLatTestCase {
 	public function test_sanitize_post_name_without_gutenberg(): void {
 		$data = [ 'something' ];
 
-		WP_Mock::userFunction(
-			'has_filter',
-			[
-				'args'   => [ 'replace_editor', 'gutenberg_init' ],
-				'return' => false,
-			]
-		);
-		WP_Mock::userFunction(
-			'is_plugin_active',
-			[
-				'times'  => 1,
-				'args'   => [ 'classic-editor/classic-editor.php' ],
-				'return' => true,
-			]
-		);
-		WP_Mock::userFunction(
-			'get_option',
-			[
-				'times'  => 1,
-				'args'   => [ 'classic-editor-replace' ],
-				'return' => 'replace',
-			]
-		);
-
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
@@ -1317,33 +1102,7 @@ class MainTest extends CyrToLatTestCase {
 	public function test_sanitize_post_name_with_disable_gutenberg_plugin(): void {
 		$data = [ 'something' ];
 
-		WP_Mock::userFunction(
-			'has_filter',
-			[
-				'args'   => [ 'replace_editor', 'gutenberg_init' ],
-				'return' => false,
-			]
-		);
-		WP_Mock::userFunction(
-			'is_plugin_active',
-			[
-				'times'  => 1,
-				'args'   => [ 'classic-editor/classic-editor.php' ],
-				'return' => false,
-			]
-		);
-		WP_Mock::userFunction(
-			'is_plugin_active',
-			[
-				'times'  => 1,
-				'args'   => [ 'disable-gutenberg/disable-gutenberg.php' ],
-				'return' => true,
-			]
-		);
-
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
-
-		FunctionMocker::replace( 'disable_gutenberg', true );
 
 		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
 	}
@@ -1399,10 +1158,14 @@ class MainTest extends CyrToLatTestCase {
 	 * @param array $expected Post data expected after sanitization.
 	 *
 	 * @dataProvider dp_test_sanitize_post_name
+	 * @throws ReflectionException ReflectionException.
 	 */
 	public function test_sanitize_post_name( array $data, array $expected ): void {
 
-		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
+		$subject = $this->get_subject();
+		$subject->shouldReceive( 'sanitize_explicit_slug' )
+			->with( $data['post_title'] )
+			->andReturn( 'sanitized(' . $data['post_title'] . ')' );
 
 		WP_Mock::userFunction(
 			'has_filter',
@@ -1826,7 +1589,7 @@ class MainTest extends CyrToLatTestCase {
 	 */
 	public static function dp_test_wpml_locale_filter(): array {
 		return [
-			'Existing language code, return from wpml' => [ 'ru', 'ru_RU' ],
+			'Existing language code, return from WPML' => [ 'ru', 'ru_RU' ],
 			'Not existing language code, return null'  => [ 'some', null ],
 		];
 	}
@@ -1947,8 +1710,7 @@ class MainTest extends CyrToLatTestCase {
 				}
 			);
 
-		$subject = Mockery::mock( Main::class )->makePartial();
-		$this->set_protected_property( $subject, 'settings', $settings );
+		$subject = $this->get_subject();
 
 		$subject->check_for_changed_slugs( $post_id, $post, $post_before );
 		self::assertEquals( $expected, $post_before );
@@ -2183,6 +1945,9 @@ class MainTest extends CyrToLatTestCase {
 		$settings->shouldReceive( 'get_table' )->andReturn( $iso9_table );
 		$settings->shouldReceive( 'is_chinese_locale' )->andReturn( false );
 
+		$transliterator = Mockery::mock( Transliterator::class )->makePartial();
+		$this->set_protected_property( $transliterator, 'settings', $settings );
+
 		$process_all_posts = Mockery::mock( PostConversionProcess::class );
 		$process_all_terms = Mockery::mock( TermConversionProcess::class );
 		$admin_notices     = Mockery::mock( AdminNotices::class );
@@ -2194,6 +1959,7 @@ class MainTest extends CyrToLatTestCase {
 		$subject = Mockery::mock( Main::class )->makePartial();
 
 		$this->set_protected_property( $subject, 'settings', $settings );
+		$this->set_protected_property( $subject, 'transliterator', $transliterator );
 		$this->set_protected_property( $subject, 'process_all_posts', $process_all_posts );
 		$this->set_protected_property( $subject, 'process_all_terms', $process_all_terms );
 		$this->set_protected_property( $subject, 'admin_notices', $admin_notices );
@@ -2202,6 +1968,18 @@ class MainTest extends CyrToLatTestCase {
 		$this->set_protected_property( $subject, 'acf', $acf );
 
 		return $subject;
+	}
+
+	/**
+	 * Call sanitize_title() from a method named like the WordPress function.
+	 *
+	 * @param Main|object $subject Main plugin class.
+	 * @param string      $title   Title.
+	 *
+	 * @return string
+	 */
+	private function wp_insert_term( $subject, string $title ): string {
+		return $subject->sanitize_title( $title );
 	}
 
 	/**

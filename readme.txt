@@ -1,10 +1,10 @@
 === Cyr-To-Lat ===
 Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
-Tags: cyrillic, slugs, translation, transliteration
+Tags: transliteration, cyrillic, slugs, translation, multilingual
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 6.8.0
+Stable tag: 7.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,9 +16,11 @@ Converts Cyrillic characters in post, page, and term slugs to Latin characters. 
 
 = Features =
 * The only plugin with a fully editable transliteration table. Allows adding/removing and editing pairs like 'Я' => 'Ya', or even 'Пиво' => 'Beer'
-* Converts any number of existing post, page, and term slugs in background processes
+* Converts post, page, custom post type, and term slugs through explicit WordPress save and REST/Gutenberg paths
+* Converts any number of existing post, page, and term slugs in background processes or with WP-CLI
 * Saves existing post and page permalinks integrity
 * Performs transliteration of attachment file names
+* Supports WooCommerce product, product taxonomy, global attribute, local attribute, variation, and frontend cart slug flows without automatic migration of existing attributes
 * The plugin supports Russian, Belorussian, Ukrainian, Bulgarian, Macedonian, Serbian, Greek, Armenian, Georgian, Kazakh, Hebrew, and Chinese characters
 * [Has many advantages over similar plugins](https://kagg.eu/en/the-benefits-of-cyr-to-lat/)
 * [Officially compatible with WPML](https://wpml.org/plugin/cyr-to-lat/)
@@ -47,6 +49,14 @@ Sponsored by [Blackfire](https://www.blackfire.io/).
 
 1. Upload the ` cyr2lat ` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
+
+= Upgrade notes for 7.0 =
+
+Version 7.0 is an architecture-focused release. It keeps the existing transliteration table, locale filters, post and term conversion tools, and WP-CLI command stable while moving slug handling to explicit services.
+
+Existing posts, pages, terms, filenames, and WooCommerce product data are not destructively rewritten during the plugin upgrade. Use the Converter page or `wp cyr2lat regenerate` when you intentionally want to regenerate existing post and term slugs.
+
+WooCommerce attributes created before 7.0 are not automatically migrated. Existing global `pa_*` taxonomies and existing local or variation attribute keys should be reviewed separately; any future migration must use a dedicated dry-run-first workflow.
 
 == Frequently Asked Questions ==
 
@@ -115,6 +125,18 @@ function my_ctl_pre_sanitize_title( $result, $title ) {
 }
 add_filter( 'ctl_pre_sanitize_title', 10, 2 );
 `
+
+= How can I control the legacy sanitize_title bridge? =
+
+Version 7.0 uses explicit slug handlers for posts, terms, WooCommerce attributes, and other known save paths. A legacy `sanitize_title` bridge remains as a compatibility fallback for broad calls that older integrations may still rely on.
+
+You can disable the broad fallback with this code:
+
+`
+add_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
+`
+
+The filter receives the current default value, `$title`, `$raw_title`, and `$context`. Explicit known contexts, such as WordPress save handling, continue to use the dedicated 7.0 slug paths.
 
 = How can I define my own transliteration of filenames? =
 
@@ -202,6 +224,12 @@ Where
   `-post_type` is a list of post types,
   `-post_status` is a list of post statuses.
 
+= What WooCommerce attribute behavior is supported in 7.0? =
+
+Cyr-To-Lat 7.0 explicitly handles new and updated WooCommerce product slugs, product category and tag slugs, global attribute slugs, global attribute term slugs, local product attribute keys, variation attribute keys, frontend add-to-cart requests, cart session loading, REST/API saves, and admin save flows.
+
+Existing WooCommerce attributes are not automatically migrated during plugin upgrade. This means existing global `pa_*` taxonomies, local product attribute keys, and variation attribute keys keep their current stored values until you intentionally change them. A future migration tool should be separate and dry-run-first so store owners can review the impact before any rewrite.
+
 = How can I regenerate thumbnails safely? =
 
 Regeneration of thumbnails with the command `wp media regenerate` can break links in old posts as file names become transliterated.
@@ -235,6 +263,14 @@ When reporting a vulnerability, please include as much information as possible t
 We will review your report and respond as quickly as possible.
 
 == Changelog ==
+
+= 7.0.0 (18.05.2026) =
+* Refactored slug handling into explicit services for posts, terms, filenames, WooCommerce attributes, variation attributes, background conversion, and WP-CLI paths.
+* Improved Gutenberg coverage through REST/backend slug handling.
+* Improved WooCommerce support for product, taxonomy, global attribute, local attribute, variation, frontend cart, REST/API, and admin save flows.
+* Added the `ctl_enable_legacy_sanitize_title_bridge` compatibility filter for broad legacy `sanitize_title` behavior.
+* Documented that existing WooCommerce attributes are not automatically migrated in 7.0; future migration work must be a separate dry-run-first workflow.
+* Documented the backend-first testing strategy without required Codeception or Playwright release dependencies.
 
 = 6.8.0 (10.05.2026) =
 * Fixed returning unexpected results by REST API in some cases.

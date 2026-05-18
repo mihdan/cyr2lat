@@ -1,12 +1,14 @@
 # A set of files and directories you probably don't want in your WordPress.org distribution
 
 # Directories
+/.aiassistant
 /.git
 /.github
 /.idea
 /.wordpress-org
 /.yarn
 /bin
+/docs
 /node_modules
 /src/js
 /tests
@@ -28,7 +30,19 @@
 /eslint.config.cjs
 /package.json
 /phpcs.xml
+/phpunit.integration.xml
 /phpunit.xml
 /postcss.config.js
 /webpack.config.js
 /yarn.lock
+
+# Directories
+/.git
+/.github
+/.idea
+/.make
+/.wordpress-org
+/.yarn
+/node_modules
+/src/js
+/tests

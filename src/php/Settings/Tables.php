@@ -100,7 +100,7 @@ class Tables extends PluginSettingsBase {
 	}
 
 	/**
-	 * Get current locale.
+	 * Get the current locale.
 	 *
 	 * @return string
 	 */
