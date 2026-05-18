@@ -20,7 +20,7 @@
  * Text Domain:       cyr2lat
  *
  * WC requires at least: 3.0
- * WC tested up to:      10.6
+ * WC tested up to:      10.7
  */
 
 // phpcs:ignore Generic.Commenting.DocComment.MissingShort
