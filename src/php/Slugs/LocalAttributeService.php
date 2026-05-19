@@ -344,9 +344,10 @@ class LocalAttributeService {
 	private function is_variable_add_to_cart_attribute( string $title ): bool {
 		$attributes = $this->product_attributes();
 
-		$encoded_attr_name = $this->variation_attribute_service->encoded_product_attribute_key( $title );
+		$encoded_attr_name    = $this->variation_attribute_service->encoded_product_attribute_key( $title );
+		$normalized_attr_name = $this->variation_attribute_service->normalize_variation_attribute_key( $title );
 
-		return isset( $attributes[ $encoded_attr_name ] );
+		return isset( $attributes[ $encoded_attr_name ] ) || isset( $attributes[ $normalized_attr_name ] );
 	}
 
 	/**

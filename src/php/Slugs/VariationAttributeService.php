@@ -132,6 +132,44 @@ class VariationAttributeService {
 	}
 
 	/**
+	 * Normalize frontend available variation attribute keys.
+	 *
+	 * @param array|mixed $variation_data Available variation data.
+	 * @param object      $variation      Variation product object.
+	 *
+	 * @return array|mixed
+	 */
+	public function normalize_available_variation_attributes( $variation_data, object $variation ) {
+		if ( ! is_array( $variation_data ) || empty( $variation_data['attributes'] ) || ! is_array( $variation_data['attributes'] ) ) {
+			return $variation_data;
+		}
+
+		$normalized_attributes = [];
+		$raw_attribute_meta    = $this->raw_variation_attribute_meta( $variation );
+
+		foreach ( $variation_data['attributes'] as $attribute_key => $attribute_value ) {
+			$normalized_key   = $this->normalized_local_variation_request_key( (string) $attribute_key );
+			$normalized_value = '' === $attribute_value
+				? $this->matching_raw_variation_attribute_value( $normalized_key, $raw_attribute_meta )
+				: $attribute_value;
+
+			if (
+				isset( $normalized_attributes[ $normalized_key ] ) &&
+				'' !== $normalized_attributes[ $normalized_key ] &&
+				'' === $normalized_value
+			) {
+				continue;
+			}
+
+			$normalized_attributes[ $normalized_key ] = $normalized_value;
+		}
+
+		$variation_data['attributes'] = $normalized_attributes;
+
+		return $variation_data;
+	}
+
+	/**
 	 * Normalize a variation attribute key.
 	 *
 	 * @param string $attribute_key Attribute key.
@@ -151,6 +189,60 @@ class VariationAttributeService {
 		}
 
 		return strtolower( $this->main->transliterate( $attribute_key ) );
+	}
+
+	/**
+	 * Get raw variation attribute metadata.
+	 *
+	 * @param object $variation Variation product object.
+	 *
+	 * @return array<string, string>
+	 */
+	private function raw_variation_attribute_meta( object $variation ): array {
+		if ( ! method_exists( $variation, 'get_id' ) ) {
+			return [];
+		}
+
+		$variation_id = (int) $variation->get_id();
+
+		if ( $variation_id <= 0 ) {
+			return [];
+		}
+
+		$meta   = get_post_meta( $variation_id );
+		$result = [];
+
+		foreach ( $meta as $meta_key => $values ) {
+			if ( ! is_string( $meta_key ) || 0 !== strpos( $meta_key, 'attribute_' ) ) {
+				continue;
+			}
+
+			$result[ $meta_key ] = (string) ( $values[0] ?? '' );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Find a non-empty raw variation attribute value matching a normalized request key.
+	 *
+	 * @param string               $normalized_key Normalized request key.
+	 * @param array<string,string> $raw_meta       Raw variation attribute metadata.
+	 *
+	 * @return string
+	 */
+	private function matching_raw_variation_attribute_value( string $normalized_key, array $raw_meta ): string {
+		foreach ( $raw_meta as $raw_key => $raw_value ) {
+			if ( '' === $raw_value ) {
+				continue;
+			}
+
+			if ( $this->normalized_local_variation_request_key( $raw_key ) === $normalized_key ) {
+				return $raw_value;
+			}
+		}
+
+		return '';
 	}
 
 	/**

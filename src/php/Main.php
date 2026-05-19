@@ -277,6 +277,8 @@ class Main {
 			add_action( 'woocommerce_after_template_part', [ $this, 'woocommerce_after_template_part_filter' ] );
 		}
 
+		add_filter( 'woocommerce_available_variation', [ $this, 'normalize_wc_available_variation_attributes' ], 10, 3 );
+
 		if ( ! $this->request->is_allowed() ) {
 			return;
 		}
@@ -436,6 +438,20 @@ class Main {
 		}
 
 		return $this->local_attribute_service()->normalize_product_attribute_array( $attributes );
+	}
+
+	/**
+	 * Normalize WooCommerce available variation attribute keys for frontend matching.
+	 *
+	 * @param array|mixed $variation_data Available variation data.
+	 * @param object      $product        Variable product.
+	 * @param object      $variation      Variation product.
+	 *
+	 * @return array|mixed
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function normalize_wc_available_variation_attributes( $variation_data, object $product, object $variation ) {
+		return $this->variation_attribute_service()->normalize_available_variation_attributes( $variation_data, $variation );
 	}
 
 	/**
