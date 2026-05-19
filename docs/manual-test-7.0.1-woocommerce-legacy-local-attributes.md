@@ -2,7 +2,7 @@
 
 Этот сценарий вручную проверяет регрессию 7.0.1 для старых WooCommerce variable products, созданных в Cyr-To-Lat 6.8.0 с локальным кириллическим attribute.
 
-Проверяемый баг: старый товар хранит local attribute key как URL-encoded Cyrillic (`%d1%86...`), а Cyr-To-Lat 7.0.x должен отдать frontend form и `available_variations` с согласованным ключом `attribute_czvet`, не потеряв значение `Красный`.
+Проверяемый баг: старый товар хранит local attribute key как URL-encoded Cyrillic (`%d1%86...`). В Cyr-To-Lat 7.0.0 frontend мог получить рассинхрон между form key, `available_variations` и cart/session validation. В Cyr-To-Lat 7.0.1 frontend contract должен быть согласован на `attribute_czvet`, а cart item должен переживать переход в корзину и reload.
 
 ## Подготовка
 
@@ -31,9 +31,14 @@
    - Regular price: `10`.
    - Variation status: enabled/in stock.
    - Сохранить variation.
-6. Опубликовать или обновить товар.
-7. Открыть товар на frontend.
-8. Выбрать `Красный` и добавить в корзину.
+6. Создать вторую variation для проверки `Any`:
+   - Attribute `Цвет`: оставить `Any Цвет`.
+   - Regular price: `11`.
+   - Variation status: enabled/in stock.
+   - Сохранить variation.
+7. Опубликовать или обновить товар.
+8. Открыть товар на frontend.
+9. Выбрать `Красный` и добавить в корзину.
 
 Ожидаемо в 6.8.0:
 
@@ -44,10 +49,60 @@
 name="attribute_%d1%86%d0%b2%d0%b5%d1%82"
 ```
 
-## Фаза 2: проверить тот же товар в 7.0.1
+## Фаза 2: увидеть регрессию в 7.0.0
+
+Эта фаза нужна, если надо доказать, что manual-сценарий ловит именно исправленную ошибку. Если 7.0.0 уже недоступен, можно пропустить и сразу идти к фазе 3.
 
 1. Не пересоздавать товар.
 2. Деактивировать Cyr-To-Lat 6.8.0.
+3. Активировать Cyr-To-Lat 7.0.0.
+4. Очистить page cache/object cache, если они есть.
+5. Открыть тот же товар на frontend в приватном окне или после hard refresh.
+6. Открыть DevTools -> Elements.
+7. Найти variation select для attribute `Цвет`.
+8. В DevTools -> Console выполнить:
+
+```js
+const form = document.querySelector('form.variations_form');
+const select = form.querySelector('[name^="attribute_"]');
+const variations = JSON.parse(form.getAttribute('data-product_variations'));
+({
+  selectName: select && select.getAttribute('name'),
+  variationAttributes: variations.map(v => v.attributes)
+});
+```
+
+Один из этих вариантов означает регрессию 7.0.0:
+
+```js
+{
+  selectName: "attribute_czvet",
+  variationAttributes: [
+    { "attribute_%d1%86%d0%b2%d0%b5%d1%82": "Красный" }
+  ]
+}
+```
+
+или:
+
+```js
+{
+  selectName: "attribute_czvet",
+  variationAttributes: [
+    { attribute_czvet: "" }
+  ]
+}
+```
+
+Дополнительный симптом 7.0.0 для variation `Any`:
+
+- После выбора `Красный` товар показывает notice `added to cart`.
+- При переходе в cart корзина пустая или товар удален как измененный.
+
+## Фаза 3: проверить тот же товар в 7.0.1
+
+1. Не пересоздавать товар.
+2. Деактивировать Cyr-To-Lat 7.0.0, если он был активирован.
 3. Активировать Cyr-To-Lat 7.0.1.
 4. Очистить page cache/object cache, если они есть.
 5. Открыть тот же товар на frontend в приватном окне или после hard refresh.
@@ -65,22 +120,43 @@ data-attribute_name="attribute_czvet"
 
 ```js
 const form = document.querySelector('form.variations_form');
-JSON.parse(form.getAttribute('data-product_variations')).map(v => v.attributes);
+const select = form.querySelector('[name^="attribute_"]');
+const variations = JSON.parse(form.getAttribute('data-product_variations'));
+({
+  selectName: select && select.getAttribute('name'),
+  variationAttributes: variations.map(v => v.attributes)
+});
 ```
 
-Ожидаемо:
+Ожидаемо для concrete variation `Красный`:
 
 ```js
-[
-  {
-    attribute_czvet: "Красный"
-  }
-]
+{
+  selectName: "attribute_czvet",
+  variationAttributes: [
+    { attribute_czvet: "Красный" }
+  ]
+}
 ```
 
-Критично: ключ в `data-product_variations` должен совпадать с `select[name]`, а значение не должно быть пустым.
+Ожидаемо для `Any Цвет` variation:
 
-## Фаза 3: пользовательский поток
+```js
+{
+  selectName: "attribute_czvet",
+  variationAttributes: [
+    { attribute_czvet: "" }
+  ]
+}
+```
+
+Критично:
+
+- Ключ в `data-product_variations` должен совпадать с `select[name]`.
+- Для concrete variation значение не должно быть пустым.
+- Для `Any` variation пустое значение нормально: оно означает “эта variation принимает любое значение attribute”.
+
+## Фаза 4: пользовательский поток
 
 1. На странице товара выбрать `Красный`.
 2. Убедиться, что WooCommerce показывает variation price/availability.
@@ -95,14 +171,29 @@ JSON.parse(form.getAttribute('data-product_variations')).map(v => v.attributes);
 - В корзине отображается выбранное значение `Цвет: Красный`.
 - После reload корзины variation остается в корзине.
 
+Повторить этот же поток для `Any Цвет` variation:
+
+1. Убедиться, что variation в админке имеет `Any Цвет`.
+2. На frontend выбрать `Красный`.
+3. Нажать `Add to cart`.
+4. Перейти в корзину.
+5. Обновить страницу корзины.
+
+Ожидаемо:
+
+- Notice `added to cart` не должен быть ложноположительным.
+- В корзине должен быть товар.
+- После reload корзины товар не исчезает.
+
 ## Как выглядит регрессия
 
 Баг считается воспроизведенным, если после апгрейда на 7.0.1 есть любой из симптомов:
 
 - Select рендерится как `attribute_czvet`, но `data-product_variations` содержит `attribute_%d1...`.
-- `data-product_variations` содержит `attribute_czvet: ""`.
+- Concrete variation `Красный` в `data-product_variations` содержит `attribute_czvet: ""`.
 - При выборе `Красный` WooCommerce не находит variation, не показывает variation price/availability или пишет `Цвет is a required field`.
-- Add to cart не добавляет товар в корзину.
+- Add to cart показывает success notice, но при переходе в cart корзина пустая.
+- После reload cart товар исчезает.
 
 ## Optional: проверить сырые meta
 
@@ -127,4 +218,5 @@ attribute_%d1%86%d0%b2%d0%b5%d1%82
 ```text
 select name = attribute_czvet
 data-product_variations attributes = attribute_czvet: Красный
+cart/session reload keeps the item
 ```

@@ -278,6 +278,7 @@ class Main {
 		}
 
 		add_filter( 'woocommerce_available_variation', [ $this, 'normalize_wc_available_variation_attributes' ], 10, 3 );
+		add_filter( 'woocommerce_cart_item_data_to_validate', [ $this, 'normalize_wc_cart_item_data_to_validate' ], 10, 2 );
 
 		if ( ! $this->request->is_allowed() ) {
 			return;
@@ -452,6 +453,33 @@ class Main {
 	 */
 	public function normalize_wc_available_variation_attributes( $variation_data, object $product, object $variation ) {
 		return $this->variation_attribute_service()->normalize_available_variation_attributes( $variation_data, $variation );
+	}
+
+	/**
+	 * Normalize WooCommerce cart item data used for session hash validation.
+	 *
+	 * @param array|mixed $data    Cart item data to validate.
+	 * @param object      $product Product object.
+	 *
+	 * @return array|mixed
+	 */
+	public function normalize_wc_cart_item_data_to_validate( $data, object $product ) {
+		if ( ! is_array( $data ) || ! isset( $data['attributes'] ) || ! is_array( $data['attributes'] ) ) {
+			return $data;
+		}
+
+		$variation_data = $this->variation_attribute_service()->normalize_available_variation_attributes(
+			[
+				'attributes' => $data['attributes'],
+			],
+			$product
+		);
+
+		if ( is_array( $variation_data ) && isset( $variation_data['attributes'] ) && is_array( $variation_data['attributes'] ) ) {
+			$data['attributes'] = $variation_data['attributes'];
+		}
+
+		return $data;
 	}
 
 	/**

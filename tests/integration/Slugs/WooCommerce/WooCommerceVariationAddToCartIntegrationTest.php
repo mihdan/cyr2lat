@@ -156,6 +156,48 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 	}
 
 	/**
+	 * Test legacy encoded any variation survives cart session reload.
+	 *
+	 * @return void
+	 * @noinspection PhpArrayWriteIsNotUsedInspection
+	 */
+	public function test_legacy_encoded_any_variation_survives_cart_session_reload(): void {
+		[ $product_id, $variation_id ] = $this->create_legacy_encoded_variable_product_with_cyrillic_local_attribute( '' );
+		$request_key                   = $this->get_rendered_variation_attribute_request_key( $product_id );
+
+		$this->load_cart();
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$_REQUEST = [
+			'add-to-cart'  => (string) $product_id,
+			'variation_id' => (string) $variation_id,
+			'quantity'     => '1',
+			$request_key   => 'Красный',
+		];
+
+		WC_Form_Handler::add_to_cart_action();
+
+		self::assertSame( 'attribute_czvet', $request_key );
+		self::assertSame( 0, wc_notice_count( 'error' ) );
+		self::assertEquals( 1, WC()->cart->get_cart_contents_count() );
+
+		remove_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ], 9 );
+
+		try {
+			$this->reload_cart_from_session();
+		} finally {
+			add_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ], 9, 3 );
+		}
+
+		self::assertEquals( 1, WC()->cart->get_cart_contents_count() );
+
+		$cart_item = $this->first_cart_item();
+
+		self::assertSame( $variation_id, $cart_item['variation_id'] );
+		self::assertSame( 'Красный', $cart_item['variation']['attribute_czvet'] );
+	}
+
+	/**
 	 * Get the first cart item.
 	 *
 	 * @return array
@@ -212,9 +254,11 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 	/**
 	 * Create a variable product with legacy URL-encoded local attribute metadata.
 	 *
+	 * @param string $variation_value Variation attribute value.
+	 *
 	 * @return array{int, int}
 	 */
-	private function create_legacy_encoded_variable_product_with_cyrillic_local_attribute(): array {
+	private function create_legacy_encoded_variable_product_with_cyrillic_local_attribute( string $variation_value = 'Красный' ): array {
 		$product = new WC_Product_Variable();
 		$product->set_name( 'Legacy variable local attribute product' );
 		$product->set_status( 'publish' );
@@ -241,7 +285,7 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 		$variation->set_regular_price( '10' );
 		$variation_id = $variation->save();
 
-		update_post_meta( $variation_id, 'attribute_' . $legacy_key, 'Красный' );
+		update_post_meta( $variation_id, 'attribute_' . $legacy_key, $variation_value );
 
 		WC_Product_Variable::sync( $product_id );
 		wc_delete_product_transients( $product_id );

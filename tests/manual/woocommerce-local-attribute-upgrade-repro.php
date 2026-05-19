@@ -46,6 +46,8 @@ function main( array $argv ): void {
 	$args    = parse_args( $argv );
 	$command = $args['_'][1] ?? '';
 
+	$GLOBALS['cyr2lat_wc_repro_any_variation'] = ! empty( $args['any-variation'] );
+
 	if ( '' === $command || isset( $args['help'] ) ) {
 		print_usage();
 		exit( 0 );
@@ -118,6 +120,7 @@ function print_usage(): void {
 	echo "\nOptions:\n";
 	echo "  --activate\n";
 	echo "  --integration-bootstrap\n";
+	echo "  --any-variation\n";
 	echo "  --woocommerce-plugin=woocommerce/woocommerce.php\n";
 	echo "  --cyr2lat-plugin=cyr2lat/cyr-to-lat.php\n";
 }
@@ -305,7 +308,11 @@ function seed_product_with_active_plugin( string $mode ): array {
 	$variation->set_parent_id( $product_id );
 	$variation->set_status( 'publish' );
 	$variation->set_regular_price( '10' );
-	$variation->set_attributes( [ $attribute_key => 'Красный' ] );
+	$variation->set_attributes(
+		[
+			$attribute_key => ! empty( $GLOBALS['cyr2lat_wc_repro_any_variation'] ) ? '' : 'Красный',
+		]
+	);
 
 	$variation_id = $variation->save();
 
@@ -315,10 +322,11 @@ function seed_product_with_active_plugin( string $mode ): array {
 	update_option(
 		CYR2LAT_WC_REPRO_OPTION,
 		[
-			'product_id'   => $product_id,
-			'variation_id' => $variation_id,
-			'created_by'   => $mode,
-			'version'      => cyr2lat_version(),
+			'product_id'    => $product_id,
+			'variation_id'  => $variation_id,
+			'created_by'    => $mode,
+			'version'       => cyr2lat_version(),
+			'any_variation' => ! empty( $GLOBALS['cyr2lat_wc_repro_any_variation'] ),
 		],
 		false
 	);
@@ -365,7 +373,7 @@ function seed_synthetic_legacy_product(): array {
 
 	$variation_id = $variation->save();
 
-	update_post_meta( $variation_id, 'attribute_' . $legacy_key, 'Красный' );
+	update_post_meta( $variation_id, 'attribute_' . $legacy_key, ! empty( $GLOBALS['cyr2lat_wc_repro_any_variation'] ) ? '' : 'Красный' );
 
 	WC_Product_Variable::sync( $product_id );
 	wc_delete_product_transients( $product_id );
@@ -373,10 +381,11 @@ function seed_synthetic_legacy_product(): array {
 	update_option(
 		CYR2LAT_WC_REPRO_OPTION,
 		[
-			'product_id'   => $product_id,
-			'variation_id' => $variation_id,
-			'created_by'   => 'synthetic',
-			'version'      => cyr2lat_version(),
+			'product_id'    => $product_id,
+			'variation_id'  => $variation_id,
+			'created_by'    => 'synthetic',
+			'version'       => cyr2lat_version(),
+			'any_variation' => ! empty( $GLOBALS['cyr2lat_wc_repro_any_variation'] ),
 		],
 		false
 	);
@@ -438,12 +447,14 @@ function build_report( string $mode, int $product_id, int $variation_id ): array
 	$product   = new WC_Product_Variable( $product_id );
 	$variation = new WC_Product_Variation( $variation_id );
 
-	$rendered_key = rendered_variation_request_key( $product );
-	$cart_result  = try_add_to_cart( $product_id, $variation_id, $rendered_key );
+	$rendered_key  = rendered_variation_request_key( $product );
+	$cart_result   = try_add_to_cart( $product_id, $variation_id, $rendered_key );
+	$reload_result = reload_cart_from_session_result();
 
 	$raw_product_attributes = get_post_meta( $product_id, '_product_attributes', true );
 	$raw_variation_meta     = variation_attribute_meta( $variation_id );
 	$available_variations   = normalize_available_variations( $product->get_available_variations() );
+	$is_any_variation       = array_key_exists( 'attribute_' . strtolower( rawurlencode( 'цвет' ) ), $raw_variation_meta ) && '' === $raw_variation_meta[ 'attribute_' . strtolower( rawurlencode( 'цвет' ) ) ];
 
 	return [
 		'mode'                         => $mode,
@@ -461,12 +472,15 @@ function build_report( string $mode, int $product_id, int $variation_id ): array
 		'variation_get_attributes'     => $variation->get_attributes( 'edit' ),
 		'rendered_request_key'         => $rendered_key,
 		'cart_result'                  => $cart_result,
+		'cart_reload_result'           => $reload_result,
 		'possible_problem'             => [
 			'cart_rejected_rendered_key' => 1 !== (int) $cart_result['cart_count'],
-			'empty_available_value'      => has_empty_available_variation_value( $available_variations, $rendered_key ),
+			'cart_dropped_on_reload'     => (int) $reload_result['cart_count'] !== (int) $cart_result['cart_count'],
+			'empty_available_value'      => ! $is_any_variation && has_empty_available_variation_value( $available_variations, $rendered_key ),
 			'frontend_key_mismatch'      => has_frontend_variation_key_mismatch( $available_variations, $rendered_key ),
 			'legacy_parent_meta'         => in_array( strtolower( rawurlencode( 'цвет' ) ), is_array( $raw_product_attributes ) ? array_keys( $raw_product_attributes ) : [], true ),
 			'legacy_variation_meta'      => array_key_exists( 'attribute_' . strtolower( rawurlencode( 'цвет' ) ), $raw_variation_meta ),
+			'any_variation'              => $is_any_variation,
 		],
 	];
 }
@@ -639,6 +653,52 @@ function try_add_to_cart( int $product_id, int $variation_id, string $request_ke
 	return [
 		'cart_count' => WC()->cart->get_cart_contents_count(),
 		'errors'     => normalize_notices( $notices ),
+		'cart'       => normalize_cart( WC()->cart->get_cart() ),
+	];
+}
+
+/**
+ * Reload cart contents from the WooCommerce session.
+ *
+ * @return array<string, mixed>
+ * @noinspection PhpUndefinedFunctionInspection
+ */
+function reload_cart_from_session_result(): array {
+	if ( ! function_exists( 'wc_load_cart' ) || ! is_object( WC()->cart ) || ! is_object( WC()->session ) ) {
+		return [
+			'skipped'    => 'WooCommerce cart/session classes are unavailable.',
+			'cart_count' => 0,
+		];
+	}
+
+	WC()->session->set( 'cart', WC()->cart->get_cart_for_session() );
+	WC()->cart->set_cart_contents( [] );
+
+	$sanitize_title_priority = function_exists( 'cyr_to_lat' ) ? has_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ] ) : false;
+
+	if ( false !== $sanitize_title_priority ) {
+		remove_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ], (int) $sanitize_title_priority );
+	}
+
+	try {
+		// phpcs:disable PHPCompatibility.FunctionDeclarations.NewClosure.ThisFoundOutsideClass -- Bound to WC_Cart below to access the protected session handler.
+		$cart_session = function () {
+			return $this->session;
+		};
+		// phpcs:enable PHPCompatibility.FunctionDeclarations.NewClosure.ThisFoundOutsideClass
+
+		$cart_session = $cart_session->call( WC()->cart );
+		$cart_session->get_cart_from_session();
+	} finally {
+		if ( false !== $sanitize_title_priority ) {
+			add_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ], (int) $sanitize_title_priority, 3 );
+		}
+	}
+
+	return [
+		'cart_count' => WC()->cart->get_cart_contents_count(),
+		'errors'     => normalize_notices( function_exists( 'wc_get_notices' ) ? wc_get_notices( 'error' ) : [] ),
+		'notices'    => normalize_notices( function_exists( 'wc_get_notices' ) ? wc_get_notices( 'notice' ) : [] ),
 		'cart'       => normalize_cart( WC()->cart->get_cart() ),
 	];
 }

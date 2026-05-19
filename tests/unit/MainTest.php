@@ -331,6 +331,7 @@ class MainTest extends CyrToLatTestCase {
 		WP_Mock::expectActionAdded( 'woocommerce_product_read', [ $subject, 'normalize_wc_read_product_attribute_keys' ], 10, 2 );
 		WP_Mock::expectFilterAdded( 'woocommerce_product_get_attributes', [ $subject, 'normalize_wc_product_get_attribute_keys' ], 10, 2 );
 		WP_Mock::expectFilterAdded( 'woocommerce_available_variation', [ $subject, 'normalize_wc_available_variation_attributes' ], 10, 3 );
+		WP_Mock::expectFilterAdded( 'woocommerce_cart_item_data_to_validate', [ $subject, 'normalize_wc_cart_item_data_to_validate' ], 10, 2 );
 
 		FunctionMocker::replace(
 			'class_exists',
@@ -406,6 +407,7 @@ class MainTest extends CyrToLatTestCase {
 		WP_Mock::expectActionNotAdded( 'woocommerce_product_read', [ $subject, 'normalize_wc_read_product_attribute_keys' ] );
 		WP_Mock::expectFilterNotAdded( 'woocommerce_product_get_attributes', [ $subject, 'normalize_wc_product_get_attribute_keys' ] );
 		WP_Mock::expectFilterAdded( 'woocommerce_available_variation', [ $subject, 'normalize_wc_available_variation_attributes' ], 10, 3 );
+		WP_Mock::expectFilterAdded( 'woocommerce_cart_item_data_to_validate', [ $subject, 'normalize_wc_cart_item_data_to_validate' ], 10, 2 );
 		WP_Mock::expectFilterNotAdded( 'locale', [ $subject, 'pll_locale_filter' ] );
 		WP_Mock::expectFilterNotAdded( 'ctl_locale', [ $subject, 'wpml_locale_filter' ] );
 		WP_Mock::expectActionNotAdded( 'wpml_language_has_switched', [ $subject, 'wpml_language_has_switched' ] );
