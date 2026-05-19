@@ -175,15 +175,24 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 			$request_key   => 'Красный',
 		];
 
-		WC_Form_Handler::add_to_cart_action();
-
-		self::assertSame( 'attribute_czvet', $request_key );
-		self::assertSame( 0, wc_notice_count( 'error' ) );
-		self::assertEquals( 1, WC()->cart->get_cart_contents_count() );
-
 		remove_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ], 9 );
 
 		try {
+			cyr_to_lat()->normalize_wc_add_to_cart_request_attributes();
+
+			$legacy_request_key = 'attribute_' . strtolower( rawurlencode( 'цвет' ) );
+
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput
+			self::assertArrayHasKey( $legacy_request_key, $_REQUEST );
+			self::assertSame( 'Красный', $_REQUEST[ $legacy_request_key ] );
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput
+
+			WC_Form_Handler::add_to_cart_action();
+
+			self::assertSame( 'attribute_czvet', $request_key );
+			self::assertSame( 0, wc_notice_count( 'error' ) );
+			self::assertEquals( 1, WC()->cart->get_cart_contents_count() );
+
 			$this->reload_cart_from_session();
 		} finally {
 			add_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ], 9, 3 );

@@ -698,6 +698,10 @@ function try_add_to_cart( int $product_id, int $variation_id, string $request_ke
 		$_REQUEST[ $request_key ] = 'Красный';
 	}
 
+	if ( function_exists( 'cyr_to_lat' ) && method_exists( cyr_to_lat(), 'normalize_wc_add_to_cart_request_attributes' ) ) {
+		cyr_to_lat()->normalize_wc_add_to_cart_request_attributes();
+	}
+
 	WC_Form_Handler::add_to_cart_action();
 
 	$notices = function_exists( 'wc_get_notices' ) ? wc_get_notices( 'error' ) : [];
