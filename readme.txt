@@ -138,6 +138,8 @@ add_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
 
 The filter receives the current default value, `$title`, `$raw_title`, and `$context`. Explicit known contexts, such as WordPress save handling, continue to use the dedicated 7.0 slug paths.
 
+For debugging unknown bridge calls, define `CYR_TO_LAT_DEBUG_LEGACY_SANITIZE_TITLE_BRIDGE` as `true`. This diagnostic log is disabled by default and is not enabled by `WP_DEBUG`.
+
 = How can I define my own transliteration of filenames? =
 
 Add similar code to your theme's `functions.php` file:
@@ -263,6 +265,9 @@ When reporting a vulnerability, please include as much information as possible t
 We will review your report and respond as quickly as possible.
 
 == Changelog ==
+
+= 7.0.1 (19.05.2026) =
+* Changed legacy sanitize_title bridge diagnostics to use the dedicated CYR_TO_LAT_DEBUG_LEGACY_SANITIZE_TITLE_BRIDGE constant instead of WP_DEBUG.
 
 = 7.0.0 (18.05.2026) =
 * Refactored slug handling into explicit services for posts, terms, filenames, WooCommerce attributes, variation attributes, background conversion, and WP-CLI paths.
