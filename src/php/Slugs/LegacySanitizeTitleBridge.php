@@ -108,10 +108,10 @@ class LegacySanitizeTitleBridge {
 		}
 
 		$message = sprintf(
-			'Cyr To Lat legacy sanitize_title bridge handled an unknown call: context="%s", title_hash="%s", raw_title_hash="%s".',
+			'Cyr To Lat legacy sanitize_title bridge handled an unknown call: context="%s", title="%s", raw_title="%s".',
 			is_scalar( $context ) ? (string) $context : gettype( $context ),
-			md5( $title ),
-			md5( is_scalar( $raw_title ) ? (string) $raw_title : gettype( $raw_title ) )
+			$title,
+			is_scalar( $raw_title ) ? (string) $raw_title : gettype( $raw_title )
 		);
 
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log

@@ -112,7 +112,10 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 		self::assertSame( 'czvet', $subject->sanitize_title( 'цвет' ) );
 		self::assertCount( 1, $messages );
 		self::assertStringContainsString( 'legacy sanitize_title bridge handled an unknown call', $messages[0] );
-		self::assertStringNotContainsString( 'цвет', $messages[0] );
+		self::assertStringContainsString( 'title="цвет"', $messages[0] );
+		self::assertStringContainsString( 'raw_title=""', $messages[0] );
+		self::assertStringNotContainsString( 'title_hash', $messages[0] );
+		self::assertStringNotContainsString( 'raw_title_hash', $messages[0] );
 	}
 
 	/**
