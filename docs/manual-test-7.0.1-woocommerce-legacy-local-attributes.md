@@ -220,3 +220,53 @@ select name = attribute_czvet
 data-product_variations attributes = attribute_czvet: Красный
 cart/session reload keeps the item
 ```
+
+## Optional: standalone probe
+
+Для быстрой проверки без браузера можно использовать `tests/manual/woocommerce-local-attribute-upgrade-repro.php`.
+
+Concrete variation:
+
+```powershell
+git checkout 6.8.0
+php tests/manual/woocommerce-local-attribute-upgrade-repro.php seed --wp-load=C:\path\to\wp-load.php
+git checkout v7.0.1
+php tests/manual/woocommerce-local-attribute-upgrade-repro.php probe --wp-load=C:\path\to\wp-load.php
+```
+
+`Any Цвет` variation:
+
+```powershell
+git checkout 6.8.0
+php tests/manual/woocommerce-local-attribute-upgrade-repro.php seed-any --wp-load=C:\path\to\wp-load.php
+git checkout v7.0.1
+php tests/manual/woocommerce-local-attribute-upgrade-repro.php probe-any --wp-load=C:\path\to\wp-load.php
+```
+
+Ожидаемо для 7.0.1:
+
+```json
+{
+  "scenario": "any_variation",
+  "result": "pass",
+  "failed_checks": [],
+  "cart_reload_result": {
+    "cart_count": 1
+  },
+  "possible_problem": {
+    "any_variation_cart_dropped_on_reload": false
+  }
+}
+```
+
+Если старый `Any`-товар показывает success notice, но корзина пустеет после перехода в cart, probe должен показать:
+
+```json
+{
+  "result": "fail",
+  "failed_checks": [
+    "cart_dropped_on_reload",
+    "any_variation_cart_dropped_on_reload"
+  ]
+}
+```

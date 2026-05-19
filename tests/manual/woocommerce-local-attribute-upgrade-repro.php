@@ -6,6 +6,8 @@
  *
  * php tests/manual/woocommerce-local-attribute-upgrade-repro.php seed --wp-load=C:/path/to/wordpress/wp-load.php
  * php tests/manual/woocommerce-local-attribute-upgrade-repro.php probe --wp-load=C:/path/to/wordpress/wp-load.php
+ * php tests/manual/woocommerce-local-attribute-upgrade-repro.php seed-any --wp-load=C:/path/to/wordpress/wp-load.php
+ * php tests/manual/woocommerce-local-attribute-upgrade-repro.php probe-any --wp-load=C:/path/to/wordpress/wp-load.php
  * php tests/manual/woocommerce-local-attribute-upgrade-repro.php synthetic --wp-load=C:/path/to/wordpress/wp-load.php
  * php tests/manual/woocommerce-local-attribute-upgrade-repro.php cleanup --wp-load=C:/path/to/wordpress/wp-load.php
  *
@@ -46,7 +48,16 @@ function main( array $argv ): void {
 	$args    = parse_args( $argv );
 	$command = $args['_'][1] ?? '';
 
-	$GLOBALS['cyr2lat_wc_repro_any_variation'] = ! empty( $args['any-variation'] );
+	$require_any_variation = false;
+
+	if ( in_array( $command, [ 'seed-any', 'synthetic-any', 'probe-any' ], true ) ) {
+		$args['any-variation'] = true;
+		$require_any_variation = true;
+		$command               = str_replace( '-any', '', $command );
+	}
+
+	$GLOBALS['cyr2lat_wc_repro_any_variation']         = ! empty( $args['any-variation'] );
+	$GLOBALS['cyr2lat_wc_repro_require_any_variation'] = $require_any_variation || ! empty( $args['require-any-variation'] );
 
 	if ( '' === $command || isset( $args['help'] ) ) {
 		print_usage();
@@ -115,12 +126,16 @@ function print_usage(): void {
 	echo "Usage:\n";
 	echo "  php tests/manual/woocommerce-local-attribute-upgrade-repro.php seed --wp-load=/path/to/wp-load.php\n";
 	echo "  php tests/manual/woocommerce-local-attribute-upgrade-repro.php probe --wp-load=/path/to/wp-load.php\n";
+	echo "  php tests/manual/woocommerce-local-attribute-upgrade-repro.php seed-any --wp-load=/path/to/wp-load.php\n";
+	echo "  php tests/manual/woocommerce-local-attribute-upgrade-repro.php probe-any --wp-load=/path/to/wp-load.php\n";
 	echo "  php tests/manual/woocommerce-local-attribute-upgrade-repro.php synthetic --wp-load=/path/to/wp-load.php\n";
+	echo "  php tests/manual/woocommerce-local-attribute-upgrade-repro.php synthetic-any --wp-load=/path/to/wp-load.php\n";
 	echo "  php tests/manual/woocommerce-local-attribute-upgrade-repro.php cleanup --wp-load=/path/to/wp-load.php\n";
 	echo "\nOptions:\n";
 	echo "  --activate\n";
 	echo "  --integration-bootstrap\n";
 	echo "  --any-variation\n";
+	echo "  --require-any-variation\n";
 	echo "  --woocommerce-plugin=woocommerce/woocommerce.php\n";
 	echo "  --cyr2lat-plugin=cyr2lat/cyr-to-lat.php\n";
 }
@@ -455,9 +470,24 @@ function build_report( string $mode, int $product_id, int $variation_id ): array
 	$raw_variation_meta     = variation_attribute_meta( $variation_id );
 	$available_variations   = normalize_available_variations( $product->get_available_variations() );
 	$is_any_variation       = array_key_exists( 'attribute_' . strtolower( rawurlencode( 'цвет' ) ), $raw_variation_meta ) && '' === $raw_variation_meta[ 'attribute_' . strtolower( rawurlencode( 'цвет' ) ) ];
+	$possible_problem       = [
+		'cart_rejected_rendered_key'           => 1 !== (int) $cart_result['cart_count'],
+		'cart_dropped_on_reload'               => (int) $reload_result['cart_count'] !== (int) $cart_result['cart_count'],
+		'any_variation_cart_dropped_on_reload' => $is_any_variation && 1 === (int) $cart_result['cart_count'] && 1 !== (int) $reload_result['cart_count'],
+		'empty_available_value'                => ! $is_any_variation && has_empty_available_variation_value( $available_variations, $rendered_key ),
+		'frontend_key_mismatch'                => has_frontend_variation_key_mismatch( $available_variations, $rendered_key ),
+		'wrong_repro_scenario'                 => ! empty( $GLOBALS['cyr2lat_wc_repro_require_any_variation'] ) && ! $is_any_variation,
+		'legacy_parent_meta'                   => in_array( strtolower( rawurlencode( 'цвет' ) ), is_array( $raw_product_attributes ) ? array_keys( $raw_product_attributes ) : [], true ),
+		'legacy_variation_meta'                => array_key_exists( 'attribute_' . strtolower( rawurlencode( 'цвет' ) ), $raw_variation_meta ),
+		'any_variation'                        => $is_any_variation,
+	];
+	$failed_checks          = failed_checks( $possible_problem );
 
 	return [
 		'mode'                         => $mode,
+		'scenario'                     => $is_any_variation ? 'any_variation' : 'concrete_variation',
+		'result'                       => [] === $failed_checks ? 'pass' : 'fail',
+		'failed_checks'                => $failed_checks,
 		'cyr2lat_version'              => cyr2lat_version(),
 		'product_id'                   => $product_id,
 		'variation_id'                 => $variation_id,
@@ -473,16 +503,38 @@ function build_report( string $mode, int $product_id, int $variation_id ): array
 		'rendered_request_key'         => $rendered_key,
 		'cart_result'                  => $cart_result,
 		'cart_reload_result'           => $reload_result,
-		'possible_problem'             => [
-			'cart_rejected_rendered_key' => 1 !== (int) $cart_result['cart_count'],
-			'cart_dropped_on_reload'     => (int) $reload_result['cart_count'] !== (int) $cart_result['cart_count'],
-			'empty_available_value'      => ! $is_any_variation && has_empty_available_variation_value( $available_variations, $rendered_key ),
-			'frontend_key_mismatch'      => has_frontend_variation_key_mismatch( $available_variations, $rendered_key ),
-			'legacy_parent_meta'         => in_array( strtolower( rawurlencode( 'цвет' ) ), is_array( $raw_product_attributes ) ? array_keys( $raw_product_attributes ) : [], true ),
-			'legacy_variation_meta'      => array_key_exists( 'attribute_' . strtolower( rawurlencode( 'цвет' ) ), $raw_variation_meta ),
-			'any_variation'              => $is_any_variation,
-		],
+		'possible_problem'             => $possible_problem,
 	];
+}
+
+/**
+ * Return problem keys that should make this repro fail.
+ *
+ * Legacy metadata flags are informational: old products are expected to keep
+ * encoded database keys after an upgrade.
+ *
+ * @param array<string, bool> $possible_problem Problem map.
+ *
+ * @return array<int, string>
+ */
+function failed_checks( array $possible_problem ): array {
+	$informational = [
+		'legacy_parent_meta'    => true,
+		'legacy_variation_meta' => true,
+		'any_variation'         => true,
+	];
+
+	$failed = [];
+
+	foreach ( $possible_problem as $key => $value ) {
+		if ( ! $value || isset( $informational[ $key ] ) ) {
+			continue;
+		}
+
+		$failed[] = $key;
+	}
+
+	return $failed;
 }
 
 /**
