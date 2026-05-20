@@ -11,6 +11,7 @@ use CyrToLat\Main;
 use CyrToLat\Slugs\PostSlugService;
 use CyrToLat\Tests\Unit\CyrToLatTestCase;
 use Mockery;
+use WP_Mock;
 
 /**
  * Class PostSlugServiceTest
@@ -147,6 +148,35 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 		];
 
 		self::assertSame( $data, $subject->filter_post_data( $data ) );
+	}
+
+	/**
+	 * Test filter_post_data() uses the updated post ID when uniquing a regenerated slug.
+	 *
+	 * @return void
+	 */
+	public function test_filter_post_data_uses_postarr_id_for_updated_post_slug_uniqueness(): void {
+		$main = $this->get_main_mock();
+		$main->shouldReceive( 'sanitize_explicit_slug' )
+			->with( 'й' )
+			->andReturn( 'j' );
+
+		WP_Mock::userFunction( 'wp_unique_post_slug' )
+			->with( 'j', 123, 'publish', 'product', 0 )
+			->once()
+			->andReturn( 'j' );
+
+		$subject = new PostSlugService( $main );
+		$data    = [
+			'post_name'   => '',
+			'post_title'  => 'й',
+			'post_status' => 'publish',
+			'post_type'   => 'product',
+		];
+
+		$filtered = $subject->filter_post_data( $data, [ 'ID' => 123 ], [], true );
+
+		self::assertSame( 'j', $filtered['post_name'] );
 	}
 
 	/**

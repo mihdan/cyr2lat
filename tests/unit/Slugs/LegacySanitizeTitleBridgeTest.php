@@ -91,11 +91,11 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test sanitize_title() logs unknown calls only when development logging is enabled.
+	 * Test sanitize_title() logs unknown calls only when bridge debug logging is enabled.
 	 *
 	 * @return void
 	 */
-	public function test_sanitize_title_logs_unknown_call_when_development_logging_is_enabled(): void {
+	public function test_sanitize_title_logs_unknown_call_when_bridge_debug_logging_is_enabled(): void {
 		$messages = [];
 		$subject  = $this->get_subject( true );
 
@@ -112,27 +112,62 @@ class LegacySanitizeTitleBridgeTest extends CyrToLatTestCase {
 		self::assertSame( 'czvet', $subject->sanitize_title( 'цвет' ) );
 		self::assertCount( 1, $messages );
 		self::assertStringContainsString( 'legacy sanitize_title bridge handled an unknown call', $messages[0] );
-		self::assertStringNotContainsString( 'цвет', $messages[0] );
+		self::assertStringContainsString( 'title="цвет"', $messages[0] );
+		self::assertStringContainsString( 'raw_title=""', $messages[0] );
+		self::assertStringNotContainsString( 'title_hash', $messages[0] );
+		self::assertStringNotContainsString( 'raw_title_hash', $messages[0] );
+	}
+
+	/**
+	 * Test sanitize_title() does not log unknown calls when only WP_DEBUG is enabled.
+	 *
+	 * @return void
+	 */
+	public function test_sanitize_title_does_not_log_unknown_call_when_only_wp_debug_is_enabled(): void {
+		$messages = [];
+		$subject  = $this->get_subject( false, true );
+
+		WP_Mock::onFilter( 'ctl_enable_legacy_sanitize_title_bridge' )->with( true, 'цвет', '', '' )->reply( true );
+		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, 'цвет' )->reply( false );
+
+		FunctionMocker::replace(
+			'error_log',
+			static function ( string $message ) use ( &$messages ): void {
+				$messages[] = $message;
+			}
+		);
+
+		self::assertSame( 'czvet', $subject->sanitize_title( 'цвет' ) );
+		self::assertSame( [], $messages );
 	}
 
 	/**
 	 * Get a test subject.
 	 *
-	 * @param bool $is_development_logging_enabled Whether the development logging is enabled.
+	 * @param bool $is_bridge_debug_logging_enabled Whether the bridge debug logging is enabled.
+	 * @param bool $is_wp_debug_enabled             Whether WP_DEBUG is enabled.
 	 *
 	 * @return LegacySanitizeTitleBridge
 	 */
-	private function get_subject( bool $is_development_logging_enabled = false ): LegacySanitizeTitleBridge {
+	private function get_subject( bool $is_bridge_debug_logging_enabled = false, bool $is_wp_debug_enabled = false ): LegacySanitizeTitleBridge {
 		FunctionMocker::replace(
 			'defined',
-			static function ( string $constant_name ) use ( $is_development_logging_enabled ): bool {
-				return 'WP_DEBUG' === $constant_name && $is_development_logging_enabled;
+			static function ( string $constant_name ) use ( $is_bridge_debug_logging_enabled, $is_wp_debug_enabled ): bool {
+				return (
+					'CYR_TO_LAT_DEBUG_LEGACY_SANITIZE_TITLE_BRIDGE' === $constant_name && $is_bridge_debug_logging_enabled
+				) || (
+					'WP_DEBUG' === $constant_name && $is_wp_debug_enabled
+				);
 			}
 		);
 		FunctionMocker::replace(
 			'constant',
-			static function ( string $name ) use ( $is_development_logging_enabled ): bool {
-				return 'WP_DEBUG' === $name && $is_development_logging_enabled;
+			static function ( string $name ) use ( $is_bridge_debug_logging_enabled, $is_wp_debug_enabled ): bool {
+				if ( 'CYR_TO_LAT_DEBUG_LEGACY_SANITIZE_TITLE_BRIDGE' === $name ) {
+					return $is_bridge_debug_logging_enabled;
+				}
+
+				return 'WP_DEBUG' === $name && $is_wp_debug_enabled;
 			}
 		);
 

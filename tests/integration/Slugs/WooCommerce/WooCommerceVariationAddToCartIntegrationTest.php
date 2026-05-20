@@ -67,7 +67,7 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 	}
 
 	/**
-	 * Test that the frontend variation form uses a URL-encoded local attribute request key.
+	 * Test that the frontend variation form uses a transliterated local attribute request key.
 	 *
 	 * @return void
 	 */
@@ -76,9 +76,9 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 
 		$html = $this->render_variable_add_to_cart_form( $product_id );
 
-		self::assertStringContainsString( 'name="attribute_%d1%86', strtolower( $html ) );
-		self::assertStringContainsString( 'data-attribute_name="attribute_%d1%86', strtolower( $html ) );
-		self::assertStringNotContainsString( 'name="attribute_czvet"', $html );
+		self::assertStringContainsString( 'name="attribute_czvet"', $html );
+		self::assertStringContainsString( 'data-attribute_name="attribute_czvet"', $html );
+		self::assertStringNotContainsString( 'name="attribute_%d1%86', strtolower( $html ) );
 	}
 
 	/**
@@ -118,7 +118,7 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 
 		WC_Form_Handler::add_to_cart_action();
 
-		self::assertStringContainsString( 'attribute_%d1%86', strtolower( $request_key ) );
+		self::assertSame( 'attribute_czvet', $request_key );
 		self::assertSame( 0, wc_notice_count( 'error' ) );
 		self::assertEquals( 1, WC()->cart->get_cart_contents_count() );
 
@@ -129,6 +129,74 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 		self::assertSame( 'Красный', $cart_item['variation']['attribute_czvet'] );
 
 		$this->reload_cart_from_session();
+
+		self::assertEquals( 1, WC()->cart->get_cart_contents_count() );
+
+		$cart_item = $this->first_cart_item();
+
+		self::assertSame( $variation_id, $cart_item['variation_id'] );
+		self::assertSame( 'Красный', $cart_item['variation']['attribute_czvet'] );
+	}
+
+	/**
+	 * Test legacy encoded local attribute products keep matching frontend variation keys.
+	 *
+	 * @return void
+	 */
+	public function test_legacy_encoded_local_attribute_keeps_form_and_available_variation_keys_aligned(): void {
+		[ $product_id ] = $this->create_legacy_encoded_variable_product_with_cyrillic_local_attribute();
+		$request_key    = $this->get_rendered_variation_attribute_request_key( $product_id );
+		$product        = new WC_Product_Variable( $product_id );
+		$variations     = $product->get_available_variations();
+
+		self::assertSame( 'attribute_czvet', $request_key );
+		self::assertNotEmpty( $variations );
+		self::assertArrayHasKey( $request_key, $variations[0]['attributes'] );
+		self::assertSame( 'Красный', $variations[0]['attributes'][ $request_key ] );
+	}
+
+	/**
+	 * Test legacy encoded any variation survives cart session reload.
+	 *
+	 * @return void
+	 * @noinspection PhpArrayWriteIsNotUsedInspection
+	 */
+	public function test_legacy_encoded_any_variation_survives_cart_session_reload(): void {
+		[ $product_id, $variation_id ] = $this->create_legacy_encoded_variable_product_with_cyrillic_local_attribute( '' );
+		$request_key                   = $this->get_rendered_variation_attribute_request_key( $product_id );
+
+		$this->load_cart();
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$_REQUEST = [
+			'add-to-cart'  => (string) $product_id,
+			'variation_id' => (string) $variation_id,
+			'quantity'     => '1',
+			$request_key   => 'Красный',
+		];
+
+		remove_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ], 9 );
+
+		try {
+			cyr_to_lat()->normalize_wc_add_to_cart_request_attributes();
+
+			$legacy_request_key = 'attribute_' . strtolower( rawurlencode( 'цвет' ) );
+
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput
+			self::assertArrayHasKey( $legacy_request_key, $_REQUEST );
+			self::assertSame( 'Красный', $_REQUEST[ $legacy_request_key ] );
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput
+
+			WC_Form_Handler::add_to_cart_action();
+
+			self::assertSame( 'attribute_czvet', $request_key );
+			self::assertSame( 0, wc_notice_count( 'error' ) );
+			self::assertEquals( 1, WC()->cart->get_cart_contents_count() );
+
+			$this->reload_cart_from_session();
+		} finally {
+			add_filter( 'sanitize_title', [ cyr_to_lat(), 'sanitize_title' ], 9, 3 );
+		}
 
 		self::assertEquals( 1, WC()->cart->get_cart_contents_count() );
 
@@ -185,6 +253,48 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 		);
 
 		$variation_id = $variation->save();
+
+		WC_Product_Variable::sync( $product_id );
+		wc_delete_product_transients( $product_id );
+
+		return [ $product_id, $variation_id ];
+	}
+
+	/**
+	 * Create a variable product with legacy URL-encoded local attribute metadata.
+	 *
+	 * @param string $variation_value Variation attribute value.
+	 *
+	 * @return array{int, int}
+	 */
+	private function create_legacy_encoded_variable_product_with_cyrillic_local_attribute( string $variation_value = 'Красный' ): array {
+		$product = new WC_Product_Variable();
+		$product->set_name( 'Legacy variable local attribute product' );
+		$product->set_status( 'publish' );
+
+		$product_id = $product->save();
+		$legacy_key = strtolower( rawurlencode( 'цвет' ) );
+		$attribute  = [
+			'name'         => 'Цвет',
+			'value'        => 'Красный | Синий',
+			'position'     => 0,
+			'is_visible'   => 1,
+			'is_variation' => 1,
+			'is_taxonomy'  => 0,
+		];
+		$attributes = [
+			$legacy_key => $attribute,
+		];
+		$variation  = new WC_Product_Variation();
+
+		update_post_meta( $product_id, '_product_attributes', $attributes );
+
+		$variation->set_parent_id( $product_id );
+		$variation->set_status( 'publish' );
+		$variation->set_regular_price( '10' );
+		$variation_id = $variation->save();
+
+		update_post_meta( $variation_id, 'attribute_' . $legacy_key, $variation_value );
 
 		WC_Product_Variable::sync( $product_id );
 		wc_delete_product_transients( $product_id );

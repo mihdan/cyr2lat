@@ -277,6 +277,11 @@ class Main {
 			add_action( 'woocommerce_after_template_part', [ $this, 'woocommerce_after_template_part_filter' ] );
 		}
 
+		add_filter( 'woocommerce_available_variation', [ $this, 'normalize_wc_available_variation_attributes' ], 10, 3 );
+		add_filter( 'woocommerce_cart_item_data_to_validate', [ $this, 'normalize_wc_cart_item_data_to_validate' ], 10, 2 );
+		add_filter( 'woocommerce_add_cart_item', [ $this, 'normalize_wc_cart_item_variation_attributes' ] );
+		add_action( 'wp_loaded', [ $this, 'normalize_wc_add_to_cart_request_attributes' ], 15 );
+
 		if ( ! $this->request->is_allowed() ) {
 			return;
 		}
@@ -436,6 +441,255 @@ class Main {
 		}
 
 		return $this->local_attribute_service()->normalize_product_attribute_array( $attributes );
+	}
+
+	/**
+	 * Normalize WooCommerce available variation attribute keys for frontend matching.
+	 *
+	 * @param array|mixed $variation_data Available variation data.
+	 * @param object      $product        Variable product.
+	 * @param object      $variation      Variation product.
+	 *
+	 * @return array|mixed
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function normalize_wc_available_variation_attributes( $variation_data, object $product, object $variation ) {
+		return $this->variation_attribute_service()->normalize_available_variation_attributes( $variation_data, $variation );
+	}
+
+	/**
+	 * Normalize WooCommerce cart item data used for session hash validation.
+	 *
+	 * @param array|mixed $data    Cart item data to validate.
+	 * @param object      $product Product object.
+	 *
+	 * @return array|mixed
+	 */
+	public function normalize_wc_cart_item_data_to_validate( $data, object $product ) {
+		if ( ! is_array( $data ) || ! isset( $data['attributes'] ) || ! is_array( $data['attributes'] ) ) {
+			return $data;
+		}
+
+		$variation_data = $this->variation_attribute_service()->normalize_available_variation_attributes(
+			[
+				'attributes' => $data['attributes'],
+			],
+			$product
+		);
+
+		if ( is_array( $variation_data ) && isset( $variation_data['attributes'] ) && is_array( $variation_data['attributes'] ) ) {
+			$data['attributes'] = $variation_data['attributes'];
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Normalize WooCommerce cart item variation keys after add-to-cart.
+	 *
+	 * @param array|mixed $cart_item Cart item.
+	 *
+	 * @return array|mixed
+	 */
+	public function normalize_wc_cart_item_variation_attributes( $cart_item ) {
+		if ( ! is_array( $cart_item ) || empty( $cart_item['variation_id'] ) || empty( $cart_item['variation'] ) || ! is_array( $cart_item['variation'] ) ) {
+			return $cart_item;
+		}
+
+		$variation_data = $this->variation_attribute_service()->normalize_available_variation_attributes(
+			[
+				'attributes' => $cart_item['variation'],
+			],
+			new \WC_Product_Variation( (int) $cart_item['variation_id'] )
+		);
+
+		if ( is_array( $variation_data ) && isset( $variation_data['attributes'] ) && is_array( $variation_data['attributes'] ) ) {
+			$cart_item['variation'] = $variation_data['attributes'];
+		}
+
+		return $cart_item;
+	}
+
+	/**
+	 * Normalize submitted WooCommerce local attribute keys before add-to-cart validation.
+	 *
+	 * Old variable products can keep URL-encoded local attribute keys in meta.
+	 * The frontend renders the transliterated request key, but WooCommerce's
+	 * variable add-to-cart handler still validates against the legacy key when
+	 * the broad sanitize_title bridge is inactive.
+	 *
+	 * @return void
+	 * @noinspection PhpUndefinedFunctionInspection
+	 */
+	public function normalize_wc_add_to_cart_request_attributes(): void {
+		$product_id = $this->wc_add_to_cart_product_id();
+
+		if ( $product_id <= 0 ) {
+			return;
+		}
+
+		$attributes = $this->wc_add_to_cart_product_attributes( $product_id );
+
+		if ( [] === $attributes ) {
+			return;
+		}
+
+		$raw_attribute_request_keys = $this->raw_wc_local_variation_request_keys_by_name( $product_id );
+
+		foreach ( $attributes as $attribute_key => $attribute ) {
+			$this->normalize_wc_add_to_cart_request_attribute( (string) $attribute_key, $attribute, $raw_attribute_request_keys );
+		}
+	}
+
+	/**
+	 * Get the submitted WooCommerce add-to-cart product ID.
+	 *
+	 * @return int
+	 */
+	private function wc_add_to_cart_product_id(): int {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		return isset( $_REQUEST['add-to-cart'] ) ? absint( wp_unslash( $_REQUEST['add-to-cart'] ) ) : 0;
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+	}
+
+	/**
+	 * Get WooCommerce add-to-cart product attributes.
+	 *
+	 * @param int $product_id Product ID.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function wc_add_to_cart_product_attributes( int $product_id ): array {
+		if ( ! function_exists( 'wc_get_product' ) ) {
+			return [];
+		}
+
+		$product = wc_get_product( $product_id );
+
+		if ( ! is_object( $product ) || ! method_exists( $product, 'get_attributes' ) ) {
+			return [];
+		}
+
+		$attributes = $product->get_attributes( 'edit' );
+
+		return is_array( $attributes ) ? $attributes : [];
+	}
+
+	/**
+	 * Normalize a submitted WooCommerce local variation attribute request.
+	 *
+	 * @param string                            $attribute_key              Product attribute key.
+	 * @param mixed                             $attribute                  Product attribute object.
+	 * @param array<string, array<int, string>> $raw_attribute_request_keys Raw request keys by attribute name.
+	 *
+	 * @return void
+	 */
+	private function normalize_wc_add_to_cart_request_attribute( string $attribute_key, $attribute, array $raw_attribute_request_keys ): void {
+		if ( ! $this->is_wc_local_variation_attribute_for_request( $attribute ) ) {
+			return;
+		}
+
+		$attribute_name         = method_exists( $attribute, 'get_name' ) ? (string) $attribute->get_name() : $attribute_key;
+		$normalized_request_key = $this->variation_attribute_service()->normalized_local_variation_request_key( $attribute_key );
+		$normalized_name_key    = $this->variation_attribute_service()->normalized_local_variation_request_key( $attribute_name );
+		$request_value          = $this->wc_add_to_cart_request_value( [ $normalized_request_key, $normalized_name_key ] );
+
+		if ( null === $request_value ) {
+			return;
+		}
+
+		$target_keys = array_merge(
+			[
+				'attribute_' . $attribute_key,
+				'attribute_' . $this->variation_attribute_service()->encoded_product_attribute_key( $attribute_name ),
+			],
+			$raw_attribute_request_keys[ rawurldecode( $attribute_name ) ] ?? []
+		);
+
+		foreach ( array_unique( $target_keys ) as $target_key ) {
+			$this->set_wc_add_to_cart_request_value( $target_key, $request_value );
+		}
+	}
+
+	/**
+	 * Check whether a WooCommerce attribute participates in local variation add-to-cart requests.
+	 *
+	 * @param mixed $attribute Product attribute.
+	 *
+	 * @return bool
+	 */
+	private function is_wc_local_variation_attribute_for_request( $attribute ): bool {
+		if ( ! is_object( $attribute ) ) {
+			return false;
+		}
+
+		if ( method_exists( $attribute, 'is_taxonomy' ) && $attribute->is_taxonomy() ) {
+			return false;
+		}
+
+		return ! method_exists( $attribute, 'get_variation' ) || $attribute->get_variation();
+	}
+
+	/**
+	 * Get raw local variation request keys from persisted product attribute metadata.
+	 *
+	 * @param int $product_id Product ID.
+	 *
+	 * @return array<string, array<int, string>>
+	 */
+	private function raw_wc_local_variation_request_keys_by_name( int $product_id ): array {
+		$raw_attributes = get_post_meta( $product_id, '_product_attributes', true );
+
+		if ( ! is_array( $raw_attributes ) ) {
+			return [];
+		}
+
+		$result = [];
+
+		foreach ( $raw_attributes as $attribute_key => $attribute ) {
+			if ( ! is_array( $attribute ) || ! empty( $attribute['is_taxonomy'] ) || empty( $attribute['is_variation'] ) ) {
+				continue;
+			}
+
+			$attribute_name              = rawurldecode( (string) ( $attribute['name'] ?? $attribute_key ) );
+			$result[ $attribute_name ][] = 'attribute_' . (string) $attribute_key;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Return the first submitted WooCommerce add-to-cart attribute value.
+	 *
+	 * @param array<int, string> $request_keys Request keys.
+	 *
+	 * @return mixed|null
+	 */
+	private function wc_add_to_cart_request_value( array $request_keys ) {
+		foreach ( array_unique( $request_keys ) as $request_key ) {
+			if ( isset( $_REQUEST[ $request_key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				return $_REQUEST[ $request_key ]; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Set a WooCommerce add-to-cart attribute value across request bags.
+	 *
+	 * @param string $request_key Request key.
+	 * @param mixed  $value       Request value.
+	 *
+	 * @return void
+	 */
+	private function set_wc_add_to_cart_request_value( string $request_key, $value ): void {
+		if ( '' === $request_key || isset( $_REQUEST[ $request_key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return;
+		}
+
+		$_REQUEST[ $request_key ] = $value; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$_POST[ $request_key ]    = $value; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 	}
 
 	/**

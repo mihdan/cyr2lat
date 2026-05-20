@@ -4,7 +4,7 @@ Tags: transliteration, cyrillic, slugs, translation, multilingual
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 7.0.0
+Stable tag: 7.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,6 +57,8 @@ Version 7.0 is an architecture-focused release. It keeps the existing transliter
 Existing posts, pages, terms, filenames, and WooCommerce product data are not destructively rewritten during the plugin upgrade. Use the Converter page or `wp cyr2lat regenerate` when you intentionally want to regenerate existing post and term slugs.
 
 WooCommerce attributes created before 7.0 are not automatically migrated. Existing global `pa_*` taxonomies and existing local or variation attribute keys should be reviewed separately; any future migration must use a dedicated dry-run-first workflow.
+
+Cyr-To-Lat 7.0.1 keeps legacy WooCommerce local variation attributes, including `Any` variations, aligned between the product form, add-to-cart request, and cart session.
 
 == Frequently Asked Questions ==
 
@@ -137,6 +139,8 @@ add_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
 `
 
 The filter receives the current default value, `$title`, `$raw_title`, and `$context`. Explicit known contexts, such as WordPress save handling, continue to use the dedicated 7.0 slug paths.
+
+For debugging unknown bridge calls, define `CYR_TO_LAT_DEBUG_LEGACY_SANITIZE_TITLE_BRIDGE` as `true`. This diagnostic log is disabled by default and is not enabled by `WP_DEBUG`.
 
 = How can I define my own transliteration of filenames? =
 
@@ -263,6 +267,11 @@ When reporting a vulnerability, please include as much information as possible t
 We will review your report and respond as quickly as possible.
 
 == Changelog ==
+
+= 7.0.1 (20.05.2026) =
+* Changed legacy sanitize_title bridge diagnostics to use the dedicated CYR_TO_LAT_DEBUG_LEGACY_SANITIZE_TITLE_BRIDGE constant instead of WP_DEBUG.
+* Fixed legacy WooCommerce local variation attributes, including `Any` variations, after upgrading from versions before 7.0.
+* Fixed duplicate WooCommerce product slugs when an existing product is updated with an empty slug.
 
 = 7.0.0 (18.05.2026) =
 * Refactored slug handling into explicit services for posts, terms, filenames, WooCommerce attributes, variation attributes, background conversion, and WP-CLI paths.

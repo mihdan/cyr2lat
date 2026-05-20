@@ -66,4 +66,37 @@ class WooCommercePostSlugIntegrationTest extends WooCommerceWPTestCase {
 		$this->assertNotWPError( $post_id );
 		self::assertSame( 'j', get_post( $post_id )->post_name );
 	}
+
+	/**
+	 * Test that clearing a product slug during update does not add a duplicate suffix.
+	 *
+	 * @return void
+	 */
+	public function test_wp_update_post_with_empty_product_slug_keeps_slug_unique_against_itself(): void {
+		self::assertTrue( post_type_exists( 'product' ) );
+
+		$post_id = wp_insert_post(
+			[
+				'post_type'   => 'product',
+				'post_status' => 'publish',
+				'post_title'  => 'й',
+			],
+			true
+		);
+
+		$this->assertNotWPError( $post_id );
+		self::assertSame( 'j', get_post( $post_id )->post_name );
+
+		$updated = wp_update_post(
+			[
+				'ID'         => $post_id,
+				'post_title' => 'й',
+				'post_name'  => '',
+			],
+			true
+		);
+
+		$this->assertNotWPError( $updated );
+		self::assertSame( 'j', get_post( $post_id )->post_name );
+	}
 }

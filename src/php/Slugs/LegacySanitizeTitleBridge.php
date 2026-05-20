@@ -18,6 +18,11 @@ use CyrToLat\Main;
 class LegacySanitizeTitleBridge {
 
 	/**
+	 * Constant enabling diagnostic logs for unknown broad bridge calls.
+	 */
+	private const DEBUG_LOG_CONSTANT = 'CYR_TO_LAT_DEBUG_LEGACY_SANITIZE_TITLE_BRIDGE';
+
+	/**
 	 * Main plugin class.
 	 *
 	 * @var Main
@@ -98,15 +103,15 @@ class LegacySanitizeTitleBridge {
 	 * @return void
 	 */
 	private function maybe_log_unknown_call( string $title, $raw_title, $context ): void {
-		if ( ! ( defined( 'WP_DEBUG' ) && constant( 'WP_DEBUG' ) ) ) {
+		if ( ! ( defined( self::DEBUG_LOG_CONSTANT ) && constant( self::DEBUG_LOG_CONSTANT ) ) ) {
 			return;
 		}
 
 		$message = sprintf(
-			'Cyr To Lat legacy sanitize_title bridge handled an unknown call: context="%s", title_hash="%s", raw_title_hash="%s".',
+			'Cyr To Lat legacy sanitize_title bridge handled an unknown call: context="%s", title="%s", raw_title="%s".',
 			is_scalar( $context ) ? (string) $context : gettype( $context ),
-			md5( $title ),
-			md5( is_scalar( $raw_title ) ? (string) $raw_title : gettype( $raw_title ) )
+			$title,
+			is_scalar( $raw_title ) ? (string) $raw_title : gettype( $raw_title )
 		);
 
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log

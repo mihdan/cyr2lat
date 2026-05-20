@@ -18,7 +18,7 @@ Add development-only diagnostics for unknown broad `sanitize_title` bridge calls
 
 ## Scope
 
-- Add logging only when development/debug conditions are enabled.
+- Add logging only when the dedicated bridge debug constant is enabled.
 - Include enough context to identify unknown bridge calls without logging sensitive payloads unnecessarily.
 - Avoid logging for known explicit contexts already handled by dedicated services.
 - Add tests for the logger decision logic where practical.
@@ -26,7 +26,7 @@ Add development-only diagnostics for unknown broad `sanitize_title` bridge calls
 ## Acceptance criteria
 
 - Production behavior and output are unchanged.
-- Logging is disabled unless development/debug conditions are active.
+- Logging is disabled unless `CYR_TO_LAT_DEBUG_LEGACY_SANITIZE_TITLE_BRIDGE` is enabled.
 - Unknown broad bridge calls can be diagnosed from the log context.
 - Tests cover the logging gate or pure decision logic.
 

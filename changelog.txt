@@ -1,3 +1,8 @@
+= 7.0.1 (20.05.2026) =
+* Changed legacy sanitize_title bridge diagnostics to use the dedicated CYR_TO_LAT_DEBUG_LEGACY_SANITIZE_TITLE_BRIDGE constant instead of WP_DEBUG.
+* Fixed legacy WooCommerce local variation attributes, including `Any` variations, after upgrading from versions before 7.0.
+* Fixed duplicate WooCommerce product slugs when an existing product is updated with an empty slug.
+
 = 7.0.0 (18.05.2026) =
 * Refactored slug handling into explicit services for posts, terms, filenames, WooCommerce attributes, variation attributes, background conversion, and WP-CLI paths.
 * Improved Gutenberg coverage through REST/backend slug handling.

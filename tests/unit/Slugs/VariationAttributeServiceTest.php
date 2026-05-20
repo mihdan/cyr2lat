@@ -113,6 +113,55 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test normalize_available_variation_attributes().
+	 *
+	 * @return void
+	 */
+	public function test_normalize_available_variation_attributes_uses_legacy_raw_meta_value(): void {
+		$main = Mockery::mock( Main::class );
+		$main->shouldReceive( 'transliterate' )->andReturnUsing( [ $this, 'normalize_key' ] );
+
+		$variation = new class() {
+			/**
+			 * Get ID.
+			 *
+			 * @return int
+			 */
+			public function get_id(): int {
+				return 123;
+			}
+		};
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+			->with( 123 )
+			->andReturn(
+				[
+					'attribute_%d1%86%d0%b2%d0%b5%d1%82' => [ 'Красный' ],
+				]
+			);
+
+		$subject = new VariationAttributeService( $main );
+
+		$result = $subject->normalize_available_variation_attributes(
+			[
+				'attributes' => [
+					'attribute_%d1%86%d0%b2%d0%b5%d1%82' => '',
+				],
+			],
+			$variation
+		);
+
+		self::assertSame(
+			[
+				'attributes' => [
+					'attribute_czvet' => 'Красный',
+				],
+			],
+			$result
+		);
+	}
+
+	/**
 	 * Test is_saved_local_variation_attribute_name().
 	 *
 	 * @return void

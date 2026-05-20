@@ -73,6 +73,8 @@ curl -X POST https://site.test/wp-json/wp/v2/posts \
 
 ## WooCommerce
 
+Для upgrade-регрессии старых variable products с local attributes см. отдельный сценарий: [Cyr-To-Lat 7.0.1 Manual Test: Legacy WooCommerce Local Attributes](manual-test-7.0.1-woocommerce-legacy-local-attributes.md).
+
 | Статус | Что тестировать                         | Как тестировать                                                                   | Ожидаемый результат                                              |
 |--------|-----------------------------------------|-----------------------------------------------------------------------------------|------------------------------------------------------------------|
 | [ ]    | Simple product slug                     | Products -> Add New: title `Й`, Publish                                           | Product slug стал `j`                                            |
