@@ -58,6 +58,8 @@ Existing posts, pages, terms, filenames, and WooCommerce product data are not de
 
 WooCommerce attributes created before 7.0 are not automatically migrated. Existing global `pa_*` taxonomies and existing local or variation attribute keys should be reviewed separately; any future migration must use a dedicated dry-run-first workflow.
 
+Cyr-To-Lat 7.0.1 keeps legacy WooCommerce local variation attributes, including `Any` variations, aligned between the product form, add-to-cart request, and cart session.
+
 == Frequently Asked Questions ==
 
 = How can I define my own substitutions? =
@@ -267,8 +269,9 @@ We will review your report and respond as quickly as possible.
 == Changelog ==
 
 = 7.0.1 (20.05.2026) =
-* Fixed duplicate WooCommerce product slugs when an existing product is updated with an empty slug.
 * Changed legacy sanitize_title bridge diagnostics to use the dedicated CYR_TO_LAT_DEBUG_LEGACY_SANITIZE_TITLE_BRIDGE constant instead of WP_DEBUG.
+* Fixed legacy WooCommerce local variation attributes, including `Any` variations, after upgrading from versions before 7.0.
+* Fixed duplicate WooCommerce product slugs when an existing product is updated with an empty slug.
 
 = 7.0.0 (18.05.2026) =
 * Refactored slug handling into explicit services for posts, terms, filenames, WooCommerce attributes, variation attributes, background conversion, and WP-CLI paths.
