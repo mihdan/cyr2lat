@@ -64,7 +64,7 @@ class PostSlugService extends BaseService {
 		}
 
 		if ( $changed ) {
-			$data['post_name'] = $this->unique_post_slug( (string) $data['post_name'], $data );
+			$data['post_name'] = $this->unique_post_slug( (string) $data['post_name'], $data, $postarr );
 		}
 
 		return $data;
@@ -165,17 +165,18 @@ class PostSlugService extends BaseService {
 	 *
 	 * @param string $slug Slug.
 	 * @param array  $data Post data.
+	 * @param array  $postarr Original post array.
 	 *
 	 * @return string
 	 */
-	private function unique_post_slug( string $slug, array $data ): string {
+	private function unique_post_slug( string $slug, array $data, array $postarr = [] ): string {
 		if ( '' === $slug || ! function_exists( 'wp_unique_post_slug' ) ) {
 			return $slug;
 		}
 
 		return wp_unique_post_slug(
 			$slug,
-			(int) ( $data['ID'] ?? 0 ),
+			(int) ( $postarr['ID'] ?? $data['ID'] ?? 0 ),
 			(string) ( $data['post_status'] ?? '' ),
 			(string) ( $data['post_type'] ?? '' ),
 			(int) ( $data['post_parent'] ?? 0 )
