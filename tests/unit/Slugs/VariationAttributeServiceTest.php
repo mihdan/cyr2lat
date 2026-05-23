@@ -88,6 +88,7 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	public function test_normalized_local_variation_request_key(): void {
 		$main = Mockery::mock( Main::class );
 		$main->shouldReceive( 'transliterate' )->andReturnUsing( [ $this, 'normalize_key' ] );
+		$main->shouldReceive( 'sanitize_explicit_slug' )->andReturnUsing( [ $this, 'sanitize_key' ] );
 
 		$subject = new VariationAttributeService( $main );
 
@@ -103,6 +104,7 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	public function test_normalize_variation_attribute_key(): void {
 		$main = Mockery::mock( Main::class );
 		$main->shouldReceive( 'transliterate' )->andReturnUsing( [ $this, 'normalize_key' ] );
+		$main->shouldReceive( 'sanitize_explicit_slug' )->andReturnUsing( [ $this, 'sanitize_key' ] );
 
 		$subject = new VariationAttributeService( $main );
 
@@ -120,6 +122,7 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	public function test_normalize_available_variation_attributes_uses_legacy_raw_meta_value(): void {
 		$main = Mockery::mock( Main::class );
 		$main->shouldReceive( 'transliterate' )->andReturnUsing( [ $this, 'normalize_key' ] );
+		$main->shouldReceive( 'sanitize_explicit_slug' )->andReturnUsing( [ $this, 'sanitize_key' ] );
 
 		$variation = new class() {
 			/**
@@ -169,6 +172,7 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	public function test_normalize_read_variation_attributes_uses_legacy_raw_meta_value(): void {
 		$main = Mockery::mock( Main::class );
 		$main->shouldReceive( 'transliterate' )->andReturnUsing( [ $this, 'normalize_key' ] );
+		$main->shouldReceive( 'sanitize_explicit_slug' )->andReturnUsing( [ $this, 'sanitize_key' ] );
 
 		$variation = new class() {
 			/**
@@ -253,6 +257,7 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	public function test_normalize_read_variation_attribute_array_uses_legacy_raw_meta_value(): void {
 		$main = Mockery::mock( Main::class );
 		$main->shouldReceive( 'transliterate' )->andReturnUsing( [ $this, 'normalize_key' ] );
+		$main->shouldReceive( 'sanitize_explicit_slug' )->andReturnUsing( [ $this, 'sanitize_key' ] );
 
 		$variation = new class() {
 			/**
@@ -352,5 +357,16 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 				'е' => 'e',
 			]
 		);
+	}
+
+	/**
+	 * Sanitize key.
+	 *
+	 * @param string $key Key.
+	 *
+	 * @return string
+	 */
+	public function sanitize_key( string $key ): string {
+		return strtolower( preg_replace( '/[^a-zA-Z0-9_-]+/', '', $this->normalize_key( rawurldecode( $key ) ) ) );
 	}
 }
