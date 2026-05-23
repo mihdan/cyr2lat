@@ -268,6 +268,8 @@ We will review your report and respond as quickly as possible.
 
 == Changelog ==
 
+= 7.0.2 (23.05.2026) =
+
 = 7.0.1 (20.05.2026) =
 * Changed legacy sanitize_title bridge diagnostics to use the dedicated CYR_TO_LAT_DEBUG_LEGACY_SANITIZE_TITLE_BRIDGE constant instead of WP_DEBUG.
 * Fixed legacy WooCommerce local variation attributes, including `Any` variations, after upgrading from versions before 7.0.
