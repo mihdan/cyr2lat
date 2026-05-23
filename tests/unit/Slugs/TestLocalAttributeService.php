@@ -172,12 +172,14 @@ class TestLocalAttributeService extends LocalAttributeService {
 		return strtr(
 			$key,
 			[
+				'А' => 'A',
 				'Р' => 'R',
 				'р' => 'r',
 				'а' => 'a',
 				'з' => 'z',
 				'м' => 'm',
 				'е' => 'e',
+				'т' => 't',
 			]
 		);
 	}

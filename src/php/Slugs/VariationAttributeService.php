@@ -137,6 +137,21 @@ class VariationAttributeService {
 	}
 
 	/**
+	 * Normalize local variation attribute keys and values after reading persisted data.
+	 *
+	 * @param object $variation  Variation.
+	 * @param array  $attributes Attributes.
+	 *
+	 * @return array
+	 */
+	public function normalize_read_variation_attribute_array( object $variation, array $attributes ): array {
+		return $this->normalize_read_variation_attribute_array_with_meta(
+			$attributes,
+			$this->raw_variation_attribute_meta( $variation )
+		);
+	}
+
+	/**
 	 * Normalize local variation attribute keys on a WooCommerce variation object.
 	 *
 	 * @param object $variation    Variation.
@@ -159,11 +174,15 @@ class VariationAttributeService {
 			return false;
 		}
 
-		$normalized_attributes = $this->normalize_variation_attribute_array( $attributes );
+		$raw_attribute_meta    = $mark_changes ? [] : $this->raw_variation_attribute_meta( $variation );
+		$normalized_attributes = $mark_changes
+			? $this->normalize_variation_attribute_array( $attributes )
+			: $this->normalize_read_variation_attribute_array_with_meta( $attributes, $raw_attribute_meta );
 		$changed               = false;
 
-		foreach ( array_keys( $attributes ) as $attribute_key ) {
-			$changed = $changed || ! array_key_exists( $attribute_key, $normalized_attributes );
+		foreach ( $attributes as $attribute_key => $attribute_value ) {
+			$normalized_key = $this->normalize_variation_attribute_key( (string) $attribute_key );
+			$changed        = $changed || ! array_key_exists( $attribute_key, $normalized_attributes ) || $normalized_attributes[ $normalized_key ] !== $attribute_value;
 		}
 
 		if ( ! $changed ) {
@@ -171,6 +190,40 @@ class VariationAttributeService {
 		}
 
 		return $this->set_variation_attributes_prop( $variation, $normalized_attributes, $mark_changes );
+	}
+
+	/**
+	 * Normalize local variation attribute keys and values using raw meta.
+	 *
+	 * @param array $attributes         Attributes.
+	 * @param array $raw_attribute_meta Raw attribute meta.
+	 *
+	 * @return array
+	 */
+	private function normalize_read_variation_attribute_array_with_meta( array $attributes, array $raw_attribute_meta ): array {
+		$normalized_attributes = [];
+
+		foreach ( $attributes as $attribute_key => $attribute_value ) {
+			$normalized_key   = $this->normalize_variation_attribute_key( (string) $attribute_key );
+			$normalized_value = '' === $attribute_value
+				? $this->matching_raw_variation_attribute_value(
+					$this->normalized_local_variation_request_key( $normalized_key ),
+					$raw_attribute_meta
+				)
+				: $attribute_value;
+
+			if (
+				isset( $normalized_attributes[ $normalized_key ] ) &&
+				'' !== $normalized_attributes[ $normalized_key ] &&
+				'' === $normalized_value
+			) {
+				continue;
+			}
+
+			$normalized_attributes[ $normalized_key ] = $normalized_value;
+		}
+
+		return $normalized_attributes;
 	}
 
 	/**
@@ -230,7 +283,7 @@ class VariationAttributeService {
 			return $attribute_key;
 		}
 
-		return strtolower( $this->main->transliterate( $attribute_key ) );
+		return $this->main->sanitize_explicit_slug( $attribute_key );
 	}
 
 	/**

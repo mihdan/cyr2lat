@@ -162,6 +162,131 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test normalize_read_variation_attributes().
+	 *
+	 * @return void
+	 */
+	public function test_normalize_read_variation_attributes_uses_legacy_raw_meta_value(): void {
+		$main = Mockery::mock( Main::class );
+		$main->shouldReceive( 'transliterate' )->andReturnUsing( [ $this, 'normalize_key' ] );
+
+		$variation = new class() {
+			/**
+			 * Data.
+			 *
+			 * @var array
+			 */
+			private array $data = [
+				'attributes' => [
+					'czvet' => '',
+				],
+			];
+
+			/**
+			 * Changes.
+			 *
+			 * @var array
+			 */
+			private array $changes = [
+				'attributes' => [
+					'czvet' => '',
+				],
+			];
+
+			/**
+			 * Get ID.
+			 *
+			 * @return int
+			 */
+			public function get_id(): int {
+				return 123;
+			}
+
+			/**
+			 * Get type.
+			 *
+			 * @return string
+			 */
+			public function get_type(): string {
+				return 'variation';
+			}
+
+			/**
+			 * Get attributes.
+			 *
+			 * @return array
+			 */
+			public function get_attributes(): array {
+				return $this->data['attributes'];
+			}
+
+			/**
+			 * Get changes.
+			 *
+			 * @return array
+			 */
+			public function get_changes(): array {
+				return $this->changes;
+			}
+		};
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+			->with( 123 )
+			->andReturn(
+				[
+					'attribute_%d1%86%d0%b2%d0%b5%d1%82' => [ 'Красный' ],
+				]
+			);
+
+		$subject = new VariationAttributeService( $main );
+
+		self::assertTrue( $subject->normalize_read_variation_attributes( $variation ) );
+		self::assertSame( [ 'czvet' => 'Красный' ], $variation->get_attributes() );
+		self::assertSame( [], $variation->get_changes() );
+	}
+
+	/**
+	 * Test normalize_read_variation_attribute_array().
+	 *
+	 * @return void
+	 */
+	public function test_normalize_read_variation_attribute_array_uses_legacy_raw_meta_value(): void {
+		$main = Mockery::mock( Main::class );
+		$main->shouldReceive( 'transliterate' )->andReturnUsing( [ $this, 'normalize_key' ] );
+
+		$variation = new class() {
+			/**
+			 * Get ID.
+			 *
+			 * @return int
+			 */
+			public function get_id(): int {
+				return 5954;
+			}
+		};
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+			->with( 5954 )
+			->andReturn(
+				[
+					'attribute_%d0%b0%d1%80%d1%82' => [ '00074-1' ],
+				]
+			);
+
+		$subject = new VariationAttributeService( $main );
+
+		self::assertSame(
+			[ 'art' => '00074-1' ],
+			$subject->normalize_read_variation_attribute_array(
+				$variation,
+				[
+					'art' => '',
+				]
+			)
+		);
+	}
+
+	/**
 	 * Test is_saved_local_variation_attribute_name().
 	 *
 	 * @return void
@@ -218,11 +343,13 @@ class VariationAttributeServiceTest extends CyrToLatTestCase {
 		return strtr(
 			$key,
 			[
+				'а' => 'a',
+				'р' => 'r',
+				'т' => 't',
 				'Ц' => 'CZ',
 				'ц' => 'cz',
 				'в' => 'v',
 				'е' => 'e',
-				'т' => 't',
 			]
 		);
 	}

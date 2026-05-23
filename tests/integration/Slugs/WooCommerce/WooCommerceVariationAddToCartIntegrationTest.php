@@ -171,10 +171,65 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 		];
 
 		self::assertSame( [ $legacy_key => '00074-1' ], $variation->get_attributes( 'edit' ) );
-		self::assertSame( $legacy_key, sanitize_title( 'Цвет' ) );
-		self::assertSame( '00074-1', $variation->get_attributes( 'edit' )[ sanitize_title( 'Цвет' ) ] );
+		self::assertSame( 'czvet', sanitize_title( 'Цвет' ) );
+
+		$queried_variation = wc_get_products(
+			[
+				'status' => [ 'private', 'publish' ],
+				'type'   => 'variation',
+				'parent' => $product_id,
+				'limit'  => 1,
+				'return' => 'objects',
+			]
+		)[0];
+
+		self::assertSame( '00074-1', $queried_variation->get_attributes( 'edit' )[ sanitize_title( 'Цвет' ) ] );
 		self::assertSame( '00074-1', get_post_meta( $variation_id, 'attribute_' . $legacy_key, true ) );
 		self::assertSame( '', get_post_meta( $variation_id, 'attribute_czvet', true ) );
+	}
+
+	/**
+	 * Test legacy encoded local attributes with punctuation keep frontend and admin keys aligned.
+	 *
+	 * @return void
+	 */
+	public function test_legacy_encoded_punctuated_attribute_keeps_frontend_and_admin_keys_aligned(): void {
+		$legacy_key = strtolower( rawurlencode( 'арт' ) );
+
+		[ $product_id, $variation_id ] = $this->create_legacy_encoded_variable_product_with_cyrillic_local_attribute(
+			'00074-1',
+			'Арт.',
+			[ '00074-1', '00074-2', '00074-3' ],
+			$legacy_key
+		);
+
+		$request_key = $this->get_rendered_variation_attribute_request_key( $product_id );
+		$product     = new WC_Product_Variable( $product_id );
+		$variations  = $product->get_available_variations();
+
+		$_POST = [
+			'action'     => 'woocommerce_load_variations',
+			'product_id' => (string) $product_id,
+		];
+
+		self::assertSame( 'attribute_art', $request_key );
+		self::assertNotEmpty( $variations );
+		self::assertSame( '00074-1', $variations[0]['attributes'][ $request_key ] );
+		self::assertSame( 'art', sanitize_title( 'Арт.' ) );
+
+		$queried_variation = wc_get_products(
+			[
+				'status' => [ 'private', 'publish' ],
+				'type'   => 'variation',
+				'parent' => $product_id,
+				'limit'  => 1,
+				'return' => 'objects',
+			]
+		)[0];
+
+		self::assertSame( '00074-1', $queried_variation->get_attributes( 'edit' )[ sanitize_title( 'Арт.' ) ] );
+		self::assertSame( '00074-1', get_post_meta( $variation_id, 'attribute_' . $legacy_key, true ) );
+		self::assertSame( '', get_post_meta( $variation_id, 'attribute_art', true ) );
 	}
 
 	/**
@@ -285,20 +340,28 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 	/**
 	 * Create a variable product with legacy URL-encoded local attribute metadata.
 	 *
-	 * @param string $variation_value Variation attribute value.
+	 * @param string      $variation_value Variation attribute value.
+	 * @param string      $attribute_name  Attribute display name.
+	 * @param string[]    $options         Attribute options.
+	 * @param string|null $legacy_key      Legacy encoded attribute key.
 	 *
 	 * @return array{int, int}
 	 */
-	private function create_legacy_encoded_variable_product_with_cyrillic_local_attribute( string $variation_value = 'Красный' ): array {
+	private function create_legacy_encoded_variable_product_with_cyrillic_local_attribute(
+		string $variation_value = 'Красный',
+		string $attribute_name = 'Цвет',
+		array $options = [ 'Красный', 'Синий' ],
+		?string $legacy_key = null
+	): array {
 		$product = new WC_Product_Variable();
 		$product->set_name( 'Legacy variable local attribute product' );
 		$product->set_status( 'publish' );
 
 		$product_id = $product->save();
-		$legacy_key = strtolower( rawurlencode( 'цвет' ) );
+		$legacy_key = $legacy_key ?? strtolower( rawurlencode( 'цвет' ) );
 		$attribute  = [
-			'name'         => 'Цвет',
-			'value'        => 'Красный | Синий',
+			'name'         => $attribute_name,
+			'value'        => implode( ' | ', $options ),
 			'position'     => 0,
 			'is_visible'   => 1,
 			'is_variation' => 1,

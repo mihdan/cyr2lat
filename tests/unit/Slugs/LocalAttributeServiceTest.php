@@ -140,4 +140,144 @@ class LocalAttributeServiceTest extends CyrToLatTestCase {
 
 		self::assertTrue( $subject->is_local_attribute( 'Размер' ) );
 	}
+
+	/**
+	 * Test normalize_product_attribute_array() prefers a legacy stored key over a display name.
+	 *
+	 * @return void
+	 */
+	public function test_normalize_product_attribute_array_prefers_legacy_stored_key(): void {
+		$subject = new TestLocalAttributeService();
+
+		$attribute = new class() {
+			/**
+			 * Check if attribute is a taxonomy.
+			 *
+			 * @return bool
+			 */
+			public function is_taxonomy(): bool {
+				return false;
+			}
+
+			/**
+			 * Get name.
+			 *
+			 * @return string
+			 */
+			public function get_name(): string {
+				return 'Арт.';
+			}
+		};
+
+		self::assertSame(
+			[ 'art' => $attribute ],
+			$subject->normalize_product_attribute_array(
+				[
+					'%d0%b0%d1%80%d1%82' => $attribute,
+				]
+			)
+		);
+	}
+
+	/**
+	 * Test normalize_read_product_attributes() restores a legacy stored key lost by WooCommerce read.
+	 *
+	 * @return void
+	 */
+	public function test_normalize_read_product_attributes_restores_legacy_stored_key(): void {
+		$subject = new TestLocalAttributeService();
+
+		$attribute = new class() {
+			/**
+			 * Check if attribute is a taxonomy.
+			 *
+			 * @return bool
+			 */
+			public function is_taxonomy(): bool {
+				return false;
+			}
+
+			/**
+			 * Get name.
+			 *
+			 * @return string
+			 */
+			public function get_name(): string {
+				return 'Арт.';
+			}
+		};
+
+		$product = new class( $attribute ) {
+			/**
+			 * Data.
+			 *
+			 * @var array
+			 */
+			private array $data;
+
+			/**
+			 * Changes.
+			 *
+			 * @var array
+			 */
+			private array $changes = [
+				'attributes' => [],
+			];
+
+			/**
+			 * Constructor.
+			 *
+			 * @param object $attribute Attribute.
+			 */
+			public function __construct( object $attribute ) {
+				$this->data = [
+					'attributes' => [
+						'art.' => $attribute,
+					],
+				];
+			}
+
+			/**
+			 * Get ID.
+			 *
+			 * @return int
+			 */
+			public function get_id(): int {
+				return 5953;
+			}
+
+			/**
+			 * Get attributes.
+			 *
+			 * @return array
+			 */
+			public function get_attributes(): array {
+				return $this->data['attributes'];
+			}
+
+			/**
+			 * Get changes.
+			 *
+			 * @return array
+			 */
+			public function get_changes(): array {
+				return $this->changes;
+			}
+		};
+
+		\WP_Mock::userFunction( 'get_post_meta' )
+			->with( 5953, '_product_attributes', true )
+			->andReturn(
+				[
+					'%d0%b0%d1%80%d1%82' => [
+						'name'        => 'Арт.',
+						'is_taxonomy' => 0,
+					],
+				]
+			);
+
+		self::assertTrue( $subject->normalize_read_product_attributes( $product ) );
+		self::assertSame( [ 'art' => $attribute ], $product->get_attributes() );
+		self::assertSame( [], $product->get_changes() );
+	}
 }
