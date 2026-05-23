@@ -424,6 +424,7 @@ class Main {
 	 */
 	public function normalize_wc_read_product_attribute_keys( int $product_id, object $product ): void {
 		$this->local_attribute_service()->normalize_read_product_attributes( $product );
+		$this->variation_attribute_service()->normalize_read_variation_attributes( $product );
 	}
 
 	/**

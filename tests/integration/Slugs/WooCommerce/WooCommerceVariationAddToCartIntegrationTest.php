@@ -156,6 +156,28 @@ class WooCommerceVariationAddToCartIntegrationTest extends WooCommerceWPTestCase
 	}
 
 	/**
+	 * Test legacy encoded variation attributes keep admin variation row values selected.
+	 *
+	 * @return void
+	 */
+	public function test_legacy_encoded_variation_attribute_values_stay_selected_in_admin_variation_rows(): void {
+		[ $product_id, $variation_id ] = $this->create_legacy_encoded_variable_product_with_cyrillic_local_attribute( '00074-1' );
+		$variation                     = new WC_Product_Variation( $variation_id );
+		$legacy_key                    = strtolower( rawurlencode( 'цвет' ) );
+
+		$_POST = [
+			'action'     => 'woocommerce_load_variations',
+			'product_id' => (string) $product_id,
+		];
+
+		self::assertSame( [ $legacy_key => '00074-1' ], $variation->get_attributes( 'edit' ) );
+		self::assertSame( $legacy_key, sanitize_title( 'Цвет' ) );
+		self::assertSame( '00074-1', $variation->get_attributes( 'edit' )[ sanitize_title( 'Цвет' ) ] );
+		self::assertSame( '00074-1', get_post_meta( $variation_id, 'attribute_' . $legacy_key, true ) );
+		self::assertSame( '', get_post_meta( $variation_id, 'attribute_czvet', true ) );
+	}
+
+	/**
 	 * Test legacy encoded any variation survives cart session reload.
 	 *
 	 * @return void

@@ -101,6 +101,50 @@ class VariationAttributeService {
 	 * @return bool
 	 */
 	public function normalize_variation_attributes( object $variation ): bool {
+		return $this->normalize_variation_attributes_prop( $variation, true );
+	}
+
+	/**
+	 * Normalize local variation attribute keys after reading persisted data.
+	 *
+	 * @param object $variation Variation.
+	 *
+	 * @return bool
+	 */
+	public function normalize_read_variation_attributes( object $variation ): bool {
+		return $this->normalize_variation_attributes_prop( $variation, false );
+	}
+
+	/**
+	 * Normalize local variation attribute keys in an attribute array.
+	 *
+	 * @param array $attributes Attributes.
+	 *
+	 * @return array
+	 */
+	public function normalize_variation_attribute_array( array $attributes ): array {
+		if ( [] === $attributes ) {
+			return $attributes;
+		}
+
+		$normalized_attributes = [];
+
+		foreach ( $attributes as $attribute_key => $attribute_value ) {
+			$normalized_attributes[ $this->normalize_variation_attribute_key( (string) $attribute_key ) ] = $attribute_value;
+		}
+
+		return $normalized_attributes;
+	}
+
+	/**
+	 * Normalize local variation attribute keys on a WooCommerce variation object.
+	 *
+	 * @param object $variation    Variation.
+	 * @param bool   $mark_changes Whether the object should be marked as changed.
+	 *
+	 * @return bool
+	 */
+	private function normalize_variation_attributes_prop( object $variation, bool $mark_changes ): bool {
 		if ( ! is_object( $variation ) || ! method_exists( $variation, 'get_attributes' ) ) {
 			return false;
 		}
@@ -115,20 +159,18 @@ class VariationAttributeService {
 			return false;
 		}
 
-		$normalized_attributes = [];
+		$normalized_attributes = $this->normalize_variation_attribute_array( $attributes );
 		$changed               = false;
 
-		foreach ( $attributes as $attribute_key => $attribute_value ) {
-			$normalized_key                           = $this->normalize_variation_attribute_key( (string) $attribute_key );
-			$normalized_attributes[ $normalized_key ] = $attribute_value;
-			$changed                                  = $changed || $normalized_key !== $attribute_key;
+		foreach ( array_keys( $attributes ) as $attribute_key ) {
+			$changed = $changed || ! array_key_exists( $attribute_key, $normalized_attributes );
 		}
 
 		if ( ! $changed ) {
 			return false;
 		}
 
-		return $this->set_variation_attributes_prop( $variation, $normalized_attributes );
+		return $this->set_variation_attributes_prop( $variation, $normalized_attributes, $mark_changes );
 	}
 
 	/**
@@ -291,14 +333,25 @@ class VariationAttributeService {
 	/**
 	 * Set normalized variation attributes without calling WooCommerce's set_attributes().
 	 *
-	 * @param object $variation  Variation.
-	 * @param array  $attributes Attributes.
+	 * @param object $variation    Variation.
+	 * @param array  $attributes   Attributes.
+	 * @param bool   $mark_changes Whether the object should be marked as changed.
 	 *
 	 * @return bool
 	 */
-	private function set_variation_attributes_prop( object $variation, array $attributes ): bool {
-		$setter = function ( array $attributes_to_set ): void {
-			$this->set_prop( 'attributes', $attributes_to_set );
+	private function set_variation_attributes_prop( object $variation, array $attributes, bool $mark_changes = true ): bool {
+		$setter = function ( array $attributes_to_set, bool $should_mark_changes ): void {
+			if ( $should_mark_changes ) {
+				$this->set_prop( 'attributes', $attributes_to_set );
+
+				return;
+			}
+
+			$this->data['attributes'] = $attributes_to_set;
+
+			if ( isset( $this->changes['attributes'] ) ) {
+				unset( $this->changes['attributes'] );
+			}
 		};
 
 		$setter = $setter->bindTo( $variation, get_class( $variation ) );
@@ -307,7 +360,7 @@ class VariationAttributeService {
 			return false;
 		}
 
-		$setter( $attributes );
+		$setter( $attributes, $mark_changes );
 
 		return true;
 	}

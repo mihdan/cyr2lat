@@ -112,6 +112,12 @@ class LocalAttributeService {
 			return null;
 		}
 
+		$saved_admin_variation_key = $this->saved_local_variation_attribute_key_for_admin_variation( $decoded );
+
+		if ( null !== $saved_admin_variation_key ) {
+			return $saved_admin_variation_key;
+		}
+
 		if ( ! $this->is_local_attribute( $decoded ) && ! $this->is_saved_variation_product_attribute_name( $decoded ) ) {
 			return null;
 		}
@@ -410,6 +416,50 @@ class LocalAttributeService {
 		}
 
 		return $this->variation_attribute_service->is_saved_local_variation_attribute_name( $title, $product_id );
+	}
+
+	/**
+	 * Return a saved local variation attribute key while WooCommerce renders admin variation rows.
+	 *
+	 * WooCommerce matches variation row dropdown values with
+	 * sanitize_title( $attribute->get_name() ). Old products can keep URL-encoded
+	 * local attribute keys in meta, so returning the persisted key keeps existing
+	 * variation values selected without migrating data during render.
+	 *
+	 * @param string $title Attribute display title.
+	 *
+	 * @return string|null
+	 */
+	private function saved_local_variation_attribute_key_for_admin_variation( string $title ): ?string {
+		$action = $this->post_value( 'action', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+		if ( 'woocommerce_load_variations' !== $action ) {
+			return null;
+		}
+
+		$product_id = (int) $this->post_value( 'product_id', FILTER_SANITIZE_NUMBER_INT );
+
+		if ( $product_id <= 0 ) {
+			return null;
+		}
+
+		$attributes = get_post_meta( $product_id, '_product_attributes', true );
+
+		if ( ! is_array( $attributes ) ) {
+			return null;
+		}
+
+		foreach ( $attributes as $attribute_key => $attribute ) {
+			if ( ! is_array( $attribute ) || ! empty( $attribute['is_taxonomy'] ) || empty( $attribute['is_variation'] ) ) {
+				continue;
+			}
+
+			if ( rawurldecode( (string) ( $attribute['name'] ?? '' ) ) === $title ) {
+				return (string) $attribute_key;
+			}
+		}
+
+		return null;
 	}
 
 	/**
