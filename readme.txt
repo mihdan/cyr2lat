@@ -4,7 +4,7 @@ Tags: transliteration, cyrillic, slugs, translation, multilingual
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 7.0.1
+Stable tag: 7.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -268,6 +268,9 @@ We will review your report and respond as quickly as possible.
 
 == Changelog ==
 
+= 7.0.2 (24.05.2026) =
+* Fixed legacy WooCommerce local variation attributes with punctuation in attribute names after upgrading from versions before 7.0.
+
 = 7.0.1 (20.05.2026) =
 * Changed legacy sanitize_title bridge diagnostics to use the dedicated CYR_TO_LAT_DEBUG_LEGACY_SANITIZE_TITLE_BRIDGE constant instead of WP_DEBUG.
 * Fixed legacy WooCommerce local variation attributes, including `Any` variations, after upgrading from versions before 7.0.
@@ -280,102 +283,5 @@ We will review your report and respond as quickly as possible.
 * Added the `ctl_enable_legacy_sanitize_title_bridge` compatibility filter for broad legacy `sanitize_title` behavior.
 * Documented that existing WooCommerce attributes are not automatically migrated in 7.0; future migration work must be a separate dry-run-first workflow.
 * Documented the backend-first testing strategy without required Codeception or Playwright release dependencies.
-
-= 6.8.0 (10.05.2026) =
-* Fixed returning unexpected results by REST API in some cases.
-* Fixed import of WooCommerce products.
-* Fixed transliteration of product categories, brands, and tags.
-
-= 6.7.0 (01.04.2026) =
-* The minimum required PHP version is now 7.4.
-* The minimum required WordPress version is now 6.0.
-* Fixed a fatal error occurred with WP-CLI in a rare case.
-* Fixed transliteration of WC local attributes.
-* Tested with WordPress 7.0.
-
-= 6.6.0 (30.11.2025) =
-* Fixed the deprecated function message in Main.php with WordPress 6.9.
-* Tested with PHP 8.4.
-* Tested with WordPress 6.9.
-* Tested with WooCommerce 10.3.
-
-= 6.5.0 (24.10.2025) =
-* Fixed transliteration of tags during editing.
-
-= 6.4.1 (03.05.2025) =
-* Fixed the layout of messages on the Tables page.
-* Tested with WordPress 6.8.
-* Tested with WooCommerce 9.8.
-
-= 6.3.0 (22.12.2024) =
-* Added a warning message on the Tables page when the active table does not match the site locale.
-* Removed fix for translation after WordPress 6.5+ due to performance issues.
-
-= 6.2.3 (24.11.2024) =
-* Fixed the deprecation error with PHP 8.4.
-* Tested with PHP 8.4.
-
-= 6.2.2 (15.11.2024) =
-* Fixed _load_textdomain_just_in_time notice with WordPress 6.7.
-* Some translations were empty with WordPress 6.5+.
-
-= 6.2.1 (13.11.2024) =
-* Fixed the layout of the Converter page.
-* Fixed issues reported by Plugin Check Plugin.
-
-= 6.2.0 (13.11.2024) =
-* Dropped support for PHP 7.0 and 7.1. The minimum required PHP version is now 7.2.
-* The minimum required WordPress version is now 5.3.
-* Fixed the notice about the _load_textdomain_just_in_time function being called incorrectly.
-* Tested with WordPress 6.7.
-* Tested with WooCommerce 9.4.
-
-= 6.1.0 (09.03.2024) =
-* Tested with WordPress 6.5.
-* Tested with WooCommerce 8.6.
-* Fixed the error on the System Info tab when post types or post statuses are not set.
-
-= 6.0.8 (14.02.2024) =
-* Improved detection of the Gutenberg editor.
-* Fixed processing of product attributes.
-
-= 6.0.7 (11.02.2024) =
-* Tested with WooCommerce 8.5.
-* Added redirect from the cyrillic post title when creating a new post.
-* Added description of post types and post statuses on the Converter page.
-* Fixed displaying all file descriptions in the Theme Editor in the current locale.
-* Fixed PHP warning in the SettingsBase.
-* Fixed the output of variable product attributes.
-
-= 6.0.6 (14.01.2024) =
-* Tested with WordPress 6.4.
-* Tested with WooCommerce 8.4.
-* Tested with PHP 8.3.
-* Fixed documentation on ctl_allow filter.
-* Fixed the improper display of the "rate plugin" message on options.php.
-
-= 6.0.5 (09.10.2023) =
-* Fixed displaying file descriptions in the Theme Editor; now in the current locale.
-
-= 6.0.4 (23.09.2023) =
-* Fixed disappeared file descriptions on the Theme File Editor page.
-
-= 6.0.3 (29.07.2023) =
-* Fixed the fatal error with Jetpack sync.
-
-= 6.0.2 (26.07.2023) =
-* Fixed the fatal error in admin_footer_text().
-
-= 6.0.1 (26.07.2023) =
-* Fixed the fatal error on the System Info page with empty options.
-
-= 6.0.0 (26.07.2023) =
-* Dropped support of PHP 5.6. The Minimum required PHP version is 7.0 now.
-* Tested with WordPress 6.3.
-* Tested with WooCommerce 7.9.
-* Added System Info tab.
-* Added filter 'ctl_allow'
-* Fixed the console error when saving table data.
-* Fixed the current table setting on the Tables page with WPML.
 
 [See changelog for all versions](https://plugins.svn.wordpress.org/cyr2lat/trunk/changelog.txt).

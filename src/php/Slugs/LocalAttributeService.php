@@ -112,11 +112,17 @@ class LocalAttributeService {
 			return null;
 		}
 
+		$saved_admin_variation_key = $this->saved_local_variation_attribute_key_for_admin_variation( $decoded );
+
+		if ( null !== $saved_admin_variation_key ) {
+			return $saved_admin_variation_key;
+		}
+
 		if ( ! $this->is_local_attribute( $decoded ) && ! $this->is_saved_variation_product_attribute_name( $decoded ) ) {
 			return null;
 		}
 
-		return strtolower( $this->main->transliterate( $decoded ) );
+		return $this->main->sanitize_explicit_slug( $decoded );
 	}
 
 	/**
@@ -181,7 +187,9 @@ class LocalAttributeService {
 			return false;
 		}
 
-		$normalized_attributes = $this->normalize_product_attribute_array( $attributes );
+		$normalized_attributes = $mark_changes
+			? $this->normalize_product_attribute_array( $attributes )
+			: $this->normalize_read_product_attribute_array( $product, $attributes );
 		$changed               = false;
 
 		foreach ( array_keys( $attributes ) as $attribute_key ) {
@@ -254,13 +262,118 @@ class LocalAttributeService {
 			return $attribute_key;
 		}
 
+		$legacy_key = $this->normalize_legacy_product_attribute_key( $attribute_key );
+
+		if ( null !== $legacy_key ) {
+			return $legacy_key;
+		}
+
 		$name = rawurldecode( (string) $attribute->get_name() );
 
 		if ( '' === $name ) {
 			return $attribute_key;
 		}
 
-		return strtolower( $this->main->transliterate( $name ) );
+		return $this->main->sanitize_explicit_slug( $name );
+	}
+
+	/**
+	 * Normalize product attribute keys after reading persisted product data.
+	 *
+	 * @param object $product    Product.
+	 * @param array  $attributes Attributes.
+	 *
+	 * @return array
+	 */
+	public function normalize_read_product_attribute_array( object $product, array $attributes ): array {
+		if ( [] === $attributes ) {
+			return $attributes;
+		}
+
+		$legacy_keys           = $this->legacy_product_attribute_keys_by_name( $product );
+		$normalized_attributes = [];
+
+		foreach ( $attributes as $attribute_key => $attribute ) {
+			$normalized_attributes[ $this->normalize_read_product_attribute_key( (string) $attribute_key, $attribute, $legacy_keys ) ] = $attribute;
+		}
+
+		return $normalized_attributes;
+	}
+
+	/**
+	 * Normalize a read product attribute key.
+	 *
+	 * @param string $attribute_key Attribute key.
+	 * @param mixed  $attribute     Attribute.
+	 * @param array  $legacy_keys   Legacy keys indexed by attribute display names.
+	 *
+	 * @return string
+	 */
+	private function normalize_read_product_attribute_key( string $attribute_key, $attribute, array $legacy_keys ): string {
+		if ( ! is_object( $attribute ) || ! method_exists( $attribute, 'is_taxonomy' ) || ! method_exists( $attribute, 'get_name' ) ) {
+			return $attribute_key;
+		}
+
+		if ( $attribute->is_taxonomy() ) {
+			return $attribute_key;
+		}
+
+		$name = rawurldecode( (string) $attribute->get_name() );
+
+		if ( isset( $legacy_keys[ $name ] ) ) {
+			return $legacy_keys[ $name ];
+		}
+
+		return $this->normalize_product_attribute_key( $attribute_key, $attribute );
+	}
+
+	/**
+	 * Get normalized legacy product attribute keys indexed by display names.
+	 *
+	 * @param object $product Product.
+	 *
+	 * @return array
+	 */
+	private function legacy_product_attribute_keys_by_name( object $product ): array {
+		if ( ! method_exists( $product, 'get_id' ) ) {
+			return [];
+		}
+
+		$product_id = (int) $product->get_id();
+
+		if ( $product_id <= 0 ) {
+			return [];
+		}
+
+		$attributes = get_post_meta( $product_id, '_product_attributes', true );
+
+		if ( ! is_array( $attributes ) || [] === $attributes ) {
+			return [];
+		}
+
+		$legacy_keys = [];
+
+		foreach ( $attributes as $attribute_key => $attribute ) {
+			if ( ! is_array( $attribute ) || ! empty( $attribute['is_taxonomy'] ) ) {
+				continue;
+			}
+
+			$legacy_key = $this->normalize_legacy_product_attribute_key( (string) $attribute_key );
+
+			if ( null === $legacy_key ) {
+				continue;
+			}
+
+			$name = rawurldecode( (string) ( $attribute['name'] ?? '' ) );
+
+			if ( '' === $name ) {
+				continue;
+			}
+
+			$legacy_keys[ $name ] = $legacy_key;
+		}
+
+		return $legacy_keys;
 	}
 
 	/**
@@ -276,13 +389,36 @@ class LocalAttributeService {
 			return $attribute_key;
 		}
 
+		$legacy_key = $this->normalize_legacy_product_attribute_key( $attribute_key );
+
+		if ( null !== $legacy_key ) {
+			return $legacy_key;
+		}
+
 		$name = rawurldecode( (string) ( $attribute['name'] ?? '' ) );
 
 		if ( '' === $name ) {
 			return $attribute_key;
 		}
 
-		return strtolower( $this->main->transliterate( $name ) );
+		return $this->main->sanitize_explicit_slug( $name );
+	}
+
+	/**
+	 * Normalize a legacy product attribute key.
+	 *
+	 * @param string $attribute_key Attribute key.
+	 *
+	 * @return string|null
+	 */
+	private function normalize_legacy_product_attribute_key( string $attribute_key ): ?string {
+		$decoded_key = rawurldecode( $attribute_key );
+
+		if ( '' === $decoded_key || ! $this->has_non_ascii_chars( $decoded_key ) ) {
+			return null;
+		}
+
+		return $this->main->sanitize_explicit_slug( $decoded_key );
 	}
 
 	/**
@@ -410,6 +546,50 @@ class LocalAttributeService {
 		}
 
 		return $this->variation_attribute_service->is_saved_local_variation_attribute_name( $title, $product_id );
+	}
+
+	/**
+	 * Return a saved local variation attribute key while WooCommerce renders admin variation rows.
+	 *
+	 * WooCommerce matches variation row dropdown values with
+	 * sanitize_title( $attribute->get_name() ). Old products can keep URL-encoded
+	 * local attribute keys in meta, so returning the persisted key keeps existing
+	 * variation values selected without migrating data during render.
+	 *
+	 * @param string $title Attribute display title.
+	 *
+	 * @return string|null
+	 */
+	private function saved_local_variation_attribute_key_for_admin_variation( string $title ): ?string {
+		$action = $this->post_value( 'action', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+		if ( 'woocommerce_load_variations' !== $action ) {
+			return null;
+		}
+
+		$product_id = (int) $this->post_value( 'product_id', FILTER_SANITIZE_NUMBER_INT );
+
+		if ( $product_id <= 0 ) {
+			return null;
+		}
+
+		$attributes = get_post_meta( $product_id, '_product_attributes', true );
+
+		if ( ! is_array( $attributes ) ) {
+			return null;
+		}
+
+		foreach ( $attributes as $attribute_key => $attribute ) {
+			if ( ! is_array( $attribute ) || ! empty( $attribute['is_taxonomy'] ) || empty( $attribute['is_variation'] ) ) {
+				continue;
+			}
+
+			if ( rawurldecode( (string) ( $attribute['name'] ?? '' ) ) === $title ) {
+				return $this->normalize_legacy_product_attribute_key( (string) $attribute_key );
+			}
+		}
+
+		return null;
 	}
 
 	/**

@@ -280,6 +280,9 @@ class Main {
 		add_filter( 'woocommerce_available_variation', [ $this, 'normalize_wc_available_variation_attributes' ], 10, 3 );
 		add_filter( 'woocommerce_cart_item_data_to_validate', [ $this, 'normalize_wc_cart_item_data_to_validate' ], 10, 2 );
 		add_filter( 'woocommerce_add_cart_item', [ $this, 'normalize_wc_cart_item_variation_attributes' ] );
+		add_action( 'woocommerce_product_read', [ $this, 'normalize_wc_read_product_attribute_keys' ], 10, 2 );
+		add_filter( 'woocommerce_product_get_attributes', [ $this, 'normalize_wc_product_get_attribute_keys' ], 10, 2 );
+		add_filter( 'woocommerce_product_object_query', [ $this, 'normalize_wc_product_object_query_variation_attributes' ], 10, 2 );
 		add_action( 'wp_loaded', [ $this, 'normalize_wc_add_to_cart_request_attributes' ], 15 );
 
 		if ( ! $this->request->is_allowed() ) {
@@ -297,8 +300,6 @@ class Main {
 		add_filter( 'post_updated', [ $this, 'check_for_changed_slugs' ], 10, 3 );
 		add_action( 'woocommerce_before_product_object_save', [ $this, 'normalize_wc_product_attribute_keys' ] );
 		add_action( 'woocommerce_product_attributes_updated', [ $this, 'normalize_wc_product_attribute_meta' ] );
-		add_action( 'woocommerce_product_read', [ $this, 'normalize_wc_read_product_attribute_keys' ], 10, 2 );
-		add_filter( 'woocommerce_product_get_attributes', [ $this, 'normalize_wc_product_get_attribute_keys' ], 10, 2 );
 
 		add_action( 'before_woocommerce_init', [ $this, 'declare_wc_compatibility' ] );
 
@@ -424,6 +425,7 @@ class Main {
 	 */
 	public function normalize_wc_read_product_attribute_keys( int $product_id, object $product ): void {
 		$this->local_attribute_service()->normalize_read_product_attributes( $product );
+		$this->variation_attribute_service()->normalize_read_variation_attributes( $product );
 	}
 
 	/**
@@ -440,7 +442,36 @@ class Main {
 			return $attributes;
 		}
 
-		return $this->local_attribute_service()->normalize_product_attribute_array( $attributes );
+		$attributes = $this->local_attribute_service()->normalize_read_product_attribute_array( $product, $attributes );
+
+		if ( method_exists( $product, 'get_type' ) && 'variation' === $product->get_type() ) {
+			return $this->variation_attribute_service()->normalize_read_variation_attribute_array( $product, $attributes );
+		}
+
+		return $attributes;
+	}
+
+	/**
+	 * Normalize WooCommerce variation attribute keys in product object query results.
+	 *
+	 * @param array|mixed $products   Products.
+	 * @param array       $query_vars Query vars.
+	 *
+	 * @return array|mixed
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function normalize_wc_product_object_query_variation_attributes( $products, array $query_vars ) {
+		if ( ! is_array( $products ) ) {
+			return $products;
+		}
+
+		foreach ( $products as $product ) {
+			if ( is_object( $product ) && method_exists( $product, 'get_type' ) && 'variation' === $product->get_type() ) {
+				$this->variation_attribute_service()->normalize_read_variation_attributes( $product );
+			}
+		}
+
+		return $products;
 	}
 
 	/**

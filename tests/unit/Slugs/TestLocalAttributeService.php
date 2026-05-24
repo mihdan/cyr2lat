@@ -61,6 +61,7 @@ class TestLocalAttributeService extends LocalAttributeService {
 	) {
 		$main = Mockery::mock( Main::class );
 		$main->shouldReceive( 'transliterate' )->andReturnUsing( [ $this, 'normalize_key' ] );
+		$main->shouldReceive( 'sanitize_explicit_slug' )->andReturnUsing( [ $this, 'sanitize_key' ] );
 
 		parent::__construct( $main, new VariationAttributeService( $main ) );
 
@@ -172,14 +173,30 @@ class TestLocalAttributeService extends LocalAttributeService {
 		return strtr(
 			$key,
 			[
+				'А' => 'A',
+				'Ц' => 'CZ',
 				'Р' => 'R',
+				'ц' => 'cz',
+				'в' => 'v',
 				'р' => 'r',
 				'а' => 'a',
 				'з' => 'z',
 				'м' => 'm',
 				'е' => 'e',
+				'т' => 't',
 			]
 		);
+	}
+
+	/**
+	 * Sanitize key.
+	 *
+	 * @param string $key Key.
+	 *
+	 * @return string
+	 */
+	public function sanitize_key( string $key ): string {
+		return strtolower( preg_replace( '/[^a-zA-Z0-9_-]+/', '', $this->normalize_key( rawurldecode( $key ) ) ) );
 	}
 
 	// @codeCoverageIgnoreStart
