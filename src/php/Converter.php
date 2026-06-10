@@ -152,7 +152,13 @@ class Converter {
 		if ( ! isset( $_POST['ctl-convert'] ) ) {
 			return;
 		}
+
 		check_admin_referer( \CyrToLat\Settings\Converter::NONCE );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'cyr2lat' ) );
+		}
+
 		$this->convert_existing_slugs();
 	}
 
@@ -167,6 +173,10 @@ class Converter {
 		}
 
 		if ( ! wp_verify_nonce( sanitize_key( $_GET['_wpnonce'] ), self::QUERY_ARG ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 

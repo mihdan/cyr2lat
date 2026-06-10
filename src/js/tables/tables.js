@@ -139,7 +139,7 @@ class Tables {
 	}
 
 	/**
-	 * Check of active table was changed.
+	 * Check of the active table was changed.
 	 *
 	 * @return {boolean} If active table was changed.
 	 */
@@ -153,7 +153,7 @@ class Tables {
 	}
 
 	/**
-	 * Set status of Submit button.
+	 * Set the status of the Submit button.
 	 */
 	setSubmitStatus() {
 		this.submitButton.disabled = ! this.isActiveTableChanged();
@@ -553,7 +553,7 @@ class Tables {
 	}
 
 	/**
-	 * Is new value of edited label unique in active table.
+	 * Is the new value of edited label unique in active table.
 	 *
 	 * @param {string} newValue New Value from edited label.
 	 * @return {*} If new value of edited label is unique in active table.
@@ -627,12 +627,49 @@ class Tables {
 	}
 
 	/**
+	 * Sanitize HTML to prevent XSS while allowing safe HTML tags.
+	 *
+	 * @param {string} html Raw HTML.
+	 * @return {string} Sanitized HTML.
+	 */
+	sanitizeHTML( html ) {
+		const parser = new DOMParser();
+		const doc = parser.parseFromString( html, 'text/html' );
+
+		// Remove harmful elements.
+		const harmfulElements = doc.querySelectorAll( 'script, iframe, object, embed, form' );
+		harmfulElements.forEach( ( el ) => el.remove() );
+
+		// Remove event handlers and JavaScript: URIs.
+		const allElements = doc.querySelectorAll( '*' );
+		allElements.forEach( ( el ) => {
+			const attrs = el.attributes;
+			for ( let i = attrs.length - 1; i >= 0; i-- ) {
+				const attrName = attrs[ i ].name;
+				if ( attrName.startsWith( 'on' ) ) {
+					el.removeAttribute( attrName );
+				}
+			}
+
+			// Clean attributes that might contain JavaScript: URLs.
+			[ 'href', 'src', 'action', 'data' ].forEach( ( attr ) => {
+				const val = el.getAttribute( attr );
+				if ( val && val.trim().toLowerCase().startsWith( 'javascript:' ) ) {
+					el.removeAttribute( attr );
+				}
+			} );
+		} );
+
+		return doc.body.innerHTML;
+	}
+
+	/**
 	 * Clear message.
 	 *
 	 * @param {HTMLDivElement} message Message.
 	 */
 	clearMessage( message ) {
-		message.innerHTML = '';
+		message.textContent = '';
 		message.classList.remove( 'active' );
 	}
 
@@ -652,7 +689,7 @@ class Tables {
 	 * @param {string}         message Message.
 	 */
 	showMessage( el, message ) {
-		el.innerHTML = message;
+		el.innerHTML = this.sanitizeHTML( message );
 		el.classList.add( 'active' );
 
 		this.msgTimer = setTimeout( () => {

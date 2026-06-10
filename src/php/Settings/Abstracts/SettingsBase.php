@@ -682,11 +682,11 @@ abstract class SettingsBase {
 			'<input %1$s name="%2$s[%3$s]" id="%3$s" type="%4$s"' .
 			' placeholder="%5$s" value="%6$s" autocomplete="%7$s" data-lpignore="%8$s" class="regular-text" />',
 			disabled( $arguments['disabled'], true, false ),
-			esc_html( $this->option_name() ),
+			esc_attr( $this->option_name() ),
 			esc_attr( $arguments['field_id'] ),
 			esc_attr( $arguments['type'] ),
 			esc_attr( $arguments['placeholder'] ),
-			esc_html( $value ),
+			esc_attr( $value ),
 			esc_attr( $autocomplete ),
 			esc_attr( $lp_ignore )
 		);
@@ -709,11 +709,11 @@ abstract class SettingsBase {
 			'<input %1$s name="%2$s[%3$s]" id="%3$s" type="%4$s"' .
 			' placeholder="%5$s" value="%6$s" class="regular-text" min="%7$s" max="%8$s" step="%9$s" />',
 			disabled( $arguments['disabled'], true, false ),
-			esc_html( $this->option_name() ),
+			esc_attr( $this->option_name() ),
 			esc_attr( $arguments['field_id'] ),
 			esc_attr( $arguments['type'] ),
 			esc_attr( $arguments['placeholder'] ),
-			esc_html( $value ),
+			esc_attr( $value ),
 			esc_attr( $min ),
 			esc_attr( $max ),
 			esc_attr( $step )
@@ -734,7 +734,7 @@ abstract class SettingsBase {
 		printf(
 			'<textarea %1$s name="%2$s[%3$s]" id="%3$s" placeholder="%4$s" rows="5" cols="50">%5$s</textarea>',
 			disabled( $arguments['disabled'], true, false ),
-			esc_html( $this->option_name() ),
+			esc_attr( $this->option_name() ),
 			esc_attr( $arguments['field_id'] ),
 			esc_attr( $arguments['placeholder'] ),
 			wp_kses_post( $value )
@@ -772,7 +772,7 @@ abstract class SettingsBase {
 				' %6$s' .
 				'</label>' .
 				'<br/>',
-				esc_html( $this->option_name() ),
+				esc_attr( $this->option_name() ),
 				$arguments['field_id'],
 				$arguments['type'],
 				$key,
@@ -839,7 +839,7 @@ abstract class SettingsBase {
 				' %6$s' .
 				'</label>' .
 				'<br/>',
-				esc_html( $this->option_name() ),
+				esc_attr( $this->option_name() ),
 				$arguments['field_id'],
 				$arguments['type'],
 				$key,
@@ -911,8 +911,8 @@ abstract class SettingsBase {
 		printf(
 			'<select %1$s name="%2$s[%3$s]">%4$s</select>',
 			disabled( $element_disabled, true, false ),
-			esc_html( $this->option_name() ),
-			esc_html( $arguments['field_id'] ),
+			esc_attr( $this->option_name() ),
+			esc_attr( $arguments['field_id'] ),
 			wp_kses(
 				$options_markup,
 				[
@@ -968,8 +968,8 @@ abstract class SettingsBase {
 		printf(
 			'<select %1$s multiple="multiple" name="%2$s[%3$s][]">%4$s</select>',
 			disabled( $element_disabled, true, false ),
-			esc_html( $this->option_name() ),
-			esc_html( $arguments['field_id'] ),
+			esc_attr( $this->option_name() ),
+			esc_attr( $arguments['field_id'] ),
 			wp_kses(
 				$options_markup,
 				[
@@ -1011,19 +1011,19 @@ abstract class SettingsBase {
 			echo '<div class="ctl-table-cell">';
 			printf(
 				'<label for="%1$s">%2$s</label>',
-				esc_html( $id ),
+				esc_attr( $id ),
 				esc_html( $key )
 			);
 			printf(
 				'<input name="%1$s[%2$s][%3$s]" id="%4$s" type="%5$s"' .
 				' placeholder="%6$s" value="%7$s" class="regular-text" />',
-				esc_html( $this->option_name() ),
+				esc_attr( $this->option_name() ),
 				esc_attr( $arguments['field_id'] ),
 				esc_attr( $key ),
 				esc_attr( $id ),
 				'text',
 				esc_attr( $arguments['placeholder'] ),
-				esc_html( $cell_value )
+				esc_attr( $cell_value )
 			);
 			echo '</div>';
 

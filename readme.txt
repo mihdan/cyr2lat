@@ -268,6 +268,9 @@ We will review your report and respond as quickly as possible.
 
 == Changelog ==
 
+= 7.1.0 (10.06.2026) =
+* Hardened data validation in admin.
+
 = 7.0.2 (24.05.2026) =
 * Fixed legacy WooCommerce local variation attributes with punctuation in attribute names after upgrading from versions before 7.0.
 
