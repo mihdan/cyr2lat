@@ -5,6 +5,7 @@
 /.git
 /.github
 /.idea
+/.vscode
 /.wordpress-org
 /.yarn
 /bin
@@ -40,6 +41,7 @@
 /.git
 /.github
 /.idea
+/.vscode
 /.make
 /.wordpress-org
 /.yarn
