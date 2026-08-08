@@ -86,6 +86,25 @@ class FilenameIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that a custom table cannot introduce traversal or an executable extension.
+	 *
+	 * @return void
+	 */
+	public function test_sanitize_file_name_hardens_unsafe_custom_table_value(): void {
+		$filter = static function (): array {
+			return [ 'с' => '../payload.php' ];
+		};
+
+		add_filter( 'ctl_table', $filter );
+
+		try {
+			self::assertSame( 'payload.php_.jpg', sanitize_file_name( 'С.jpg' ) );
+		} finally {
+			remove_filter( 'ctl_table', $filter );
+		}
+	}
+
+	/**
 	 * Test that macOS decomposed Cyrillic filenames are normalized before transliteration.
 	 *
 	 * @return void

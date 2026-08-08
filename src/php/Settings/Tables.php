@@ -204,9 +204,17 @@ class Tables extends PluginSettingsBase {
 			wp_unslash( $_POST['cyr_to_lat_settings'] ) :
 			[];
 
-		// We have only one table returned, so this is loop is executed once.
+		$this->init_locales();
+		$allowed_locales = array_keys( $this->locales );
+
+		// We have only one table returned, so this loop is executed once.
 		foreach ( $new_settings as $new_key => $new_value ) {
-			$key   = sanitize_text_field( $new_key );
+			$key = sanitize_text_field( $new_key );
+
+			if ( ! in_array( $key, $allowed_locales, true ) ) {
+				continue;
+			}
+
 			$value = [];
 
 			foreach ( $new_value as $k => $v ) {

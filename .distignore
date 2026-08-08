@@ -5,6 +5,8 @@
 /.git
 /.github
 /.idea
+/.make
+/.vscode
 /.wordpress-org
 /.yarn
 /bin
@@ -35,14 +37,3 @@
 /postcss.config.js
 /webpack.config.js
 /yarn.lock
-
-# Directories
-/.git
-/.github
-/.idea
-/.make
-/.wordpress-org
-/.yarn
-/node_modules
-/src/js
-/tests

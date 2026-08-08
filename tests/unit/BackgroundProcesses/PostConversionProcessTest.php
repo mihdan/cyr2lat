@@ -437,9 +437,12 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 		];
 
 		$main = Mockery::mock( Main::class );
-		$main->shouldReceive( 'transliterate' )->with( $meta['file'] )->andReturn( $transliterated_meta['file'] );
-		$main->shouldReceive( 'transliterate' )->with( $meta['sizes']['thumbnail']['file'] )
-			->andReturn( $transliterated_meta['sizes']['thumbnail']['file'] );
+		$main->shouldReceive( 'transliterate' )->with( 'Скамейка' )->andReturn( 'Skamejka' );
+		$main->shouldReceive( 'transliterate' )->with( 'Скамейка-150x150' )->andReturn( 'Skamejka-150x150' );
+		$main->shouldReceive( 'sanitize_transliterated_filename' )
+			->with( 'Skamejka.jpg', 'Скамейка.jpg' )->andReturn( 'Skamejka.jpg' );
+		$main->shouldReceive( 'sanitize_transliterated_filename' )
+			->with( 'Skamejka-150x150.jpg', 'Скамейка-150x150.jpg' )->andReturn( 'Skamejka-150x150.jpg' );
 
 		$subject = Mockery::mock( PostConversionProcess::class, [ $main ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();
@@ -464,6 +467,31 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 
 		$main = Mockery::mock( Main::class );
 		$main->shouldReceive( 'transliterate' )->with( 'Скамейка' )->andReturn( 'Skamejka' );
+		$main->shouldReceive( 'sanitize_transliterated_filename' )
+			->with( 'Skamejka.jpg', 'Скамейка.jpg' )->andReturn( 'Skamejka.jpg' );
+
+		$subject = Mockery::mock( PostConversionProcess::class, [ $main ] )->makePartial()
+			->shouldAllowMockingProtectedMethods();
+		$method  = 'get_transliterated_file';
+
+		$this->set_method_accessibility( $subject, $method );
+
+		self::assertSame( $transliterated_file, $subject->$method( $file ) );
+	}
+
+	/**
+	 * Test get_transliterated_file() keeps an unsafe transliteration inside the source directory.
+	 *
+	 * @throws ReflectionException ReflectionException.
+	 */
+	public function test_get_transliterated_file_hardens_unsafe_filename(): void {
+		$file                = '/var/www/test/wp-content/uploads/2020/05/Скамейка.jpg';
+		$transliterated_file = '/var/www/test/wp-content/uploads/2020/05/payload.php_.jpg';
+
+		$main = Mockery::mock( Main::class );
+		$main->shouldReceive( 'transliterate' )->with( 'Скамейка' )->andReturn( '../payload.php' );
+		$main->shouldReceive( 'sanitize_transliterated_filename' )
+			->with( '../payload.php.jpg', 'Скамейка.jpg' )->andReturn( 'payload.php_.jpg' );
 
 		$subject = Mockery::mock( PostConversionProcess::class, [ $main ] )->makePartial()
 			->shouldAllowMockingProtectedMethods();

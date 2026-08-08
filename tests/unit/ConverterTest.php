@@ -196,6 +196,9 @@ class ConverterTest extends CyrToLatTestCase {
 		$subject = Mockery::mock( Converter::class )->makePartial();
 
 		WP_Mock::passthruFunction( 'check_admin_referer' );
+		WP_Mock::userFunction( 'current_user_can' )
+			->with( 'manage_options' )
+			->andReturn( true );
 
 		if ( $convert ) {
 			$_POST['ctl-convert'] = 'something';
@@ -230,6 +233,10 @@ class ConverterTest extends CyrToLatTestCase {
 	 */
 	public function test_process_handler( string $query_arg, string $nonce, bool $verify_nonce ): void {
 		$subject = Mockery::mock( Converter::class )->makePartial();
+
+		WP_Mock::userFunction( 'current_user_can' )
+			->with( 'manage_options' )
+			->andReturn( true );
 
 		if ( $query_arg ) {
 			$_GET[ Converter::QUERY_ARG ] = '1';

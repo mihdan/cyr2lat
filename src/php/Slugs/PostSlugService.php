@@ -15,6 +15,11 @@ use CyrToLat\Main;
 class PostSlugService extends BaseService {
 
 	/**
+	 * Internal wp_insert_post() flag used to preserve an intentionally empty post name.
+	 */
+	public const PRESERVE_EMPTY_POST_NAME = '_cyr_to_lat_preserve_empty_post_name';
+
+	/**
 	 * Main plugin class.
 	 *
 	 * @var Main
@@ -48,7 +53,7 @@ class PostSlugService extends BaseService {
 		if (
 			empty( $data['post_name'] ) &&
 			! empty( $data['post_title'] ) &&
-			! $this->is_skipped_post_data( $data, $postarr )
+			! $this->is_skipped_post_data( $data, $postarr, $unsanitized_postarr )
 		) {
 			$data['post_name'] = $this->sanitize_slug( (string) $data['post_title'] );
 			$changed           = true;
@@ -57,7 +62,7 @@ class PostSlugService extends BaseService {
 		if (
 			! empty( $data['post_name'] ) &&
 			$this->requires_sanitization( (string) $data['post_name'] ) &&
-			! $this->is_skipped_post_data( $data, $postarr )
+			! $this->is_skipped_post_data( $data, $postarr, $unsanitized_postarr )
 		) {
 			$data['post_name'] = $this->sanitize_slug( rawurldecode( (string) $data['post_name'] ) );
 			$changed           = true;
@@ -104,12 +109,17 @@ class PostSlugService extends BaseService {
 	/**
 	 * Whether post data should be skipped.
 	 *
-	 * @param array       $data    Post data.
-	 * @param array|mixed $postarr Original post array.
+	 * @param array       $data                Post data.
+	 * @param array|mixed $postarr             Original post array.
+	 * @param array       $unsanitized_postarr Unsanitized post data passed to wp_insert_post().
 	 *
 	 * @return bool
 	 */
-	private function is_skipped_post_data( array $data, $postarr = [] ): bool {
+	private function is_skipped_post_data( array $data, $postarr = [], array $unsanitized_postarr = [] ): bool {
+		if ( ! empty( $unsanitized_postarr[ self::PRESERVE_EMPTY_POST_NAME ] ) ) {
+			return true;
+		}
+
 		if ( in_array( $data['post_status'] ?? '', [ 'auto-draft', 'revision' ], true ) ) {
 			return true;
 		}

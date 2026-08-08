@@ -2,9 +2,9 @@
 Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: transliteration, cyrillic, slugs, translation, multilingual
 Requires at least: 6.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 7.0.2
+Stable tag: 7.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -267,6 +267,12 @@ When reporting a vulnerability, please include as much information as possible t
 We will review your report and respond as quickly as possible.
 
 == Changelog ==
+
+= 7.1.0 (08.08.2026) =
+* Hardened filename transliteration and multisite settings.
+* Hardened data validation in admin.
+* Fixed slug generation for new drafts created by Yoast Duplicate Post when copying the original slug is disabled.
+* Prevented a fatal error when WooCommerce fires the product-read hook without a product object.
 
 = 7.0.2 (24.05.2026) =
 * Fixed legacy WooCommerce local variation attributes with punctuation in attribute names after upgrading from versions before 7.0.

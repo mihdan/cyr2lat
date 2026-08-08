@@ -31,6 +31,7 @@ use JsonException;
 use Polylang;
 use SitePress;
 use stdClass;
+use WC_Product_Variation;
 use WP_CLI;
 use WP_Error;
 use WP_Post;
@@ -292,6 +293,7 @@ class Main {
 		add_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 9, 3 );
 		add_filter( 'sanitize_file_name', [ $this, 'sanitize_filename' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ $this, 'sanitize_post_name' ], 10, 4 );
+		add_filter( 'duplicate_post_new_post', [ $this, 'preserve_yoast_duplicate_post_empty_slug' ] );
 		add_filter( 'get_sample_permalink', [ $this, 'sanitize_sample_permalink' ], 10, 5 );
 		add_filter( 'pre_insert_term', [ $this, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
 		add_filter( 'pre_term_slug', [ $this, 'sanitize_term_slug' ], 8 );
@@ -318,8 +320,6 @@ class Main {
 
 		/**
 		 * Method WP_CLI::add_command() accepts a class as callable.
-		 *
-		 * @noinspection PhpParamsInspection
 		 */
 		WP_CLI::add_command( 'cyr2lat', $this->cli );
 	}
@@ -417,13 +417,17 @@ class Main {
 	/**
 	 * Normalize WooCommerce product attribute keys after reading persisted data.
 	 *
-	 * @param int    $product_id Product ID.
-	 * @param object $product    Product.
+	 * @param int         $product_id Product ID.
+	 * @param object|null $product    Product.
 	 *
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function normalize_wc_read_product_attribute_keys( int $product_id, object $product ): void {
+	public function normalize_wc_read_product_attribute_keys( int $product_id, ?object $product = null ): void {
+		if ( null === $product ) {
+			return;
+		}
+
 		$this->local_attribute_service()->normalize_read_product_attributes( $product );
 		$this->variation_attribute_service()->normalize_read_variation_attributes( $product );
 	}
@@ -531,7 +535,7 @@ class Main {
 			[
 				'attributes' => $cart_item['variation'],
 			],
-			new \WC_Product_Variation( (int) $cart_item['variation_id'] )
+			new WC_Product_Variation( (int) $cart_item['variation_id'] )
 		);
 
 		if ( is_array( $variation_data ) && isset( $variation_data['attributes'] ) && is_array( $variation_data['attributes'] ) ) {
@@ -568,7 +572,7 @@ class Main {
 		$raw_attribute_request_keys = $this->raw_wc_local_variation_request_keys_by_name( $product_id );
 
 		foreach ( $attributes as $attribute_key => $attribute ) {
-			$this->normalize_wc_add_to_cart_request_attribute( (string) $attribute_key, $attribute, $raw_attribute_request_keys );
+			$this->normalize_wc_add_to_cart_request_attribute( $attribute_key, $attribute, $raw_attribute_request_keys );
 		}
 	}
 
@@ -589,6 +593,7 @@ class Main {
 	 * @param int $product_id Product ID.
 	 *
 	 * @return array<string, mixed>
+	 * @noinspection PhpUndefinedFunctionInspection
 	 */
 	private function wc_add_to_cart_product_attributes( int $product_id ): array {
 		if ( ! function_exists( 'wc_get_product' ) ) {
@@ -683,7 +688,7 @@ class Main {
 			}
 
 			$attribute_name              = rawurldecode( (string) ( $attribute['name'] ?? $attribute_key ) );
-			$result[ $attribute_name ][] = 'attribute_' . (string) $attribute_key;
+			$result[ $attribute_name ][] = 'attribute_' . $attribute_key;
 		}
 
 		return $result;
@@ -794,6 +799,19 @@ class Main {
 	}
 
 	/**
+	 * Sanitize an already transliterated filename.
+	 *
+	 * @param string $filename        Transliterated filename.
+	 * @param string $source_filename Filename before transliteration.
+	 *
+	 * @return string
+	 */
+	public function sanitize_transliterated_filename( string $filename, string $source_filename ): string {
+		return ( new FilenameService( $this->transliterator ) )
+			->sanitize_transliterated_filename( $filename, $source_filename );
+	}
+
+	/**
 	 * Get min suffix.
 	 *
 	 * @return string
@@ -832,6 +850,23 @@ class Main {
 		( new PostSlugService( $this ) )
 			->filter_post_data( $data, $postarr, $unsanitized_postarr, $update )
 		);
+	}
+
+	/**
+	 * Preserve an intentionally empty slug when Yoast Duplicate Post does not copy it.
+	 *
+	 * @param array|mixed $data New duplicate post data.
+	 *
+	 * @return array|mixed
+	 */
+	public function preserve_yoast_duplicate_post_empty_slug( $data ) {
+		if ( ! is_array( $data ) || ! array_key_exists( 'post_name', $data ) || '' !== $data['post_name'] ) {
+			return $data;
+		}
+
+		$data[ PostSlugService::PRESERVE_EMPTY_POST_NAME ] = true;
+
+		return $data;
 	}
 
 	/**

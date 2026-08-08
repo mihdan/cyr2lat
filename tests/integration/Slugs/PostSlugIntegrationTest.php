@@ -142,6 +142,49 @@ class PostSlugIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that a Yoast Duplicate Post draft gets a slug from its edited title on publication.
+	 */
+	public function test_yoast_duplicate_post_keeps_slug_empty_until_publication(): void {
+		$original_id = wp_insert_post(
+			[
+				'post_type'   => 'post',
+				'post_status' => 'publish',
+				'post_title'  => 'Исходный заголовок',
+			],
+			true
+		);
+
+		$this->assertNotWPError( $original_id );
+
+		$duplicate_data = apply_filters(
+			'duplicate_post_new_post',
+			[
+				'post_type'   => 'post',
+				'post_status' => 'draft',
+				'post_title'  => 'Исходный заголовок',
+				'post_name'   => '',
+			],
+			get_post( $original_id )
+		);
+		$duplicate_id   = wp_insert_post( wp_slash( $duplicate_data ), true );
+
+		$this->assertNotWPError( $duplicate_id );
+		self::assertSame( '', get_post( $duplicate_id )->post_name );
+
+		$updated_id = wp_update_post(
+			[
+				'ID'          => $duplicate_id,
+				'post_title'  => 'Новый заголовок копии',
+				'post_status' => 'publish',
+			],
+			true
+		);
+
+		$this->assertNotWPError( $updated_id );
+		self::assertSame( 'novyj-zagolovok-kopii', get_post( $duplicate_id )->post_name );
+	}
+
+	/**
 	 * Test that wp_insert_post_data preserves a manually supplied post_name.
 	 *
 	 * @return void
