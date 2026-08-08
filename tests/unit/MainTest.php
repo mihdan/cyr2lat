@@ -35,6 +35,7 @@ use CyrToLat\WPCli;
 use Mockery;
 use PHPUnit\Runner\Version;
 use ReflectionException;
+use ReflectionMethod;
 use WP_Mock;
 use WP_Post;
 use WP_REST_Server;
@@ -423,6 +424,20 @@ class MainTest extends CyrToLatTestCase {
 		WP_Mock::expectActionNotAdded( 'before_woocommerce_init', [ $subject, 'declare_wc_compatibility' ] );
 
 		$subject->$method();
+	}
+
+	/**
+	 * Test that the legacy WooCommerce product-read hook signature does not cause a fatal error.
+	 */
+	public function test_normalize_wc_read_product_attribute_keys_accepts_product_id_only(): void {
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		$subject->normalize_wc_read_product_attribute_keys( 123 );
+
+		$method    = new ReflectionMethod( Main::class, 'normalize_wc_read_product_attribute_keys' );
+		$parameter = $method->getParameters()[1];
+
+		self::assertTrue( $parameter->allowsNull() );
 	}
 
 	/**

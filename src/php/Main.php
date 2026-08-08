@@ -417,13 +417,17 @@ class Main {
 	/**
 	 * Normalize WooCommerce product attribute keys after reading persisted data.
 	 *
-	 * @param int    $product_id Product ID.
-	 * @param object $product    Product.
+	 * @param int         $product_id Product ID.
+	 * @param object|null $product    Product.
 	 *
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function normalize_wc_read_product_attribute_keys( int $product_id, object $product ): void {
+	public function normalize_wc_read_product_attribute_keys( int $product_id, ?object $product = null ): void {
+		if ( null === $product ) {
+			return;
+		}
+
 		$this->local_attribute_service()->normalize_read_product_attributes( $product );
 		$this->variation_attribute_service()->normalize_read_variation_attributes( $product );
 	}

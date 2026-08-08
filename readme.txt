@@ -271,6 +271,7 @@ We will review your report and respond as quickly as possible.
 = 7.1.0 (08.08.2026) =
 * Hardened data validation in admin.
 * Fixed slug generation for new drafts created by Yoast Duplicate Post when copying the original slug is disabled.
+* Prevented a fatal error when WooCommerce fires the product-read hook without a product object.
 
 = 7.0.2 (24.05.2026) =
 * Fixed legacy WooCommerce local variation attributes with punctuation in attribute names after upgrading from versions before 7.0.
