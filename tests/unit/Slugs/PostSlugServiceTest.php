@@ -62,6 +62,23 @@ class PostSlugServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test filter_post_data() preserves an intentionally empty duplicate post slug.
+	 */
+	public function test_filter_post_data_preserves_marked_empty_post_name(): void {
+		$subject = new PostSlugService( $this->get_main_mock() );
+		$data    = [
+			'post_name'   => '',
+			'post_title'  => 'й',
+			'post_status' => 'draft',
+		];
+
+		$unsanitized_postarr = $data;
+		$unsanitized_postarr[ PostSlugService::PRESERVE_EMPTY_POST_NAME ] = true;
+
+		self::assertSame( $data, $subject->filter_post_data( $data, $data, $unsanitized_postarr ) );
+	}
+
+	/**
 	 * Test filter_post_data() normalizes explicit Cyrillic post_name.
 	 *
 	 * @return void

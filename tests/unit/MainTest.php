@@ -27,6 +27,7 @@ use CyrToLat\Request;
 use CyrToLat\Requirements;
 use CyrToLat\Settings\Settings;
 use CyrToLat\Slugs\LocalAttributeService;
+use CyrToLat\Slugs\PostSlugService;
 use CyrToLat\Slugs\VariationAttributeService;
 use CyrToLat\Symfony\Polyfill\Mbstring\Mbstring;
 use CyrToLat\Transliteration\Transliterator;
@@ -323,6 +324,7 @@ class MainTest extends CyrToLatTestCase {
 		WP_Mock::expectFilterAdded( 'sanitize_title', [ $subject, 'sanitize_title' ], 9, 3 );
 		WP_Mock::expectFilterAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ], 10, 2 );
 		WP_Mock::expectFilterAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ], 10, 4 );
+		WP_Mock::expectFilterAdded( 'duplicate_post_new_post', [ $subject, 'preserve_yoast_duplicate_post_empty_slug' ] );
 		WP_Mock::expectFilterAdded( 'get_sample_permalink', [ $subject, 'sanitize_sample_permalink' ], 10, 5 );
 		WP_Mock::expectFilterAdded( 'pre_insert_term', [ $subject, 'pre_insert_term_filter' ], PHP_INT_MAX, 2 );
 		WP_Mock::expectFilterAdded( 'wp_unique_term_slug_is_bad_slug', [ $subject, 'filter_unique_term_slug_is_bad_slug' ], 10, 3 );
@@ -402,6 +404,7 @@ class MainTest extends CyrToLatTestCase {
 		WP_Mock::expectFilterNotAdded( 'sanitize_title', [ $subject, 'sanitize_title' ] );
 		WP_Mock::expectFilterNotAdded( 'sanitize_file_name', [ $subject, 'sanitize_filename' ] );
 		WP_Mock::expectFilterNotAdded( 'wp_insert_post_data', [ $subject, 'sanitize_post_name' ] );
+		WP_Mock::expectFilterNotAdded( 'duplicate_post_new_post', [ $subject, 'preserve_yoast_duplicate_post_empty_slug' ] );
 		WP_Mock::expectFilterNotAdded( 'get_sample_permalink', [ $subject, 'sanitize_sample_permalink' ] );
 		WP_Mock::expectFilterNotAdded( 'pre_insert_term', [ $subject, 'pre_insert_term_filter' ] );
 		WP_Mock::expectFilterNotAdded( 'wp_unique_term_slug_is_bad_slug', [ $subject, 'filter_unique_term_slug_is_bad_slug' ] );
@@ -1106,6 +1109,37 @@ class MainTest extends CyrToLatTestCase {
 		$subject = Mockery::mock( Main::class )->makePartial()->shouldAllowMockingProtectedMethods();
 
 		self::assertSame( $data, $subject->sanitize_post_name( $data ) );
+	}
+
+	/**
+	 * Test that Yoast Duplicate Post can intentionally keep the duplicate slug empty.
+	 */
+	public function test_preserve_yoast_duplicate_post_empty_slug(): void {
+		$data = [
+			'post_name'   => '',
+			'post_title'  => 'Новый черновик',
+			'post_status' => 'draft',
+		];
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+		$result  = $subject->preserve_yoast_duplicate_post_empty_slug( $data );
+
+		self::assertTrue( $result[ PostSlugService::PRESERVE_EMPTY_POST_NAME ] );
+	}
+
+	/**
+	 * Test that Yoast Duplicate Post can still copy an explicit slug.
+	 */
+	public function test_preserve_yoast_duplicate_post_copied_slug(): void {
+		$data = [
+			'post_name'   => 'copied-slug',
+			'post_title'  => 'Новый черновик',
+			'post_status' => 'draft',
+		];
+
+		$subject = Mockery::mock( Main::class )->makePartial();
+
+		self::assertSame( $data, $subject->preserve_yoast_duplicate_post_empty_slug( $data ) );
 	}
 
 	/**
