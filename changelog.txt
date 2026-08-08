@@ -1,3 +1,6 @@
+= 7.1.0 (xx.xx.2026) =
+* Hardened data validation in admin.
+
 = 7.1.0 (10.06.2026) =
 * Hardened data validation in admin.
 
