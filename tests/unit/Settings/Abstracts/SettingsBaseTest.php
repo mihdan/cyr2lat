@@ -1185,7 +1185,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 					'section'      => 'some_section',
 					'type'         => 'text',
 					'placeholder'  => '',
-					'helper'       => 'This is helper',
+					'helper'       => 'This is the helper',
 					'supplemental' => '',
 					'default'      => 'some text',
 					'field_id'     => 'some_id',
