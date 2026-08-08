@@ -799,6 +799,19 @@ class Main {
 	}
 
 	/**
+	 * Sanitize an already transliterated filename.
+	 *
+	 * @param string $filename        Transliterated filename.
+	 * @param string $source_filename Filename before transliteration.
+	 *
+	 * @return string
+	 */
+	public function sanitize_transliterated_filename( string $filename, string $source_filename ): string {
+		return ( new FilenameService( $this->transliterator ) )
+			->sanitize_transliterated_filename( $filename, $source_filename );
+	}
+
+	/**
 	 * Get min suffix.
 	 *
 	 * @return string

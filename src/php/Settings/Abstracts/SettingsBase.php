@@ -204,7 +204,7 @@ abstract class SettingsBase {
 		add_action( 'current_screen', [ $this, 'setup_sections' ], 11 );
 
 		add_filter( 'pre_update_option_' . $this->option_name(), [ $this, 'pre_update_option_filter' ], 10, 2 );
-		add_filter( 'pre_update_site_option_option_' . $this->option_name(), [ $this, 'pre_update_option_filter' ], 10, 2 );
+		add_filter( 'pre_update_site_option_' . $this->option_name(), [ $this, 'pre_update_site_option_filter' ], 10, 2 );
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'base_admin_enqueue_scripts' ] );
 	}
@@ -1185,6 +1185,25 @@ abstract class SettingsBase {
 		$value                       = array_merge( $old_value, $value );
 		$value[ self::NETWORK_WIDE ] = array_key_exists( self::NETWORK_WIDE, $value ) ? $value[ self::NETWORK_WIDE ] : [];
 
+		return $this->update_network_settings( $value, $old_value );
+	}
+
+	/**
+	 * Update network settings when the current user is allowed to do so.
+	 *
+	 * @param array $value     New option value.
+	 * @param array $old_value Old option value.
+	 *
+	 * @return array
+	 */
+	private function update_network_settings( array $value, array $old_value ): array {
+		if ( ! $this->can_manage_network_settings() ) {
+			$network_wide                = get_site_option( $this->option_name() . self::NETWORK_WIDE, [] );
+			$value[ self::NETWORK_WIDE ] = $network_wide;
+
+			return empty( $network_wide ) ? $value : $old_value;
+		}
+
 		update_site_option( $this->option_name() . self::NETWORK_WIDE, $value[ self::NETWORK_WIDE ] );
 
 		if ( empty( $value[ self::NETWORK_WIDE ] ) ) {
@@ -1194,6 +1213,27 @@ abstract class SettingsBase {
 		update_site_option( $this->option_name(), $value );
 
 		return $old_value;
+	}
+
+	/**
+	 * Prevent unauthorized direct updates of network settings.
+	 *
+	 * @param mixed $value     New site option value.
+	 * @param mixed $old_value Old site option value.
+	 *
+	 * @return mixed
+	 */
+	public function pre_update_site_option_filter( $value, $old_value ) {
+		return $this->can_manage_network_settings() ? $value : $old_value;
+	}
+
+	/**
+	 * Check whether the current user can update network settings.
+	 *
+	 * @return bool
+	 */
+	private function can_manage_network_settings(): bool {
+		return ! is_multisite() || current_user_can( 'manage_network_options' );
 	}
 
 	/**

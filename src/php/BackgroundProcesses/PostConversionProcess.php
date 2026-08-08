@@ -160,12 +160,12 @@ class PostConversionProcess extends ConversionProcess {
 		$meta = wp_get_attachment_metadata( $attachment_id );
 
 		if ( isset( $meta['file'] ) ) {
-			$meta['file'] = $this->main->transliterate( $meta['file'] );
+			$meta['file'] = $this->get_transliterated_file( $meta['file'] );
 		}
 
 		if ( isset( $meta['sizes'] ) ) {
 			foreach ( $meta['sizes'] as $key => $size ) {
-				$meta['sizes'][ $key ]['file'] = $this->main->transliterate( $meta['sizes'][ $key ]['file'] );
+				$meta['sizes'][ $key ]['file'] = $this->get_transliterated_file( $meta['sizes'][ $key ]['file'] );
 			}
 		}
 
@@ -180,10 +180,16 @@ class PostConversionProcess extends ConversionProcess {
 	 * @return string
 	 */
 	protected function get_transliterated_file( string $file ): string {
-		$path                    = pathinfo( $file );
-		$transliterated_filename = $this->main->transliterate( $path['filename'] );
+		$path                     = pathinfo( $file );
+		$extension                = isset( $path['extension'] ) ? '.' . $path['extension'] : '';
+		$transliterated_filename  = $this->main->transliterate( $path['filename'] ) . $extension;
+		$transliterated_filename  = $this->main->sanitize_transliterated_filename(
+			$transliterated_filename,
+			$path['basename']
+		);
+		$transliterated_directory = '.' === $path['dirname'] ? '' : $path['dirname'] . '/';
 
-		return $path['dirname'] . '/' . $transliterated_filename . '.' . $path['extension'];
+		return $transliterated_directory . $transliterated_filename;
 	}
 
 	/**

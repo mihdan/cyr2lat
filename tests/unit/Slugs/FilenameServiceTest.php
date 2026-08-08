@@ -72,6 +72,55 @@ class FilenameServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Test sanitize_filename() removes path traversal and hardens an injected executable extension.
+	 *
+	 * @return void
+	 */
+	public function test_sanitize_filename_hardens_unsafe_custom_table_value(): void {
+		$filename = 'Й.JPG';
+		$table    = [ 'й' => '../payload.php' ];
+		$subject  = $this->create_subject( $table );
+
+		WP_Mock::userFunction(
+			'seems_utf8',
+			[
+				'args'   => [ $filename ],
+				'return' => true,
+			]
+		);
+		WP_Mock::userFunction( 'get_allowed_mime_types' )->andReturn( [ 'jpg|jpeg|jpe' => 'image/jpeg' ] );
+
+		WP_Mock::onFilter( 'ctl_pre_sanitize_filename' )->with( false, $filename )->reply( false );
+		WP_Mock::expectFilter( 'ctl_table', $table );
+
+		self::assertSame( 'payload.php_.jpg', $subject->sanitize_filename( $filename, '' ) );
+	}
+
+	/**
+	 * Test sanitize_filename() does not allow a custom table to add an extension.
+	 *
+	 * @return void
+	 */
+	public function test_sanitize_filename_preserves_extensionless_filename(): void {
+		$filename = 'Й';
+		$table    = [ 'й' => 'payload.php' ];
+		$subject  = $this->create_subject( $table );
+
+		WP_Mock::userFunction(
+			'seems_utf8',
+			[
+				'args'   => [ $filename ],
+				'return' => true,
+			]
+		);
+
+		WP_Mock::onFilter( 'ctl_pre_sanitize_filename' )->with( false, $filename )->reply( false );
+		WP_Mock::expectFilter( 'ctl_table', $table );
+
+		self::assertSame( 'payload-php', $subject->sanitize_filename( $filename, '' ) );
+	}
+
+	/**
 	 * Test sanitize_filename() returns ctl_pre_sanitize_filename filter value if set.
 	 *
 	 * @return void

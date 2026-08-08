@@ -1042,23 +1042,23 @@ class MainTest extends CyrToLatTestCase {
 			],
 			'iconv'                      => [
 				'Символ евро - €.',
-				'simvol evro - €.',
+				'simvol-evro-€',
 			],
 			'most used prohibited chars' => [
 				'z!"#$%&()*+,/:;<=>?@[\]^`{|}`Åz',
-				'z!"#$%&()*+,/:;<=>?@[\]^`{|}`åz',
+				'z@^åz',
 			],
 			'allowed chars'              => [
 				"ABC-XYZ-abc-xyz-0123456789'_.",
-				"abc-xyz-abc-xyz-0123456789'_.",
+				'abc-xyz-abc-xyz-0123456789',
 			],
 			'plus minus'                 => [
 				'ABC-XYZ-+abc-xyz',
-				'abc-xyz-+abc-xyz',
+				'abc-xyz-abc-xyz',
 			],
 			'series of minus signs'      => [
 				'-ABC---XYZ-',
-				'-abc---xyz-',
+				'abc-xyz',
 			],
 		];
 	}

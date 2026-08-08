@@ -168,8 +168,8 @@ class SettingsBaseTest extends CyrToLatTestCase {
 			2
 		);
 		WP_Mock::expectFilterAdded(
-			'pre_update_site_option_option_' . $option_name,
-			[ $subject, 'pre_update_option_filter' ],
+			'pre_update_site_option_' . $option_name,
+			[ $subject, 'pre_update_site_option_filter' ],
 			10,
 			2
 		);
@@ -571,7 +571,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test setup_sections() not on options screen.
+	 * Test setup_sections() not on the option screen.
 	 */
 	public function test_setup_sections_not_on_options_screen(): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
@@ -581,7 +581,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test setup_tabs_section() not on options screen.
+	 * Test setup_tabs_section() not on the option screen.
 	 */
 	public function test_setup_tabs_section_not_on_options_screen(): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
@@ -943,6 +943,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	 * Test get_active_tab().
 	 *
 	 * @throws ReflectionException ReflectionException.
+	 * @noinspection JsonEncodingApiUsageInspection
 	 */
 	public function test_get_active_tab(): void {
 		$tab = Mockery::mock( SettingsBase::class )->makePartial();
@@ -1033,7 +1034,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test setup_fields() not on options screen.
+	 * Test setup_fields() not on the option screen.
 	 */
 	public function test_setup_fields_not_on_options_screen(): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
@@ -1134,7 +1135,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Data provider for wrong field.
+	 * Data provider for the wrong field.
 	 *
 	 * @return array
 	 */
@@ -1192,7 +1193,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 				],
 				'<input  name="cyr_to_lat_settings[some_id]"' .
 				' id="some_id" type="text" placeholder="" value="some text" autocomplete="" data-lpignore="false" class="regular-text" />' .
-				'<span class="helper"><span class="helper-content">This is helper</span></span>',
+				'<span class="helper"><span class="helper-content">This is the helper</span></span>',
 			],
 			'Text with supplemental' => [
 				[
@@ -1214,7 +1215,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Data provider for password field.
+	 * Data provider for the password field.
 	 *
 	 * @return array
 	 */
@@ -1289,7 +1290,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Data provider for checkbox field.
+	 * Data provider for the checkbox field.
 	 *
 	 * @return array
 	 */
@@ -1347,7 +1348,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Data provider for radio field.
+	 * Data provider for the radio field.
 	 *
 	 * @return array
 	 */
@@ -1588,7 +1589,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Data provider for table field.
+	 * Data provider for the table field.
 	 *
 	 * @return array
 	 */
@@ -1639,7 +1640,7 @@ class SettingsBaseTest extends CyrToLatTestCase {
 	}
 
 	/**
-	 * Test field_callback() without field id.
+	 * Test field_callback() without a field id.
 	 */
 	public function test_field_callback_without_field_id(): void {
 		$subject = Mockery::mock( SettingsBase::class )->makePartial();
@@ -1889,11 +1890,91 @@ class SettingsBaseTest extends CyrToLatTestCase {
 		$subject->shouldReceive( 'form_fields' )->andReturn( $form_fields );
 		$subject->shouldReceive( 'option_name' )->andReturn( $option_name );
 
+		WP_Mock::userFunction( 'is_multisite' )->andReturn( false );
+
 		WP_Mock::userFunction( 'update_site_option' )
 			->with( $option_name . $network_wide, $merged_value[ $network_wide ] );
 		WP_Mock::userFunction( 'update_site_option' )->with( $option_name, $merged_value );
 
 		self::assertSame( $expected, $subject->pre_update_option_filter( $value, $old_value ) );
+	}
+
+	/**
+	 * Test that a subsite admin cannot enable network-wide settings.
+	 */
+	public function test_pre_update_option_filter_rejects_network_wide_update_from_subsite(): void {
+		$option_name = 'cyr_to_lat_settings';
+		$value       = [
+			'table'         => [ 'й' => '../payload.php' ],
+			'_network_wide' => [ 'on' ],
+		];
+		$old_value   = [ 'table' => [ 'й' => 'j' ] ];
+		$expected    = [
+			'table'         => [ 'й' => '../payload.php' ],
+			'_network_wide' => [],
+		];
+
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'form_fields' )->andReturn( [] );
+		$subject->shouldReceive( 'option_name' )->andReturn( $option_name );
+
+		WP_Mock::userFunction( 'is_multisite' )->once()->andReturn( true );
+		WP_Mock::userFunction( 'current_user_can' )->with( 'manage_network_options' )->once()->andReturn( false );
+		WP_Mock::userFunction( 'get_site_option' )->with( $option_name . '_network_wide', [] )->once()->andReturn( [] );
+		WP_Mock::userFunction( 'update_site_option' )->never();
+
+		self::assertSame( $expected, $subject->pre_update_option_filter( $value, $old_value ) );
+	}
+
+	/**
+	 * Test that a subsite admin cannot overwrite active network-wide settings.
+	 */
+	public function test_pre_update_option_filter_preserves_active_network_settings_for_subsite(): void {
+		$option_name = 'cyr_to_lat_settings';
+		$value       = [ 'table' => [ 'й' => '../payload.php' ] ];
+		$old_value   = [ 'table' => [ 'й' => 'j' ] ];
+
+		$subject = Mockery::mock( SettingsBase::class )->makePartial();
+		$subject->shouldAllowMockingProtectedMethods();
+		$subject->shouldReceive( 'form_fields' )->andReturn( [] );
+		$subject->shouldReceive( 'option_name' )->andReturn( $option_name );
+
+		WP_Mock::userFunction( 'is_multisite' )->once()->andReturn( true );
+		WP_Mock::userFunction( 'current_user_can' )->with( 'manage_network_options' )->once()->andReturn( false );
+		WP_Mock::userFunction( 'get_site_option' )->with( $option_name . '_network_wide', [] )->once()
+			->andReturn( [ 'on' ] );
+		WP_Mock::userFunction( 'update_site_option' )->never();
+
+		self::assertSame( $old_value, $subject->pre_update_option_filter( $value, $old_value ) );
+	}
+
+	/**
+	 * Test direct network option updates require the network capability.
+	 */
+	public function test_pre_update_site_option_filter_rejects_subsite_admin(): void {
+		$value     = [ 'table' => [ 'й' => '../payload.php' ] ];
+		$old_value = [ 'table' => [ 'й' => 'j' ] ];
+		$subject   = Mockery::mock( SettingsBase::class )->makePartial();
+
+		WP_Mock::userFunction( 'is_multisite' )->once()->andReturn( true );
+		WP_Mock::userFunction( 'current_user_can' )->with( 'manage_network_options' )->once()->andReturn( false );
+
+		self::assertSame( $old_value, $subject->pre_update_site_option_filter( $value, $old_value ) );
+	}
+
+	/**
+	 * Test direct network option updates are allowed for a network admin.
+	 */
+	public function test_pre_update_site_option_filter_allows_network_admin(): void {
+		$value     = [ 'table' => [ 'й' => 'j1' ] ];
+		$old_value = [ 'table' => [ 'й' => 'j' ] ];
+		$subject   = Mockery::mock( SettingsBase::class )->makePartial();
+
+		WP_Mock::userFunction( 'is_multisite' )->once()->andReturn( true );
+		WP_Mock::userFunction( 'current_user_can' )->with( 'manage_network_options' )->once()->andReturn( true );
+
+		self::assertSame( $value, $subject->pre_update_site_option_filter( $value, $old_value ) );
 	}
 
 	/**
