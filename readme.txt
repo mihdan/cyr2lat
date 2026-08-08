@@ -2,7 +2,7 @@
 Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: transliteration, cyrillic, slugs, translation, multilingual
 Requires at least: 6.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 7.0.2
 License: GPLv2 or later
