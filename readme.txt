@@ -268,7 +268,7 @@ We will review your report and respond as quickly as possible.
 
 == Changelog ==
 
-= 7.1.0 (xx.xx.2026) =
+= 7.1.0 (08.08.2026) =
 * Hardened data validation in admin.
 
 = 7.0.2 (24.05.2026) =
