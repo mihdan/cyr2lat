@@ -132,11 +132,16 @@ class GlobalAttributeService {
 			return null;
 		}
 
-		if ( ! $this->is_wc_attribute_sanitize_title_call() ) {
-			return null;
+		$decoded   = urldecode( $title );
+		$call_type = $this->wc_attribute_sanitize_title_call_type();
+
+		if ( 'saved_global' === $call_type ) {
+			return $this->is_attribute_taxonomy( $decoded ) ? $decoded : null;
 		}
 
-		$decoded = urldecode( $title );
+		if ( null === $call_type ) {
+			return null;
+		}
 
 		if ( $this->should_preserve_attribute_title( $decoded ) ) {
 			return $decoded;
@@ -146,28 +151,40 @@ class GlobalAttributeService {
 	}
 
 	/**
-	 * Whether the current sanitize_title() call originates from a known WooCommerce attribute flow.
+	 * Identify the WooCommerce attribute flow calling sanitize_title().
 	 *
 	 * Inspects a shallow `debug_backtrace()` and matches frames against the whitelist of
-	 * WooCommerce functions/methods that invoke sanitize_title() directly
-	 * (i.e., where no narrow filter is available). Mirrors the approach used in
+	 * WooCommerce functions/methods that invoke sanitize_title() directly.
+	 * Saved product and variation attribute keys can also be local attributes,
+	 * so those calls are handled only when the name is an existing global attribute.
+	 * Mirrors the approach used in
 	 * {@see TermSlugService::is_wp_insert_term_sanitize_title_call()}.
 	 *
-	 * @return bool
+	 * @return string|null 'saved_global' for saved product/variation keys, 'general'
+	 *                     for other known WooCommerce flows, or null otherwise.
 	 */
-	private function is_wc_attribute_sanitize_title_call(): bool {
+	private function wc_attribute_sanitize_title_call_type(): ?string {
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Intentional limited stack inspection for WooCommerce attribute flow detection.
 		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, self::SANITIZE_TITLE_STACK_DEPTH );
+		$general   = false;
 
 		foreach ( $backtrace as $call ) {
 			$function = $call['function'] ?? '';
 
+			if ( 'wc_get_product_variation_attributes' === $function ) {
+				return 'saved_global';
+			}
+
+			if ( 'set_attributes' === $function && isset( $call['class'] ) && is_a( $call['class'], 'WC_Product', true ) ) {
+				return 'saved_global';
+			}
+
 			if ( isset( self::WC_SANITIZE_TITLE_FRAMES[ $function ] ) ) {
-				return true;
+				$general = true;
 			}
 		}
 
-		return false;
+		return $general ? 'general' : null;
 	}
 
 	/**
@@ -187,6 +204,12 @@ class GlobalAttributeService {
 
 		if ( '' === $raw_taxonomy || ! $this->has_non_ascii_chars( $raw_taxonomy ) ) {
 			return $taxonomy;
+		}
+
+		// WooCommerce uses this filter both when saving new attributes and when
+		// resolving saved attribute names. Keep existing taxonomy keys intact.
+		if ( $this->is_attribute_taxonomy( $raw_taxonomy ) ) {
+			return $raw_taxonomy;
 		}
 
 		return $this->main->sanitize_explicit_slug( $raw_taxonomy );

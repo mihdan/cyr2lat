@@ -196,6 +196,45 @@ class GlobalAttributeServiceTest extends CyrToLatTestCase {
 	}
 
 	/**
+	 * Existing WooCommerce attribute names must retain their stored taxonomy keys.
+	 *
+	 * @return void
+	 */
+	public function test_filter_taxonomy_name_preserves_existing_cyrillic_attribute(): void {
+		WP_Mock::userFunction( 'WC' );
+		WP_Mock::userFunction(
+			'wc_get_attribute_taxonomies',
+			[
+				'return' => [ (object) [ 'attribute_name' => 'цвет' ] ],
+			]
+		);
+
+		$main = Mockery::mock( Main::class )->makePartial();
+		$main->shouldNotReceive( 'sanitize_explicit_slug' );
+		$subject = new GlobalAttributeService( $main );
+
+		self::assertSame( 'цвет', $subject->filter_taxonomy_name( 'czvet', 'цвет' ) );
+		self::assertSame( 'цвет', $subject->filter_taxonomy_name( 'czvet', rawurlencode( 'цвет' ) ) );
+		self::assertSame( 'pa_цвет', $subject->filter_taxonomy_name( 'pa_czvet', 'pa_цвет' ) );
+	}
+
+	/**
+	 * New Cyrillic attribute names still receive transliterated slugs.
+	 *
+	 * @return void
+	 */
+	public function test_filter_taxonomy_name_transliterates_new_cyrillic_attribute(): void {
+		WP_Mock::userFunction( 'WC' );
+		WP_Mock::userFunction( 'wc_get_attribute_taxonomies', [ 'return' => [] ] );
+
+		$main = Mockery::mock( Main::class )->makePartial();
+		$main->shouldReceive( 'sanitize_explicit_slug' )->once()->with( 'новый' )->andReturn( 'novyj' );
+
+		$subject = new GlobalAttributeService( $main );
+		self::assertSame( 'novyj', $subject->filter_taxonomy_name( 'новый', 'новый' ) );
+	}
+
+	/**
 	 * Get the subject under test.
 	 *
 	 * @return GlobalAttributeService
