@@ -689,7 +689,8 @@ class MainTest extends CyrToLatTestCase {
 
 		WP_Mock::userFunction( 'doing_filter' )->with( 'pre_term_slug' )->andReturn( false );
 		WP_Mock::userFunction( 'is_wp_error' )->with( $title )->andReturn( false );
-		WP_Mock::userFunction( 'sanitize_title_with_dashes' )->with( 'j' )->andReturn( 'j' );
+		WP_Mock::userFunction( 'remove_accents' )->with( $title )->andReturn( $title );
+		WP_Mock::userFunction( 'sanitize_title_with_dashes' )->with( 'j', '', 'save' )->andReturn( 'j' );
 		WP_Mock::onFilter( 'ctl_pre_sanitize_title' )->with( false, $title )->reply( false );
 
 		$subject->shouldReceive( 'prepare_in' )->once()->with( [ $taxonomy ] )->andReturn( $prepared_tax );

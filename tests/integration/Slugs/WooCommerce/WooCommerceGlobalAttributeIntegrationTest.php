@@ -14,6 +14,9 @@ namespace CyrToLat\Tests\Integration\Slugs\WooCommerce;
 
 use CyrToLat\Tests\Integration\WooCommerceWPTestCase;
 use WC_Cache_Helper;
+use WC_Data_Store;
+use WC_Product_Variable;
+use WC_Product_Variation;
 use WC_Query;
 
 /**
@@ -280,6 +283,102 @@ class WooCommerceGlobalAttributeIntegrationTest extends WooCommerceWPTestCase {
 
 		self::assertSame( 'color-ua', $attribute->attribute_name );
 		self::assertSame( 'Колір', $attribute->attribute_label );
+	}
+
+	/**
+	 * A saved Cyrillic attribute must keep its taxonomy, terms, and product relationships.
+	 *
+	 * @return void
+	 */
+	public function test_existing_cyrillic_attribute_keeps_term_and_product_relationships(): void {
+		$main = cyr_to_lat();
+		remove_filter( 'sanitize_title', [ $main, 'sanitize_title' ], 9 );
+		remove_filter( 'sanitize_taxonomy_name', [ $main, 'sanitize_wc_taxonomy_name' ], 10 );
+
+		try {
+			// Model an attribute and product saved before Cyrillic taxonomy names were transliterated.
+			$attribute_id = wc_create_attribute(
+				[
+					'name' => 'Цвет',
+					'slug' => 'цвет',
+				]
+			);
+			$this->assertNotWPError( $attribute_id );
+			self::assertIsInt( $attribute_id );
+
+			$attribute = $this->get_woocommerce_attribute_taxonomy( $attribute_id );
+			self::assertSame( 'цвет', $attribute->attribute_name );
+			$taxonomy = 'pa_цвет';
+			register_taxonomy( $taxonomy, 'product', [ 'public' => true ] );
+			$this->registered_attribute_taxonomies[] = $taxonomy;
+
+			$term = wp_insert_term( 'Красный', $taxonomy, [ 'slug' => 'krasnyj' ] );
+			$this->assertNotWPError( $term );
+			$product = new WC_Product_Variable();
+			$product->set_name( 'Legacy attribute product' );
+			$product->set_status( 'publish' );
+			$product_id           = $product->save();
+			$legacy_attribute_key = strtolower( rawurlencode( $taxonomy ) );
+			update_post_meta(
+				$product_id,
+				'_product_attributes',
+				[
+					$legacy_attribute_key => [
+						'name'         => $taxonomy,
+						'value'        => '',
+						'position'     => 0,
+						'is_visible'   => 1,
+						'is_variation' => 1,
+						'is_taxonomy'  => 1,
+					],
+				]
+			);
+			wp_set_object_terms( $product_id, (int) $term['term_id'], $taxonomy );
+
+			$variation = new WC_Product_Variation();
+			$variation->set_parent_id( $product_id );
+			$variation->set_status( 'publish' );
+			$variation->set_regular_price( '10' );
+			$variation_id  = $variation->save();
+			$variation_key = 'attribute_' . $legacy_attribute_key;
+			update_post_meta( $variation_id, $variation_key, 'krasnyj' );
+		} finally {
+			add_filter( 'sanitize_title', [ $main, 'sanitize_title' ], 9, 3 );
+			add_filter( 'sanitize_taxonomy_name', [ $main, 'sanitize_wc_taxonomy_name' ], 10, 2 );
+		}
+
+		$this->reset_woocommerce_attribute_taxonomies();
+		remove_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
+		try {
+			self::assertSame( $taxonomy, wc_attribute_taxonomy_name_by_id( $attribute_id ) );
+			self::assertSame( $taxonomy, wc_attribute_taxonomy_name( 'цвет' ) );
+			self::assertSame(
+				[ (int) $term['term_id'] ],
+				get_terms(
+					[
+						'taxonomy'   => $taxonomy,
+						'hide_empty' => false,
+						'fields'     => 'ids',
+					]
+				)
+			);
+			self::assertSame( [ (int) $term['term_id'] ], wp_get_object_terms( $product_id, $taxonomy, [ 'fields' => 'ids' ] ) );
+			$product = new WC_Product_Variable( $product_id );
+			self::assertArrayHasKey( $legacy_attribute_key, $product->get_attributes() );
+			self::assertSame( [ $variation_key => 'krasnyj' ], ( new WC_Product_Variation( $variation_id ) )->get_variation_attributes() );
+			self::assertSame(
+				$variation_id,
+				WC_Data_Store::load( 'product' )->find_matching_product_variation( $product, [ $variation_key => 'krasnyj' ] )
+			);
+
+			$updated_id = wc_update_attribute( $attribute_id, [ 'name' => 'Колір' ] );
+			$this->assertNotWPError( $updated_id );
+			self::assertSame( 'цвет', $this->get_woocommerce_attribute_taxonomy( $attribute_id )->attribute_name );
+			self::assertSame( $taxonomy, wc_attribute_taxonomy_name_by_id( $attribute_id ) );
+			self::assertSame( [ (int) $term['term_id'] ], wp_get_object_terms( $product_id, $taxonomy, [ 'fields' => 'ids' ] ) );
+		} finally {
+			add_filter( 'ctl_enable_legacy_sanitize_title_bridge', '__return_false' );
+		}
 	}
 
 	/**

@@ -933,9 +933,10 @@ class Main {
 	 * @return string
 	 */
 	public function sanitize_explicit_slug( string $slug ): string {
+		$slug = remove_accents( $slug );
 		$slug = $this->transliterate( $slug );
 
-		return sanitize_title_with_dashes( $slug );
+		return sanitize_title_with_dashes( $slug, '', 'save' );
 	}
 
 	/**

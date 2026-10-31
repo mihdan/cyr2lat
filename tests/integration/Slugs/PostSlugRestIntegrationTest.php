@@ -189,6 +189,69 @@ class PostSlugRestIntegrationTest extends WP_Test_REST_TestCase {
 	}
 
 	/**
+	 * Test that draft and direct-publish workflows apply the same save sanitization.
+	 *
+	 * @param string $route REST route.
+	 *
+	 * @dataProvider data_rest_post_routes
+	 *
+	 * @return void
+	 */
+	public function test_rest_draft_and_direct_publish_normalize_unicode_consistently( string $route ): void {
+		$title         = 'Amélie’s dog loves хлеб';
+		$expected_slug = 'amelies-dog-loves-hleb';
+		$published     = $this->dispatch_successful_request(
+			'POST',
+			$route,
+			[
+				'title'  => $title,
+				'status' => 'publish',
+			]
+		);
+
+		self::assertSame( $expected_slug, $published['slug'] );
+		self::assertSame( $expected_slug, get_post( $published['id'] )->post_name );
+
+		wp_delete_post( $published['id'], true );
+
+		$draft = $this->dispatch_successful_request(
+			'POST',
+			$route,
+			[
+				'title'  => $title,
+				'status' => 'draft',
+			]
+		);
+
+		self::assertSame( $expected_slug, $draft['slug'] );
+		self::assertSame( $expected_slug, $draft['generated_slug'] );
+		self::assertSame( $expected_slug, get_post( $draft['id'] )->post_name );
+
+		$published_draft = $this->dispatch_successful_request(
+			'POST',
+			$route . '/' . $draft['id'],
+			[
+				'status' => 'publish',
+			]
+		);
+
+		self::assertSame( $expected_slug, $published_draft['slug'] );
+		self::assertSame( $expected_slug, get_post( $draft['id'] )->post_name );
+	}
+
+	/**
+	 * Provide REST routes for built-in posts and a custom post type.
+	 *
+	 * @return array<string, array{string}>
+	 */
+	public static function data_rest_post_routes(): array {
+		return [
+			'post'             => [ '/wp/v2/posts' ],
+			'custom post type' => [ '/wp/v2/cyr2lat-books' ],
+		];
+	}
+
+	/**
 	 * Test updating a post via REST with an explicit Cyrillic slug.
 	 *
 	 * @return void
