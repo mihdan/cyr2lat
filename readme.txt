@@ -268,6 +268,9 @@ We will review your report and respond as quickly as possible.
 
 == Changelog ==
 
+= 7.2.0 (31.10.2026) =
+* Fixed accented characters and Unicode punctuation remaining percent-encoded in post slugs after saving drafts.
+
 = 7.1.0 (08.08.2026) =
 * Hardened filename transliteration and multisite settings.
 * Hardened data validation in admin.
