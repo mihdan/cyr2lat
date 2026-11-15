@@ -268,6 +268,9 @@ We will review your report and respond as quickly as possible.
 
 == Changelog ==
 
+= 7.3.0 (15.11.2026) =
+* Fixed “Convert existing slugs” with WPML: posts and terms now use their own language’s transliteration table while preserving custom ctl_locale mappings.
+
 = 7.2.0 (31.10.2026) =
 * Fixed accented characters and Unicode punctuation remaining percent-encoded in post slugs after saving drafts.
 * Preserved existing WooCommerce global attributes with Cyrillic slugs so their terms, product attributes, and variations remain linked after plugin updates.
