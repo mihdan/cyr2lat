@@ -103,6 +103,14 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 			'locale',
 			[ $subject, 'filter_post_locale' ]
 		);
+		WP_Mock::expectFilterAdded( 'ctl_locale', [ $subject, 'filter_post_locale' ], - PHP_INT_MAX + 1 );
+		WP_Mock::userFunction(
+			'remove_filter',
+			[
+				'args'  => [ 'ctl_locale', [ $subject, 'filter_post_locale' ], - PHP_INT_MAX + 1 ],
+				'times' => 1,
+			]
+		);
 
 		WP_Mock::userFunction(
 			'remove_filter',
@@ -203,6 +211,14 @@ class PostConversionProcessTest extends CyrToLatTestCase {
 		WP_Mock::expectFilterAdded(
 			'locale',
 			[ $subject, 'filter_post_locale' ]
+		);
+		WP_Mock::expectFilterAdded( 'ctl_locale', [ $subject, 'filter_post_locale' ], - PHP_INT_MAX + 1 );
+		WP_Mock::userFunction(
+			'remove_filter',
+			[
+				'args'  => [ 'ctl_locale', [ $subject, 'filter_post_locale' ], - PHP_INT_MAX + 1 ],
+				'times' => 1,
+			]
 		);
 
 		WP_Mock::userFunction(

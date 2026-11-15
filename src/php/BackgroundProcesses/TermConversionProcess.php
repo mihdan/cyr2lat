@@ -75,8 +75,16 @@ class TermConversionProcess extends ConversionProcess {
 		$slug       = urldecode( $term->slug );
 
 		add_filter( 'locale', [ $this, 'filter_term_locale' ] );
-		$transliterated_slug = $this->term_slug_service->filter_term_slug( $slug );
-		remove_filter( 'locale', [ $this, 'filter_term_locale' ] );
+
+		// Replace WPML's request locale before custom locale mappings run.
+		add_filter( 'ctl_locale', [ $this, 'filter_term_locale' ], - PHP_INT_MAX + 1 );
+
+		try {
+			$transliterated_slug = $this->term_slug_service->filter_term_slug( $slug );
+		} finally {
+			remove_filter( 'ctl_locale', [ $this, 'filter_term_locale' ], - PHP_INT_MAX + 1 );
+			remove_filter( 'locale', [ $this, 'filter_term_locale' ] );
+		}
 
 		if ( $transliterated_slug !== $slug ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
