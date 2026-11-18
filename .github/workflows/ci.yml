@@ -121,14 +121,7 @@ jobs:
       matrix: ${{ steps.resolve.outputs.matrix }}
 
     env:
-      FULL_PHP_MATRIX: >-
-        ${{
-          github.event_name == 'push' &&
-          (
-            github.ref_name == github.event.repository.default_branch ||
-            contains(github.event.head_commit.message || '', '[all]')
-          )
-        }}
+      FULL_PHP_MATRIX: ${{ github.event_name == 'pull_request' }}
 
     steps:
       - name: Resolve PHP versions

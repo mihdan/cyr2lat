@@ -80,8 +80,16 @@ class PostConversionProcess extends ConversionProcess {
 		];
 
 		add_filter( 'locale', [ $this, 'filter_post_locale' ] );
-		$filtered_post_data = $this->post_slug_service->filter_post_data( $post_data, $post_data, $post_data, true );
-		remove_filter( 'locale', [ $this, 'filter_post_locale' ] );
+
+		// Replace WPML's request locale before custom locale mappings run.
+		add_filter( 'ctl_locale', [ $this, 'filter_post_locale' ], - PHP_INT_MAX + 1 );
+
+		try {
+			$filtered_post_data = $this->post_slug_service->filter_post_data( $post_data, $post_data, $post_data, true );
+		} finally {
+			remove_filter( 'ctl_locale', [ $this, 'filter_post_locale' ], - PHP_INT_MAX + 1 );
+			remove_filter( 'locale', [ $this, 'filter_post_locale' ] );
+		}
 
 		$transliterated_name = (string) ( $filtered_post_data['post_name'] ?? $decoded_post_name );
 

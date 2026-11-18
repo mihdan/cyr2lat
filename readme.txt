@@ -2,9 +2,9 @@
 Contributors: SergeyBiryukov, mihdan, kaggdesign, karevn, webvitaly
 Tags: transliteration, cyrillic, slugs, translation, multilingual
 Requires at least: 6.0
-Tested up to: 7.1
+Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 7.2.0
+Stable tag: 7.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -267,6 +267,9 @@ When reporting a vulnerability, please include as much information as possible t
 We will review your report and respond as quickly as possible.
 
 == Changelog ==
+
+= 7.3.0 (18.11.2026) =
+* Fixed “Convert existing slugs” with WPML: posts and terms now use their own language’s transliteration table while preserving custom ctl_locale mappings.
 
 = 7.2.0 (31.10.2026) =
 * Fixed accented characters and Unicode punctuation remaining percent-encoded in post slugs after saving drafts.

@@ -88,6 +88,14 @@ class TermConversionProcessTest extends CyrToLatTestCase {
 			'locale',
 			[ $subject, 'filter_term_locale' ]
 		);
+		WP_Mock::expectFilterAdded( 'ctl_locale', [ $subject, 'filter_term_locale' ], - PHP_INT_MAX + 1 );
+		WP_Mock::userFunction(
+			'remove_filter',
+			[
+				'args'  => [ 'ctl_locale', [ $subject, 'filter_term_locale' ], - PHP_INT_MAX + 1 ],
+				'times' => 1,
+			]
+		);
 
 		WP_Mock::userFunction(
 			'remove_filter',
