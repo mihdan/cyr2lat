@@ -1,3 +1,6 @@
+= 7.3.0 (18.11.2026) =
+* Fixed “Convert existing slugs” with WPML: posts and terms now use their own language’s transliteration table while preserving custom ctl_locale mappings.
+
 = 7.3.0 (15.11.2026) =
 * Fixed “Convert existing slugs” with WPML: posts and terms now use their own language’s transliteration table while preserving custom ctl_locale mappings.
 
